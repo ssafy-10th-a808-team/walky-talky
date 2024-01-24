@@ -1,6 +1,7 @@
 package com.ssafy.backend.member.controller;
 
 import com.ssafy.backend.member.domain.Member;
+import com.ssafy.backend.member.dto.MemberDto;
 import com.ssafy.backend.member.dto.RequestMemberCheckIdDto;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +61,17 @@ public class MemberController {
         return new ResponseEntity<>(resultMap, status);
     }
 
+    @PostMapping("/local-login")
+    public ResponseEntity<?> localLogin(@RequestBody MemberDto memberDto){
+        Map<String, Object> resultMap = new HashMap<>();
+
+        if(memberService.localLogin(memberDto)){
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        }else{
+            resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+    }
 
 }
