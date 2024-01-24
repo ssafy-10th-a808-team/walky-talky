@@ -15,7 +15,6 @@ public class JwtProvider {
     @Value("${security.salt}")
     private String salt;
 
-
     public String createAccessToken(String memberId, Long tokenLive) {
         Date now = new Date();
 
