@@ -33,20 +33,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean localLogin(RequestLocalLoginDto loginDto) {
+    public Map<String, String> localLogin(RequestLocalLoginDto loginDto) {
         Member member = memberRepository.findByMemberId(loginDto.getMemberId());
+        Map<String, String> returnMap = new HashMap<>();
 
         if (member == null) { // 아이디에 해당하는 회원 없을때
-            return false;
+            returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
         } else {
             if (member.isDeleted()) { // 탈퇴한 회원일때
-                return false;
+                returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+
             }
             if (!loginDto.getPassword().equals(member.getPassword())) { // 비번 틀렸을때
-                return false;
+                returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+
             }
         }
-
         // jwt
         String seq = member.getSeq().toString();
         String atk = jwtProvider.createAccessToken(seq, atkExp);
@@ -56,7 +58,15 @@ public class MemberServiceImpl implements MemberService {
         redisDao.saveToRedis("atk:" + seq, atk, Duration.ofMillis(atkExp));
         redisDao.saveToRedis("rtk:" + seq, rtk, Duration.ofMillis(rtkExp));
 
-        return true;
+        returnMap.put("message", "OK");
+        returnMap.put("atk", atk);
+
+        return returnMap;
     }
 
+    @Override
+    public void logout(Long seq) {
+        redisDao.deleteFromRedis("atk:" + seq);
+        redisDao.deleteFromRedis("rtk:" + seq);
+    }
 }
