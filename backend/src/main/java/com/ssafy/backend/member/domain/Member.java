@@ -20,7 +20,9 @@ public class Member {
     @Column(name = "member_id")
     private String memberId;
 
+    @Column(name = "password")
     private String password;
+
     private String birth;
     private String gender;
     private String nickname;
