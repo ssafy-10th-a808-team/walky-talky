@@ -71,9 +71,9 @@ public class MemberController {
             if (resultMap.containsKey("atk")) {
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", "Bearer " + resultMap.get("atk"));
-                resultMap.remove("atk"); 
+                resultMap.remove("atk");
 
-                return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+                return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }

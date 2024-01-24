@@ -23,8 +23,8 @@ public class MemberServiceImpl implements MemberService {
 
     private final RedisDao redisDao;
 
-    private static final long atkExp = 900000L;
-    private static final long rtkExp = 604800000L;
+    private static final long atkExp = 900000L; // 15분
+    private static final long rtkExp = 604800000L; // 일주일
 
 
     @Override
@@ -39,14 +39,15 @@ public class MemberServiceImpl implements MemberService {
 
         if (member == null) { // 아이디에 해당하는 회원 없을때
             returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+            return returnMap;
         } else {
             if (member.isDeleted()) { // 탈퇴한 회원일때
                 returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-
+                return returnMap;
             }
             if (!loginDto.getPassword().equals(member.getPassword())) { // 비번 틀렸을때
                 returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-
+                return returnMap;
             }
         }
         // jwt
