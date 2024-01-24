@@ -4,7 +4,9 @@ import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
+import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
+import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
 import com.ssafy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,17 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public boolean checkId(RequestCheckIdDto requestCheckIdDto) {
         return memberRepository.existsByMemberId(requestCheckIdDto.getMemberId());
+    }
+
+    @Override
+    public boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto) {
+        return memberRepository.existsByNickname(requestCheckNicknameDto.getNickname());
+    }
+
+    @Override
+    public Member localSignup(RequestLocalSignupDto requestLocalSignupDto) {
+        Member member = requestLocalSignupDto.toEntity();
+        return memberRepository.save(member);
     }
 
     @Override
@@ -65,5 +78,6 @@ public class MemberServiceImpl implements MemberService {
 
         return resultMap;
     }
+
 
 }
