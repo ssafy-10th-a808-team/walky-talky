@@ -9,6 +9,6 @@ public interface MemberService {
 
     public Member findByMemberId(String memberId);
 
-    public Map<String, Object> localLogin(RequestLocalLoginDto loginDto);
+    public boolean localLogin(RequestLocalLoginDto loginDto);
 
 }
