@@ -17,7 +17,7 @@ ADD ./dist ./dist
 RUN rm /etc/nginx/conf.d/default.conf
 
 # host pc의 nginx.conf를 아래 경로에 복사
-COPY /etc/nginx/sites-available/default /etc/nginx/conf.d
+COPY ./etc/nginx/sites-available/default /etc/nginx/conf.d
 
 # 80 포트 개방
 EXPOSE 80
