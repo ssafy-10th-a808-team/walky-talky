@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,18 +18,22 @@ public class Member {
     @Column(name = "login_type")
     private String loginType;
 
-    @Column(name = "member_id")
+    @Column(name = "id")
     private String memberId;
 
-    @Column(name = "password")
     private String password;
-
     private String birth;
     private String gender;
     private String nickname;
     private String url;
     private String introduce;
+
+    @Column(name = "region_cd")
     private String regionCd;
-    private boolean isAlert = true;
-    private boolean isDeleted = false;
+
+    @Column(name = "is_alert")
+    private boolean isAlert;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 }
