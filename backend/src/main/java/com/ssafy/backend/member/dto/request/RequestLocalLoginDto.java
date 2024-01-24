@@ -1,4 +1,4 @@
-package com.ssafy.backend.member.dto;
+package com.ssafy.backend.member.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberDto {
+public class RequestLocalLoginDto {
 
     private String memberId;
     private String password;
+
 }
