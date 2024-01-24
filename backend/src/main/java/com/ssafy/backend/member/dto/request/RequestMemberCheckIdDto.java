@@ -1,4 +1,4 @@
-package com.ssafy.backend.member.dto;
+package com.ssafy.backend.member.dto.request;
 
 import com.ssafy.backend.member.domain.Member;
 import lombok.*;
