@@ -3,6 +3,7 @@ package com.ssafy.backend.member.service;
 import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
+import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +27,9 @@ public class MemberServiceImpl implements MemberService {
     private static final long atkExp = 900000L;
     private static final long rtkExp = 604800000L;
 
-
     @Override
-    public Member findByMemberId(String memberId) {
-        return memberRepository.findByMemberId(memberId);
+    public boolean checkId(RequestCheckIdDto requestCheckIdDto) {
+        return memberRepository.existsByMemberId(requestCheckIdDto.getMemberId());
     }
 
     @Override
