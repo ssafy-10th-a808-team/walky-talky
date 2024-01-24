@@ -1,4 +1,8 @@
 <template>
+<<<<<<< HEAD
+  <div>
+    <h1>나는 헤더</h1>
+=======
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand">
@@ -27,14 +31,15 @@
 
       </ul>
     </div>
+>>>>>>> ea2c98e68116adc5a663bbed7c404ee8e72ac570
   </div>
 </nav>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>
 
 <style scoped>
-
+h1 {
+  background-color: rgb(0, 140, 255);
+}
 </style>
