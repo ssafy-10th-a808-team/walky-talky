@@ -1,15 +1,16 @@
 package com.ssafy.backend.member.controller;
 
 import com.ssafy.backend.member.domain.Member;
-import com.ssafy.backend.member.dto.MemberDto;
-import com.ssafy.backend.member.dto.RequestMemberCheckIdDto;
+import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
+import com.ssafy.backend.member.dto.request.RequestMemberCheckIdDto;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,16 +63,10 @@ public class MemberController {
     }
 
     @PostMapping("/local-login")
-    public ResponseEntity<?> localLogin(@RequestBody MemberDto memberDto){
-        Map<String, Object> resultMap = new HashMap<>();
+    public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto){
+        Map<String, Object> resultMap = memberService.localLogin(loginDto);
 
-        if(memberService.localLogin(memberDto)){
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        }else{
-            resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
     }
 
 }
