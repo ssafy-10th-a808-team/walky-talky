@@ -2,7 +2,8 @@ package com.ssafy.backend.member.controller;
 
 import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
-import com.ssafy.backend.member.dto.request.RequestMemberCheckIdDto;
+import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
+import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,51 +20,22 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/check/{memberId}")
-    public ResponseEntity<Map<String, Object>> getMemberCheckMemberId(@PathVariable String memberId) {
-
-        System.out.println("memberId = " + memberId);
-
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
-
-        Member member = memberService.findByMemberId(memberId);
-        if (member == null) {
-            resultMap.put("message", "OK");
-            status = HttpStatus.OK;
-        } else {
-            resultMap.put("message", "중복된 아이디입니다.");
-            status = HttpStatus.BAD_REQUEST;
-        }
-
-        System.out.println("status = " + status);
-
-        return new ResponseEntity<>(resultMap, status);
-    }
-
     @PostMapping("/check-id")
-    public ResponseEntity<Map<String, Object>> postMemberCheckId(@RequestBody RequestMemberCheckIdDto requestMemberCheckIdDto) {
-        System.out.println("requestMemberCheckIdDto.getMemberId() = " + requestMemberCheckIdDto.getMemberId());
+    public ResponseEntity<ResponseCheckIdDto> CheckId(@RequestBody RequestCheckIdDto requestCheckIdDto) {
 
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
+        ResponseCheckIdDto responseCheckIdDto = new ResponseCheckIdDto();
 
-        Member member = memberService.findByMemberId(requestMemberCheckIdDto.getMemberId());
-        if (member == null) {
-            resultMap.put("message", "OK");
-            status = HttpStatus.OK;
+        if (memberService.checkId(requestCheckIdDto)) {
+            responseCheckIdDto.setMessage("중복된 아이디입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckIdDto);
         } else {
-            resultMap.put("message", "중복된 아이디입니다.");
-            status = HttpStatus.BAD_REQUEST;
+            responseCheckIdDto.setMessage("OK");
+            return ResponseEntity.ok(responseCheckIdDto);
         }
-
-        System.out.println("status = " + status);
-
-        return new ResponseEntity<>(resultMap, status);
     }
 
     @PostMapping("/local-login")
-    public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto){
+    public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto) {
         Map<String, Object> resultMap = memberService.localLogin(loginDto);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
