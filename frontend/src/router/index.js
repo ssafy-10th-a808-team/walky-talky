@@ -6,6 +6,7 @@ import GroupView from '@/views/GroupView.vue'
 import WalkView from '@/views/WalkView.vue'
 import ShareBoardView from '@/views/ShareBoardView.vue'
 import HomeView from '@/views/HomeView.vue'
+import MyLocationView from '@/views/MyLocationView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -28,7 +29,12 @@ const router = createRouter({
       path: '/share-board',
       name: 'share-board',
       component: ShareBoardView
-    }
+    },
+    {
+      path: '/mylocation',
+      name: 'mylocation',
+      component: MyLocationView
+    },
   ]
 })
 
