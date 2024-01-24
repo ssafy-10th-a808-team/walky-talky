@@ -9,7 +9,9 @@
    
   </header>
 
-
+  <div>
+    <RouterView/>
+  </div>
 
 </template>
 
