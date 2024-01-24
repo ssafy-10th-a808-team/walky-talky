@@ -5,6 +5,7 @@ import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.dto.request.RequestMemberCheckIdDto;
 import com.ssafy.backend.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,21 +65,32 @@ public class MemberController {
 
     @PostMapping("/local-login")
     public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto) {
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, String> resultMap = memberService.localLogin(loginDto);
 
         try {
-            if (memberService.localLogin(loginDto)) {
-                resultMap.put("message", "OK");
+            if (resultMap.containsKey("atk")) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Authorization", "Bearer " + resultMap.get("atk"));
+                resultMap.remove("atk");
+
                 return ResponseEntity.status(HttpStatus.OK).body(resultMap);
             } else {
-                resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
+
         } catch (Exception e) {
             resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
         }
 
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        Map<String, String> resultMap = new HashMap<>();
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
 }
