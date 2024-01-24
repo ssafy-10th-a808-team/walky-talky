@@ -1,5 +1,6 @@
 package com.ssafy.backend.member.domain;
 
+import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Member {
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -25,6 +26,8 @@ public class Member {
     private String birth;
     private String gender;
     private String nickname;
+
+    @Column(length = 2083)
     private String url;
     private String introduce;
 
