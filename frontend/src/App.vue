@@ -10,6 +10,8 @@
 <script setup>
 import TheFooter from './components/common/TheFooter.vue'
 import TheHeaderNav from './components/common/TheHeaderNav.vue'
+
+
 </script>
 
 <style scoped>
@@ -29,7 +31,7 @@ import TheHeaderNav from './components/common/TheHeaderNav.vue'
   padding-top: 71px;
   border-left: 1px #d8d8d8 solid;
   border-right: 1px #d8d8d8 solid;
-  positon: relative;
+  position: relative;
   text-align: center;
 }
 
