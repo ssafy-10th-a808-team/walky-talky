@@ -79,13 +79,25 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void logout(Long seq) {
-        redisDao.deleteFromRedis("atk:" + seq);
-        redisDao.deleteFromRedis("rtk:" + seq);
+    public void logout(String memberId) {
+        redisDao.deleteFromRedis("atk:" + memberId);
+        redisDao.deleteFromRedis("rtk:" + memberId);
     }
 
-    public void reissue(){
-        
+    public Map<String, String> reissue(String memberId){
+        Map<String, String> returnMap = new HashMap<>();
+
+        String atk = jwtProvider.createAccessToken(memberId, atkExp);
+        String rtk = jwtProvider.createRefreshToken(memberId, rtkExp);
+
+        // redis에 jwt저장
+        redisDao.saveToRedis("atk:" + memberId, atk, Duration.ofMillis(atkExp));
+        redisDao.saveToRedis("rtk:" + memberId, rtk, Duration.ofMillis(rtkExp));
+
+        returnMap.put("atk", atk);
+        returnMap.put("rtk", rtk);
+
+        return returnMap;
     }
 
 }
