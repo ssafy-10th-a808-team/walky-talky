@@ -26,8 +26,8 @@ public class MemberServiceImpl implements MemberService {
 
     private final RedisDao redisDao;
 
-    private static final long atkExp = 900000L;
-    private static final long rtkExp = 604800000L;
+    private static final long atkExp = 900000L; // 15분
+    private static final long rtkExp = 604800000L; // 일주일
 
     @Override
     public boolean checkId(RequestCheckIdDto requestCheckIdDto) {
@@ -46,38 +46,58 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String, Object> localLogin(RequestLocalLoginDto loginDto) {
-        Map<String, Object> resultMap = new HashMap<>();
-
+    public Map<String, String> localLogin(RequestLocalLoginDto loginDto) {
         Member member = memberRepository.findByMemberId(loginDto.getMemberId());
+        Map<String, String> returnMap = new HashMap<>();
 
         if (member == null) { // 아이디에 해당하는 회원 없을때
-            resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-            return resultMap;
+            returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+            return returnMap;
         } else {
             if (member.isDeleted()) { // 탈퇴한 회원일때
-                resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-                return resultMap;
+                returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+                return returnMap;
             }
             if (!loginDto.getPassword().equals(member.getPassword())) { // 비번 틀렸을때
-                resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-                return resultMap;
+                returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+                return returnMap;
             }
         }
+        // jwt
+        String memberId = member.getMemberId();
+        String atk = jwtProvider.createAccessToken(memberId, atkExp);
+        String rtk = jwtProvider.createRefreshToken(memberId, rtkExp);
 
-        String seq = member.getSeq().toString();
-        // jwt token
-        String atk = jwtProvider.createAccessToken(seq, atkExp);
-        String rtk = jwtProvider.createAccessToken(seq, rtkExp);
+        // redis에 jwt저장
+        redisDao.saveToRedis("atk:" + memberId, atk, Duration.ofMillis(atkExp));
+        redisDao.saveToRedis("rtk:" + memberId, rtk, Duration.ofMillis(rtkExp));
 
-        // redis 저장
-        redisDao.saveToRedis("atk:" + seq, atk, Duration.ofMillis(atkExp));
-        redisDao.saveToRedis("rtk:" + seq, rtk, Duration.ofMillis(rtkExp));
+        returnMap.put("atk", atk);
+        returnMap.put("rtk", rtk);
 
-        resultMap.put("message", "OK");
-
-        return resultMap;
+        return returnMap;
     }
 
+    @Override
+    public void logout(String memberId) {
+        redisDao.deleteFromRedis("atk:" + memberId);
+        redisDao.deleteFromRedis("rtk:" + memberId);
+    }
+
+    public Map<String, String> reissue(String memberId){
+        Map<String, String> returnMap = new HashMap<>();
+
+        String atk = jwtProvider.createAccessToken(memberId, atkExp);
+        String rtk = jwtProvider.createRefreshToken(memberId, rtkExp);
+
+        // redis에 jwt저장
+        redisDao.saveToRedis("atk:" + memberId, atk, Duration.ofMillis(atkExp));
+        redisDao.saveToRedis("rtk:" + memberId, rtk, Duration.ofMillis(rtkExp));
+
+        returnMap.put("atk", atk);
+        returnMap.put("rtk", rtk);
+
+        return returnMap;
+    }
 
 }
