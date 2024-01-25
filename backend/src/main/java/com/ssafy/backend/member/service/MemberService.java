@@ -19,4 +19,5 @@ public interface MemberService {
     boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto);
 
     Member localSignup(RequestLocalSignupDto requestLocalSignupDto);
+
 }

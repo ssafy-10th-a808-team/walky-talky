@@ -73,6 +73,7 @@ public class MemberServiceImpl implements MemberService {
         redisDao.saveToRedis("rtk:" + memberId, rtk, Duration.ofMillis(rtkExp));
 
         returnMap.put("atk", atk);
+        returnMap.put("rtk", rtk);
 
         return returnMap;
     }
@@ -82,4 +83,9 @@ public class MemberServiceImpl implements MemberService {
         redisDao.deleteFromRedis("atk:" + seq);
         redisDao.deleteFromRedis("rtk:" + seq);
     }
+
+    public void reissue(){
+        
+    }
+
 }
