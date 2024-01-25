@@ -7,7 +7,7 @@ const test = () => {
     method: 'post',
     url: 'https://i10a808.p.ssafy.io/member/check-id',
     data: {
-      'memberId' : 'minho'
+      'memberId' : 'minhou'
     }
   })
 }
