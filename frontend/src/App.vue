@@ -5,7 +5,7 @@ import axios from 'axios'
 const test = () => {
   axios({
     method: 'post',
-    url: 'https://i10a808.p.ssafy.io/api/member/check-id',
+    url: 'https://i10a808.p.ssafy.io/member/check-id',
     data: {
       'memberId' : 'minho'
     }
