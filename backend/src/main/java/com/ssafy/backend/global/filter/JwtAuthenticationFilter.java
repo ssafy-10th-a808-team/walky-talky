@@ -31,56 +31,57 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String requestURI = request.getRequestURI();
         String[] splitURI = requestURI.split("/");
 
-        switch (splitURI[3]) {
-            case "reissue":
-                String rtk = request.getHeader("rtk");
+        try{
+            switch (splitURI[3]) {
+                case "reissue":
+                    String rtk = getToken(request.getHeader("Authorization"));
 
-                try {
-                    if (rtk != null && jwtProvider.validateToken(rtk)) {
-                        String memberId = jwtProvider.getMemberId(rtk);
-                        request.setAttribute("memberId", memberId);
+                    try {
+                        if (rtk != null && jwtProvider.validateToken(rtk)) {
+                            String memberId = jwtProvider.getMemberId(rtk);
+                            request.setAttribute("memberId", memberId);
 
-                        String token = (String) redisDao.readFromRedis("rtk:" + memberId);
+                            String token = (String) redisDao.readFromRedis("rtk:" + memberId);
 
-                        if (token == null) {
-                            throw new WTException("유효하지 않은 토큰입니다.");
+                            if (token == null) {
+                                throw new WTException("세션이 만료되었습니다.");
+                            }
+                        } else {
+                            throw new WTException("세션이 만료되었습니다.");
                         }
-                    } else {
-                        throw new WTException("유효하지 않은 토큰입니다.");
+                    } catch (Exception e) {
+                        throw new WTException("세션이 만료되었습니다.");
                     }
-                } catch (Exception e) {
-                    throw new WTException("유효하지 않은 토큰입니다.");
-                }
-                break;
-            case "logout":
-                String atk = request.getHeader("atk");
+                    break;
+                case "logout":
+                    String atk = request.getHeader("atk");
 
-                try {
-                    if (atk != null && jwtProvider.validateToken(atk)) {
-                        String memberId = jwtProvider.getMemberId(atk);
-                        request.setAttribute("memberId", memberId);
+                    try {
+                        if (atk != null && jwtProvider.validateToken(atk)) {
+                            String memberId = jwtProvider.getMemberId(atk);
+                            request.setAttribute("memberId", memberId);
 
-                        String token = (String) redisDao.readFromRedis("atk:" + memberId);
+                            String token = (String) redisDao.readFromRedis("atk:" + memberId);
 
-                        if (token == null) {
-                            System.out.println("token null");
-                            throw new WTException("유효하지 않은 토큰입니다.");
+                            if (token == null) {
+                                throw new WTException("세션이 만료되었습니다.");
+                            }
+                        } else {
+                            throw new WTException("세션이 만료되었습니다.");
                         }
-                    } else {
-                        System.out.println("유효안함");
-                        throw new WTException("유효하지 않은 토큰입니다.");
+                    } catch (Exception e) {
+                        throw new WTException("세션이 만료되었습니다.");
                     }
-                } catch (Exception e) {
-                    System.out.println("걍에러");
-                    throw new WTException("유효하지 않은 토큰입니다.");
-                }
-                break;
+                    break;
+            }
+        }catch (WTException e){
+            request.setAttribute("message", e.getMessage());
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private String getAccessToken(String header) {
+    private String getToken(String header) {
         if (header != null && header.startsWith("Bearer")) {
             return header.substring("Bearer ".length());
         }
