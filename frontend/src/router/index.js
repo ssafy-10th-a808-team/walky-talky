@@ -7,6 +7,7 @@ import WalkView from '@/views/WalkView.vue'
 import ShareBoardView from '@/views/ShareBoardView.vue'
 import HomeView from '@/views/HomeView.vue'
 import MyLocationView from '@/views/MyLocationView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -35,6 +36,11 @@ const router = createRouter({
       name: 'mylocation',
       component: MyLocationView
     },
+    {
+      path: '/member/local-signup',
+      name: 'Signup',
+      component: Signup
+    }
   ]
 })
 
