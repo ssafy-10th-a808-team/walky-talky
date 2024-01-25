@@ -8,7 +8,9 @@ import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
 import com.ssafy.backend.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,9 +68,35 @@ public class MemberController {
 
     @PostMapping("/local-login")
     public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto) {
-        Map<String, Object> resultMap = memberService.localLogin(loginDto);
+        Map<String, String> resultMap = memberService.localLogin(loginDto);
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        try {
+            if (!resultMap.containsKey("message")) {
+                System.out.println("로그인성공");
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Authorization", "Bearer " + resultMap.get("atk"));
+                resultMap.remove("atk");
+                resultMap.put("message", "OK");
+
+                return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+        } catch (Exception e) {
+            resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        Map<String, String> resultMap = new HashMap<>();
+
+        System.out.println("controller" + (String)request.getAttribute("memberId"));
+
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
 }
