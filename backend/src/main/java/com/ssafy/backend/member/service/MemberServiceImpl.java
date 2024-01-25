@@ -51,15 +51,14 @@ public class MemberServiceImpl implements MemberService {
             }
         }
         // jwt
-        String seq = member.getSeq().toString();
-        String atk = jwtProvider.createAccessToken(seq, atkExp);
-        String rtk = jwtProvider.createRefreshToken(seq, rtkExp);
+        String memberId = member.getMemberId();
+        String atk = jwtProvider.createAccessToken(memberId, atkExp);
+        String rtk = jwtProvider.createRefreshToken(memberId, rtkExp);
 
         // redis에 jwt저장
-        redisDao.saveToRedis("atk:" + seq, atk, Duration.ofMillis(atkExp));
-        redisDao.saveToRedis("rtk:" + seq, rtk, Duration.ofMillis(rtkExp));
+        redisDao.saveToRedis("atk:" + memberId, atk, Duration.ofMillis(atkExp));
+        redisDao.saveToRedis("rtk:" + memberId, rtk, Duration.ofMillis(rtkExp));
 
-        returnMap.put("message", "OK");
         returnMap.put("atk", atk);
 
         return returnMap;
