@@ -1,6 +1,16 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios'
+const test = () => {
+  axios({
+    method: 'post',
+    url: 'https://i10a808.p.ssafy.io/api/member/check-id',
+    data: {
+      'memberId' : 'minho'
+    }
+  })
+}
 </script>
 
 <template>
@@ -9,6 +19,7 @@ import HelloWorld from './components/HelloWorld.vue'
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
+      <button type="button" @click="test">나는 버튼</button>
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
