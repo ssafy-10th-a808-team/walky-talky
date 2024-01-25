@@ -1,21 +1,20 @@
 <template>
-    <a>
-        <img :src="currentIconUrl" alt="ButtonIcon">
-    </a>
+    
+        <ButtonWithIconItem 
+        v-if="selectedButton"
+        :icon="selectedButton.icon"
+        :urlName="selectedButton.urlName">
+    
+        </ButtonWithIconItem> 
+    
 </template>
 
 <script setup>
-    // import { ref } from 'vue'
-    // const IconUrls = ref(
-    //     {
-    //         logoIcon : '../../assets/img/Logo.png',
-    //         profileIcon : '../../assets/img/ProfileIcon.png',
+    import ButtonWithIconItem from './ButtonWithIconItem.vue'
+   
 
-    //     }
-    // )
-    const currentIconUrl = ''
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 
 </style>
