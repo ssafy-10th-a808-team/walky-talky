@@ -1,5 +1,6 @@
 package com.ssafy.backend.member.domain;
 
+import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +10,8 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Member {
+@Builder
+public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -20,15 +22,21 @@ public class Member {
     @Column(name = "id")
     private String memberId;
 
-    @Column(name = "password")
     private String password;
-
     private String birth;
     private String gender;
     private String nickname;
+
+    @Column(length = 2083)
     private String url;
     private String introduce;
+
+    @Column(name = "region_cd")
     private String regionCd;
-    private boolean isAlert = true;
-    private boolean isDeleted = false;
+
+    @Column(name = "is_alert")
+    private boolean isAlert;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 }
