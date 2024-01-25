@@ -19,7 +19,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("api/member")
 public class MemberController {
 
     private final MemberService memberService;
@@ -72,10 +72,13 @@ public class MemberController {
 
         try {
             if (!resultMap.containsKey("message")) {
-                System.out.println("로그인성공");
                 HttpHeaders headers = new HttpHeaders();
-                headers.add("Authorization", "Bearer " + resultMap.get("atk"));
+
+                headers.add("atk", resultMap.get("atk"));
                 resultMap.remove("atk");
+                headers.add("rtk", resultMap.get("rtk"));
+                resultMap.remove("rtk");
+
                 resultMap.put("message", "OK");
 
                 return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
@@ -94,9 +97,49 @@ public class MemberController {
     public ResponseEntity<?> logout(HttpServletRequest request) {
         Map<String, String> resultMap = new HashMap<>();
 
-        System.out.println("controller" + (String)request.getAttribute("memberId"));
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            String memberId = (String) request.getAttribute("memberId");
 
-        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+            memberService.logout(memberId);
+            resultMap.put("message", "OK");
+
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissue(HttpServletRequest request) { // rtk만 갖고온 사람한테 atk 재발급해줘야됨
+        Map<String, String> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+
+        if (msg == null) {
+            String memberId = (String) request.getAttribute("memberId");
+            try {
+                Map<String, String> returnMap = memberService.reissue(memberId);
+                HttpHeaders headers = new HttpHeaders();
+
+                headers.add("atk", returnMap.get("atk"));
+                returnMap.remove("atk");
+                headers.add("rtk", returnMap.get("rtk"));
+                returnMap.remove("rtk");
+
+                resultMap.put("message", "OK");
+
+                return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
+            } catch (Exception e) {
+                resultMap.put("message", "세션이 만료되었습니다.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+            }
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
     }
 
 }

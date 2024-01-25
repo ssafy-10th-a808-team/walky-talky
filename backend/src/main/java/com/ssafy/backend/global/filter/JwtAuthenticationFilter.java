@@ -1,5 +1,6 @@
 package com.ssafy.backend.global.filter;
 
+import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import jakarta.servlet.FilterChain;
@@ -13,9 +14,11 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 @RequiredArgsConstructor
-@WebFilter("/member/logout")
+@WebFilter(urlPatterns = {"/member/logout", "/member/reIssue"})
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtProvider jwtProvider;
@@ -24,41 +27,66 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
-        String header = request.getHeader("Authorization");
 
-        System.out.println("header " + header);
+        String requestURI = request.getRequestURI();
+        String[] splitURI = requestURI.split("/");
 
-        String atk = getAccessToken(header);
+        try{
+            switch (splitURI[3]) {
+                case "reissue":
+                    String rtk = getToken(request.getHeader("Authorization"));
 
-        System.out.println("atk " + atk);
+                    try {
+                        if (rtk != null && jwtProvider.validateToken(rtk)) {
+                            String memberId = jwtProvider.getMemberId(rtk);
+                            request.setAttribute("memberId", memberId);
 
-        if (atk != null) {
-            String memberId = jwtProvider.getMemberId(atk);
-            System.out.println("1 "+ memberId);
-            if (jwtProvider.validateToken(atk)) {
-                System.out.println("2 "+ memberId);
+                            String token = (String) redisDao.readFromRedis("rtk:" + memberId);
 
-                request.setAttribute("memberId", memberId);
-            } else {
-                String rtk = (String) redisDao.readFromRedis("rtk:" + memberId);
-                System.out.println("rtk "+ memberId);
+                            if (token == null) {
+                                throw new WTException("세션이 만료되었습니다.");
+                            }
+                        } else {
+                            throw new WTException("세션이 만료되었습니다.");
+                        }
+                    } catch (Exception e) {
+                        throw new WTException("세션이 만료되었습니다.");
+                    }
+                    break;
+                case "logout":
+                    String atk = request.getHeader("atk");
 
-                if (rtk != null && jwtProvider.validateToken(rtk)) {
-                    System.out.println("3 "+ memberId);
+                    try {
+                        if (atk != null && jwtProvider.validateToken(atk)) {
+                            String memberId = jwtProvider.getMemberId(atk);
+                            request.setAttribute("memberId", memberId);
 
-                    request.setAttribute("memberId", memberId);
-                }
+                            String token = (String) redisDao.readFromRedis("atk:" + memberId);
+
+                            if (token == null) {
+                                throw new WTException("세션이 만료되었습니다.");
+                            }
+                        } else {
+                            throw new WTException("세션이 만료되었습니다.");
+                        }
+                    } catch (Exception e) {
+                        throw new WTException("세션이 만료되었습니다.");
+                    }
+                    break;
             }
+        }catch (WTException e){
+            request.setAttribute("message", e.getMessage());
         }
-        filterChain.doFilter(servletRequest, servletResponse);
 
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    private String getAccessToken(String header) {
+    private String getToken(String header) {
         if (header != null && header.startsWith("Bearer")) {
             return header.substring("Bearer ".length());
         }
         return null;
     }
+
 
 }

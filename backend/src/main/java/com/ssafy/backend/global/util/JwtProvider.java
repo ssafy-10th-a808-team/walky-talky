@@ -1,5 +1,6 @@
 package com.ssafy.backend.global.util;
 
+import com.ssafy.backend.global.error.WTException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -58,22 +59,18 @@ public class JwtProvider {
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(salt)
                     .parseClaimsJws(token);
-            return !(claims.getBody().getExpiration().before(new Date()) && claims.getBody().getIssuer().equals(issuer));
+            return !(claims.getBody().getExpiration().before(new Date()) && issuer.equals(claims.getBody().getIssuer()));
         } catch (Exception e) {
             return false;
         }
     }
 
     public String getMemberId(String token) {
-        try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(salt)
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims.getSubject();
-        } catch (Exception e) {
-            return null;
-        }
+        Claims claims = Jwts.parser()
+                .setSigningKey(salt)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("memberId", String.class);
     }
 
 }
