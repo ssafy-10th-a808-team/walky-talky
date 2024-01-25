@@ -4,6 +4,7 @@ import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.dto.request.RequestMemberCheckIdDto;
 import com.ssafy.backend.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -68,10 +69,12 @@ public class MemberController {
         Map<String, String> resultMap = memberService.localLogin(loginDto);
 
         try {
-            if (resultMap.containsKey("atk")) {
+            if (!resultMap.containsKey("message")) {
+                System.out.println("로그인성공");
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Authorization", "Bearer " + resultMap.get("atk"));
                 resultMap.remove("atk");
+                resultMap.put("message", "OK");
 
                 return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
             } else {
@@ -86,9 +89,10 @@ public class MemberController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         Map<String, String> resultMap = new HashMap<>();
 
+        System.out.println("controller" + (String)request.getAttribute("memberId"));
 
         return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }

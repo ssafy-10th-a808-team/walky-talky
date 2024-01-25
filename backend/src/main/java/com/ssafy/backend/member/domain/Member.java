@@ -17,7 +17,7 @@ public class Member {
     @Column(name = "login_type")
     private String loginType;
 
-    @Column(name = "member_id")
+    @Column(name = "id")
     private String memberId;
 
     @Column(name = "password")

@@ -15,6 +15,7 @@ public class JwtProvider {
     @Value("${security.salt}")
     private String salt;
 
+    private final String issuer = "walkytalky";
 
     public String createAccessToken(String memberId, Long tokenLive) {
         Date now = new Date();
@@ -26,6 +27,7 @@ public class JwtProvider {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setClaims(claims)
                 .setIssuedAt(now)
+                .setIssuer(issuer)
                 .setExpiration(new Date(now.getTime() + tokenLive))
                 .signWith(SignatureAlgorithm.HS256, salt)
                 .compact();
@@ -43,6 +45,7 @@ public class JwtProvider {
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
                 .setClaims(claims)
                 .setIssuedAt(now)
+                .setIssuer(issuer)
                 .setExpiration(new Date(now.getTime() + tokenLive))
                 .signWith(SignatureAlgorithm.HS256, salt)
                 .compact();
@@ -50,14 +53,27 @@ public class JwtProvider {
         return token;
     }
 
-    public boolean validateToken(String jwtToken) {
+    public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(salt).parseClaimsJws(jwtToken);
-            return !(claims.getBody().getExpiration().before(new Date()));
+            Jws<Claims> claims = Jwts.parser()
+                    .setSigningKey(salt)
+                    .parseClaimsJws(token);
+            return !(claims.getBody().getExpiration().before(new Date()) && claims.getBody().getIssuer().equals(issuer));
         } catch (Exception e) {
             return false;
         }
     }
 
+    public String getMemberId(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(salt)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 }
