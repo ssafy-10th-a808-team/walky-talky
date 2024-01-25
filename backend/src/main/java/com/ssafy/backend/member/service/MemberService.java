@@ -12,7 +12,9 @@ public interface MemberService {
 
     boolean checkId(RequestCheckIdDto requestCheckIdDto);
 
-    Map<String, Object> localLogin(RequestLocalLoginDto loginDto);
+    public Map<String, String> localLogin(RequestLocalLoginDto loginDto);
+
+    public void logout(Long seq);
 
     boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto);
 
