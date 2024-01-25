@@ -3,7 +3,10 @@ package com.ssafy.backend.member.service;
 import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
+import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
+import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
+import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
 import com.ssafy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,10 +29,20 @@ public class MemberServiceImpl implements MemberService {
     private static final long atkExp = 900000L; // 15분
     private static final long rtkExp = 604800000L; // 일주일
 
+    @Override
+    public boolean checkId(RequestCheckIdDto requestCheckIdDto) {
+        return memberRepository.existsByMemberId(requestCheckIdDto.getMemberId());
+    }
 
     @Override
-    public Member findByMemberId(String memberId) {
-        return memberRepository.findByMemberId(memberId);
+    public boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto) {
+        return memberRepository.existsByNickname(requestCheckNicknameDto.getNickname());
+    }
+
+    @Override
+    public Member localSignup(RequestLocalSignupDto requestLocalSignupDto) {
+        Member member = requestLocalSignupDto.toEntity();
+        return memberRepository.save(member);
     }
 
     @Override
