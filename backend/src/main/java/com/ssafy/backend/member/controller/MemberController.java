@@ -19,7 +19,7 @@ import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
+@RequestMapping("api/member")
 public class MemberController {
 
     private final MemberService memberService;
@@ -72,10 +72,13 @@ public class MemberController {
 
         try {
             if (!resultMap.containsKey("message")) {
-                System.out.println("로그인성공");
                 HttpHeaders headers = new HttpHeaders();
-                headers.add("Authorization", "Bearer " + resultMap.get("atk"));
+
+                headers.add("atk", resultMap.get("atk"));
                 resultMap.remove("atk");
+                headers.add("rtk", resultMap.get("rtk"));
+                resultMap.remove("rtk");
+
                 resultMap.put("message", "OK");
 
                 return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
@@ -98,5 +101,15 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<?> reissue(HttpServletRequest request){ // rtk만 갖고온 사람한테 atk 재발급해줘야됨
+        Map<String, String> resultMap = new HashMap<>();
+
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
 
 }
