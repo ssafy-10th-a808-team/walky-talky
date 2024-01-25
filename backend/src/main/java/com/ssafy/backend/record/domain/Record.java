@@ -3,7 +3,6 @@ package com.ssafy.backend.record.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Duration;
 

@@ -18,7 +18,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
-@WebFilter(urlPatterns = {"/member/logout", "/member/reIssue"})
+//@WebFilter(urlPatterns = {"/member/logout", "/member/reIssue"})
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtProvider jwtProvider;
@@ -29,52 +29,50 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
 
         String requestURI = request.getRequestURI();
-        String[] splitURI = requestURI.split("/");
+        try {
+            if ("/api/member/reissue".equals(requestURI)) { // 토큰 재발급 요청
+                System.out.println("reissue");
 
-        try{
-            switch (splitURI[3]) {
-                case "reissue":
-                    String rtk = getToken(request.getHeader("Authorization"));
+                String rtk = getToken(request.getHeader("Authorization"));
 
-                    try {
-                        if (rtk != null && jwtProvider.validateToken(rtk)) {
-                            String memberId = jwtProvider.getMemberId(rtk);
-                            request.setAttribute("memberId", memberId);
+                try {
+                    if (rtk != null && jwtProvider.validateToken(rtk)) {
+                        String memberId = jwtProvider.getMemberId(rtk);
+                        request.setAttribute("memberId", memberId);
 
-                            String token = (String) redisDao.readFromRedis("rtk:" + memberId);
+                        String token = (String) redisDao.readFromRedis("rtk:" + memberId);
 
-                            if (token == null) {
-                                throw new WTException("세션이 만료되었습니다.");
-                            }
-                        } else {
+                        if (token == null) {
                             throw new WTException("세션이 만료되었습니다.");
                         }
-                    } catch (Exception e) {
+                    } else {
                         throw new WTException("세션이 만료되었습니다.");
                     }
-                    break;
-                case "logout":
-                    String atk = request.getHeader("atk");
+                } catch (Exception e) {
+                    throw new WTException("세션이 만료되었습니다.");
+                }
+            } else { // 그 외의 모든 경우는 atk으로 사용자 검증
+                String atk = getToken(request.getHeader("Authorization"));
 
-                    try {
-                        if (atk != null && jwtProvider.validateToken(atk)) {
-                            String memberId = jwtProvider.getMemberId(atk);
-                            request.setAttribute("memberId", memberId);
+                try {
+                    if (atk != null && jwtProvider.validateToken(atk)) {
+                        String memberId = jwtProvider.getMemberId(atk);
+                        request.setAttribute("memberId", memberId);
 
-                            String token = (String) redisDao.readFromRedis("atk:" + memberId);
+                        String token = (String) redisDao.readFromRedis("atk:" + memberId);
 
-                            if (token == null) {
-                                throw new WTException("세션이 만료되었습니다.");
-                            }
-                        } else {
+                        if (token == null) {
                             throw new WTException("세션이 만료되었습니다.");
                         }
-                    } catch (Exception e) {
+                    } else {
                         throw new WTException("세션이 만료되었습니다.");
                     }
-                    break;
+                } catch (Exception e) {
+                    throw new WTException("세션이 만료되었습니다.");
+                }
             }
-        }catch (WTException e){
+
+        } catch (WTException e) {
             request.setAttribute("message", e.getMessage());
         }
 
