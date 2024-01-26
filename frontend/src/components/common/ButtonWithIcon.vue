@@ -1,20 +1,23 @@
 <template>
-    
-        <ButtonWithIconItem 
-        v-if="selectedButton"
-        :icon="selectedButton.icon"
-        :urlName="selectedButton.urlName">
-    
-        </ButtonWithIconItem> 
-    
+    <RouterLink :to="{ name : `${urlName}` }">
+        <button class="button-style">
+            <img :src="icon" :alt="name" class="icon-style">
+        </button>
+    </RouterLink>
 </template>
 
 <script setup>
-    import ButtonWithIconItem from './ButtonWithIconItem.vue'
-   
+
+    defineProps(['name', 'icon', 'urlName'])
 
 </script>
 
 <style scoped>
-
+    .button-style {
+        border: none;
+    }
+    .icon-style {
+        width: 30px;
+        height: 30px;
+    }
 </style>
