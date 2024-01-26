@@ -15,7 +15,7 @@
           </RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink :to="{ name: 'walk'}">
+          <RouterLink :to="{ name: 'DoWalk'}">
             <a class="nav-link">산책하기</a>
           </RouterLink>
         </li>
