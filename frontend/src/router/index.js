@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Signup from '@/components/member/Signup.vue'
+import Signup from '@/views/member/Signup.vue'
+import RecordScrapList from '@/views/member/RecordScrapList.vue'
+
+import DoWalk from '@/views/walk/DoWalk.vue'
+import WalkList from '@/views/walk/WalkList.vue'
 
 import GroupView from '@/views/GroupView.vue'
 import WalkView from '@/views/WalkView.vue'
@@ -40,6 +44,21 @@ const router = createRouter({
       path: '/member/local-signup',
       name: 'Signup',
       component: Signup
+    },
+    {
+      path: '/walk/do-walk',
+      name: 'DoWalk',
+      component: DoWalk
+    },
+    {
+      path: '/walk/list',
+      name: 'WalkList',
+      component: WalkList
+    },
+    {
+      path: '/record-scrap/list',
+      name: 'RecordScrapList',
+      component: RecordScrapList
     }
   ]
 })
