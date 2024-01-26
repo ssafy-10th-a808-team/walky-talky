@@ -31,10 +31,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
                 try {
                     if (rtk != null && jwtProvider.validateToken(rtk)) {
-                        String memberId = jwtProvider.getMemberId(rtk);
-                        request.setAttribute("memberId", memberId);
+                        Long seq = jwtProvider.getSeq(rtk);
+                        request.setAttribute("seq", seq);
 
-                        String token = (String) redisDao.readFromRedis("rtk:" + memberId);
+                        String token = (String) redisDao.readFromRedis("rtk:" + seq);
 
                         if (token == null) {
                             throw new WTException("세션이 만료되었습니다.");
@@ -50,10 +50,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
                 try {
                     if (atk != null && jwtProvider.validateToken(atk)) {
-                        String memberId = jwtProvider.getMemberId(atk);
-                        request.setAttribute("memberId", memberId);
+                        Long seq = jwtProvider.getSeq(atk);
+                        request.setAttribute("seq", seq);
 
-                        String token = (String) redisDao.readFromRedis("atk:" + memberId);
+                        String token = (String) redisDao.readFromRedis("atk:" + seq);
 
                         if (token == null) {
                             throw new WTException("세션이 만료되었습니다.");
