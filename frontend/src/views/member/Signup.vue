@@ -268,8 +268,9 @@ export default {
         })
     },
     cancelRegistration() {
-      // 취소 버튼 클릭 시의 처리 (예: 폼 초기화 등)
+      // 취소 버튼 클릭 시의 처리 (로그인 페이지로 이동:지금은 일단 홈으로)
       console.log('회원가입 취소')
+      this.$router.push({ name: 'home' })
     },
     checkDuplicate(field) {
       // 중복 확인 로직 구현

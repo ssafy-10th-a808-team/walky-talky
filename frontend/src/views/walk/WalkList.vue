@@ -1,7 +1,7 @@
 <template>
   <div>
     <WalkHeaderNav />
-    <h1>산책 메인 페이지</h1>
+    <h1>내코스</h1>
   </div>
 </template>
 
