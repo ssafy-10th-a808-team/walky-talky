@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestRegistRecordDto {
-    private String startTime;
+    private Long seq;
     private String Duration;
     private String Distance;
     private String[][] points;

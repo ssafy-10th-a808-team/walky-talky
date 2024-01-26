@@ -27,9 +27,9 @@ public class RecordController {
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
-            String memberId = (String) request.getAttribute("memberId");
+            Long memberSeq = (Long) request.getAttribute("seq");
 
-            Long seq = recordService.startRecord(memberId);
+            Long seq = recordService.startRecord(memberSeq);
 
             Map<String, Long> returnSeq = new HashMap<>();
             returnSeq.put("seq", seq);
@@ -49,10 +49,12 @@ public class RecordController {
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
-            String memberId = (String) request.getAttribute("memberId");
+            Long memberSeq = (Long) request.getAttribute("seq");
 
-            // 이거도 필터에서 먼저 사용자 정보 꺼내서 넘겨준 다음에 할 수 있음
-            // 그럼 그 사용자 정보와 입력받은 정보들을 통해서 DB에 저장
+            if(!recordService.registRecord(memberSeq, requestRegistRecordDto)){
+                resultMap.put("message", "산책 기록 등록에 실패하였습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
 
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
