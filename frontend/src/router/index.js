@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Signup from '@/components/member/Signup.vue'
-
 import GroupView from '@/views/GroupView.vue'
 import WalkView from '@/views/WalkView.vue'
 import ShareBoardView from '@/views/ShareBoardView.vue'
 import HomeView from '@/views/HomeView.vue'
 import MyLocationView from '@/views/MyLocationView.vue'
+import GroupMemory from '@/views/group/GroupMemoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,7 +40,12 @@ const router = createRouter({
       path: '/member/local-signup',
       name: 'Signup',
       component: Signup
-    }
+    },
+    {
+      path: '/group/memory',
+      name: 'group-memory',
+      component: GroupMemory
+    },
   ]
 })
 
