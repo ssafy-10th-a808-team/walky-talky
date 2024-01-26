@@ -64,13 +64,13 @@ public class MemberServiceImpl implements MemberService {
             }
         }
         // jwt
-        String memberId = member.getMemberId();
-        String atk = jwtProvider.createAccessToken(memberId, atkExp);
-        String rtk = jwtProvider.createRefreshToken(memberId, rtkExp);
+        Long seq = member.getSeq();
+        String atk = jwtProvider.createAccessToken(seq, atkExp);
+        String rtk = jwtProvider.createRefreshToken(seq, rtkExp);
 
         // redis에 jwt저장
-        redisDao.saveToRedis("atk:" + memberId, atk, Duration.ofMillis(atkExp));
-        redisDao.saveToRedis("rtk:" + memberId, rtk, Duration.ofMillis(rtkExp));
+        redisDao.saveToRedis("atk:" + seq, atk, Duration.ofMillis(atkExp));
+        redisDao.saveToRedis("rtk:" + seq, rtk, Duration.ofMillis(rtkExp));
 
         returnMap.put("atk", atk);
         returnMap.put("rtk", rtk);
@@ -79,20 +79,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void logout(String memberId) {
-        redisDao.deleteFromRedis("atk:" + memberId);
-        redisDao.deleteFromRedis("rtk:" + memberId);
+    public void logout(Long seq) {
+        redisDao.deleteFromRedis("atk:" + seq);
+        redisDao.deleteFromRedis("rtk:" + seq);
     }
 
-    public Map<String, String> reissue(String memberId){
+    @Override
+    public Map<String, String> reissue(Long seq){
         Map<String, String> returnMap = new HashMap<>();
 
-        String atk = jwtProvider.createAccessToken(memberId, atkExp);
-        String rtk = jwtProvider.createRefreshToken(memberId, rtkExp);
+        String atk = jwtProvider.createAccessToken(seq, atkExp);
+        String rtk = jwtProvider.createRefreshToken(seq, rtkExp);
 
         // redis에 jwt저장
-        redisDao.saveToRedis("atk:" + memberId, atk, Duration.ofMillis(atkExp));
-        redisDao.saveToRedis("rtk:" + memberId, rtk, Duration.ofMillis(rtkExp));
+        redisDao.saveToRedis("atk:" + seq, atk, Duration.ofMillis(atkExp));
+        redisDao.saveToRedis("rtk:" + seq, rtk, Duration.ofMillis(rtkExp));
 
         returnMap.put("atk", atk);
         returnMap.put("rtk", rtk);

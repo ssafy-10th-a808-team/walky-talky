@@ -1,14 +1,10 @@
 package com.ssafy.backend.global.util;
 
-import com.ssafy.backend.global.error.WTException;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-
-import java.util.Base64;
 
 @Component
 public class JwtProvider {
@@ -18,11 +14,11 @@ public class JwtProvider {
 
     private final String issuer = "walkytalky";
 
-    public String createAccessToken(String memberId, Long tokenLive) {
+    public String createAccessToken(Long seq, Long tokenLive) {
         Date now = new Date();
 
         Claims claims = Jwts.claims();
-        claims.put("memberId", memberId);
+        claims.put("seq", seq);
 
         String token = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -36,11 +32,11 @@ public class JwtProvider {
         return token;
     }
 
-    public String createRefreshToken(String memberId, Long tokenLive) {
+    public String createRefreshToken(Long seq, Long tokenLive) {
         Date now = new Date();
 
         Claims claims = Jwts.claims();
-        claims.put("memberId", memberId);
+        claims.put("seq", seq);
 
         String token = Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
@@ -65,12 +61,12 @@ public class JwtProvider {
         }
     }
 
-    public String getMemberId(String token) {
+    public Long getSeq(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(salt)
                 .parseClaimsJws(token)
                 .getBody();
-        return claims.get("memberId", String.class);
+        return claims.get("seq", Long.class);
     }
 
 }
