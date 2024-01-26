@@ -1,34 +1,10 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-import axios from 'axios'
-const test = () => {
-  axios({
-    method: 'post',
-    url: 'https://i10a808.p.ssafy.io/api/member/check-id',
-    data: {
-      'memberId' : 'minhou'
-    }
-  })
-}
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-      <button type="button" @click="test">나는 버튼</button>
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div id="app">
+    <TheHeaderNav />
+    <RouterView />
+    <button type="button" @click="test" class="btn btn-primary">나는 버튼</button>
+    <TheFooter />
+  </div>
 </template>
 
 <script setup>
