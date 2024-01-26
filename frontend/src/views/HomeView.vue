@@ -1,9 +1,28 @@
+<template>
+    <div>
+        HelloWorld It's TestPage.
+    </div>
+    <div>
+
+        <ButtonWithIcon
+        :name="locationIcon.name"
+        :icon="locationIcon.icon"
+        :urlName="locationIcon.urlName"
+        />
+
+
+    </div>
+ 
+</template>
+
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
+import { useCounterStore } from '@/stores/counter'
+
+    const store = useCounterStore()
+    const locationIcon = store.selectButton('LocationIcon')
+    
+    
 </script>
 
-<template>
-  <main>
-    <TheWelcome />
-  </main>
-</template>
+<style scoped></style>
