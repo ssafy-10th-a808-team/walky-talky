@@ -1,24 +1,27 @@
 package com.ssafy.backend.record.domain;
 
+import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
-import java.sql.Timestamp;
 import java.time.Duration;
 
 @Entity
 @Table(name = "record")
 @Getter
-@Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Record {
+public class Record extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(name="member_seq")
+    @NotNull
+    @Column(name = "member_seq")
     private Long memberSeq;
 
     @Column(name = "group_seq")
@@ -26,28 +29,43 @@ public class Record {
 
     private String title;
 
-    @Column(name = "star_rating", nullable = false)
+    @Column(name = "star_rating")
     private int starRating;
 
     private String comment;
 
     @Column(name = "used_count")
-    private Integer usedCount;
+    @ColumnDefault("0")
+    private int usedCount;
 
     @Column(name = "scraped_count")
-    private Integer scrapedCount;
+    @ColumnDefault("0")
+    private int scrapedCount;
 
     private Double distance;
 
     private Duration duration;
 
-    @Column(name = "start_time")
-    private Timestamp startTime;
-
     @Column(name = "region_cd", length = 255)
     private String regionCd;
 
     @Column(name = "is_deleted")
+    @ColumnDefault("0")
     private Boolean isDeleted;
 
+    @Builder
+    public Record(Long seq, Long memberSeq, Long groupSeq, String title, int starRating, String comment, int usedCount, int scrapedCount, Double distance, Duration duration, String regionCd, Boolean isDeleted) {
+        this.seq = seq;
+        this.memberSeq = memberSeq;
+        this.groupSeq = groupSeq;
+        this.title = title;
+        this.starRating = starRating;
+        this.comment = comment;
+        this.usedCount = usedCount;
+        this.scrapedCount = scrapedCount;
+        this.distance = distance;
+        this.duration = duration;
+        this.regionCd = regionCd;
+        this.isDeleted = isDeleted;
+    }
 }
