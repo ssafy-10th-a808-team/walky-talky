@@ -1,11 +1,16 @@
 <template>
-    
-  
-    HelloWorld It's TestPage.
+    <div>
+        HelloWorld It's TestPage.
+    </div>
     <div>
 
-        <ButtonWithIcon>
-        </ButtonWithIcon>
+        <ButtonWithIcon
+        :name="locationIcon.name"
+        :icon="locationIcon.icon"
+        :urlName="locationIcon.urlName"
+        />
+
+
     </div>
  
 </template>
@@ -15,7 +20,8 @@
     import { useCounterStore } from '@/stores/counter'
 
     const store = useCounterStore()
-    store.selectButton('LogoIcon')
+    const locationIcon = store.selectButton('LocationIcon')
+    
     
 </script>
 

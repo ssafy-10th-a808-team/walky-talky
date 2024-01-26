@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useCounterStore = defineStore('counter', () => {
-  const selectedButton = ref(null)
+  
 
   const icons = ref([
       { name:'LogoIcon', icon: 'src/assets/img/Logo.png', urlName:'home' },
@@ -12,15 +12,9 @@ export const useCounterStore = defineStore('counter', () => {
 
   ])
 
-  const selectButton = (name) => {
-      const selectedIcon = icons.value.find(icon => icon.name === name)
-      if (selectedIcon) {
-          selectedButton.value = selectedIcon
-      } else {
-          console.error(`Icon with name ${name} not found.`)
-      }
-      
+  const selectButton = (alt) => {
+    return icons.value.find(icon => icon.name === alt)
   }
 
-  return { icons, selectButton, selectedButton }
+  return { icons, selectButton }
 })

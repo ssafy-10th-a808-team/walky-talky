@@ -15,7 +15,7 @@
     onMounted(() => {
         if (window.kakao && window.kakao.maps) {
             initMap();
-            
+            searchDetailAddrFromCoords(lat, lon, addrCallback)
         } else {
             
             const script = document.createElement('script');
@@ -62,7 +62,7 @@
   
     const searchDetailAddrFromCoords = (lat, lon, callback) => {
         // 좌표로 법정동 상세 주소 정보를 요청합니다
-        const geocoder = new window.kakao.maps.services.Geocoder()
+        const geocoder = kakao.maps.services.Geocoder()
         geocoder.coord2Address(lat, lon, callback);
     }
 
@@ -70,9 +70,11 @@
         // 법정동 상세 주소를 가져올 때 콜백 함수를 선언한 것입니다
         if (status === kakao.services.Status.OK) {
             console.log(result)
-        } 
+        } else {
+            console.error()
+        }
     }
-    searchDetailAddrFromCoords(lat, lon, addrCallback)
+    
 
 
 
