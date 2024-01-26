@@ -12,7 +12,10 @@ import lombok.Setter;
 public class RequestRegistRecordDto {
     private String startTime;
     private String Duration;
+    private String Distance;
     private String[][] points;
     private int starRating;
     private String comment;
+    private String title;
+    private String address;
 }

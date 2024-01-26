@@ -7,15 +7,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 //@WebFilter(urlPatterns = {"/member/logout", "/member/reIssue"})
@@ -31,8 +27,6 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String requestURI = request.getRequestURI();
         try {
             if ("/api/member/reissue".equals(requestURI)) { // 토큰 재발급 요청
-                System.out.println("reissue");
-
                 String rtk = getToken(request.getHeader("Authorization"));
 
                 try {
