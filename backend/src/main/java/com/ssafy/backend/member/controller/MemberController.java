@@ -99,9 +99,9 @@ public class MemberController {
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
-            String memberId = (String) request.getAttribute("memberId");
+            Long seq = (Long) request.getAttribute("seq");
 
-            memberService.logout(memberId);
+            memberService.logout(seq);
             resultMap.put("message", "OK");
 
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
@@ -119,9 +119,9 @@ public class MemberController {
         String msg = (String) request.getAttribute("message");
 
         if (msg == null) {
-            String memberId = (String) request.getAttribute("memberId");
+            Long seq = (Long) request.getAttribute("seq");
             try {
-                Map<String, String> returnMap = memberService.reissue(memberId);
+                Map<String, String> returnMap = memberService.reissue(seq);
                 HttpHeaders headers = new HttpHeaders();
 
                 headers.add("atk", returnMap.get("atk"));

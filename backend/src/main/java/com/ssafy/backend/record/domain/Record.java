@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.Duration;
-
 @Entity
 @Table(name = "record")
 @Getter
@@ -44,7 +42,7 @@ public class Record extends BaseEntity {
 
     private Double distance;
 
-    private Duration duration;
+    private String duration;
 
     @Column(name = "region_cd", length = 255)
     private String regionCd;
@@ -54,7 +52,7 @@ public class Record extends BaseEntity {
     private Boolean isDeleted;
 
     @Builder
-    public Record(Long seq, Long memberSeq, Long groupSeq, String title, int starRating, String comment, int usedCount, int scrapedCount, Double distance, Duration duration, String regionCd, Boolean isDeleted) {
+    public Record(Long seq, Long memberSeq, Long groupSeq, String title, int starRating, String comment, int usedCount, int scrapedCount, Double distance, String duration, String regionCd, Boolean isDeleted) {
         this.seq = seq;
         this.memberSeq = memberSeq;
         this.groupSeq = groupSeq;

@@ -19,12 +19,9 @@ public class RecordDetail extends BaseEntity {
     @Column(name = "record_seq", nullable = false)
     private Long recordSeq;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "lat", column = @Column(name = "point_lat", nullable = false)),
-            @AttributeOverride(name = "lng", column = @Column(name = "point_lng", nullable = false))
-    })
-    private Point point;
+    private String latitude;
+
+    private String longitude;
 
     @Column(name = "time")
     private String time;
@@ -35,10 +32,11 @@ public class RecordDetail extends BaseEntity {
     @Column(name = "point_comment", length = 255)
     private String pointComment;
 
-    public RecordDetail(Long seq, Long recordSeq, Point point, String time, String url, String pointComment) {
+    public RecordDetail(Long seq, Long recordSeq, String latitude, String longitude, String time, String url, String pointComment) {
         this.seq = seq;
         this.recordSeq = recordSeq;
-        this.point = point;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.time = time;
         this.url = url;
         this.pointComment = pointComment;
