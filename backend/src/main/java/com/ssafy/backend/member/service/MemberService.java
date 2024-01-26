@@ -14,12 +14,12 @@ public interface MemberService {
 
     public Map<String, String> localLogin(RequestLocalLoginDto loginDto);
 
-    public void logout(String memberId);
+    public void logout(Long seq);
 
     boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto);
 
     Member localSignup(RequestLocalSignupDto requestLocalSignupDto);
 
-    public Map<String, String> reissue(String memberId);
+    public Map<String, String> reissue(Long seq);
 
 }
