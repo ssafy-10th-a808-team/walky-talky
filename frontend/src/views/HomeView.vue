@@ -16,8 +16,8 @@
 </template>
 
 <script setup>
-    import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue';
-    import { useCounterStore } from '@/stores/counter'
+import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
+import { useCounterStore } from '@/stores/counter'
 
     const store = useCounterStore()
     const locationIcon = store.selectButton('LocationIcon')
@@ -25,6 +25,4 @@
     
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
