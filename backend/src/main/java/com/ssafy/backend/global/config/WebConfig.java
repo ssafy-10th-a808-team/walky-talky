@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "https://i10a808.p.ssafy.io",
                         "http://localhost:5173"
-                        )
+                )
                 .allowedMethods("GET", "POST");
 
     }
