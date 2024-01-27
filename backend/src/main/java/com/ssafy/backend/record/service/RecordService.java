@@ -2,6 +2,9 @@ package com.ssafy.backend.record.service;
 
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
+import com.ssafy.backend.record.dto.response.ResponseListDto;
+
+import java.util.List;
 
 public interface RecordService {
 
@@ -10,5 +13,7 @@ public interface RecordService {
     boolean registRecord(Long memberSeq, RequestRegistRecordDto requestRegistRecordDto);
 
     boolean registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto);
+
+    List<ResponseListDto> list(Long memberSeq);
 
 }
