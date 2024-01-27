@@ -4,6 +4,7 @@ import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
+import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,6 @@ public class RecordServiceImpl implements RecordService {
         Long recordSeq = requestRegistRecordDto.getSeq();
 
         validateRecord(recordSeq, memberSeq);
-
 
         Record record = Record.builder()
                 .seq(recordSeq)
@@ -83,6 +83,10 @@ public class RecordServiceImpl implements RecordService {
         recordDetailRepository.save(recordDetail);
 
         return true;
+    }
+
+    public List<ResponseListDto> list(Long memberSeq){
+        return recordRepository.findResponseListDtoByMemberSeq(memberSeq);
     }
 
     private boolean validateRecord(Long recordSeq, Long memberSeq) {
