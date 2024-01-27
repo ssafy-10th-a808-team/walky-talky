@@ -1,4 +1,4 @@
-package com.ssafy.backend.record.dto.request;
+package com.ssafy.backend.record.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,13 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestRegistRecordDto {
+public class ResponseListDto {
     private Long seq;
-    private String Duration;
-    private Double Distance;
-    private String[][] points;
+    private String title;
     private int starRating;
     private String comment;
-    private String title;
-    private String address;
+    private Double distance;
+    private String duration;
 }
