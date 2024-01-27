@@ -2,6 +2,7 @@ package com.ssafy.backend.member.domain;
 
 import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -20,6 +21,7 @@ public class Member extends BaseEntity {
     private String loginType;
 
     @Column(name = "id")
+    @NotNull
     private String memberId;
 
     private String password;
