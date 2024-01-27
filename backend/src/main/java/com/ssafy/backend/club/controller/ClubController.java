@@ -1,8 +1,11 @@
 package com.ssafy.backend.club.controller;
 
 import com.ssafy.backend.club.dto.request.RequestCheckNameDto;
+import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
 import com.ssafy.backend.club.dto.response.ResponseCheckNameDto;
+import com.ssafy.backend.club.dto.response.ResponseClubCreateDto;
 import com.ssafy.backend.club.service.ClubService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,21 @@ public class ClubController {
             return ResponseEntity.status(HttpStatus.OK).body(responseCheckNameDto);
         }
     }
+
+    @PostMapping("/create")
+    public ResponseEntity<ResponseClubCreateDto> clubCreate(@RequestBody RequestClubCreateDto requestClubCreateDto,
+                                                            HttpServletRequest httpServletRequest) {
+        ResponseClubCreateDto responseClubCreateDto = new ResponseClubCreateDto();
+
+        clubService.clubCreate(requestClubCreateDto, httpServletRequest);
+
+        responseClubCreateDto.setMessage("OK");
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubCreateDto);
+
+
+    }
+
 }
 
 
