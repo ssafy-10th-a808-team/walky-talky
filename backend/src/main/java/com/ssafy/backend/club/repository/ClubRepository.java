@@ -1,11 +1,11 @@
-package com.ssafy.backend.group.repository;
+package com.ssafy.backend.club.repository;
 
-import com.ssafy.backend.group.domain.Group;
+import com.ssafy.backend.club.domain.Club;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GroupRepository extends JpaRepository<Group, Long> {
+public interface ClubRepository extends JpaRepository<Club, Long> {
 
     Boolean existsByName(String name);
 
