@@ -1,9 +1,7 @@
 <template>
     <div class="card" style="width: 18rem;">
         <div class="card-header">
-            <img src="..." alt="프사"> 이름 날짜 동네
         </div>
-        <img src="..." class="card-img-top" alt="이미지x, 지도 ">
         <div class="col">
             시간 : {{ coursetime }}
         </div>
