@@ -16,11 +16,11 @@ import java.util.Date;
 public abstract class BaseEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at")
+    @Column(updatable = false, name = "created_at")
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated_at")
+    @Column(updatable = false, name = "updated_at")
     private Date updatedAt;
 
     @Column(name = "created_by")

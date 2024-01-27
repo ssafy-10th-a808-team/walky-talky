@@ -42,7 +42,7 @@ public class RecordServiceImpl implements RecordService {
                 .memberSeq(memberSeq)
                 .title(requestRegistRecordDto.getTitle())
                 .duration(requestRegistRecordDto.getDuration())
-                .distance(Double.valueOf(requestRegistRecordDto.getDistance()))
+                .distance(requestRegistRecordDto.getDistance())
                 .starRating(requestRegistRecordDto.getStarRating())
                 .comment(requestRegistRecordDto.getComment())
                 .build();
