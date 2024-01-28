@@ -2,7 +2,7 @@ package com.ssafy.backend.region.service;
 
 public interface RegionService {
 
-    int findRegionCode(String address);
+    String findRegionCode(String address);
 
-    String findAddress(int regionCode);
+    String findAddress(String regionCode);
 }

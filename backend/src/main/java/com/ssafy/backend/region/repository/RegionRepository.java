@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RegionRepository extends JpaRepository<Region, Integer> {
 
-    int findRegionCdByLocataddNm(String locataddNm);
+    Region findRegionCdByLocataddNm(String locataddNm);
 
-    String findLocataddNmByRegionCd(int regionCd);
+    Region findLocataddNmByRegionCd(String regionCd);
 
 }
