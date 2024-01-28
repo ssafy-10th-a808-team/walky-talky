@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <RouterLink :to="{ name : 'group' }">
+          <RouterLink :to="{ name : 'club' }">
             <a class="nav-link" aria-current="page">소모임 찾기</a>
           </RouterLink>
         </li>
