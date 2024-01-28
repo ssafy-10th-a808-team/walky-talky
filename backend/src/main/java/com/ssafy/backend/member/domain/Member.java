@@ -1,9 +1,12 @@
 package com.ssafy.backend.member.domain;
 
+import com.ssafy.backend.clubMember.domain.ClubMember;
 import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.*;
 
 @Entity
 @Table(name = "member")
@@ -41,4 +44,5 @@ public class Member extends BaseEntity {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
+
 }
