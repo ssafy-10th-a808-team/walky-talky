@@ -3,6 +3,9 @@
         <h1>내 위치 확인하는 페이지</h1>
         <div id="map" style="width:500px;height:400px;"></div>
     </div>
+    <div>
+        님 현재 위치가 {{ address }} 맞나요?
+    </div>
 </template>
 
 
@@ -12,6 +15,7 @@
     let map = null // map is not defined Reference Error 방지
     let lat = 0
     let lon = 0
+    const address = ref("")
     onMounted(() => {
         if (window.kakao && window.kakao.maps) {
             initMap();
@@ -68,7 +72,7 @@
         marker.setMap(map)
 
         const geocoder = new kakao.maps.services.Geocoder()
-        geocoder.coord2Address(lat, lon, addrCallback)
+        geocoder.coord2Address(lon, lat, addrCallback)
     }
  
     
@@ -83,10 +87,13 @@
     const addrCallback = (result, status) => {
         // 법정동 상세 주소를 가져올 때 콜백 함수를 선언한 것입니다
         if (status === kakao.maps.services.Status.OK) {
-            console.log(result)
+            console.log('주소 가져왔습니다')
+            console.log(result[0].address.address_name)
+            address.value = result[0].address.address_name
         } else {
             console.error("Failed to get address info")
             console.log(kakao.maps.services.Status)
+            console.log(result)
         }
     }
 
