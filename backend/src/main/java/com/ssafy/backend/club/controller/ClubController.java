@@ -2,7 +2,7 @@ package com.ssafy.backend.club.controller;
 
 import com.ssafy.backend.club.dto.request.RequestCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
-import com.ssafy.backend.club.dto.request.ResponseClubListDto;
+import com.ssafy.backend.club.dto.response.ResponseClubListDto;
 import com.ssafy.backend.club.dto.response.ResponseCheckNameDto;
 import com.ssafy.backend.club.dto.response.ResponseClubCreateDto;
 import com.ssafy.backend.club.service.ClubService;
@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,11 +37,14 @@ public class ClubController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ResponseClubCreateDto> clubCreate(@RequestBody RequestClubCreateDto requestClubCreateDto,
-                                                            HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ResponseClubCreateDto> clubCreate(
+            @RequestPart("profileImg") MultipartFile multipartFile,
+            @RequestPart("json") RequestClubCreateDto requestClubCreateDto,
+            HttpServletRequest httpServletRequest) throws IOException {
+
         ResponseClubCreateDto responseClubCreateDto = new ResponseClubCreateDto();
 
-        clubService.clubCreate(requestClubCreateDto, httpServletRequest);
+        clubService.clubCreate(multipartFile, requestClubCreateDto, httpServletRequest);
 
         responseClubCreateDto.setMessage("OK");
 
