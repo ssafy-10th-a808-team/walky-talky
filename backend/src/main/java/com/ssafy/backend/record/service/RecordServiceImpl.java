@@ -6,6 +6,7 @@ import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
+import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
@@ -99,6 +100,46 @@ public class RecordServiceImpl implements RecordService {
 
     public List<ResponseListDto> list(Long memberSeq) {
         return recordRepository.findResponseListDtoByMemberSeq(memberSeq);
+    }
+
+    public ResponseViewDto view(Long recordSeq) {
+        ResponseViewDto responseViewDto = new ResponseViewDto();
+
+        Optional<Record> recordOptional = recordRepository.findById(recordSeq);
+
+        if (recordOptional.isPresent()) {
+            Record record = recordOptional.get();
+            responseViewDto.setTitle(record.getTitle());
+            responseViewDto.setDuration(record.getDuration());
+            responseViewDto.setDistance(record.getDistance());
+            responseViewDto.setStarRating(record.getStarRating());
+            responseViewDto.setComment(record.getComment());
+
+            String regionCode = record.getRegionCd();
+            String address = regionService.findAddress(regionCode);
+            responseViewDto.setAddress(address);
+
+            responseViewDto.setStartTime(String.valueOf(record.getCreatedAt()));
+        } else {
+            return null;
+        }
+
+        List<RecordDetail> recordDetails = recordDetailRepository.findAllByRecordSeq(recordSeq);
+
+        List<String[]> points = new ArrayList<>();
+        String[] p = new String[5];
+        for(RecordDetail recordDetail:recordDetails){
+            p[0] = recordDetail.getLatitude();
+            p[1] = recordDetail.getLongitude();
+            p[2] = recordDetail.getTime();
+            p[3] = recordDetail.getUrl();
+            p[4] = recordDetail.getPointComment();
+            points.add(p);
+        }
+
+        responseViewDto.setPoints(points);
+
+        return responseViewDto;
     }
 
     public boolean modify(Long memberSeq, Long recordSeq, RequestRecordModify requestRecordModify) {
