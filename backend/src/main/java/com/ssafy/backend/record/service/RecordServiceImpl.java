@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -115,6 +116,37 @@ public class RecordServiceImpl implements RecordService {
         recordRepository.save(record);
 
         return true;
+    }
+
+    public boolean delete(Long memberSeq, Long recordSeq) {
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
+
+        Optional<Record> recordOptional = recordRepository.findById(recordSeq);
+
+        if (recordOptional.isPresent()) {
+            Record record = recordOptional.get();
+            Record deletedRecord = Record.builder()
+                    .seq(record.getSeq())
+                    .memberSeq(record.getMemberSeq())
+                    .groupSeq(record.getGroupSeq())
+                    .title(record.getTitle())
+                    .starRating(record.getStarRating())
+                    .comment(record.getComment())
+                    .usedCount(record.getUsedCount())
+                    .scrapedCount(record.getScrapedCount())
+                    .distance(record.getDistance())
+                    .duration(record.getDuration())
+                    .regionCd(record.getRegionCd())
+                    .isDeleted(true)
+                    .build();
+            recordRepository.save(deletedRecord);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     private boolean validateRecord(Long recordSeq, Long memberSeq) {
