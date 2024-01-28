@@ -1,5 +1,6 @@
 package com.ssafy.backend.record.controller;
 
+import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
@@ -72,7 +73,7 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if(!recordService.registComment(memberSeq, requestRegistCommentDto)){
+            if (!recordService.registComment(memberSeq, requestRegistCommentDto)) {
                 resultMap.put("message", "산책 기록 등록에 실패하였습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
@@ -86,7 +87,7 @@ public class RecordController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> list(HttpServletRequest request){
+    public ResponseEntity<?> list(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
         String msg = (String) request.getAttribute("message");
@@ -101,6 +102,28 @@ public class RecordController {
             resultMap.put("data", returnSeq);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("/modify/{recordSeq}")
+    public ResponseEntity<?> modify(HttpServletRequest request, @PathVariable("recordSeq") Long recordSeq, @RequestBody RequestRecordModify requestRecordModify) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            if (recordService.modify(memberSeq, recordSeq, requestRecordModify)) {
+                resultMap.put("message", "OK");
+                return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+            } else {
+                resultMap.put("message", "수정에 실패하였습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
         } else {
             resultMap.put("message", msg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
