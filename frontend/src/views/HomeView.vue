@@ -3,18 +3,18 @@
         HelloWorld It's TestPage.
     </div>
     <div>
-
         <ButtonWithIcon
-        :name="locationIcon.name"
-        :icon="locationIcon.icon"
-        :urlName="locationIcon.urlName"
+        :selectedIcon="locationIcon"
         />
-
-
+    </div>
+    <div>
+        <ButtonWithIcon
+        :selectedIcon="logoIcon"
+        />
     </div>
  
     <div>
-        <button type="button" @click="test" class="btn btn-primary">나는 버튼</button>
+        <button type="button" @click="test" class="btn btn-primary">서버통신테스트버튼</button>
     </div>
 </template>
 
@@ -33,6 +33,7 @@ const test = () => {
 }
     const store = useCounterStore()
     const locationIcon = store.selectButton('LocationIcon')
+    const logoIcon = store.selectButton('LogoIcon')
     
     
 </script>
