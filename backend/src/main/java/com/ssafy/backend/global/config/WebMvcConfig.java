@@ -18,7 +18,8 @@ public class WebMvcConfig {
                 "/api/member/logout",
                 "/api/member/reissue",
                 "/api/walk/*",
-                "/api/club/create"
+                "/api/club/create",
+                "/api/club/list"
         );
         return registrationBean;
     }
