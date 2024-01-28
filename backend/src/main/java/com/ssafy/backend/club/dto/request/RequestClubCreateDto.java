@@ -14,15 +14,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class RequestClubCreateDto {
 
     private String name;
-    //    private MultipartFile image_data;
-    private String image_data;
     private String introduce;
     private String address;
     private String young_birth;
     private String old_birth;
     private String gender_type;
     private int max_capacity;
-
     private boolean is_auto_recruite;
 
     public Club toEntity() {

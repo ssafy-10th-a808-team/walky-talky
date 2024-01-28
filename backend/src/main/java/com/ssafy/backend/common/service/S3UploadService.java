@@ -21,7 +21,7 @@ public class S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadProfileImg(MultipartFile multipartFile, Long memberSeq) throws IOException {
+    public String uploadMemberProfileImg(MultipartFile multipartFile, Long memberSeq) throws IOException {
         StringBuffer sb = new StringBuffer();
         sb.append("member/").append(memberSeq).append("/").append("profile/").append(UUID.randomUUID());
         return upload(multipartFile, sb.toString());
@@ -33,11 +33,18 @@ public class S3UploadService {
         return upload(multipartFile, sb.toString());
     }
 
-    public String uploadGroupBoardImg(MultipartFile multipartFile, Long groupSeq, Long boardSeq) throws IOException {
+    public String uploadClubBoardImg(MultipartFile multipartFile, Long clubSeq, Long boardSeq) throws IOException {
         StringBuffer sb = new StringBuffer();
-        sb.append("group/").append(groupSeq).append("/").append(boardSeq).append("/").append(UUID.randomUUID());
+        sb.append("club/").append(clubSeq).append("/").append(boardSeq).append("/").append(UUID.randomUUID());
         return upload(multipartFile, sb.toString());
     }
+
+    public String uploadClubProfileImg(MultipartFile multipartFile, Long clubSeq) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        sb.append("club/").append(clubSeq).append("/").append("profile/").append(UUID.randomUUID());
+        return upload(multipartFile, sb.toString());
+    }
+
 
     public String upload(MultipartFile multipartFile, String filePath) throws IOException {
         String contentType = multipartFile.getContentType();

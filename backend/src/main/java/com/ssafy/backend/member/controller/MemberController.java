@@ -14,7 +14,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -53,17 +55,15 @@ public class MemberController {
     }
 
     @PostMapping("/local-signup")
-    public ResponseEntity<ResponseLocalSignupDto> localSignup(@RequestBody RequestLocalSignupDto requestLocalSignupDto) {
+    public ResponseEntity<ResponseLocalSignupDto> localSignup(@RequestPart("profileImg") MultipartFile multipartFile, @RequestPart("json") RequestLocalSignupDto requestLocalSignupDto) throws IOException {
 
         ResponseLocalSignupDto responseLocalSignupDto = new ResponseLocalSignupDto();
 
-        if (memberService.localSignup(requestLocalSignupDto) == null) {
-            responseLocalSignupDto.setMessage("회원가입 실패!");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
-        } else {
-            responseLocalSignupDto.setMessage("OK");
-            return ResponseEntity.status(HttpStatus.OK).body(responseLocalSignupDto);
-        }
+        memberService.localSignup(multipartFile, requestLocalSignupDto);
+
+        responseLocalSignupDto.setMessage("OK");
+        return ResponseEntity.status(HttpStatus.OK).body(responseLocalSignupDto);
+
     }
 
     @PostMapping("/local-login")
