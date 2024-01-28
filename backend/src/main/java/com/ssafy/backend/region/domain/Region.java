@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 public class Region {
 
     @Id
-    private Integer regionCd;
+    private String regionCd;
     private String locataddNm;
     private String sidoo;
     private String sgg;
     private String locallowNm;
 
-    public Region(Integer regionCd, String locataddNm, String sidoo, String sgg, String locallowNm) {
+    public Region(String regionCd, String locataddNm, String sidoo, String sgg, String locallowNm) {
         this.regionCd = regionCd;
         this.locataddNm = locataddNm;
         this.sidoo = sidoo;

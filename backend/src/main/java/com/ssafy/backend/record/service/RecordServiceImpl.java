@@ -7,6 +7,7 @@ import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
+import com.ssafy.backend.region.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,8 @@ public class RecordServiceImpl implements RecordService {
     private final RecordRepository recordRepository;
 
     private final RecordDetailRepository recordDetailRepository;
+
+    private final RegionService regionService;
 
     public Long startRecord(Long memberSeq) {
         Record record = Record.builder()
@@ -37,6 +40,8 @@ public class RecordServiceImpl implements RecordService {
 
         validateRecord(recordSeq, memberSeq);
 
+        String regionCode = regionService.findRegionCode(requestRegistRecordDto.getAddress());
+
         Record record = Record.builder()
                 .seq(recordSeq)
                 .memberSeq(memberSeq)
@@ -45,6 +50,7 @@ public class RecordServiceImpl implements RecordService {
                 .distance(requestRegistRecordDto.getDistance())
                 .starRating(requestRegistRecordDto.getStarRating())
                 .comment(requestRegistRecordDto.getComment())
+                .regionCd(regionCode)
                 .build();
 
         recordRepository.save(record);
