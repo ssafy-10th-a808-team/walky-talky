@@ -2,6 +2,7 @@ package com.ssafy.backend.record.service;
 
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
+import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
@@ -35,7 +36,9 @@ public class RecordServiceImpl implements RecordService {
         // record table
         Long recordSeq = requestRegistRecordDto.getSeq();
 
-        validateRecord(recordSeq, memberSeq);
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
 
         Record record = Record.builder()
                 .seq(recordSeq)
@@ -71,7 +74,9 @@ public class RecordServiceImpl implements RecordService {
     public boolean registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto) {
         Long recordSeq = requestRegistCommentDto.getSeq();
 
-        validateRecord(recordSeq, memberSeq);
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
 
         RecordDetail recordDetail = RecordDetail.builder()
                 .recordSeq(recordSeq)
@@ -85,8 +90,25 @@ public class RecordServiceImpl implements RecordService {
         return true;
     }
 
-    public List<ResponseListDto> list(Long memberSeq){
+    public List<ResponseListDto> list(Long memberSeq) {
         return recordRepository.findResponseListDtoByMemberSeq(memberSeq);
+    }
+
+    public boolean modify(Long memberSeq, Long recordSeq, RequestRecordModify requestRecordModify) {
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
+
+        Record record = Record.builder()
+                .seq(recordSeq)
+                .memberSeq(memberSeq)
+                .starRating(requestRecordModify.getStarRating())
+                .comment(requestRecordModify.getComment())
+                .build();
+
+        recordRepository.save(record);
+
+        return true;
     }
 
     private boolean validateRecord(Long recordSeq, Long memberSeq) {
@@ -95,7 +117,6 @@ public class RecordServiceImpl implements RecordService {
             // 이는 사용자가 시작을 누르지 않은 비정상 요청임
             return false;
         }
-
 
         if (!memberSeq.equals(recordRepository.findMemberSeqBySeq(recordSeq).getMemberSeq())) {
             // 기존 저장되어있던 기록 식별번호를 등록한 사용자와
