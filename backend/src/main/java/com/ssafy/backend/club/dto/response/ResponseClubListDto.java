@@ -1,4 +1,4 @@
-package com.ssafy.backend.club.dto.request;
+package com.ssafy.backend.club.dto.response;
 
 import com.ssafy.backend.club.domain.Club;
 import lombok.AllArgsConstructor;

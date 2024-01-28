@@ -5,7 +5,9 @@ import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface MemberService {
@@ -18,7 +20,7 @@ public interface MemberService {
 
     boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto);
 
-    Member localSignup(RequestLocalSignupDto requestLocalSignupDto);
+    void localSignup(MultipartFile multipartFile, RequestLocalSignupDto requestLocalSignupDto) throws IOException;
 
     public Map<String, String> reissue(Long seq);
 
