@@ -2,6 +2,7 @@ package com.ssafy.backend.club.controller;
 
 import com.ssafy.backend.club.dto.request.RequestCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
+import com.ssafy.backend.club.dto.request.ResponseClubListDto;
 import com.ssafy.backend.club.dto.response.ResponseCheckNameDto;
 import com.ssafy.backend.club.dto.response.ResponseClubCreateDto;
 import com.ssafy.backend.club.service.ClubService;
@@ -9,10 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,7 +44,16 @@ public class ClubController {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseClubCreateDto);
 
+    }
 
+    @GetMapping("/list")
+    public ResponseEntity<ResponseClubListDto> clubList(HttpServletRequest httpServletRequest) {
+
+        ResponseClubListDto responseClubListDto = clubService.clubList(httpServletRequest);
+
+        responseClubListDto.setMessage("OK");
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubListDto);
     }
 
 }
