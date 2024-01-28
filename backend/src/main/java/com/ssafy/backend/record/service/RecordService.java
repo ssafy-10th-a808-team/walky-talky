@@ -19,4 +19,6 @@ public interface RecordService {
 
     boolean modify(Long memberSeq, Long recordSeq, RequestRecordModify requestRecordModify);
 
+    boolean delete(Long memberSeq, Long recordSeq);
+
 }
