@@ -4,6 +4,7 @@ import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
+import com.ssafy.backend.record.dto.response.ResponseViewDto;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface RecordService {
     boolean registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto);
 
     List<ResponseListDto> list(Long memberSeq);
+
+    ResponseViewDto view(Long recordSeq);
 
     boolean modify(Long memberSeq, Long recordSeq, RequestRecordModify requestRecordModify);
 

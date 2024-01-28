@@ -4,6 +4,7 @@ import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
+import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -96,10 +97,27 @@ public class RecordController {
 
             List<ResponseListDto> list = recordService.list(memberSeq);
 
-            Map<String, List<ResponseListDto>> returnSeq = new HashMap<>();
-            returnSeq.put("list", list);
+            Map<String, List<ResponseListDto>> returnMap = new HashMap<>();
+            returnMap.put("list", list);
 
-            resultMap.put("data", returnSeq);
+            resultMap.put("data", returnMap);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/view/{recordSeq}")
+    public ResponseEntity<?> view(HttpServletRequest request, @PathVariable("recordSeq") Long recordSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            ResponseViewDto responseViewDto = recordService.view(recordSeq);
+
+            resultMap.put("data", responseViewDto);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {
