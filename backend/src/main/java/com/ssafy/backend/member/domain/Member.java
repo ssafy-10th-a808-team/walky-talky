@@ -1,12 +1,9 @@
 package com.ssafy.backend.member.domain;
 
-import com.ssafy.backend.clubMember.domain.ClubMember;
 import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.util.*;
 
 @Entity
 @Table(name = "member")

@@ -1,5 +1,6 @@
 package com.ssafy.backend.member.service;
 
+import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
@@ -8,9 +9,12 @@ import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
 import com.ssafy.backend.member.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +30,8 @@ public class MemberServiceImpl implements MemberService {
 
     private final RedisDao redisDao;
 
+    private final S3UploadService s3UploadService;
+
     private static final long atkExp = 900000L; // 15분
     private static final long rtkExp = 604800000L; // 일주일
 
@@ -40,9 +46,19 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member localSignup(RequestLocalSignupDto requestLocalSignupDto) {
+    @Transactional(rollbackOn = IOException.class)
+    public void localSignup(MultipartFile multipartFile, RequestLocalSignupDto requestLocalSignupDto) throws IOException {
+
         Member member = requestLocalSignupDto.toEntity();
-        return memberRepository.save(member);
+
+        Member savedMember = memberRepository.save(member);
+
+        String tmpUrl = s3UploadService.uploadMemberProfileImg(multipartFile, savedMember.getSeq());
+
+        savedMember.setUrl(tmpUrl);
+
+        memberRepository.save(savedMember);
+
     }
 
     @Override
@@ -85,7 +101,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String, String> reissue(Long seq){
+    public Map<String, String> reissue(Long seq) {
         Map<String, String> returnMap = new HashMap<>();
 
         String atk = jwtProvider.createAccessToken(seq, atkExp);
