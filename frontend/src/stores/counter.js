@@ -7,7 +7,7 @@ export const useCounterStore = defineStore('counter', () => {
 
   const icons = ref([
       { name:'LogoIcon', icon: 'src/assets/img/Logo.png', urlName:'home' },
-      { name:'ProfileIcon', icon: 'src/assets/img/ProfileIcon.png', urlName:'mypage' },
+      { name:'ProfileIcon', icon: 'src/assets/img/ProfileIcon.png', urlName:'home' },
       { name:'LocationIcon', icon: 'src/assets/img/LocationIcon.png', urlName:'mylocation' },
 
   ])

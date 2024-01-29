@@ -1,14 +1,14 @@
 <template>
-    <RouterLink :to="{ name : `${urlName}` }">
+    <RouterLink :to="{ name : `${selectedIcon.urlName}` }">
         <button class="button-style">
-            <img :src="icon" :alt="name" class="icon-style">
+            <img :src="selectedIcon.icon" :alt="selectedIcon.name" class="icon-style">
         </button>
     </RouterLink>
 </template>
 
 <script setup>
 
-    defineProps(['name', 'icon', 'urlName'])
+    defineProps(['selectedIcon'])
 
 </script>
 

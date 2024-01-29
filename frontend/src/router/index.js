@@ -10,8 +10,8 @@ import DoWalk from '@/views/walk/DoWalk.vue'
 import WalkList from '@/views/walk/WalkList.vue'
 
 // club router 소모임
-import ClubView from '@/views/club/clubView.vue'
-import ClubMemory from '@/views/club/clubMemoryView.vue'
+import ClubView from '@/views/club/ClubView.vue'
+import ClubMemory from '@/views/club/ClubMemoryView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
