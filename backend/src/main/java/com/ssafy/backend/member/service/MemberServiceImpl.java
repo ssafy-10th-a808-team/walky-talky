@@ -40,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
     private final S3UploadService s3UploadService;
     private final RegionService regionService;
 
-//    private static final long atkExp = 900000L; // 15분
+    //    private static final long atkExp = 900000L; // 15분
     private static final long atkExp = 604800000L; // 일주일
     private static final long rtkExp = 604800000L; // 일주일
 
@@ -80,9 +80,10 @@ public class MemberServiceImpl implements MemberService {
 
         Member savedMember = memberRepository.save(member);
 
-        String tmpUrl = s3UploadService.uploadMemberProfileImg(multipartFile, savedMember.getSeq());
-
-        savedMember.setUrl(tmpUrl);
+        if (!multipartFile.isEmpty()) {
+            String tmpUrl = s3UploadService.uploadMemberProfileImg(multipartFile, savedMember.getSeq());
+            savedMember.setUrl(tmpUrl);
+        }
 
         memberRepository.save(savedMember);
 
