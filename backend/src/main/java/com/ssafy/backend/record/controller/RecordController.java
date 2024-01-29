@@ -105,7 +105,28 @@ public class RecordController {
             Long memberSeq = (Long) request.getAttribute("seq");
 
             if (!recordService.modifyComment(memberSeq, recordDetailSeq, comment)) {
-                resultMap.put("message", "산책 중 한줄평 등록에 실패하였습니다.");
+                resultMap.put("message", "산책 중 한줄평 수정에 실패하였습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("delete-comment/{recordDetailSeq}")
+    public ResponseEntity<?> deleteComment(HttpServletRequest request, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            if (!recordService.deleteComment(memberSeq, recordDetailSeq)) {
+                resultMap.put("message", "산책 중 한줄평 삭제에 실패하였습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 

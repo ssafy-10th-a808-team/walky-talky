@@ -130,6 +130,25 @@ public class RecordServiceImpl implements RecordService {
         return true;
     }
 
+    public boolean deleteComment(Long memberSeq, Long recordDetailSeq) {
+        Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
+
+        if (recordDetailOptional.isEmpty()) {
+            return false;
+        }
+
+        RecordDetail recordDetail = recordDetailOptional.get();
+
+        Long recordSeq = recordDetail.getRecordSeq();
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
+
+        recordDetailRepository.delete(recordDetail);
+
+        return true;
+    }
+
     public Long registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto) {
         Long recordSeq = requestRegistImageDto.getSeq();
 
