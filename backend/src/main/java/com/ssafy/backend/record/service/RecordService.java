@@ -18,6 +18,8 @@ public interface RecordService {
 
     boolean modifyImage(Long memberSeq, RequestModifyImageDto requestModifyImageDto);
 
+    boolean deleteImage(Long memberSeq, Long recordDetailSeq);
+
     List<ResponseListDto> list(Long memberSeq);
 
     ResponseViewDto view(Long recordSeq);

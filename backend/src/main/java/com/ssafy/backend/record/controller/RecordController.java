@@ -125,8 +125,30 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if(!recordService.modifyImage(memberSeq, requestModifyImageDto)){
+            if (!recordService.modifyImage(memberSeq, requestModifyImageDto)) {
                 resultMap.put("message", "산책 중 사진 수정에 실패하였습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("/delete-image")
+    public ResponseEntity<?> deleteImage(HttpServletRequest request, Long seq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            if (!recordService.deleteImage(memberSeq, seq)) {
+                resultMap.put("message", "산책 중 사진 삭제에 실패하였습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
