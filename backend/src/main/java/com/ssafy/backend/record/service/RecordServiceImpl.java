@@ -127,12 +127,12 @@ public class RecordServiceImpl implements RecordService {
         return seq;
     }
 
-    public boolean modifyImage(Long memberSeq, RequestModifyImageDto requestModifyImageDto){
+    public boolean modifyImage(Long memberSeq, RequestModifyImageDto requestModifyImageDto) {
         Long recordDetailSeq = requestModifyImageDto.getSeq();
 
         Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
 
-        if(recordDetailOptional.isEmpty()){
+        if (recordDetailOptional.isEmpty()) {
             return false;
         }
 
@@ -142,6 +142,10 @@ public class RecordServiceImpl implements RecordService {
         if (!validateRecord(recordSeq, memberSeq)) {
             return false;
         }
+
+        String existingUrl = recordDetail.getUrl();
+
+        s3UploadService.deleteImg(existingUrl);
 
         String url;
         try {
@@ -160,6 +164,28 @@ public class RecordServiceImpl implements RecordService {
                 .build();
 
         recordDetailRepository.save(upDateRecordDetail);
+
+        return true;
+    }
+
+    public boolean deleteImage(Long memberSeq, Long recordDetailSeq) {
+        Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
+
+        if (recordDetailOptional.isEmpty()) {
+            return false;
+        }
+
+        RecordDetail recordDetail = recordDetailOptional.get();
+
+        Long recordSeq = recordDetail.getRecordSeq();
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
+
+        String existingUrl = recordDetail.getUrl();
+        s3UploadService.deleteImg(existingUrl);
+
+        recordDetailRepository.delete(recordDetail);
 
         return true;
     }
