@@ -13,16 +13,16 @@ public class RegionServiceImpl implements RegionService {
 
     public String findRegionCode(String address) {
         // 주소로 지역코드 찾기
-        // 예제 : findRegionCode("서울특별시 강남구 역삼동") > 11680101
-        Region region = regionRepository.findRegionCdByLocataddNm(address);
+        // 예제 : findRegionCode("서울특별시 강남구 역삼동") > 1168010100
+        Region region = regionRepository.findRegionCdByLocationAddr(address);
         return region.getRegionCd();
     }
 
     public String findAddress(String regionCode) {
         // 지역코드로 주소 찾기
-        // 예제 : findAddress(11680101) > 서울특별시 강남구 역삼동
+        // 예제 : findAddress(1168010100) > 서울특별시 강남구 역삼동
         Region region = regionRepository.findLocataddNmByRegionCd(regionCode);
-        return region.getLocataddNm();
+        return region.getLocationAddr();
     }
 
 }
