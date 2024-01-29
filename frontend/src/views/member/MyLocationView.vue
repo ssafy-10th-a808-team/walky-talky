@@ -4,7 +4,10 @@
         <div id="map" style="width:500px;height:400px;"></div>
     </div>
     <div>
-        님 현재 위치가 {{ address }} 맞나요?
+        님 현재 위치가 {{ address_name }} 맞나요?
+    </div>
+    <div>
+        지역 코드 : {{ address_code }}
     </div>
 </template>
 
@@ -15,7 +18,8 @@
     let map = null // map is not defined Reference Error 방지
     let lat = 0
     let lon = 0
-    const address = ref("")
+    const address_name = ref("")
+    const address_code = ref("")
     onMounted(() => {
         if (window.kakao && window.kakao.maps) {
             initMap();
@@ -41,6 +45,7 @@
             navigator.geolocation.getCurrentPosition(function(position){
                 lat = position.coords.latitude // 위도
                 lon = position.coords.longitude // 경도
+
                 // geolocation 가능한 경우 내 위치
                 // 크롬 브라우저는 https 환경에서만 geolocation이 지원된다고 하네요 local도 되긴 했음
                 console.log("내 좌표를 가져왔습니다")
@@ -72,24 +77,21 @@
         marker.setMap(map)
 
         const geocoder = new kakao.maps.services.Geocoder()
-        geocoder.coord2Address(lon, lat, addrCallback)
+        geocoder.coord2RegionCode(lon, lat, addrCallback)
     }
  
-    
 
-    // const searchDetailAddrFromCoords = (lat, lon, callback) => {
-    //     console.log("좌표 가져오는 코드")
-    //         this.geocoder.coord2Address(lat, lon, callback);
-    
-    //     // 좌표로 법정동 상세 주소 정보를 요청합니다
-    // }
 
     const addrCallback = (result, status) => {
         // 법정동 상세 주소를 가져올 때 콜백 함수를 선언한 것입니다
         if (status === kakao.maps.services.Status.OK) {
             console.log('주소 가져왔습니다')
-            console.log(result[0].address.address_name)
-            address.value = result[0].address.address_name
+            console.log(result[0])
+            if (result[0].region_type === 'B'){
+                // 법정동 코드일 경우에만 저장하기, 수정가능성 높음
+                address_name.value = result[0].address_name
+                address_code.value = result[0].code
+            }
         } else {
             console.error("Failed to get address info")
             console.log(kakao.maps.services.Status)
