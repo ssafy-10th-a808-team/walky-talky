@@ -7,6 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestCheckIdDto {
-    private String memberId;
+    private String id;
 
 }

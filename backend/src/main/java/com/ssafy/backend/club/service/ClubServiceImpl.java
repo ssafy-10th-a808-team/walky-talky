@@ -3,6 +3,8 @@ package com.ssafy.backend.club.service;
 import com.ssafy.backend.club.domain.Club;
 import com.ssafy.backend.club.dto.request.RequestCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
+import com.ssafy.backend.club.dto.response.ResponseClubDetailDto;
+import com.ssafy.backend.club.dto.response.ResponseClubDetailDtoMember;
 import com.ssafy.backend.club.dto.response.ResponseClubListDto;
 import com.ssafy.backend.club.repository.ClubRepository;
 import com.ssafy.backend.clubMember.domain.ClubMember;
@@ -10,6 +12,7 @@ import com.ssafy.backend.clubMember.repository.ClubMemberRepository;
 import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.region.service.RegionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ public class ClubServiceImpl implements ClubService {
     private final MemberRepository memberRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final S3UploadService s3UploadService;
+    private final RegionService regionService;
 
     @Override
     public boolean checkName(RequestCheckNameDto requestCheckNameDto) {
@@ -41,10 +45,16 @@ public class ClubServiceImpl implements ClubService {
 
         //  Club save
         Club club = requestClubCreateDto.toEntity();
+
+        // find address
+        club.setAddress(regionService.findAddress(club.getRegionCd()));
+
         Club savedClub = clubRepository.save(club);
 
-        String tmpUrl = s3UploadService.uploadClubProfileImg(multipartFile, savedClub.getSeq());
-        savedClub.setUrl(tmpUrl);
+        if (!multipartFile.isEmpty()) {
+            String tmpUrl = s3UploadService.uploadClubProfileImg(multipartFile, savedClub.getSeq());
+            savedClub.setUrl(tmpUrl);
+        }
 
         clubRepository.save(savedClub);
 
@@ -90,7 +100,7 @@ public class ClubServiceImpl implements ClubService {
                     isRecommendClub = false;
 
                 //  인원이 전부 찼다
-                if (clubs.get(i).getNowCapacity() == clubs.get(i).getMaxCapacity())
+                if (clubs.get(i).getNowCapacity() >= clubs.get(i).getMaxCapacity())
                     isRecommendClub = false;
 
                 //  나의 성별과 모집 성별이 다르다
@@ -107,7 +117,9 @@ public class ClubServiceImpl implements ClubService {
                 if (memberBirth > clubYoungBirth || memberBirth < clubOldBirth)
                     isRecommendClub = false;
 
-                // TODO : 동네 조건 넣기!!
+                // 동네 조건
+                if (!clubs.get(i).getRegionCd().equals(member.getRegionCd()))
+                    isRecommendClub = false;
 
                 if (isRecommendClub) {
                     responseClubListDto.getRecommendClubs().add(clubs.get(i));
@@ -121,6 +133,37 @@ public class ClubServiceImpl implements ClubService {
 
         return responseClubListDto;
 
+    }
+
+    @Override
+    public ResponseClubDetailDto clubDetail(Long clubSeq) {
+
+        ResponseClubDetailDto responseClubDetailDto = new ResponseClubDetailDto();
+        responseClubDetailDto.setMembers(new ArrayList<>());
+
+        // TODO : club 찾아서 넣기
+        Club club = clubRepository.findById(clubSeq).orElse(null);
+        responseClubDetailDto.setClub(club);
+
+        // TODO : 해당 club의 멤버 모두 찾아 넣기
+        List<ClubMember> clubMembers = clubMemberRepository.findAllByClubSeq(clubSeq);
+
+        for (int i = 0; i < clubMembers.size(); i++) {
+            if (clubMembers.get(i).getRole().equals("owner") || clubMembers.get(i).getRole().equals("member")) {
+                Member tmpMember = clubMembers.get(i).getMember();
+
+                ResponseClubDetailDtoMember responseClubDetailDtoMember = new ResponseClubDetailDtoMember();
+                responseClubDetailDtoMember.setNickname(tmpMember.getNickname());
+                responseClubDetailDtoMember.setUrl(tmpMember.getUrl());
+                responseClubDetailDtoMember.setAddress(tmpMember.getAddress());
+                responseClubDetailDtoMember.setRole(clubMembers.get(i).getRole());
+
+                responseClubDetailDto.getMembers().add(responseClubDetailDtoMember);
+            }
+        }
+
+
+        return responseClubDetailDto;
     }
 
 }
