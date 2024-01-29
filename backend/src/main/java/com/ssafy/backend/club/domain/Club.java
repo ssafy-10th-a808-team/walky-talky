@@ -26,6 +26,9 @@ public class Club extends BaseEntity {
     @Column(name = "region_cd")
     private String regionCd;
 
+    @Column(name = "address")
+    private String address;
+
     @Column(name = "young_birth")
     private String youngBirth;
 
