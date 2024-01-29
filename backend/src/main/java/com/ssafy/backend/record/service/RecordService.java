@@ -13,7 +13,9 @@ public interface RecordService {
 
     boolean registRecord(Long memberSeq, RequestRegistRecordDto requestRegistRecordDto);
 
-    boolean registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto);
+    Long registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto);
+
+    boolean modifyComment(Long memberSeq, Long recordDetailSeq, String comment);
 
     Long registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto);
 
