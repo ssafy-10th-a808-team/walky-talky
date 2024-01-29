@@ -3,14 +3,21 @@ package com.ssafy.backend.clubMember.service;
 import com.ssafy.backend.club.domain.Club;
 import com.ssafy.backend.club.repository.ClubRepository;
 import com.ssafy.backend.clubMember.domain.ClubMember;
+import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyAcceptDto;
 import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyDto;
+import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyAcceptDto;
 import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyDto;
+import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyListDto;
+import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyListDtoMember;
 import com.ssafy.backend.clubMember.repository.ClubMemberRepository;
 import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -122,5 +129,74 @@ public class ClubMemberServiceImpl implements ClubMemberService {
 
         responseClubMemberApplyDto.setMessage("OK");
         return responseClubMemberApplyDto;
+    }
+
+    @Override
+    public ResponseClubMemberApplyListDto clubMemberApplyList(Long clubSeq, HttpServletRequest httpServletRequest) {
+
+        ResponseClubMemberApplyListDto responseClubMemberApplyListDto = new ResponseClubMemberApplyListDto();
+
+        Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
+
+        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(clubSeq, memberSeq, "owner")) {
+            responseClubMemberApplyListDto.setMessage("소모임장이 아니므로 접근 불가능 합니다.");
+            return responseClubMemberApplyListDto;
+        }
+
+        responseClubMemberApplyListDto.setResponseClubMemberApplyListDtoMembers(new ArrayList<>());
+
+        List<ClubMember> clubMembers = clubMemberRepository.findAllByClubSeqAndRole(clubSeq, "applicant");
+
+        for (ClubMember clubMember : clubMembers) {
+
+            Member tmpMember = clubMember.getMember();
+
+            ResponseClubMemberApplyListDtoMember responseClubMemberApplyListDtoMember = new ResponseClubMemberApplyListDtoMember();
+
+            responseClubMemberApplyListDtoMember.setMemberSeq(tmpMember.getSeq());
+            responseClubMemberApplyListDtoMember.setAddress(tmpMember.getAddress());
+            responseClubMemberApplyListDtoMember.setUrl(tmpMember.getUrl());
+            responseClubMemberApplyListDtoMember.setNickname(tmpMember.getNickname());
+            responseClubMemberApplyListDtoMember.setBirth(tmpMember.getBirth());
+            responseClubMemberApplyListDtoMember.setIntroduce(tmpMember.getIntroduce());
+
+            responseClubMemberApplyListDto.getResponseClubMemberApplyListDtoMembers().add(responseClubMemberApplyListDtoMember);
+        }
+
+        responseClubMemberApplyListDto.setMessage("OK");
+
+        return responseClubMemberApplyListDto;
+    }
+
+    @Override
+    public ResponseClubMemberApplyAcceptDto clubMemberApplyAccept(RequestClubMemberApplyAcceptDto requestClubMemberApplyAcceptDto, HttpServletRequest httpServletRequest) {
+        ResponseClubMemberApplyAcceptDto responseClubMemberApplyAcceptDto = new ResponseClubMemberApplyAcceptDto();
+
+        Long myMemberSeq = (Long) httpServletRequest.getAttribute("seq");
+        Long applicantMemberSeq = requestClubMemberApplyAcceptDto.getMemberSeq();
+        Long applicantClubSeq = requestClubMemberApplyAcceptDto.getClubSeq();
+
+        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(applicantClubSeq, myMemberSeq, "owner")) {
+            responseClubMemberApplyAcceptDto.setMessage("해당 소모임의 owner가 아니므로 수락할 수 없습니다.");
+            return responseClubMemberApplyAcceptDto;
+        }
+
+        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(applicantClubSeq, applicantMemberSeq, "applicant")) {
+            responseClubMemberApplyAcceptDto.setMessage("그런 사용자는 현재 applicant 상태가 아닙니다.");
+            return responseClubMemberApplyAcceptDto;
+        }
+
+        ClubMember clubMember = clubMemberRepository.findByMemberSeqAndClubSeq(applicantMemberSeq, applicantClubSeq);
+        clubMember.setRole("member");
+        clubMemberRepository.save(clubMember);
+
+        // 인원 수 늘리기
+        Club club = clubRepository.findById(applicantClubSeq).orElse(null);
+        club.setNowCapacity(club.getNowCapacity() + 1);
+        clubRepository.save(club);
+
+        responseClubMemberApplyAcceptDto.setMessage("OK");
+        return responseClubMemberApplyAcceptDto;
+
     }
 }
