@@ -59,7 +59,8 @@ public class S3UploadService {
         return amazonS3.getUrl(bucket, filePath).toString();
     }
 
-    public void deleteImg(String filePath) {
+    public void deleteImg(String url) {
+        String filePath = url.substring(51);
         amazonS3.deleteObject(bucket, filePath);
     }
 
