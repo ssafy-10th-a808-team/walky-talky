@@ -15,4 +15,8 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     boolean existsByClubSeqAndMemberSeq(Long clubSeq, Long memberSeq);
 
     ClubMember findByMemberSeqAndClubSeq(Long memberSeq, Long clubSeq);
+
+    boolean existsByClubSeqAndMemberSeqAndRole(Long clubSeq, Long memberSeq, String role);
+
+    List<ClubMember> findAllByClubSeqAndRole(Long clubSeq, String role);
 }

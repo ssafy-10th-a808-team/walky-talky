@@ -46,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean checkId(RequestCheckIdDto requestCheckIdDto) {
-        return memberRepository.existsByMemberId(requestCheckIdDto.getMemberId());
+        return memberRepository.existsByMemberId(requestCheckIdDto.getId());
     }
 
     @Override
