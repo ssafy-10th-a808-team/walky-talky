@@ -16,16 +16,10 @@ public class Region {
 
     @Id
     private String regionCd;
-    private String locataddNm;
-    private String sidoo;
-    private String sgg;
-    private String locallowNm;
+    private String locationAddr;
 
-    public Region(String regionCd, String locataddNm, String sidoo, String sgg, String locallowNm) {
+    public Region(String regionCd, String locationAddr) {
         this.regionCd = regionCd;
-        this.locataddNm = locataddNm;
-        this.sidoo = sidoo;
-        this.sgg = sgg;
-        this.locallowNm = locallowNm;
+        this.locationAddr = locationAddr;
     }
 }
