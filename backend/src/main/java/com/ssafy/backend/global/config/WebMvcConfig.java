@@ -14,7 +14,12 @@ public class WebMvcConfig {
     public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilter(JwtProvider jwtProvider, RedisDao redisDao) {
         FilterRegistrationBean<JwtAuthenticationFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new JwtAuthenticationFilter(jwtProvider, redisDao));
-        registrationBean.addUrlPatterns("/api/member/logout", "/api/member/reissue", "/api/walk/*");
+        registrationBean.addUrlPatterns(
+                "/api/member/logout",
+                "/api/member/reissue",
+                "/api/walk/*",
+                "/api/club/*"
+        );
         return registrationBean;
     }
 

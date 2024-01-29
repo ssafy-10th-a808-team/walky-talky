@@ -2,7 +2,6 @@ package com.ssafy.backend.member.dto.request;
 
 import com.ssafy.backend.member.domain.Member;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -15,8 +14,7 @@ public class RequestLocalSignupDto {
     private String birth;
     private String gender;
     private String nickname;
-//    private MultipartFile profileImg;
-    private String profileImg;
+    //    private MultipartFile profileImg;
     private String introduce;
     private String address;
 
