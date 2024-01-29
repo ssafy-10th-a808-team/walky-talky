@@ -10,6 +10,7 @@ import com.ssafy.backend.clubMember.repository.ClubMemberRepository;
 import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.region.service.RegionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class ClubServiceImpl implements ClubService {
     private final MemberRepository memberRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final S3UploadService s3UploadService;
+    private final RegionService regionService;
 
     @Override
     public boolean checkName(RequestCheckNameDto requestCheckNameDto) {
@@ -41,6 +43,10 @@ public class ClubServiceImpl implements ClubService {
 
         //  Club save
         Club club = requestClubCreateDto.toEntity();
+
+        // find address
+        club.setAddress(regionService.findAddress(club.getRegionCd()));
+
         Club savedClub = clubRepository.save(club);
 
         String tmpUrl = s3UploadService.uploadClubProfileImg(multipartFile, savedClub.getSeq());
@@ -107,7 +113,9 @@ public class ClubServiceImpl implements ClubService {
                 if (memberBirth > clubYoungBirth || memberBirth < clubOldBirth)
                     isRecommendClub = false;
 
-                // TODO : 동네 조건 넣기!!
+                // 동네 조건
+                if (!clubs.get(i).getRegionCd().equals(member.getRegionCd()))
+                    isRecommendClub = false;
 
                 if (isRecommendClub) {
                     responseClubListDto.getRecommendClubs().add(clubs.get(i));

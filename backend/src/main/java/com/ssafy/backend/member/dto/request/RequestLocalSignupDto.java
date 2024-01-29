@@ -14,9 +14,8 @@ public class RequestLocalSignupDto {
     private String birth;
     private String gender;
     private String nickname;
-    //    private MultipartFile profileImg;
     private String introduce;
-    private String address;
+    private String regionCd;
 
     public Member toEntity() {
         return Member.builder()
@@ -27,9 +26,10 @@ public class RequestLocalSignupDto {
                 .birth(birth)
                 .gender(gender)
                 .nickname(nickname)
-                .url("바꿔야함")
+                .url(null)
                 .introduce(introduce)
-                .regionCd("바꿔야함")
+                .regionCd(regionCd)
+                .address(null)
                 .isAlert(true)
                 .isDeleted(false)
                 .build();
