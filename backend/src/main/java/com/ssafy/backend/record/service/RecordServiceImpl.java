@@ -51,8 +51,6 @@ public class RecordServiceImpl implements RecordService {
             return false;
         }
 
-        String regionCode = regionService.findRegionCode(requestRegistRecordDto.getAddress());
-
         Record record = Record.builder()
                 .seq(recordSeq)
                 .memberSeq(memberSeq)
@@ -61,7 +59,7 @@ public class RecordServiceImpl implements RecordService {
                 .distance(requestRegistRecordDto.getDistance())
                 .starRating(requestRegistRecordDto.getStarRating())
                 .comment(requestRegistRecordDto.getComment())
-                .regionCd(regionCode)
+                .regionCd(requestRegistRecordDto.getRegionCd())
                 .build();
 
         recordRepository.save(record);
