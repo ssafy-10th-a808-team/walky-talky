@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 // member router 멤버
 import Signup from '@/views/member/Signup.vue'
+import Login from '@/views/member/Login.vue'
 import RecordScrapList from '@/views/member/RecordScrapList.vue'
 import MyLocationView from '@/views/member/MyLocationView.vue'
 
@@ -29,6 +30,11 @@ const router = createRouter({
       path: '/member/local-signup',
       name: 'Signup',
       component: Signup
+    },
+    {
+      path: '/member/local-login',
+      name: 'Login',
+      component: Login
     },
     {
       path: '/mylocation',
@@ -70,17 +76,12 @@ const router = createRouter({
       component: ClubCreate
     },
 
-    // shareboard router 산책공유게시판   
+    // shareboard router 산책공유게시판
     {
       path: '/share-board',
       name: 'share-board',
       component: ShareBoardView
-    },
-
-
-
-
-
+    }
   ]
 })
 
