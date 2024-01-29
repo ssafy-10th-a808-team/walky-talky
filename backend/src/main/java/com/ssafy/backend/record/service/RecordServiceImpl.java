@@ -1,6 +1,7 @@
 package com.ssafy.backend.record.service;
 
 import com.ssafy.backend.common.service.S3UploadService;
+import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
@@ -12,6 +13,7 @@ import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,115 +45,135 @@ public class RecordServiceImpl implements RecordService {
         return returnRecord.getSeq();
     }
 
-    public boolean registRecord(Long memberSeq, RequestRegistRecordDto requestRegistRecordDto) {
-        // record table
-        Long recordSeq = requestRegistRecordDto.getSeq();
+    @Transactional
+    public void registRecord(Long memberSeq, RequestRegistRecordDto requestRegistRecordDto) throws WTException {
+        Long recordSeq;
+        try {
+            // record table
+            recordSeq = requestRegistRecordDto.getSeq();
 
-        if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
+            if (!validateRecord(recordSeq, memberSeq)) {
+                throw new WTException("비정상적인 요청입니다.");
+            }
+
+            Record record = Record.builder()
+                    .seq(recordSeq)
+                    .memberSeq(memberSeq)
+                    .title(requestRegistRecordDto.getTitle())
+                    .duration(requestRegistRecordDto.getDuration())
+                    .distance(requestRegistRecordDto.getDistance())
+                    .starRating(requestRegistRecordDto.getStarRating())
+                    .comment(requestRegistRecordDto.getComment())
+                    .regionCd(requestRegistRecordDto.getRegionCd())
+                    .build();
+
+            recordRepository.save(record);
+        } catch (Exception e) {
+            throw new WTException("산책 기록 등록 오류입니다.");
         }
 
-        Record record = Record.builder()
-                .seq(recordSeq)
-                .memberSeq(memberSeq)
-                .title(requestRegistRecordDto.getTitle())
-                .duration(requestRegistRecordDto.getDuration())
-                .distance(requestRegistRecordDto.getDistance())
-                .starRating(requestRegistRecordDto.getStarRating())
-                .comment(requestRegistRecordDto.getComment())
-                .regionCd(requestRegistRecordDto.getRegionCd())
-                .build();
+        try {
+            // record detail table
+            String[][] tmpPoint = requestRegistRecordDto.getPoints();
+            List<RecordDetail> list = new ArrayList<>();
 
-        recordRepository.save(record);
+            for (String[] p : tmpPoint) {
+                RecordDetail recordDetail = RecordDetail.builder()
+                        .recordSeq(recordSeq)
+                        .latitude(p[0])
+                        .longitude(p[1])
+                        .time(p[2])
+                        .build();
+                list.add(recordDetail);
+            }
 
-        // record detail table
-        String[][] tmpPoint = requestRegistRecordDto.getPoints();
-        List<RecordDetail> list = new ArrayList<>();
+            recordDetailRepository.saveAll(list);
+        } catch (Exception e) {
+            throw new WTException("산책 기록 상세 등록 오류입니다.");
+        }
+    }
 
-        for (String[] p : tmpPoint) {
+    @Transactional
+    public Long registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto) throws WTException {
+        try {
+            Long recordSeq = requestRegistCommentDto.getSeq();
+
+            if (!validateRecord(recordSeq, memberSeq)) {
+                throw new WTException("비정상적인 요청입니다.");
+            }
+
             RecordDetail recordDetail = RecordDetail.builder()
                     .recordSeq(recordSeq)
-                    .latitude(p[0])
-                    .longitude(p[1])
-                    .time(p[2])
+                    .pointComment(requestRegistCommentDto.getComment())
+                    .latitude(requestRegistCommentDto.getLatitude())
+                    .longitude(requestRegistCommentDto.getLongitude())
                     .build();
-            list.add(recordDetail);
+
+            return recordDetailRepository.save(recordDetail).getSeq();
+        } catch (Exception e) {
+            throw new WTException("산책 중 한줄평 등록에 실패하였습니다.");
         }
-
-        recordDetailRepository.saveAll(list);
-
-        return true;
     }
 
-    public Long registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto) {
-        Long recordSeq = requestRegistCommentDto.getSeq();
-
-        if (!validateRecord(recordSeq, memberSeq)) {
-            return (long) -1;
-        }
-
-        RecordDetail recordDetail = RecordDetail.builder()
-                .recordSeq(recordSeq)
-                .pointComment(requestRegistCommentDto.getComment())
-                .latitude(requestRegistCommentDto.getLatitude())
-                .longitude(requestRegistCommentDto.getLongitude())
-                .build();
-
-        return recordDetailRepository.save(recordDetail).getSeq();
-    }
-
-    public boolean modifyComment(Long memberSeq, Long recordDetailSeq, String comment) {
+    @Transactional
+    public void modifyComment(Long memberSeq, Long recordDetailSeq, String comment) throws WTException {
         Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
 
         if (recordDetailOptional.isEmpty()) {
-            return false;
+            throw new WTException("산책 중 한줄평 수정에 실패하였습니다.");
+        }
+
+        try {
+            RecordDetail recordDetail = recordDetailOptional.get();
+
+            Long recordSeq = recordDetail.getRecordSeq();
+            if (!validateRecord(recordSeq, memberSeq)) {
+                throw new WTException("비정상적인 요청입니다.");
+            }
+
+            RecordDetail updateRecordDetail = RecordDetail.builder()
+                    .seq(recordDetailSeq)
+                    .recordSeq(recordSeq)
+                    .pointComment(comment)
+                    .url(recordDetail.getUrl())
+                    .latitude(recordDetail.getLatitude())
+                    .longitude(recordDetail.getLongitude())
+                    .build();
+
+            recordDetailRepository.save(updateRecordDetail);
+        } catch (Exception e) {
+            throw new WTException("산책 중 한줄평 수정에 실패하였습니다.");
+        }
+    }
+
+    @Transactional
+    public void deleteComment(Long memberSeq, Long recordDetailSeq) {
+        Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
+
+        if (recordDetailOptional.isEmpty()) {
+            throw new WTException("산책 중 한줄평 삭제에 실패하였습니다.");
         }
 
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
         if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
+            throw new WTException("비정상적인 요청입니다.");
         }
 
-        RecordDetail updateRecordDetail = RecordDetail.builder()
-                .seq(recordDetailSeq)
-                .recordSeq(recordSeq)
-                .pointComment(comment)
-                .url(recordDetail.getUrl())
-                .latitude(recordDetail.getLatitude())
-                .longitude(recordDetail.getLongitude())
-                .build();
-
-        recordDetailRepository.save(updateRecordDetail);
-
-        return true;
+        try {
+            recordDetailRepository.delete(recordDetail);
+        } catch (Exception e) {
+            throw new WTException("산책 중 한줄평 삭제에 실패하였습니다.");
+        }
     }
 
-    public boolean deleteComment(Long memberSeq, Long recordDetailSeq) {
-        Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
-
-        if (recordDetailOptional.isEmpty()) {
-            return false;
-        }
-
-        RecordDetail recordDetail = recordDetailOptional.get();
-
-        Long recordSeq = recordDetail.getRecordSeq();
-        if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
-        }
-
-        recordDetailRepository.delete(recordDetail);
-
-        return true;
-    }
-
+    @Transactional
     public Long registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto) {
         Long recordSeq = requestRegistImageDto.getSeq();
 
         if (!validateRecord(recordSeq, memberSeq)) {
-            return (long) -1;
+            throw new WTException("비정상적인 요청입니다.");
         }
 
         String url;
@@ -159,33 +181,36 @@ public class RecordServiceImpl implements RecordService {
         try {
             url = s3UploadService.uploadRecordImg(requestRegistImageDto.getMultipartFile(), memberSeq, recordSeq);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new WTException("사진 업로드에 실패하였습니다.");
         }
 
-        RecordDetail recordDetail = RecordDetail.builder()
-                .recordSeq(recordSeq)
-                .url(url)
-                .latitude(requestRegistImageDto.getLatitude())
-                .longitude(requestRegistImageDto.getLongitude())
-                .build();
+        try {
+            RecordDetail recordDetail = RecordDetail.builder()
+                    .recordSeq(recordSeq)
+                    .url(url)
+                    .latitude(requestRegistImageDto.getLatitude())
+                    .longitude(requestRegistImageDto.getLongitude())
+                    .build();
 
-        Long seq = recordDetailRepository.save(recordDetail).getSeq();
-
-        return seq;
+            return recordDetailRepository.save(recordDetail).getSeq();
+        } catch (Exception e) {
+            throw new WTException("산책 중 사진 등록에 실패하였습니다.");
+        }
     }
 
-    public boolean modifyImage(Long memberSeq, Long recordDetailSeq, MultipartFile multipartFile) {
+    @Transactional
+    public void modifyImage(Long memberSeq, Long recordDetailSeq, MultipartFile multipartFile) {
         Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
 
         if (recordDetailOptional.isEmpty()) {
-            return false;
+            throw new WTException("산책 중 사진 수정에 실패하였습니다.");
         }
 
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
         if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
+            throw new WTException("비정상적인 요청입니다.");
         }
 
         String existingUrl = recordDetail.getUrl();
@@ -196,55 +221,69 @@ public class RecordServiceImpl implements RecordService {
         try {
             url = s3UploadService.uploadRecordImg(multipartFile, memberSeq, recordSeq);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new WTException("사진 업로드에 실패하였습니다.");
         }
 
-        RecordDetail updateRecordDetail = RecordDetail.builder()
-                .seq(recordDetailSeq)
-                .recordSeq(recordSeq)
-                .url(url)
-                .latitude(recordDetail.getLatitude())
-                .longitude(recordDetail.getLongitude())
-                .pointComment(recordDetail.getPointComment())
-                .build();
+        try {
+            RecordDetail updateRecordDetail = RecordDetail.builder()
+                    .seq(recordDetailSeq)
+                    .recordSeq(recordSeq)
+                    .url(url)
+                    .latitude(recordDetail.getLatitude())
+                    .longitude(recordDetail.getLongitude())
+                    .pointComment(recordDetail.getPointComment())
+                    .build();
 
-        recordDetailRepository.save(updateRecordDetail);
-
-        return true;
+            recordDetailRepository.save(updateRecordDetail);
+        } catch (Exception e) {
+            throw new WTException("산책 중 사진 수정에 실패하였습니다.");
+        }
     }
 
-    public boolean deleteImage(Long memberSeq, Long recordDetailSeq) {
+    public void deleteImage(Long memberSeq, Long recordDetailSeq) {
         Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
 
         if (recordDetailOptional.isEmpty()) {
-            return false;
+            throw new WTException("산책 중 사진 삭제에 실패하였습니다.");
         }
 
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
         if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
+            throw new WTException("비정상적인 요청입니다.");
         }
 
-        String existingUrl = recordDetail.getUrl();
-        s3UploadService.deleteImg(existingUrl);
+        try {
+            String existingUrl = recordDetail.getUrl();
+            s3UploadService.deleteImg(existingUrl);
 
-        recordDetailRepository.delete(recordDetail);
+            recordDetailRepository.delete(recordDetail);
+        } catch (Exception e) {
+            throw new WTException("산책 중 사진 삭제에 실패하였습니다.");
+        }
 
-        return true;
     }
 
     public List<ResponseListDto> list(Long memberSeq) {
         return recordRepository.findResponseListDtoByMemberSeq(memberSeq);
     }
 
-    public ResponseViewDto view(Long recordSeq) {
+    @Transactional
+    public ResponseViewDto view(Long memberSeq, Long recordSeq) {
+        if (!validateRecord(recordSeq, memberSeq)) {
+            throw new WTException("비정상적인 요청입니다.");
+        }
+
         ResponseViewDto responseViewDto = new ResponseViewDto();
 
         Optional<Record> recordOptional = recordRepository.findById(recordSeq);
 
-        if (recordOptional.isPresent()) {
+        if (recordOptional.isEmpty()) {
+            throw new WTException("산책 기록 상세 보기에 실패하였습니다.");
+        }
+
+        try {
             Record record = recordOptional.get();
             responseViewDto.setTitle(record.getTitle());
             responseViewDto.setDuration(record.getDuration());
@@ -257,53 +296,64 @@ public class RecordServiceImpl implements RecordService {
             responseViewDto.setAddress(address);
 
             responseViewDto.setStartTime(String.valueOf(record.getCreatedAt()));
-        } else {
-            return null;
+        } catch (Exception e) {
+            throw new WTException("산책 기록 상세 보기에 실패하였습니다.");
         }
 
-        List<RecordDetail> recordDetails = recordDetailRepository.findAllByRecordSeq(recordSeq);
+        try {
+            List<RecordDetail> recordDetails = recordDetailRepository.findAllByRecordSeq(recordSeq);
 
-        List<String[]> points = new ArrayList<>();
-        String[] p = new String[5];
-        for (RecordDetail recordDetail : recordDetails) {
-            p[0] = recordDetail.getLatitude();
-            p[1] = recordDetail.getLongitude();
-            p[2] = recordDetail.getTime();
-            p[3] = recordDetail.getUrl();
-            p[4] = recordDetail.getPointComment();
-            points.add(p);
+            List<String[]> points = new ArrayList<>();
+            String[] p = new String[5];
+            for (RecordDetail recordDetail : recordDetails) {
+                p[0] = recordDetail.getLatitude();
+                p[1] = recordDetail.getLongitude();
+                p[2] = recordDetail.getTime();
+                p[3] = recordDetail.getUrl();
+                p[4] = recordDetail.getPointComment();
+                points.add(p);
+            }
+
+            responseViewDto.setPoints(points);
+        } catch (Exception e) {
+            throw new WTException("산책 기록 상세 보기에 실패하였습니다.");
         }
-
-        responseViewDto.setPoints(points);
 
         return responseViewDto;
     }
 
-    public boolean modify(Long memberSeq, Long recordSeq, RequestRecordModify requestRecordModify) {
+    @Transactional
+    public void modify(Long memberSeq, Long recordSeq, RequestRecordModify requestRecordModify) {
         if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
+            throw new WTException("비정상적인 요청입니다.");
         }
 
-        Record record = Record.builder()
-                .seq(recordSeq)
-                .memberSeq(memberSeq)
-                .starRating(requestRecordModify.getStarRating())
-                .comment(requestRecordModify.getComment())
-                .build();
+        try {
+            Record record = Record.builder()
+                    .seq(recordSeq)
+                    .memberSeq(memberSeq)
+                    .starRating(requestRecordModify.getStarRating())
+                    .comment(requestRecordModify.getComment())
+                    .build();
 
-        recordRepository.save(record);
-
-        return true;
+            recordRepository.save(record);
+        } catch (Exception e) {
+            throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
+        }
     }
 
-    public boolean delete(Long memberSeq, Long recordSeq) {
+    public void delete(Long memberSeq, Long recordSeq) {
         if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
+            throw new WTException("비정상적인 요청입니다.");
         }
 
         Optional<Record> recordOptional = recordRepository.findById(recordSeq);
 
-        if (recordOptional.isPresent()) {
+        if (recordOptional.isEmpty()) {
+            throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
+        }
+
+        try {
             Record record = recordOptional.get();
             Record deletedRecord = Record.builder()
                     .seq(record.getSeq())
@@ -320,11 +370,9 @@ public class RecordServiceImpl implements RecordService {
                     .isDeleted(true)
                     .build();
             recordRepository.save(deletedRecord);
-            return true;
-        } else {
-            return false;
+        } catch (Exception e) {
+            throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
         }
-
     }
 
     private boolean validateRecord(Long recordSeq, Long memberSeq) {
