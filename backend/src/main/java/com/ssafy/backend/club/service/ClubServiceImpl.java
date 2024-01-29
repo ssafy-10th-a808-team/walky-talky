@@ -3,6 +3,8 @@ package com.ssafy.backend.club.service;
 import com.ssafy.backend.club.domain.Club;
 import com.ssafy.backend.club.dto.request.RequestCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
+import com.ssafy.backend.club.dto.response.ResponseClubDetailDto;
+import com.ssafy.backend.club.dto.response.ResponseClubDetailDtoMember;
 import com.ssafy.backend.club.dto.response.ResponseClubListDto;
 import com.ssafy.backend.club.repository.ClubRepository;
 import com.ssafy.backend.clubMember.domain.ClubMember;
@@ -96,7 +98,7 @@ public class ClubServiceImpl implements ClubService {
                     isRecommendClub = false;
 
                 //  인원이 전부 찼다
-                if (clubs.get(i).getNowCapacity() == clubs.get(i).getMaxCapacity())
+                if (clubs.get(i).getNowCapacity() >= clubs.get(i).getMaxCapacity())
                     isRecommendClub = false;
 
                 //  나의 성별과 모집 성별이 다르다
@@ -129,6 +131,37 @@ public class ClubServiceImpl implements ClubService {
 
         return responseClubListDto;
 
+    }
+
+    @Override
+    public ResponseClubDetailDto clubDetail(Long clubSeq) {
+
+        ResponseClubDetailDto responseClubDetailDto = new ResponseClubDetailDto();
+        responseClubDetailDto.setMembers(new ArrayList<>());
+
+        // TODO : club 찾아서 넣기
+        Club club = clubRepository.findById(clubSeq).orElse(null);
+        responseClubDetailDto.setClub(club);
+
+        // TODO : 해당 club의 멤버 모두 찾아 넣기
+        List<ClubMember> clubMembers = clubMemberRepository.findAllByClubSeq(clubSeq);
+
+        for (int i = 0; i < clubMembers.size(); i++) {
+            if (clubMembers.get(i).getRole().equals("owner") || clubMembers.get(i).getRole().equals("member")) {
+                Member tmpMember = clubMembers.get(i).getMember();
+
+                ResponseClubDetailDtoMember responseClubDetailDtoMember = new ResponseClubDetailDtoMember();
+                responseClubDetailDtoMember.setNickname(tmpMember.getNickname());
+                responseClubDetailDtoMember.setUrl(tmpMember.getUrl());
+                responseClubDetailDtoMember.setAddress(tmpMember.getAddress());
+                responseClubDetailDtoMember.setRole(clubMembers.get(i).getRole());
+
+                responseClubDetailDto.getMembers().add(responseClubDetailDtoMember);
+            }
+        }
+
+
+        return responseClubDetailDto;
     }
 
 }
