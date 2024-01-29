@@ -3,7 +3,10 @@ package com.ssafy.backend.record.service;
 import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
-import com.ssafy.backend.record.dto.request.*;
+import com.ssafy.backend.record.dto.request.RequestRecordModify;
+import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
+import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
+import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
@@ -82,11 +85,11 @@ public class RecordServiceImpl implements RecordService {
         return true;
     }
 
-    public boolean registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto) {
+    public Long registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto) {
         Long recordSeq = requestRegistCommentDto.getSeq();
 
         if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
+            return (long) -1;
         }
 
         RecordDetail recordDetail = RecordDetail.builder()
@@ -96,7 +99,33 @@ public class RecordServiceImpl implements RecordService {
                 .longitude(requestRegistCommentDto.getLongitude())
                 .build();
 
-        recordDetailRepository.save(recordDetail);
+        return recordDetailRepository.save(recordDetail).getSeq();
+    }
+
+    public boolean modifyComment(Long memberSeq, Long recordDetailSeq, String comment) {
+        Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
+
+        if (recordDetailOptional.isEmpty()) {
+            return false;
+        }
+
+        RecordDetail recordDetail = recordDetailOptional.get();
+
+        Long recordSeq = recordDetail.getRecordSeq();
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
+
+        RecordDetail updateRecordDetail = RecordDetail.builder()
+                .seq(recordDetailSeq)
+                .recordSeq(recordSeq)
+                .pointComment(comment)
+                .url(recordDetail.getUrl())
+                .latitude(recordDetail.getLatitude())
+                .longitude(recordDetail.getLongitude())
+                .build();
+
+        recordDetailRepository.save(updateRecordDetail);
 
         return true;
     }
@@ -153,7 +182,7 @@ public class RecordServiceImpl implements RecordService {
             throw new RuntimeException(e);
         }
 
-        RecordDetail upDateRecordDetail = RecordDetail.builder()
+        RecordDetail updateRecordDetail = RecordDetail.builder()
                 .seq(recordDetailSeq)
                 .recordSeq(recordSeq)
                 .url(url)
@@ -162,7 +191,7 @@ public class RecordServiceImpl implements RecordService {
                 .pointComment(recordDetail.getPointComment())
                 .build();
 
-        recordDetailRepository.save(upDateRecordDetail);
+        recordDetailRepository.save(updateRecordDetail);
 
         return true;
     }
