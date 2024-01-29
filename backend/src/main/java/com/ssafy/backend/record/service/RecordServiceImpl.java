@@ -9,7 +9,6 @@ import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -128,34 +127,39 @@ public class RecordServiceImpl implements RecordService {
         return seq;
     }
 
-    @Transactional
     public boolean modifyImage(Long memberSeq, RequestModifyImageDto requestModifyImageDto){
         Long recordDetailSeq = requestModifyImageDto.getSeq();
 
         Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
 
-
-        if(!recordDetailOptional.isPresent()){
+        if(recordDetailOptional.isEmpty()){
             return false;
         }
 
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
-
         if (!validateRecord(recordSeq, memberSeq)) {
             return false;
         }
 
         String url;
-
         try {
             url = s3UploadService.uploadRecordImg(requestModifyImageDto.getMultipartFile(), memberSeq, recordSeq);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        recordDetailRepository.updateUrl(recordDetailSeq, url);
+        RecordDetail upDateRecordDetail = RecordDetail.builder()
+                .seq(recordDetailSeq)
+                .recordSeq(recordSeq)
+                .url(url)
+                .latitude(recordDetail.getLatitude())
+                .longitude(recordDetail.getLongitude())
+                .pointComment(recordDetail.getPointComment())
+                .build();
+
+        recordDetailRepository.save(upDateRecordDetail);
 
         return true;
     }
