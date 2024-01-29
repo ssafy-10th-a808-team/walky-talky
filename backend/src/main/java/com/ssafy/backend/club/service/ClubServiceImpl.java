@@ -51,8 +51,10 @@ public class ClubServiceImpl implements ClubService {
 
         Club savedClub = clubRepository.save(club);
 
-        String tmpUrl = s3UploadService.uploadClubProfileImg(multipartFile, savedClub.getSeq());
-        savedClub.setUrl(tmpUrl);
+        if (!multipartFile.isEmpty()) {
+            String tmpUrl = s3UploadService.uploadClubProfileImg(multipartFile, savedClub.getSeq());
+            savedClub.setUrl(tmpUrl);
+        }
 
         clubRepository.save(savedClub);
 
