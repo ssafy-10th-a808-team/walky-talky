@@ -9,13 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestRegistRecordDto {
-    private Long seq;
-    private String Duration;
-    private Double Distance;
-    private String[][] points;
+public class RequestRecordModify {
     private int starRating;
     private String comment;
-    private String title;
-    private String address;
 }
