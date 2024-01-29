@@ -1,6 +1,9 @@
 package com.ssafy.backend.record.controller;
 
-import com.ssafy.backend.record.dto.request.*;
+import com.ssafy.backend.record.dto.request.RequestRecordModify;
+import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
+import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
+import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
@@ -115,17 +118,16 @@ public class RecordController {
         }
     }
 
-    @PostMapping("/modify-image")
-    public ResponseEntity<?> modifyImage(HttpServletRequest request, @RequestPart("image") MultipartFile multipartFile, @RequestPart("json") RequestModifyImageDto requestModifyImageDto) {
+    @PostMapping("/modify-image/{recordDetailSeq}")
+    public ResponseEntity<?> modifyImage(HttpServletRequest request, @RequestPart("image") MultipartFile multipartFile, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        requestModifyImageDto.setMultipartFile(multipartFile);
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (!recordService.modifyImage(memberSeq, requestModifyImageDto)) {
+            if (!recordService.modifyImage(memberSeq, recordDetailSeq, multipartFile)) {
                 resultMap.put("message", "산책 중 사진 수정에 실패하였습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
@@ -138,16 +140,15 @@ public class RecordController {
         }
     }
 
-    @PostMapping("/delete-image")
-    public ResponseEntity<?> deleteImage(HttpServletRequest request, Long seq) {
+    @PostMapping("/delete-image/{recordDetailSeq}")
+    public ResponseEntity<?> deleteImage(HttpServletRequest request, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
         Map<String, Object> resultMap = new HashMap<>();
-
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (!recordService.deleteImage(memberSeq, seq)) {
+            if (!recordService.deleteImage(memberSeq, recordDetailSeq)) {
                 resultMap.put("message", "산책 중 사진 삭제에 실패하였습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }

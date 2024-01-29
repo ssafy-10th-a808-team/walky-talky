@@ -11,6 +11,7 @@ import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -127,9 +128,7 @@ public class RecordServiceImpl implements RecordService {
         return seq;
     }
 
-    public boolean modifyImage(Long memberSeq, RequestModifyImageDto requestModifyImageDto) {
-        Long recordDetailSeq = requestModifyImageDto.getSeq();
-
+    public boolean modifyImage(Long memberSeq, Long recordDetailSeq, MultipartFile multipartFile) {
         Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
 
         if (recordDetailOptional.isEmpty()) {
@@ -149,7 +148,7 @@ public class RecordServiceImpl implements RecordService {
 
         String url;
         try {
-            url = s3UploadService.uploadRecordImg(requestModifyImageDto.getMultipartFile(), memberSeq, recordSeq);
+            url = s3UploadService.uploadRecordImg(multipartFile, memberSeq, recordSeq);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
