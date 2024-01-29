@@ -1,9 +1,11 @@
 package com.ssafy.backend.record.service;
 
+import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
+import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
@@ -13,6 +15,7 @@ import com.ssafy.backend.region.service.RegionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +29,8 @@ public class RecordServiceImpl implements RecordService {
     private final RecordDetailRepository recordDetailRepository;
 
     private final RegionService regionService;
+
+    private final S3UploadService s3UploadService;
 
     public Long startRecord(Long memberSeq) {
         Record record = Record.builder()
@@ -98,6 +103,33 @@ public class RecordServiceImpl implements RecordService {
         return true;
     }
 
+    public boolean registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto) {
+        Long recordSeq = requestRegistImageDto.getSeq();
+
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
+
+        String url;
+
+        try {
+            url = s3UploadService.uploadRecordImg(requestRegistImageDto.getMultipartFile(), memberSeq, recordSeq);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        RecordDetail recordDetail = RecordDetail.builder()
+                .recordSeq(recordSeq)
+                .url(url)
+                .latitude(requestRegistImageDto.getLatitude())
+                .longitude(requestRegistImageDto.getLongitude())
+                .build();
+
+        recordDetailRepository.save(recordDetail);
+
+        return true;
+    }
+
     public List<ResponseListDto> list(Long memberSeq) {
         return recordRepository.findResponseListDtoByMemberSeq(memberSeq);
     }
@@ -128,7 +160,7 @@ public class RecordServiceImpl implements RecordService {
 
         List<String[]> points = new ArrayList<>();
         String[] p = new String[5];
-        for(RecordDetail recordDetail:recordDetails){
+        for (RecordDetail recordDetail : recordDetails) {
             p[0] = recordDetail.getLatitude();
             p[1] = recordDetail.getLongitude();
             p[2] = recordDetail.getTime();

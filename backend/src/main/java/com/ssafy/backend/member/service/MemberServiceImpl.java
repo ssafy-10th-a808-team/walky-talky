@@ -9,30 +9,39 @@ import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.region.service.RegionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
+    @Value("${security.salt}")
+    private String salt;
+
     private final MemberRepository memberRepository;
-
     private final JwtProvider jwtProvider;
-
     private final RedisDao redisDao;
-
     private final S3UploadService s3UploadService;
+    private final RegionService regionService;
 
-    private static final long atkExp = 900000L; // 15분
+//    private static final long atkExp = 900000L; // 15분
+    private static final long atkExp = 604800000L; // 일주일
     private static final long rtkExp = 604800000L; // 일주일
 
     @Override
@@ -47,9 +56,27 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(rollbackOn = IOException.class)
-    public void localSignup(MultipartFile multipartFile, RequestLocalSignupDto requestLocalSignupDto) throws IOException {
+    public boolean localSignup(MultipartFile multipartFile, RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
 
         Member member = requestLocalSignupDto.toEntity();
+
+        member.setAddress(regionService.findAddress(requestLocalSignupDto.getRegionCd()));
+
+        // TODO : 비밀번호 패턴 매칭
+        // 최소 10자 이상, 대문자, 소문자, 특수문자를 각각 1개 이상 포함하는 정규표현식
+//        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{10,}$";
+//
+//        Pattern pattern = Pattern.compile(regex);
+//        Matcher matcher = pattern.matcher(member.getPassword());
+//
+//        if (!matcher.matches()) {
+//            return false;
+//        }
+
+        // TODO: 비밀번호 암호화
+        String hashedPassword = hashPassword(member.getPassword(), salt.getBytes());
+
+        member.setPassword(hashedPassword);
 
         Member savedMember = memberRepository.save(member);
 
@@ -59,10 +86,12 @@ public class MemberServiceImpl implements MemberService {
 
         memberRepository.save(savedMember);
 
+        return true;
+
     }
 
     @Override
-    public Map<String, String> localLogin(RequestLocalLoginDto loginDto) {
+    public Map<String, String> localLogin(RequestLocalLoginDto loginDto) throws NoSuchAlgorithmException {
         Member member = memberRepository.findByMemberId(loginDto.getMemberId());
         Map<String, String> returnMap = new HashMap<>();
 
@@ -74,7 +103,7 @@ public class MemberServiceImpl implements MemberService {
                 returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
                 return returnMap;
             }
-            if (!loginDto.getPassword().equals(member.getPassword())) { // 비번 틀렸을때
+            if (!hashPassword(loginDto.getPassword(), salt.getBytes()).equals(member.getPassword())) { // 비번 틀렸을때
                 returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
                 return returnMap;
             }
@@ -116,5 +145,30 @@ public class MemberServiceImpl implements MemberService {
 
         return returnMap;
     }
+
+
+    private static String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException {
+        String hashedPassword = null;
+
+        // Salt와 비밀번호를 합침
+        byte[] combined = concatenateByteArrays(password.getBytes(), salt);
+
+        // SHA-256 해시 알고리즘 사용
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(combined);
+
+        // 해시된 값을 Base64로 인코딩
+        hashedPassword = Base64.getEncoder().encodeToString(md.digest());
+
+        return hashedPassword;
+    }
+
+    private static byte[] concatenateByteArrays(byte[] a, byte[] b) {
+        byte[] result = new byte[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
+
 
 }
