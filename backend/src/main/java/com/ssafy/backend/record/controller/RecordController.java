@@ -1,9 +1,6 @@
 package com.ssafy.backend.record.controller;
 
-import com.ssafy.backend.record.dto.request.RequestRecordModify;
-import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
-import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
-import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
+import com.ssafy.backend.record.dto.request.*;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
@@ -99,8 +96,37 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (!recordService.registImage(memberSeq, requestRegistImageDto)) {
+            Long seq = recordService.registImage(memberSeq, requestRegistImageDto);
+            if (seq == -1) {
                 resultMap.put("message", "산책 중 사진 등록에 실패하였습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+
+            Map<String, Object> returnMap = new HashMap<>();
+            returnMap.put("seq", seq);
+            resultMap.put("data", returnMap);
+
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("/modify-image")
+    public ResponseEntity<?> modifyImage(HttpServletRequest request, @RequestPart("image") MultipartFile multipartFile, @RequestPart("json") RequestModifyImageDto requestModifyImageDto) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        requestModifyImageDto.setMultipartFile(multipartFile);
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            if(!recordService.modifyImage(memberSeq, requestModifyImageDto)){
+                resultMap.put("message", "산책 중 사진 수정에 실패하였습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 

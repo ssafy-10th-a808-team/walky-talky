@@ -1,9 +1,6 @@
 package com.ssafy.backend.record.service;
 
-import com.ssafy.backend.record.dto.request.RequestRecordModify;
-import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
-import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
-import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
+import com.ssafy.backend.record.dto.request.*;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 
@@ -17,7 +14,9 @@ public interface RecordService {
 
     boolean registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto);
 
-    boolean registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto);
+    Long registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto);
+
+    boolean modifyImage(Long memberSeq, RequestModifyImageDto requestModifyImageDto);
 
     List<ResponseListDto> list(Long memberSeq);
 

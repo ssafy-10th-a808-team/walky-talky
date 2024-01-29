@@ -3,15 +3,13 @@ package com.ssafy.backend.record.service;
 import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
-import com.ssafy.backend.record.dto.request.RequestRecordModify;
-import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
-import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
-import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
+import com.ssafy.backend.record.dto.request.*;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -103,11 +101,11 @@ public class RecordServiceImpl implements RecordService {
         return true;
     }
 
-    public boolean registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto) {
+    public Long registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto) {
         Long recordSeq = requestRegistImageDto.getSeq();
 
         if (!validateRecord(recordSeq, memberSeq)) {
-            return false;
+            return (long) -1;
         }
 
         String url;
@@ -125,7 +123,39 @@ public class RecordServiceImpl implements RecordService {
                 .longitude(requestRegistImageDto.getLongitude())
                 .build();
 
-        recordDetailRepository.save(recordDetail);
+        Long seq = recordDetailRepository.save(recordDetail).getSeq();
+
+        return seq;
+    }
+
+    @Transactional
+    public boolean modifyImage(Long memberSeq, RequestModifyImageDto requestModifyImageDto){
+        Long recordDetailSeq = requestModifyImageDto.getSeq();
+
+        Optional<RecordDetail> recordDetailOptional = recordDetailRepository.findById(recordDetailSeq);
+
+
+        if(!recordDetailOptional.isPresent()){
+            return false;
+        }
+
+        RecordDetail recordDetail = recordDetailOptional.get();
+
+        Long recordSeq = recordDetail.getRecordSeq();
+
+        if (!validateRecord(recordSeq, memberSeq)) {
+            return false;
+        }
+
+        String url;
+
+        try {
+            url = s3UploadService.uploadRecordImg(requestModifyImageDto.getMultipartFile(), memberSeq, recordSeq);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        recordDetailRepository.updateUrl(recordDetailSeq, url);
 
         return true;
     }
