@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @RestController
@@ -55,19 +56,24 @@ public class MemberController {
     }
 
     @PostMapping("/local-signup")
-    public ResponseEntity<ResponseLocalSignupDto> localSignup(@RequestPart("profileImg") MultipartFile multipartFile, @RequestPart("json") RequestLocalSignupDto requestLocalSignupDto) throws IOException {
+    public ResponseEntity<ResponseLocalSignupDto> localSignup(@RequestPart("profileImg") MultipartFile multipartFile, @RequestPart("json") RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
 
         ResponseLocalSignupDto responseLocalSignupDto = new ResponseLocalSignupDto();
 
-        memberService.localSignup(multipartFile, requestLocalSignupDto);
+        if (memberService.localSignup(multipartFile, requestLocalSignupDto)) {
+            responseLocalSignupDto.setMessage("OK");
+            return ResponseEntity.status(HttpStatus.OK).body(responseLocalSignupDto);
 
-        responseLocalSignupDto.setMessage("OK");
-        return ResponseEntity.status(HttpStatus.OK).body(responseLocalSignupDto);
+        } else {
+            responseLocalSignupDto.setMessage("회원가입 실패");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+
+        }
 
     }
 
     @PostMapping("/local-login")
-    public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto) {
+    public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto) throws NoSuchAlgorithmException {
         Map<String, String> resultMap = memberService.localLogin(loginDto);
 
         try {
