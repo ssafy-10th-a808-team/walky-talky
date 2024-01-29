@@ -13,6 +13,7 @@ import WalkList from '@/views/walk/WalkList.vue'
 // club router 소모임
 import ClubView from '@/views/club/ClubView.vue'
 import ClubMemory from '@/views/club/ClubMemoryView.vue'
+import ClubCreate from '@/views/club/ClubCreateView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
@@ -68,6 +69,11 @@ const router = createRouter({
       path: '/club/memory',
       name: 'club-memory',
       component: ClubMemory
+    },
+    {
+      path: '/club/create',
+      name: 'ClubCreate',
+      component: ClubCreate
     },
 
     // shareboard router 산책공유게시판

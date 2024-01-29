@@ -15,6 +15,7 @@
 <style scoped>
     .button-style {
         border: none;
+        background-color: transparent;
     }
     .icon-style {
         width: 30px;
