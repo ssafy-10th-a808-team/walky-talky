@@ -31,7 +31,7 @@ export const useMemberStore = defineStore('member', () => {
   //회원가입
   const createMember = function (member) {
     axios({
-      url: REST_MEMBER_API,
+      url: REST_MEMBER_API + '/local-signup',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -44,6 +44,7 @@ export const useMemberStore = defineStore('member', () => {
       })
       .catch((err) => {
         console.log(err)
+        console.log(member.id)
       })
   }
 

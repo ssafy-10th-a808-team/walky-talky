@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 // member router 멤버
 import Signup from '@/views/member/Signup.vue'
+import Login from '@/views/member/Login.vue'
 import RecordScrapList from '@/views/member/RecordScrapList.vue'
 import MyLocationView from '@/views/member/MyLocationView.vue'
 
@@ -9,9 +10,9 @@ import MyLocationView from '@/views/member/MyLocationView.vue'
 import DoWalk from '@/views/walk/DoWalk.vue'
 import WalkList from '@/views/walk/WalkList.vue'
 
-// group router 소모임
-import GroupView from '@/views/group/GroupView.vue'
-import GroupMemory from '@/views/group/GroupMemoryView.vue'
+// club router 소모임
+import ClubView from '@/views/club/ClubView.vue'
+import ClubMemory from '@/views/club/ClubMemoryView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
@@ -28,6 +29,11 @@ const router = createRouter({
       path: '/member/local-signup',
       name: 'Signup',
       component: Signup
+    },
+    {
+      path: '/member/local-login',
+      name: 'Login',
+      component: Login
     },
     {
       path: '/mylocation',
@@ -52,29 +58,24 @@ const router = createRouter({
       component: WalkList
     },
 
-    // group router 소모임
+    // club router 소모임
     {
-      path: '/group',
-      name: 'group',
-      component: GroupView
+      path: '/club',
+      name: 'club',
+      component: ClubView
     },
     {
-      path: '/group/memory',
-      name: 'group-memory',
-      component: GroupMemory
+      path: '/club/memory',
+      name: 'club-memory',
+      component: ClubMemory
     },
 
-    // shareboard router 산책공유게시판   
+    // shareboard router 산책공유게시판
     {
       path: '/share-board',
       name: 'share-board',
       component: ShareBoardView
-    },
-
-
-
-
-
+    }
   ]
 })
 

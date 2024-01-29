@@ -2,7 +2,7 @@
   <div id="app">
     <TheHeaderNav />
     <RouterView />
-    <button type="button" class="btn btn-primary">나는 버튼</button>
+    <button type="button" @click="test" class="btn btn-primary">나는 버튼</button>
     <TheFooter />
   </div>
 </template>

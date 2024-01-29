@@ -1,14 +1,12 @@
 <template>
     <div class="card" style="width: 18rem;">
         <div class="card-header">
-            <img src="..." alt="프사"> {{ membername }} {{ createdat }} {{ memberlocation }}
         </div>
-        <img src="..." class="card-img-top" alt="이미지x, 지도 ">
         <div class="col">
             시간 : {{ coursetime }}
         </div>
         <div class="col">
-            거리: {{ coursedistance }}
+            거리: 거리
         </div>
         <div class="card-body">
             <p class="card-text"> {{ content }}</p>
