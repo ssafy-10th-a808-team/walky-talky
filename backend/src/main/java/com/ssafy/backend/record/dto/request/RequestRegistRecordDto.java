@@ -17,5 +17,5 @@ public class RequestRegistRecordDto {
     private int starRating;
     private String comment;
     private String title;
-    private String address;
+    private String regionCd;
 }

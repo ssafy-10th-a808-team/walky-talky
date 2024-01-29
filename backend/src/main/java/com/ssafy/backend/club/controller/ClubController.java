@@ -2,6 +2,7 @@ package com.ssafy.backend.club.controller;
 
 import com.ssafy.backend.club.dto.request.RequestCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
+import com.ssafy.backend.club.dto.response.ResponseClubDetailDto;
 import com.ssafy.backend.club.dto.response.ResponseClubListDto;
 import com.ssafy.backend.club.dto.response.ResponseCheckNameDto;
 import com.ssafy.backend.club.dto.response.ResponseClubCreateDto;
@@ -60,6 +61,16 @@ public class ClubController {
         responseClubListDto.setMessage("OK");
 
         return ResponseEntity.status(HttpStatus.OK).body(responseClubListDto);
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<ResponseClubDetailDto> clubDetail(@RequestParam("clubSeq") String clubSeq) {
+
+        ResponseClubDetailDto responseClubDetailDto = clubService.clubDetail(Long.parseLong(clubSeq));
+
+        responseClubDetailDto.setMessage("OK");
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubDetailDto);
     }
 
 }

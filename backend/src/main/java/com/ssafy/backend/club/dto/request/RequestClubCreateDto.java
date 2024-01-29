@@ -15,7 +15,7 @@ public class RequestClubCreateDto {
 
     private String name;
     private String introduce;
-    private String address;
+    private String regionCd;
     private String young_birth;
     private String old_birth;
     private String gender_type;
@@ -26,9 +26,10 @@ public class RequestClubCreateDto {
         return Club.builder()
                 .seq(null)
                 .name(name)
-                .url("바꿔야 함")
+                .url(null)
                 .introduce(introduce)
-                .regionCd("바꿔야 함")
+                .regionCd(regionCd)
+                .address(null)
                 .youngBirth(young_birth)
                 .oldBirth(old_birth)
                 .genderType(gender_type)
