@@ -1,11 +1,9 @@
 package com.ssafy.backend.record.service;
 
-import com.ssafy.backend.record.dto.request.RequestRecordModify;
-import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
-import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
-import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
+import com.ssafy.backend.record.dto.request.*;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,7 +15,11 @@ public interface RecordService {
 
     boolean registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto);
 
-    boolean registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto);
+    Long registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto);
+
+    boolean modifyImage(Long memberSeq, Long recordDetailSeq, MultipartFile multipartFile);
+
+    boolean deleteImage(Long memberSeq, Long recordDetailSeq);
 
     List<ResponseListDto> list(Long memberSeq);
 

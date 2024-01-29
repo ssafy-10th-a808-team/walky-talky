@@ -99,8 +99,57 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (!recordService.registImage(memberSeq, requestRegistImageDto)) {
+            Long seq = recordService.registImage(memberSeq, requestRegistImageDto);
+            if (seq == -1) {
                 resultMap.put("message", "산책 중 사진 등록에 실패하였습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+
+            Map<String, Object> returnMap = new HashMap<>();
+            returnMap.put("seq", seq);
+            resultMap.put("data", returnMap);
+
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("/modify-image/{recordDetailSeq}")
+    public ResponseEntity<?> modifyImage(HttpServletRequest request, @RequestPart("image") MultipartFile multipartFile, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            if (!recordService.modifyImage(memberSeq, recordDetailSeq, multipartFile)) {
+                resultMap.put("message", "산책 중 사진 수정에 실패하였습니다.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("/delete-image/{recordDetailSeq}")
+    public ResponseEntity<?> deleteImage(HttpServletRequest request, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            if (!recordService.deleteImage(memberSeq, recordDetailSeq)) {
+                resultMap.put("message", "산책 중 사진 삭제에 실패하였습니다.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
