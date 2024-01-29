@@ -55,8 +55,10 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (!recordService.registRecord(memberSeq, requestRegistRecordDto)) {
-                resultMap.put("message", "산책 기록 등록에 실패하였습니다.");
+            try {
+                recordService.registRecord(memberSeq, requestRegistRecordDto);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
@@ -76,8 +78,63 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (!recordService.registComment(memberSeq, requestRegistCommentDto)) {
-                resultMap.put("message", "산책 중 한줄평 등록에 실패하였습니다.");
+            Long seq;
+            try {
+                seq = recordService.registComment(memberSeq, requestRegistCommentDto);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            Map<String, Object> returnMap = new HashMap<>();
+            returnMap.put("seq", seq);
+
+            resultMap.put("message", "OK");
+            resultMap.put("data", returnMap);
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("modify-comment/{recordDetailSeq}")
+    public ResponseEntity<?> registComment(HttpServletRequest request, @RequestBody Map<String, String> map, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String comment = map.get("comment");
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            try {
+                recordService.modifyComment(memberSeq, recordDetailSeq, comment);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("delete-comment/{recordDetailSeq}")
+    public ResponseEntity<?> deleteComment(HttpServletRequest request, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            try {
+                recordService.deleteComment(memberSeq, recordDetailSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
@@ -99,8 +156,63 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (!recordService.registImage(memberSeq, requestRegistImageDto)) {
-                resultMap.put("message", "산책 중 사진 등록에 실패하였습니다.");
+            Long seq;
+            try {
+                seq = recordService.registImage(memberSeq, requestRegistImageDto);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+
+            Map<String, Object> returnMap = new HashMap<>();
+            returnMap.put("seq", seq);
+            resultMap.put("data", returnMap);
+
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("/modify-image/{recordDetailSeq}")
+    public ResponseEntity<?> modifyImage(HttpServletRequest request, @RequestPart("image") MultipartFile multipartFile, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            try {
+                recordService.modifyImage(memberSeq, recordDetailSeq, multipartFile);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("/delete-image/{recordDetailSeq}")
+    public ResponseEntity<?> deleteImage(HttpServletRequest request, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            try {
+                recordService.deleteImage(memberSeq, recordDetailSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
@@ -140,7 +252,15 @@ public class RecordController {
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
-            ResponseViewDto responseViewDto = recordService.view(recordSeq);
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            ResponseViewDto responseViewDto;
+            try {
+                responseViewDto = recordService.view(memberSeq, recordSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
 
             resultMap.put("data", responseViewDto);
             resultMap.put("message", "OK");
@@ -159,14 +279,15 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (recordService.modify(memberSeq, recordSeq, requestRecordModify)) {
-                resultMap.put("message", "OK");
-                return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-            } else {
-                resultMap.put("message", "수정에 실패하였습니다.");
+            try {
+                recordService.modify(memberSeq, recordSeq, requestRecordModify);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {
             resultMap.put("message", msg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
@@ -181,14 +302,15 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            if (recordService.delete(memberSeq, recordSeq)) {
-                resultMap.put("message", "OK");
-                return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-            } else {
-                resultMap.put("message", "삭제에 실패하였습니다.");
+            try {
+                recordService.delete(memberSeq, recordSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {
             resultMap.put("message", msg);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
