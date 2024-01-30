@@ -2,17 +2,14 @@
   <head>
   </head>
     <div>
-        <!-- ======= Contact Section ======= -->
-        <section id="contact" class="contact">
-          <div class="container">
+      <!-- ======= Contact Section ======= -->
+      <section id="contact" class="contact">
+        <div class="container">
 
-        <div class="section-title">
-          <h2>소모임 생성</h2>
-        </div>
-
-        <div class="row">
-        <div class="col-lg-5 d-flex align-items-stretch">
-            
+          <div class="section-title">
+            <h2>소모임 생성</h2>
+          </div>
+          <div class="col-lg-15 d-flex align-items-stretch justify-content-center">
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
             <form action="forms/contact.php" method="post" role="form" class="php-email-form">
                 <div class="row">
@@ -75,7 +72,7 @@
               <div class="form-group col-md-6 mt-3">
                 <label for="name">즉시 가입 여부</label>
                 <div class="row">
-                  <div class="portfolio col-md-6 d-flex justify-content-center">
+                  <div class="portfolio col-md-8 d-flex justify-content-center">
                     <ul id="portfolio-flters">
                       <li data-filter="*" class="filter-active">즉시가입</li>
                       <li data-filter=".filter-app">가입승인</li>
@@ -94,7 +91,7 @@
           </div>
         </div>
           
-        </div>
+        
         
       </div>
     </section><!-- End Contact Section -->
