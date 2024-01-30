@@ -16,13 +16,13 @@ public class ChatMessage extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
-    @JoinColumn(name = "chat_seq")
-    private Chat chatSeq;
+    private Long chatSeq;
 
-    @ManyToOne
-    @JoinColumn(name = "clubmember_seq")
-    private ClubMember clubMember;
+//    @ManyToOne
+//    @JoinColumn(name = "clubmember_seq")
+//    private ClubMember clubMember;
+
+    private Long memberSeq;
     private String content;
     private MessageType type;
     public enum MessageType {

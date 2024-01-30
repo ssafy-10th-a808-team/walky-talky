@@ -24,5 +24,6 @@ public class Chat extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
+
     private Long clubSeq;
 }

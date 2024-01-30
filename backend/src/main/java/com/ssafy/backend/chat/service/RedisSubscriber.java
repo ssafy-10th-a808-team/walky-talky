@@ -16,14 +16,14 @@ public class RedisSubscriber implements MessageListener {
 
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate messagingTemplate;
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, ChatMessage> redisTemplateMessage;
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
+            String publishMessage = (String) redisTemplateMessage.getStringSerializer().deserialize(message.getBody());
 
             ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
-            messagingTemplate.convertAndSend("/sub/chat/" + chatMessage.getChatSeq(), publishMessage);
+            messagingTemplate.convertAndSend("/sub/chat/" + chatMessage.getChatSeq(), chatMessage);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
