@@ -47,7 +47,7 @@ public class ClubMemberServiceImpl implements ClubMemberService {
         }
 
         // 닫혀 있는 소모임입니다.
-        if (!findedClub.isOpenRecruit()) {
+        if (!findedClub.getIsOpenRecruit()) {
             responseClubMemberApplyDto.setMessage("닫혀 있는 소모임입니다.");
             return responseClubMemberApplyDto;
         }
@@ -83,7 +83,7 @@ public class ClubMemberServiceImpl implements ClubMemberService {
         }
 
         // 바로 가입
-        if (findedClub.isAutoRecruit()) {
+        if (findedClub.getIsAutoRecruit()) {
             ClubMember clubMember = ClubMember.builder()
                     .club(findedClub)
                     .member(findedMember)
