@@ -2,9 +2,11 @@ package com.ssafy.backend.clubMember.controller;
 
 import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyAcceptDto;
 import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyDto;
+import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyRejectDto;
 import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyAcceptDto;
 import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyDto;
 import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyListDto;
+import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyRejectDto;
 import com.ssafy.backend.clubMember.service.ClubMemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +67,8 @@ public class ClubMemberController {
         }
     }
 
-//    @PostMapping("/apply/reject")
+    @PostMapping("/apply/reject")
+    public ResponseEntity<ResponseClubMemberApplyRejectDto> clubMemberApplyReject(@RequestBody RequestClubMemberApplyRejectDto requestClubMemberApplyRejectDto, HttpServletRequest httpServletRequest) {
+        return clubMemberService.clubMemberApplyReject(requestClubMemberApplyRejectDto, httpServletRequest);
+    }
 }

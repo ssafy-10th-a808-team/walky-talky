@@ -36,17 +36,17 @@ public class Club extends BaseEntity {
     private String genderType;
 
     @Column(name = "now_capacity")
-    private int nowCapacity;
+    private Integer nowCapacity;
 
     @Column(name = "max_capacity")
-    private int maxCapacity;
+    private Integer maxCapacity;
 
     @Column(name = "is_auto_recruit")
-    private boolean isAutoRecruit;
+    private Boolean isAutoRecruit;
 
     @Column(name = "is_open_recruit")
-    private boolean isOpenRecruit;
+    private Boolean isOpenRecruit;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean isDeleted;
 }
