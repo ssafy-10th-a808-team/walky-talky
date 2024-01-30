@@ -1,6 +1,5 @@
 package com.ssafy.backend.clubMember.controller;
 
-import com.ssafy.backend.club.dto.response.ResponseClubDetailDto;
 import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyAcceptDto;
 import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyDto;
 import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyAcceptDto;
@@ -65,4 +64,6 @@ public class ClubMemberController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubMemberApplyAcceptDto);
         }
     }
+
+//    @PostMapping("/apply/reject")
 }

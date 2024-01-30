@@ -1,11 +1,9 @@
 package com.ssafy.backend.club.service;
 
 import com.ssafy.backend.club.domain.Club;
-import com.ssafy.backend.club.dto.request.RequestCheckNameDto;
+import com.ssafy.backend.club.dto.request.RequestClubCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
-import com.ssafy.backend.club.dto.response.ResponseClubDetailDto;
-import com.ssafy.backend.club.dto.response.ResponseClubDetailDtoMember;
-import com.ssafy.backend.club.dto.response.ResponseClubListDto;
+import com.ssafy.backend.club.dto.response.*;
 import com.ssafy.backend.club.repository.ClubRepository;
 import com.ssafy.backend.clubMember.domain.ClubMember;
 import com.ssafy.backend.clubMember.repository.ClubMemberRepository;
@@ -16,6 +14,8 @@ import com.ssafy.backend.region.service.RegionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,136 +34,199 @@ public class ClubServiceImpl implements ClubService {
     private final S3UploadService s3UploadService;
     private final RegionService regionService;
 
+
     @Override
-    public boolean checkName(RequestCheckNameDto requestCheckNameDto) {
-        return clubRepository.existsByName(requestCheckNameDto.getName());
+    public ResponseEntity<ResponseClubCheckNameDto> clubCheckName(RequestClubCheckNameDto requestClubCheckNameDto) {
+
+        ResponseClubCheckNameDto responseClubCheckNameDto = new ResponseClubCheckNameDto();
+
+        if (requestClubCheckNameDto.getName() == null || requestClubCheckNameDto.getName().isEmpty()) {
+            responseClubCheckNameDto.setMessage("올바르지 않은 입력입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCheckNameDto);
+        }
+
+        if (clubRepository.existsByName(requestClubCheckNameDto.getName())) {
+            responseClubCheckNameDto.setMessage("이미 존재하는 소모임 명입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCheckNameDto);
+        }
+
+        responseClubCheckNameDto.setMessage("OK");
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubCheckNameDto);
     }
+
 
     @Override
     @Transactional(rollbackOn = IOException.class)
-    public void clubCreate(MultipartFile multipartFile, RequestClubCreateDto requestClubCreateDto, HttpServletRequest httpServletRequest) throws IOException {
+    public ResponseEntity<ResponseClubCreateDto> clubCreate(MultipartFile multipartFile, RequestClubCreateDto requestClubCreateDto, HttpServletRequest httpServletRequest) throws IOException {
 
-        //  Club save
+        ResponseClubCreateDto responseClubCreateDto = new ResponseClubCreateDto();
+
+        // save club
         Club club = requestClubCreateDto.toEntity();
-
-        // find address
-        club.setAddress(regionService.findAddress(club.getRegionCd()));
-
         Club savedClub = clubRepository.save(club);
 
-        if (!multipartFile.isEmpty()) {
+        // file data exist
+        if (multipartFile != null && !multipartFile.isEmpty()) {
             String tmpUrl = s3UploadService.uploadClubProfileImg(multipartFile, savedClub.getSeq());
             savedClub.setUrl(tmpUrl);
+            clubRepository.save(savedClub);
         }
 
-        clubRepository.save(savedClub);
+        ///////////////////////////////////////////////////////////////////////////////////////////
 
         //  ClubMember save
         Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
-        Member member = memberRepository.findById(memberSeq).orElse(null);
+        Member findedMember = memberRepository.findById(memberSeq).orElse(null);
 
         ClubMember clubMember = ClubMember.builder()
                 .club(savedClub)
-                .member(member)
+                .member(findedMember)
                 .role("owner")
                 .build();
 
         clubMemberRepository.save(clubMember);
 
+        responseClubCreateDto.setMessage("OK");
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubCreateDto);
     }
 
     @Override
-    public ResponseClubListDto clubList(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<ResponseClubListDto> clubList(HttpServletRequest httpServletRequest) {
 
         ResponseClubListDto responseClubListDto = new ResponseClubListDto();
 
         Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
-        Member member = memberRepository.findById(memberSeq).orElse(null);
-        List<Club> clubs = clubRepository.findAll();
+        Member findedMember = memberRepository.findById(memberSeq).orElse(null);
+        List<Club> allClubs = clubRepository.findAll();
 
         responseClubListDto.setMyClubs(new ArrayList<>());
         responseClubListDto.setRecommendClubs(new ArrayList<>());
-        responseClubListDto.setAllClubs(new ArrayList<>());
+        responseClubListDto.setOtherClubs(new ArrayList<>());
 
-        for (int i = 0; i < clubs.size(); i++) {
-            //  clubs.get(i).getSeq()와 MemberSeq를 가지고 club_member 테이블에 role이 owner 또는 member 라는 것이 있으면 responseClubListDto.getMyClubs().add(clubs)하기
+        for (Club curClub : allClubs) {
 
-            boolean belong = clubMemberRepository.existsByClubSeqAndMemberSeqAndRoleIn(clubs.get(i).getSeq(), memberSeq, Arrays.asList("owner", "member"));
+            // 삭제된 클럽이면 넘기기
+            if (curClub.isDeleted())
+                continue;
+
+            ResponseClubListDtoClub responseClubListDtoClub =
+                    ResponseClubListDtoClub.builder()
+                            .seq(curClub.getSeq())
+                            .name(curClub.getName())
+                            .url(curClub.getUrl())
+                            .introduce(curClub.getIntroduce())
+                            .address(regionService.findAddress(curClub.getRegionCd()))
+                            .youngBirth(curClub.getYoungBirth())
+                            .oldBirth(curClub.getOldBirth())
+                            .genderType(curClub.getGenderType())
+                            .nowCapacity(curClub.getNowCapacity())
+                            .maxCapacity(curClub.getMaxCapacity())
+                            .isAutoRecruit(curClub.isAutoRecruit())
+                            .isOpenRecruit(curClub.isOpenRecruit())
+                            .build();
+
+            boolean belong = clubMemberRepository.existsByClubSeqAndMemberSeqAndRoleIn(curClub.getSeq(), memberSeq, Arrays.asList("owner", "member"));
             if (belong) {
-                responseClubListDto.getMyClubs().add(clubs.get(i));
+                responseClubListDto.getMyClubs().add(responseClubListDtoClub);
             } else {
 
                 boolean isRecommendClub = true;
 
                 // 모집중이 아니다
-                if (!clubs.get(i).isOpenRecruite())
+                if (!curClub.isOpenRecruit())
                     isRecommendClub = false;
 
                 //  인원이 전부 찼다
-                if (clubs.get(i).getNowCapacity() >= clubs.get(i).getMaxCapacity())
+                if (curClub.getNowCapacity() >= curClub.getMaxCapacity())
                     isRecommendClub = false;
 
                 //  나의 성별과 모집 성별이 다르다
-                if (!clubs.get(i).getGenderType().equals("A")) {
-                    if (!clubs.get(i).getGenderType().equals(member.getGender()))
+                if (!curClub.getGenderType().equals("A")) {
+                    if (!curClub.getGenderType().equals(findedMember.getGender()))
                         isRecommendClub = false;
                 }
 
                 // 나이 조건
-                Long memberBirth = Long.parseLong(member.getBirth().substring(0, 4));
-                Long clubOldBirth = Long.parseLong(clubs.get(i).getOldBirth());
-                Long clubYoungBirth = Long.parseLong(clubs.get(i).getYoungBirth());
+                Long memberBirth = Long.parseLong(findedMember.getBirth().substring(0, 4));
+                Long clubOldBirth = Long.parseLong(curClub.getOldBirth());
+                Long clubYoungBirth = Long.parseLong(curClub.getYoungBirth());
 
                 if (memberBirth > clubYoungBirth || memberBirth < clubOldBirth)
                     isRecommendClub = false;
 
                 // 동네 조건
-                if (!clubs.get(i).getRegionCd().equals(member.getRegionCd()))
+                if (!curClub.getRegionCd().equals(findedMember.getRegionCd()))
                     isRecommendClub = false;
 
                 if (isRecommendClub) {
-                    responseClubListDto.getRecommendClubs().add(clubs.get(i));
+                    responseClubListDto.getRecommendClubs().add(responseClubListDtoClub);
                 } else {
-                    responseClubListDto.getAllClubs().add(clubs.get(i));
+                    responseClubListDto.getOtherClubs().add(responseClubListDtoClub);
                 }
 
 
             }
         }
 
-        return responseClubListDto;
+        responseClubListDto.setMessage("OK");
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubListDto);
 
     }
 
     @Override
-    public ResponseClubDetailDto clubDetail(Long clubSeq) {
+    public ResponseEntity<ResponseClubDetailDto> clubDetail(Long clubSeq) {
 
         ResponseClubDetailDto responseClubDetailDto = new ResponseClubDetailDto();
-        responseClubDetailDto.setMembers(new ArrayList<>());
+        responseClubDetailDto.setResponseClubDetailDtoMembers(new ArrayList<>());
 
-        // TODO : club 찾아서 넣기
-        Club club = clubRepository.findById(clubSeq).orElse(null);
-        responseClubDetailDto.setClub(club);
+        // clubSeq의 club을 찾아서 넣기
+        Club findedClub = clubRepository.findById(clubSeq).orElse(null);
 
-        // TODO : 해당 club의 멤버 모두 찾아 넣기
-        List<ClubMember> clubMembers = clubMemberRepository.findAllByClubSeq(clubSeq);
+        if (findedClub == null || findedClub.isDeleted()) {
+            responseClubDetailDto.setMessage("잘못된 소모임번호 입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
+        }
 
-        for (int i = 0; i < clubMembers.size(); i++) {
-            if (clubMembers.get(i).getRole().equals("owner") || clubMembers.get(i).getRole().equals("member")) {
-                Member tmpMember = clubMembers.get(i).getMember();
+        responseClubDetailDto.setResponseClubDetailDtoClub(
+                ResponseClubDetailDtoClub.builder()
+                        .seq(findedClub.getSeq())
+                        .name(findedClub.getName())
+                        .url(findedClub.getUrl())
+                        .introduce(findedClub.getIntroduce())
+                        .address(regionService.findAddress(findedClub.getRegionCd()))
+                        .youngBirth(findedClub.getYoungBirth())
+                        .oldBirth(findedClub.getOldBirth())
+                        .genderType(findedClub.getGenderType())
+                        .nowCapacity(findedClub.getNowCapacity())
+                        .maxCapacity(findedClub.getMaxCapacity())
+                        .isAutoRecruit(findedClub.isAutoRecruit())
+                        .isOpenRecruit(findedClub.isOpenRecruit())
+                        .build()
+        );
 
-                ResponseClubDetailDtoMember responseClubDetailDtoMember = new ResponseClubDetailDtoMember();
-                responseClubDetailDtoMember.setNickname(tmpMember.getNickname());
-                responseClubDetailDtoMember.setUrl(tmpMember.getUrl());
-                responseClubDetailDtoMember.setAddress(tmpMember.getAddress());
-                responseClubDetailDtoMember.setRole(clubMembers.get(i).getRole());
+        // 해당 club의 멤버 모두 찾아 넣기
+        List<ClubMember> findedClubMembers = clubMemberRepository.findAllByClubSeq(clubSeq);
 
-                responseClubDetailDto.getMembers().add(responseClubDetailDtoMember);
+        for (ClubMember findedClubMember : findedClubMembers) {
+            if (findedClubMember.getRole().equals("owner") || findedClubMember.getRole().equals("member")) {
+                Member tmpMember = findedClubMember.getMember();
+
+                ResponseClubDetailDtoMember responseClubDetailDtoMember = ResponseClubDetailDtoMember.builder()
+                        .nickname(tmpMember.getNickname())
+                        .url(tmpMember.getUrl())
+                        .address(regionService.findAddress(tmpMember.getRegionCd()))
+                        .role(findedClubMember.getRole())
+                        .build();
+
+
+                responseClubDetailDto.getResponseClubDetailDtoMembers().add(responseClubDetailDtoMember);
             }
         }
 
+        responseClubDetailDto.setMessage("OK");
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubDetailDto);
 
-        return responseClubDetailDto;
     }
+
 
 }

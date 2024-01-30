@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -20,7 +19,7 @@ public class RequestClubCreateDto {
     private String old_birth;
     private String gender_type;
     private int max_capacity;
-    private boolean is_auto_recruite;
+    private Boolean is_auto_recruit;
 
     public Club toEntity() {
         return Club.builder()
@@ -29,14 +28,13 @@ public class RequestClubCreateDto {
                 .url(null)
                 .introduce(introduce)
                 .regionCd(regionCd)
-                .address(null)
                 .youngBirth(young_birth)
                 .oldBirth(old_birth)
                 .genderType(gender_type)
                 .nowCapacity(1)
                 .maxCapacity(max_capacity)
-                .isAutoRecruite(is_auto_recruite)
-                .isOpenRecruite(true)
+                .isAutoRecruit(is_auto_recruit)
+                .isOpenRecruit(true)
                 .isDeleted(false)
                 .build();
     }

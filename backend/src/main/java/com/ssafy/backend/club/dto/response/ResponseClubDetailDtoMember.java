@@ -1,14 +1,12 @@
 package com.ssafy.backend.club.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ResponseClubDetailDtoMember {
     private String nickname;
     private String url;

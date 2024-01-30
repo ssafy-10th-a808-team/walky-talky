@@ -36,8 +36,6 @@ public class Member extends BaseEntity {
     @Column(name = "region_cd")
     private String regionCd;
 
-    private String address;
-
     @Column(name = "is_alert")
     private boolean isAlert;
 
