@@ -40,13 +40,13 @@ public class MemberServiceImpl implements MemberService {
     private final S3UploadService s3UploadService;
     private final RegionService regionService;
 
-//    private static final long atkExp = 900000L; // 15분
+    //    private static final long atkExp = 900000L; // 15분
     private static final long atkExp = 604800000L; // 일주일
     private static final long rtkExp = 604800000L; // 일주일
 
     @Override
     public boolean checkId(RequestCheckIdDto requestCheckIdDto) {
-        return memberRepository.existsByMemberId(requestCheckIdDto.getMemberId());
+        return memberRepository.existsByMemberId(requestCheckIdDto.getId());
     }
 
     @Override
@@ -60,7 +60,6 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = requestLocalSignupDto.toEntity();
 
-        member.setAddress(regionService.findAddress(requestLocalSignupDto.getRegionCd()));
 
         // TODO : 비밀번호 패턴 매칭
         // 최소 10자 이상, 대문자, 소문자, 특수문자를 각각 1개 이상 포함하는 정규표현식
@@ -80,9 +79,10 @@ public class MemberServiceImpl implements MemberService {
 
         Member savedMember = memberRepository.save(member);
 
-        String tmpUrl = s3UploadService.uploadMemberProfileImg(multipartFile, savedMember.getSeq());
-
-        savedMember.setUrl(tmpUrl);
+        if (!multipartFile.isEmpty()) {
+            String tmpUrl = s3UploadService.uploadMemberProfileImg(multipartFile, savedMember.getSeq());
+            savedMember.setUrl(tmpUrl);
+        }
 
         memberRepository.save(savedMember);
 

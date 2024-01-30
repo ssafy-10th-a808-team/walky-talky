@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ResponseClubListDto {
     private String message;
-    private List<Club> myClubs;
-    private List<Club> recommendClubs;
-    private List<Club> allClubs;
+    private List<ResponseClubListDtoClub> myClubs;
+    private List<ResponseClubListDtoClub> recommendClubs;
+    private List<ResponseClubListDtoClub> otherClubs;
 }
