@@ -1,6 +1,7 @@
 package com.ssafy.backend.shareBoard.controller;
 
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
+import com.ssafy.backend.shareBoard.dto.response.ResponseLikeDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardDto;
 import com.ssafy.backend.shareBoard.service.ShareBoardService;
@@ -29,6 +30,12 @@ public class ShareBoardController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
+            try{
+                shareBoardService.write(memberSeq, requestShareBoardWriteDto);
+            }catch (Exception e){
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
 
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
@@ -48,7 +55,7 @@ public class ShareBoardController {
             try {
                 contentList = shareBoardService.listContent();
             } catch (Exception e) {
-                resultMap.put("message", msg);
+                resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
@@ -72,11 +79,36 @@ public class ShareBoardController {
             try {
                 memberList = shareBoardService.listMember();
             } catch (Exception e) {
-                resultMap.put("message", msg);
+                resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
             resultMap.put("data", memberList);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/list/like")
+    public ResponseEntity<?> listLike(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            List<ResponseLikeDto> likeList;
+            try {
+                likeList = shareBoardService.listLike(memberSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", likeList);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {
