@@ -2,10 +2,9 @@ package com.ssafy.backend.club.controller;
 
 import com.ssafy.backend.club.dto.request.RequestClubCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
-import com.ssafy.backend.club.dto.response.ResponseClubCheckNameDto;
-import com.ssafy.backend.club.dto.response.ResponseClubDetailDto;
-import com.ssafy.backend.club.dto.response.ResponseClubListDto;
-import com.ssafy.backend.club.dto.response.ResponseClubCreateDto;
+import com.ssafy.backend.club.dto.request.RequestClubDeleteDto;
+import com.ssafy.backend.club.dto.request.RequestClubModifyDto;
+import com.ssafy.backend.club.dto.response.*;
 import com.ssafy.backend.club.service.ClubService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,8 @@ public class ClubController {
 
     @PostMapping("/create")
     public ResponseEntity<ResponseClubCreateDto> clubCreate(
-            @RequestPart("profileImg") MultipartFile multipartFile, @RequestPart("json") RequestClubCreateDto requestClubCreateDto,
+            @RequestPart("profileImg") MultipartFile multipartFile,
+            @RequestPart("json") RequestClubCreateDto requestClubCreateDto,
             HttpServletRequest httpServletRequest) throws IOException {
         return clubService.clubCreate(multipartFile, requestClubCreateDto, httpServletRequest);
     }
@@ -43,6 +43,23 @@ public class ClubController {
     @GetMapping("/detail")
     public ResponseEntity<ResponseClubDetailDto> clubDetail(@RequestParam("clubSeq") Long clubSeq) {
         return clubService.clubDetail(clubSeq);
+    }
+
+    @PostMapping("/modify")
+    public ResponseEntity<ResponseClubModifyDto> clubModify(
+            @RequestPart("profileImg") MultipartFile multipartFile,
+            @RequestPart("json") RequestClubModifyDto requestClubModifyDto,
+            HttpServletRequest httpServletRequest) throws IOException {
+        return clubService.clubModify(multipartFile, requestClubModifyDto, httpServletRequest);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<ResponseClubDeleteDto> clubDelete(
+            @RequestBody RequestClubDeleteDto requestClubDeleteDto,
+            HttpServletRequest httpServletRequest) {
+
+        return clubService.clubDelete(requestClubDeleteDto, httpServletRequest);
+
     }
 
 }

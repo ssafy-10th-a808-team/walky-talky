@@ -4,6 +4,7 @@ import com.ssafy.backend.clubMember.domain.ClubMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -21,4 +22,6 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     List<ClubMember> findAllByClubSeqAndRole(Long clubSeq, String role);
 
     void deleteByClubSeqAndMemberSeq(Long clubSeq, Long memberSeq);
+
+    List<ClubMember> findAllByClubSeqAndRoleIn(Long clubSeq, List<String> list);
 }
