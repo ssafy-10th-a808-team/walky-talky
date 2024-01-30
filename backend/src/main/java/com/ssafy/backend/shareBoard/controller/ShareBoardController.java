@@ -3,6 +3,7 @@ package com.ssafy.backend.shareBoard.controller;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseLikeDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
+import com.ssafy.backend.shareBoard.dto.response.ResponseScrapDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardDto;
 import com.ssafy.backend.shareBoard.service.ShareBoardService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -109,6 +110,31 @@ public class ShareBoardController {
             }
 
             resultMap.put("data", likeList);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/list/scrap")
+    public ResponseEntity<?> listScrap(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            List<ResponseScrapDto> scrapList;
+            try {
+                scrapList = shareBoardService.listScrap(memberSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", scrapList);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {

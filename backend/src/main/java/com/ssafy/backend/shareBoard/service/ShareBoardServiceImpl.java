@@ -5,12 +5,15 @@ import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
+import com.ssafy.backend.record.repository.ScrapRepository;
 import com.ssafy.backend.region.service.RegionService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
+import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardScrapMapping;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseLikeDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
+import com.ssafy.backend.shareBoard.dto.response.ResponseScrapDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardDto;
 import com.ssafy.backend.shareBoard.repository.ShareBoardCommentRepository;
 import com.ssafy.backend.shareBoard.repository.ShareBoardLikeRepository;
@@ -39,6 +42,8 @@ public class ShareBoardServiceImpl implements ShareBoardService {
     private final RecordDetailRepository recordDetailRepository;
 
     private final RegionService regionService;
+
+    private final ScrapRepository scrapRepository;
 
     @Override
     public void write(Long memberSeq, RequestShareBoardWriteDto requestShareBoardWriteDto) throws WTException {
@@ -70,7 +75,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 responseShareBoardDto.setTitle(shareBoard.getTitle());
                 responseShareBoardDto.setCreate_at(String.valueOf(shareBoard.getCreatedAt()));
                 responseShareBoardDto.setHit(shareBoard.getHit());
-                responseShareBoardDto.setCommentCount(Math.toIntExact(shareBoardCommentRepository.countByShareBoardSeqAndIsDeletedFalse(shareBoard.getSeq())));
+                responseShareBoardDto.setCommentCount(shareBoardCommentRepository.countByShareBoardSeqAndIsDeletedFalse(shareBoard.getSeq()));
 
                 list.add(responseShareBoardDto);
             } catch (Exception e) {
@@ -87,13 +92,13 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         List<ResponseMemberDto> list = new ArrayList<>();
 
         ResponseMemberDto responseMemberDto = new ResponseMemberDto();
-        for(ShareBoardMemberMapping shareBoardMapping:boardList){
-            try{
+        for (ShareBoardMemberMapping shareBoardMapping : boardList) {
+            try {
                 Long shareBoardSeq = shareBoardMapping.getSeq();
                 responseMemberDto.setShareBoardSeq(shareBoardSeq);
 
                 Optional<Member> m = memberRepository.findById(shareBoardMapping.getMemberSeq());
-                if(m.isEmpty()){
+                if (m.isEmpty()) {
                     throw new WTException("멤버 null"); // Todo : 나중에 고치기
                 }
 
@@ -102,7 +107,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 responseMemberDto.setProfilePic(member.getUrl());
 
                 list.add(responseMemberDto);
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new WTException(e.getMessage()); // Todo : 고치기
             }
         }
@@ -116,18 +121,46 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         List<ResponseLikeDto> list = new ArrayList<>();
 
         ResponseLikeDto responseLikeDto = new ResponseLikeDto();
-        for(ShareBoardMemberMapping shareBoardMapping:boardList){
-            try{
+        for (ShareBoardMemberMapping shareBoardMapping : boardList) {
+            try {
                 Long shareBoardSeq = shareBoardMapping.getSeq();
 
                 responseLikeDto.setShareBoardSeq(shareBoardSeq);
-                responseLikeDto.setLikeCount(Math.toIntExact(shareBoardLikeRepository.countAllByShareBoardSeq(shareBoardSeq)));
+                responseLikeDto.setLikeCount(shareBoardLikeRepository.countAllByShareBoardSeq(shareBoardSeq));
                 responseLikeDto.setLiked(shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq));
 
                 list.add(responseLikeDto);
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new WTException(e.getMessage()); // Todo : 바꾸기
             }
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<ResponseScrapDto> listScrap(Long memberSeq) throws WTException {
+        List<ShareBoardScrapMapping> boardList = shareBoardRepository.findSeqAndRecordSeqByIsDeletedFalse();
+        List<ResponseScrapDto> list = new ArrayList<>();
+
+        ResponseScrapDto responseScrapDto = new ResponseScrapDto();
+        for (ShareBoardScrapMapping shareBoardScrapMapping : boardList) {
+            try {
+                Long shareBoardSeq = shareBoardScrapMapping.getSeq();
+
+                responseScrapDto.setShareBoardSeq(shareBoardSeq);
+
+                Long recordSeq = shareBoardScrapMapping.getRecordSeq();
+                responseScrapDto.setRecordSeq(recordSeq);
+                responseScrapDto.setScraped(scrapRepository.existsByRecordSeqAndMemberSeq(recordSeq, memberSeq));
+
+                responseScrapDto.setScrapCount(scrapRepository.countAllByRecordSeq(recordSeq));
+
+                list.add(responseScrapDto);
+            } catch (Exception e) {
+                throw new WTException(e.getMessage()); // Todo : 바꾸기
+            }
+
         }
 
         return list;
