@@ -47,8 +47,4 @@ public class ChatServiceImpl implements ChatService {
             topics.put(clubSeq.toString(), topic);
         }
     }
-
-    public ChannelTopic getTopic(Long clubSeq) {
-        return topics.get(clubSeq.toString());
-    }
 }
