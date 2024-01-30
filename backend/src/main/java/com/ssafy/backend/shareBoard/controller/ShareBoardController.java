@@ -1,6 +1,8 @@
 package com.ssafy.backend.shareBoard.controller;
 
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
+import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
+import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardDto;
 import com.ssafy.backend.shareBoard.service.ShareBoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -41,10 +44,39 @@ public class ShareBoardController {
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
-            Long memberSeq = (Long) request.getAttribute("seq");
+            List<ResponseShareBoardDto> contentList;
+            try {
+                contentList = shareBoardService.listContent();
+            } catch (Exception e) {
+                resultMap.put("message", msg);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
 
-            System.out.println("memberSeq = " + memberSeq);
+            resultMap.put("data", contentList);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
 
+    @GetMapping("/list/member")
+    public ResponseEntity<?> listMember(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            List<ResponseMemberDto> memberList;
+
+            try {
+                memberList = shareBoardService.listMember();
+            } catch (Exception e) {
+                resultMap.put("message", msg);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", memberList);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {

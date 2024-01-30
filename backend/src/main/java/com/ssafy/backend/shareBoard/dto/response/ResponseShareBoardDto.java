@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseShareBoardDto {
     private Long shareBoardSeq;
+    private Long recordSeq;
     private String title;
     private String create_at;
     private int hit;
