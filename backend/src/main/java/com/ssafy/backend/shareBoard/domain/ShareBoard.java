@@ -30,31 +30,21 @@ public class ShareBoard extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "like_count")
-    @ColumnDefault("0")
-    private int likeCount;
-
     @Column(name = "hit")
     @ColumnDefault("0")
     private int hit;
-
-    @Column(name = "comment_count")
-    @ColumnDefault("0")
-    private int commentCount;
 
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private boolean isDeleted;
 
     @Builder
-    public ShareBoard(Long seq, Long memberSeq, Long recordSeq, String title, String content, int likeCount, int commentCount, int hit, boolean isDeleted) {
+    public ShareBoard(Long seq, Long memberSeq, Long recordSeq, String title, String content, int hit, boolean isDeleted) {
         this.seq = seq;
         this.memberSeq = memberSeq;
         this.recordSeq = recordSeq;
         this.title = title;
         this.content = content;
-        this.likeCount = likeCount;
-        this.commentCount = commentCount;
         this.hit = hit;
         this.isDeleted = isDeleted;
     }
