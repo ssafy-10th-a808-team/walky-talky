@@ -1,5 +1,6 @@
 package com.ssafy.backend.global.config;
 
+import com.ssafy.backend.chat.domain.ChatMessage;
 import com.ssafy.backend.chat.service.RedisSubscriber;
 import com.ssafy.backend.global.util.RedisDao;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +34,7 @@ public class RedisConfig {
 
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
 
         return redisTemplate;
     }
@@ -43,6 +44,16 @@ public class RedisConfig {
         return new RedisDao();
     }
 
+    @Bean
+    public RedisTemplate<String, ChatMessage> redisTemplateMessage(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, ChatMessage> redisTemplateMessage = new RedisTemplate<>();
+
+        redisTemplateMessage.setConnectionFactory(connectionFactory);
+        redisTemplateMessage.setKeySerializer(new StringRedisSerializer());        // Key Serializer
+        redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));      // Value Serializer
+
+        return redisTemplateMessage;
+    }
     @Bean
     public RedisMessageListenerContainer redisMessageListenerContainer(
             RedisConnectionFactory connectionFactory
