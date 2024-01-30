@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface ChatService {
     void createChatRoom(Long clubSeq);
-    ChannelTopic getTopic(Long clubSeq);
     void enterChatRoom(Long clubSeq);
 }
