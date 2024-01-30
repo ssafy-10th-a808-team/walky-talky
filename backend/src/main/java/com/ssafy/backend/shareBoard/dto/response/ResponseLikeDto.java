@@ -1,4 +1,4 @@
-package com.ssafy.backend.club.dto.request;
+package com.ssafy.backend.shareBoard.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestCheckNameDto {
-    private String name;
+public class ResponseLikeDto {
+    private Long shareBoardSeq;
+    private boolean isLiked;
+    private int likeCount;
 }
