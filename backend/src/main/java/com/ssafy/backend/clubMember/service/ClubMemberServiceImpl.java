@@ -12,6 +12,7 @@ import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.region.service.RegionService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -202,6 +203,7 @@ public class ClubMemberServiceImpl implements ClubMemberService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<ResponseClubMemberApplyRejectDto> clubMemberApplyReject(RequestClubMemberApplyRejectDto requestClubMemberApplyRejectDto, HttpServletRequest httpServletRequest) {
         ResponseClubMemberApplyRejectDto responseClubMemberApplyRejectDto;
 
@@ -232,6 +234,11 @@ public class ClubMemberServiceImpl implements ClubMemberService {
 
         clubMemberRepository.deleteByClubSeqAndMemberSeq(applicantClubSeq, applicantMemberSeq);
 
+        responseClubMemberApplyRejectDto = ResponseClubMemberApplyRejectDto.builder()
+                .message("OK")
+                .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubMemberApplyRejectDto);
 
     }
 }
