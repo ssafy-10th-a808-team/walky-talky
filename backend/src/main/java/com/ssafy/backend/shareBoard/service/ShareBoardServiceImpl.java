@@ -9,6 +9,7 @@ import com.ssafy.backend.region.service.RegionService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
+import com.ssafy.backend.shareBoard.dto.response.ResponseLikeDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardDto;
 import com.ssafy.backend.shareBoard.repository.ShareBoardCommentRepository;
@@ -103,6 +104,29 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 list.add(responseMemberDto);
             }catch (Exception e){
                 throw new WTException(e.getMessage()); // Todo : 고치기
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<ResponseLikeDto> listLike(Long memberSeq) throws WTException {
+        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalse();
+        List<ResponseLikeDto> list = new ArrayList<>();
+
+        ResponseLikeDto responseLikeDto = new ResponseLikeDto();
+        for(ShareBoardMemberMapping shareBoardMapping:boardList){
+            try{
+                Long shareBoardSeq = shareBoardMapping.getSeq();
+
+                responseLikeDto.setShareBoardSeq(shareBoardSeq);
+                responseLikeDto.setLikeCount(Math.toIntExact(shareBoardLikeRepository.countAllByShareBoardSeq(shareBoardSeq)));
+                responseLikeDto.setLiked(shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq));
+
+                list.add(responseLikeDto);
+            }catch (Exception e){
+                throw new WTException(e.getMessage()); // Todo : 바꾸기
             }
         }
 

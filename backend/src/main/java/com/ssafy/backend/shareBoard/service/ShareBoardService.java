@@ -2,6 +2,7 @@ package com.ssafy.backend.shareBoard.service;
 
 import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
+import com.ssafy.backend.shareBoard.dto.response.ResponseLikeDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardDto;
 
@@ -13,4 +14,6 @@ public interface ShareBoardService {
     List<ResponseShareBoardDto> listContent() throws WTException;
 
     List<ResponseMemberDto> listMember() throws WTException;
+
+    List<ResponseLikeDto> listLike(Long memberSeq) throws WTException;
 }
