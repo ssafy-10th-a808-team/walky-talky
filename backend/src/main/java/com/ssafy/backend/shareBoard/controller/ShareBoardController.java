@@ -1,7 +1,6 @@
 package com.ssafy.backend.shareBoard.controller;
 
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardListDto;
 import com.ssafy.backend.shareBoard.service.ShareBoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -28,12 +26,6 @@ public class ShareBoardController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            try {
-                shareBoardService.write(memberSeq, requestShareBoardWriteDto);
-            } catch (Exception e) {
-                resultMap.put("msg", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
 
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
@@ -43,22 +35,23 @@ public class ShareBoardController {
         }
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> list() {
+    @GetMapping("/list/content")
+    public ResponseEntity<?> listContent(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        List<ResponseShareBoardListDto> list;
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
 
-        try {
-            list = shareBoardService.list();
-        } catch (Exception e) {
-            resultMap.put("msg", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            System.out.println("memberSeq = " + memberSeq);
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
         }
-
-        resultMap.put("data", list);
-        resultMap.put("message", "OK");
-        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
+
 
 }
