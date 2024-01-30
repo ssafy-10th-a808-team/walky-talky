@@ -1,164 +1,104 @@
 <template>
+  <head>
+  </head>
     <div>
-    <br />
-        <h1>모임 정보</h1>
-    <br />
-    <fieldset>
-      <form>
-        <!-- 모임명 -->
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <label for="inputPassword6" class="col-form-label">모임명</label>
-          </div>
-          <div class="col-auto">
-            <input
-              v-model.trim="clubname"
-              type="text"
-              class="form-control"
-              
-              style="width: 18rem"
-            />
-          </div>
-          <div class="col-auto">
-            <button type="button" class="btn btn-primary mb-3" @click="checkDuplicate('id')">
-              중복확인
-            </button>
-          </div>
-        </div>
-        <!-- 소개글 -->
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <label for="inputPassword6" class="col-form-label">소개글</label>
-          </div>
-          <div class="col-auto">
-            <input
-              v-model.trim="introduce"
-              type="textarea"
-              class="form-control-lg"
-              
-              style="width: 18rem"
-            />
-          </div>
+        <!-- ======= Contact Section ======= -->
+        <section id="contact" class="contact">
+          <div class="container">
+
+        <div class="section-title">
+          <h2>소모임 생성</h2>
         </div>
 
-        <!-- 내 동네 -->
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <label for="inputPassword6" class="col-form-label">내 동네</label>
-          </div>
-          <div class="col-auto">
-            <input
-              v-model.trim="region_cd"
-              type="text"
-              class="form-control"
+        <div class="row">
+        <div class="col-lg-5 d-flex align-items-stretch">
+            
+          <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
+            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+                <div class="row">
+                  <div class="form-group col-md-8">
+                    <label for="name">모임명</label>
+                    <input type="text" name="name" class="form-control" id="name" required>
+                  </div>
+                  <div class="col-md-4 cta-btn-container text-center">
+                    <a class="cta-btn align-middle" href="#">중복 확인</a>
+                  </div>
+                  
+                  <div class="form-group mt-3">
+                    <label for="name">소개글</label>
+                    <textarea class="form-control" name="message" rows="10" required></textarea>
+                  </div>
               
-              style="width: 18rem"
-            />
-          </div>
-          <div class="col-auto">
-            <ButtonWithIcon 
-            :selectedIcon="locationIcon"
-            />
+
+                    <div class="form-group col-md-6">
+                      <label for="name">내 동네</label>
+                      <input type="text" name="name" class="form-control" id="name" required>
+                    </div>
+                    <div class="col-md-4">
+                      
+                      <ButtonWithIcon 
+                      :selectedIcon="locationIcon"
+                      />
+                    </div>
+                
+
+                  <div class="row">
+                    <div class="form-group col-md-5 mt-3 mt-md-0">
+                      <label for="name">시작 연령</label>
+                      <input type="email" class="form-control" name="email" id="email" required>
+                    </div>
+                    <div class="form-group col-md-5 mt-3 mt-md-0">
+                      <label for="name">늙은 나이 </label>
+                      <input type="email" class="form-control" name="email" id="email" required>
+                    </div>
+                  </div>
+
+              </div>
+              <div class="form-group col-md-6 mt-3">
+                <label for="name">성별</label>
+                <div class="row">
+                  <div class="portfolio col-md-6 d-flex justify-content-center">
+                    <ul id="portfolio-flters">
+                      <li data-filter="*" class="filter-active">남</li>
+                      <li data-filter=".filter-app">여</li>
+                      <li data-filter=".filter-card">무관</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group col-md-8">
+                    <label for="name">최대인원</label>
+                    <input type="text" name="name" class="form-control" id="name" required>
+                  </div>
+
+              <div class="form-group col-md-6 mt-3">
+                <label for="name">즉시 가입 여부</label>
+                <div class="row">
+                  <div class="portfolio col-md-6 d-flex justify-content-center">
+                    <ul id="portfolio-flters">
+                      <li data-filter="*" class="filter-active">즉시가입</li>
+                      <li data-filter=".filter-app">가입승인</li>
+                    </ul>
+                  </div>
+                </div>
+                  
+              </div>
+                  <div class="my-3">
+                    <div class="loading">Loading</div>
+                    <div class="error-message"></div>
+                    <div class="sent-message">Your message has been sent. Thank you!</div>
+                  </div>
+                  <div class="text-center"><button type="submit">모임 생성</button></div>
+                </form>
           </div>
         </div>
-
-        <!-- 가입년생 -->
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <label for="inputPassword6" class="col-form-label">가입연령</label>
-          </div>
-          <div class="col-auto">
-            <input
-              v-model.trim="young_birth"
-              type="text"
-              class="form-control"
-              
-              style="width: 10rem"
-            />
-          </div>
-          ~
-          <div class="col-auto">
-            <input
-              v-model.trim="old_birth"
-              type="text"
-              class="form-control"
-              
-              style="width: 10rem"
-            />
-          </div>
-
+          
         </div>
-
-        <!-- 성별 -->
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <label for="inputPassword6" class="col-form-label">성별</label>
-          </div>
-          <div class="col-auto">
-            <input
-              v-model.trim="gender_type"
-              type="text"
-              class="form-control"
-              
-              style="width: 18rem"
-            />
-          </div>
-        </div>
-
-        <!-- 최대인원 -->
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <label for="inputPassword6" class="col-form-label">최대인원</label>
-          </div>
-          <div class="col-auto">
-            <input
-              v-model.trim="max_capacity"
-              type="number"
-              class="form-control"
-              
-              style="width: 18rem"
-            />
-          </div>
-        </div>
-
-        <!-- 즉시 가입 여부 -->
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <label for="inputPassword6" class="col-form-label">즉시 가입 여부</label>
-          </div>
-          <div class="col-auto">
-            <input
-              v-model="is_auto_recruite"
-              type="radio"
-              class="form-check-input"
-              value="true"
-              id="auto_recruite"
-            /> <label class="form-check-label" for="auto_recruite">즉시가입</label>
-            <input
-              v-model="is_auto_recruite"
-              type="radio"
-              class="form-check-input"
-              value="false"
-              id="no_auto_recruite"
-            /> <label class="form-check-label" for="no_auto_recruite">가입승인</label>
-
-          </div>
-        </div>        
-
-        <!-- 취소, 회원가입 버튼 -->
-        <div class="row g-3 align-items-center">
-          <div class="col-auto">
-            <button type="button" class="btn btn-outline-secondary" @click="cancelRegistration">
-              취소
-            </button>
-          </div>
-          <div class="col-auto">
-            <button type="submit" class="btn btn-outline-primary" @click="addClub">모임 생성</button>
-          </div>
-        </div>
-
-        </form>
-    </fieldset>
+        
+      </div>
+    </section><!-- End Contact Section -->
+ 
     </div>
 
 </template>
