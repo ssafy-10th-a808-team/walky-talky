@@ -1,10 +1,10 @@
 package com.ssafy.backend.club.controller;
 
-import com.ssafy.backend.club.dto.request.RequestCheckNameDto;
+import com.ssafy.backend.club.dto.request.RequestClubCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
+import com.ssafy.backend.club.dto.response.ResponseClubCheckNameDto;
 import com.ssafy.backend.club.dto.response.ResponseClubDetailDto;
 import com.ssafy.backend.club.dto.response.ResponseClubListDto;
-import com.ssafy.backend.club.dto.response.ResponseCheckNameDto;
 import com.ssafy.backend.club.dto.response.ResponseClubCreateDto;
 import com.ssafy.backend.club.service.ClubService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,53 +24,25 @@ public class ClubController {
     private final ClubService clubService;
 
     @PostMapping("/check-name")
-    public ResponseEntity<ResponseCheckNameDto> checkName(@RequestBody RequestCheckNameDto requestCheckNameDto) {
-
-        ResponseCheckNameDto responseCheckNameDto = new ResponseCheckNameDto();
-
-        if (clubService.checkName(requestCheckNameDto)) {
-            responseCheckNameDto.setMessage("이미 존재하는 소모임 명입니다.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckNameDto);
-        } else {
-            responseCheckNameDto.setMessage("OK");
-            return ResponseEntity.status(HttpStatus.OK).body(responseCheckNameDto);
-        }
+    public ResponseEntity<ResponseClubCheckNameDto> clubCheckName(@RequestBody RequestClubCheckNameDto requestClubCheckNameDto) {
+        return clubService.clubCheckName(requestClubCheckNameDto);
     }
 
     @PostMapping("/create")
     public ResponseEntity<ResponseClubCreateDto> clubCreate(
-            @RequestPart("profileImg") MultipartFile multipartFile,
-            @RequestPart("json") RequestClubCreateDto requestClubCreateDto,
+            @RequestPart("profileImg") MultipartFile multipartFile, @RequestPart("json") RequestClubCreateDto requestClubCreateDto,
             HttpServletRequest httpServletRequest) throws IOException {
-
-        ResponseClubCreateDto responseClubCreateDto = new ResponseClubCreateDto();
-
-        clubService.clubCreate(multipartFile, requestClubCreateDto, httpServletRequest);
-
-        responseClubCreateDto.setMessage("OK");
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseClubCreateDto);
-
+        return clubService.clubCreate(multipartFile, requestClubCreateDto, httpServletRequest);
     }
 
     @GetMapping("/list")
     public ResponseEntity<ResponseClubListDto> clubList(HttpServletRequest httpServletRequest) {
-
-        ResponseClubListDto responseClubListDto = clubService.clubList(httpServletRequest);
-
-        responseClubListDto.setMessage("OK");
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseClubListDto);
+        return clubService.clubList(httpServletRequest);
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<ResponseClubDetailDto> clubDetail(@RequestParam("clubSeq") String clubSeq) {
-
-        ResponseClubDetailDto responseClubDetailDto = clubService.clubDetail(Long.parseLong(clubSeq));
-
-        responseClubDetailDto.setMessage("OK");
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseClubDetailDto);
+    public ResponseEntity<ResponseClubDetailDto> clubDetail(@RequestParam("clubSeq") Long clubSeq) {
+        return clubService.clubDetail(clubSeq);
     }
 
 }
