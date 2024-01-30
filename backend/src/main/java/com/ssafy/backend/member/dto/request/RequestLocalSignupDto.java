@@ -29,7 +29,6 @@ public class RequestLocalSignupDto {
                 .url(null)
                 .introduce(introduce)
                 .regionCd(regionCd)
-                .address(null)
                 .isAlert(true)
                 .isDeleted(false)
                 .build();

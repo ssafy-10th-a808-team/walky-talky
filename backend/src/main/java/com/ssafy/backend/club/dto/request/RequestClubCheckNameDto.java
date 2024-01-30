@@ -1,4 +1,4 @@
-package com.ssafy.backend.club.dto.response;
+package com.ssafy.backend.club.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseCheckNameDto {
-    private String message;
+public class RequestClubCheckNameDto {
+    private String name;
 }
