@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseCheckNameDto {
+public class ResponseClubCheckNameDto {
     private String message;
 }

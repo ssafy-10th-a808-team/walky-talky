@@ -26,9 +26,6 @@ public class Club extends BaseEntity {
     @Column(name = "region_cd")
     private String regionCd;
 
-    @Column(name = "address")
-    private String address;
-
     @Column(name = "young_birth")
     private String youngBirth;
 
@@ -44,11 +41,11 @@ public class Club extends BaseEntity {
     @Column(name = "max_capacity")
     private int maxCapacity;
 
-    @Column(name = "is_auto_recruite")
-    private boolean isAutoRecruite;
+    @Column(name = "is_auto_recruit")
+    private boolean isAutoRecruit;
 
-    @Column(name = "is_open_recruite")
-    private boolean isOpenRecruite;
+    @Column(name = "is_open_recruit")
+    private boolean isOpenRecruit;
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
