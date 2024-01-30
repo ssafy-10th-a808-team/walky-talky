@@ -1,10 +1,6 @@
 package com.ssafy.backend.club.dto.response;
 
-import com.ssafy.backend.club.domain.Club;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,11 +8,10 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ResponseClubDetailDto {
 
     private String message;
-
-    private Club club;
-
-    private List<ResponseClubDetailDtoMember> members;
+    private ResponseClubDetailDtoClub responseClubDetailDtoClub;
+    private List<ResponseClubDetailDtoMember> responseClubDetailDtoMembers;
 }

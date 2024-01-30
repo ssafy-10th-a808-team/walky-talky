@@ -60,7 +60,6 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = requestLocalSignupDto.toEntity();
 
-        member.setAddress(regionService.findAddress(requestLocalSignupDto.getRegionCd()));
 
         // TODO : 비밀번호 패턴 매칭
         // 최소 10자 이상, 대문자, 소문자, 특수문자를 각각 1개 이상 포함하는 정규표현식
