@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ShareBoardLikeRepository extends JpaRepository<ShareBoardLike, Long> {
 
-    Long countAllByShareBoardSeq(Long shareBoardSeq);
+    int countAllByShareBoardSeq(Long shareBoardSeq);
 
     boolean existsByShareBoardSeqAndMemberSeq(Long shareBoardSeq, Long memberSeq);
 }

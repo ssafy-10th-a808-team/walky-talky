@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ShareBoardCommentRepository extends JpaRepository<ShareBoardComment, Long> {
 
-    Long countByShareBoardSeqAndIsDeletedFalse(Long shareBoardSeq);
+    int countByShareBoardSeqAndIsDeletedFalse(Long shareBoardSeq);
 
 }
