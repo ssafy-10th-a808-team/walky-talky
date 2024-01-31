@@ -202,6 +202,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public List<ResponseCommentDto> viewComment(Long shareBoardSeq) throws WTException {
+        if (!shareBoardRepository.existsById(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
+        }
+
         List<ShareBoardComment> commentDomainList = shareBoardCommentRepository.findAllByShareBoardSeqAndIsDeletedFalse(shareBoardSeq);
         List<ResponseCommentDto> list = new ArrayList<>();
 
