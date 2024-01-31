@@ -46,10 +46,9 @@ public class ClubController {
 
     @PostMapping("/modify")
     public ResponseEntity<ResponseClubModifyDto> clubModify(
-            @RequestPart("profileImg") MultipartFile multipartFile,
-            @RequestPart("json") RequestClubModifyDto requestClubModifyDto,
+            RequestClubModifyDto requestClubModifyDto,
             HttpServletRequest httpServletRequest) throws IOException {
-        return clubService.clubModify(multipartFile, requestClubModifyDto, httpServletRequest);
+        return clubService.clubModify(requestClubModifyDto, httpServletRequest);
     }
 
     @PostMapping("/delete")

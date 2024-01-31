@@ -25,4 +25,9 @@ public class RegionServiceImpl implements RegionService {
         return region.getLocationAddr();
     }
 
+    @Override
+    public boolean existRegionCode(String regionCode) {
+        return regionRepository.existsByRegionCd(regionCode);
+    }
+
 }
