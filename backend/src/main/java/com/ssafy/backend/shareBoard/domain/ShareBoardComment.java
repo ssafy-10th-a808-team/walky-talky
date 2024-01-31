@@ -44,4 +44,13 @@ public class ShareBoardComment extends BaseEntity {
         return this;
     }
 
+    public ShareBoardComment delete(ShareBoardComment shareBoardComment) {
+        this.seq = shareBoardComment.getSeq();
+        this.shareBoardSeq = shareBoardComment.getShareBoardSeq();
+        this.memberSeq = shareBoardComment.getMemberSeq();
+        this.content = shareBoardComment.content;
+        this.isDeleted = true;
+        return this;
+    }
+
 }
