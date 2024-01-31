@@ -1,15 +1,16 @@
 package com.ssafy.backend.club.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
 public class RequestClubModifyDto {
+
+    private MultipartFile multipartFile;
     private Long clubSeq;
     private String name;
     private String introduce;

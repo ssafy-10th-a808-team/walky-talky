@@ -11,4 +11,5 @@ public interface RegionRepository extends JpaRepository<Region, Integer> {
 
     Region findLocataddNmByRegionCd(String regionCd);
 
+    boolean existsByRegionCd(String regionCode);
 }

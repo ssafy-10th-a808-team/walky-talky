@@ -5,4 +5,6 @@ public interface RegionService {
     String findRegionCode(String address);
 
     String findAddress(String regionCode);
+
+    boolean existRegionCode(String regionCode);
 }
