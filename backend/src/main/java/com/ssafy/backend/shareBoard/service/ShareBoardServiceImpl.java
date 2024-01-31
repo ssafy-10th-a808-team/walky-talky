@@ -92,16 +92,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalse();
         List<ResponseLikeDto> list = new ArrayList<>();
 
-        ResponseLikeDto responseLikeDto = new ResponseLikeDto();
         for (ShareBoardMemberMapping shareBoardMapping : boardList) {
             try {
                 Long shareBoardSeq = shareBoardMapping.getSeq();
-
-                responseLikeDto.setShareBoardSeq(shareBoardSeq);
-                responseLikeDto.setLikeCount(shareBoardLikeRepository.countAllByShareBoardSeq(shareBoardSeq));
-                responseLikeDto.setLiked(shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq));
-
-                list.add(responseLikeDto);
+                list.add(viewLike(shareBoardSeq, memberSeq));
             } catch (Exception e) {
                 throw new WTException(e.getMessage()); // Todo : 바꾸기
             }
@@ -115,20 +109,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         List<ShareBoardScrapMapping> boardList = shareBoardRepository.findSeqAndRecordSeqByIsDeletedFalse();
         List<ResponseScrapDto> list = new ArrayList<>();
 
-        ResponseScrapDto responseScrapDto = new ResponseScrapDto();
         for (ShareBoardScrapMapping shareBoardScrapMapping : boardList) {
             try {
                 Long shareBoardSeq = shareBoardScrapMapping.getSeq();
-
-                responseScrapDto.setShareBoardSeq(shareBoardSeq);
-
-                Long recordSeq = shareBoardScrapMapping.getRecordSeq();
-                responseScrapDto.setRecordSeq(recordSeq);
-                responseScrapDto.setScraped(scrapRepository.existsByRecordSeqAndMemberSeq(recordSeq, memberSeq));
-
-                responseScrapDto.setScrapCount(scrapRepository.countAllByRecordSeq(recordSeq));
-
-                list.add(responseScrapDto);
+                list.add(viewScrap(shareBoardSeq, memberSeq));
             } catch (Exception e) {
                 throw new WTException(e.getMessage()); // Todo : 바꾸기
             }
