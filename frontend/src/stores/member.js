@@ -7,6 +7,8 @@ const REST_MEMBER_API = `http://localhost:8080/member`
 
 export const useMemberStore = defineStore('member', () => {
   const memberList = ref([])
+  const address_name = ref('')
+  const address_code = ref('')
 
   //유저 리스트 가져오기
   const getMemberList = function () {
@@ -94,6 +96,10 @@ export const useMemberStore = defineStore('member', () => {
     })
   }
 
+  // 지역코드 및 주소 가져오기
+  const getLocationInfo = () => {
+    return [address_name.value, address_code.value]
+  }
   return {
     memberList,
     member,
@@ -105,6 +111,11 @@ export const useMemberStore = defineStore('member', () => {
     logout,
     selectedMember,
     clickMember,
-    updateMember
+    updateMember,
+    // 지역 가져오기 카카오맵
+    address_name,
+    address_code,
+    getLocationInfo,
+
   }
 })

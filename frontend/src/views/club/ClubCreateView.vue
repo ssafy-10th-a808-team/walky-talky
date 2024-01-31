@@ -26,7 +26,7 @@
                     <label for="name">모임명</label>
                     <input type="text" name="name" class="form-control" id="name" v-model.trim="clubname" required>
                   </div>
-                  <div class="col-md-4 cta-btn-container text-center" @click="checkDuplicate">
+                  <div class="col-md-4 cta-btn-container text-center" @click="checkDuplicate(clubname)">
                     <a class="cta-btn align-middle" href="#">중복 확인</a>
                   </div>
                   
@@ -38,7 +38,7 @@
 
                     <div class="form-group col-md-6">
                       <label for="name">내 동네</label>
-                      <input type="text" name="name" class="form-control" id="name" required>
+                      <input type="text" name="name" class="form-control" id="name" v-model.trim="region_name" required>
                     </div>
                     <div class="col-md-4">
                       
@@ -54,7 +54,7 @@
                       <input type="name" class="form-control" name="name" id="name" v-model.trim="old_birth" required>
                     </div>
                     <div class="form-group col-md-5 mt-3 mt-md-0">
-                      <label for="name">시작 연령</label>
+                      <label for="name">어린 나이</label>
                       <input type="name" class="form-control" name="name" id="name" v-model.trim="young_birth" required>
                     </div>
                   </div>
@@ -113,11 +113,13 @@
     import { ref } from 'vue'
     import { useClubStore } from '@/stores/club'
     import { useCounterStore } from '@/stores/counter';
+    import { useMemberStore } from '@/stores/member';
     import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
     
 
     const clubstore = useClubStore()
     const counterstore = useCounterStore()
+    const memberstore = useMemberStore()
     
     const locationIcon = counterstore.selectButton('LocationIcon')
   
@@ -130,8 +132,9 @@
     const gender_type = ref('A')
     const max_capacity = ref(10)
     const is_auto_recruit = ref(true)
- 
-
+    const region_name = ref('')
+    region_name.value = memberstore.getLocationInfo()[0]
+    region_cd.value = memberstore.getLocationInfo()[1]
     const setrecruitType = (value) => {
       is_auto_recruit.value = value
       console.log(`selected recruit : ${is_auto_recruit.value}`)
@@ -157,9 +160,8 @@
         clubstore.createClub(payload)
     } 
     
-    const checkDuplicate = () => {
-      // 중복 확인 로직 구현
-      console.log(`${clubname.value} 중복 확인`)
+    const checkDuplicate = (name) => {
+      clubstore.checkDuplicate(name)
     }
     const readInputFile = (e) => {
       document.getElementById('imageFrame').innerHTML = '';
