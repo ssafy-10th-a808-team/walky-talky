@@ -58,7 +58,7 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     @Transactional(rollbackOn = IOException.class)
-    public ResponseEntity<ResponseClubCreateDto> clubCreate(MultipartFile multipartFile, RequestClubCreateDto requestClubCreateDto, HttpServletRequest httpServletRequest) throws IOException {
+    public ResponseEntity<ResponseClubCreateDto> clubCreate(RequestClubCreateDto requestClubCreateDto, HttpServletRequest httpServletRequest) throws IOException {
 
         ResponseClubCreateDto responseClubCreateDto = new ResponseClubCreateDto();
 
@@ -67,8 +67,8 @@ public class ClubServiceImpl implements ClubService {
         Club savedClub = clubRepository.save(club);
 
         // file data exist
-        if (multipartFile != null && !multipartFile.isEmpty()) {
-            String tmpUrl = s3UploadService.uploadClubProfileImg(multipartFile, savedClub.getSeq());
+        if (requestClubCreateDto.getMultipartFile() != null && !requestClubCreateDto.getMultipartFile().isEmpty()) {
+            String tmpUrl = s3UploadService.uploadClubProfileImg(requestClubCreateDto.getMultipartFile(), savedClub.getSeq());
             savedClub.setUrl(tmpUrl);
             clubRepository.save(savedClub);
         }
