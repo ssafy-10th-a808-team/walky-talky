@@ -16,7 +16,7 @@
                   <!-- 이미지 -->
                   <div class="form-group col-md-8">
                     <label for="name">이미지</label>
-                    <input type="file" name="name" class="form-control" id="name" @change="readInputFile" required/>
+                    <input type="file" name="name" class="form-control" id="name" @change="readInputFile"/>
                     <div id="imageFrame">
                       <img id="img" height="200" alt="이미지미리보기"/>
                     </div>

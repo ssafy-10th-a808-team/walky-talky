@@ -86,7 +86,8 @@ export const useClubStore = defineStore('club', () => {
       console.log(err)
     }
   }
-  
+
+
   return { 
     createClub,
     checkDuplicate,
