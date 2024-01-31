@@ -154,16 +154,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         ShareBoard shareBoard = shareBoardRepository.findBySeqAndIsDeletedFalse(shareBoardSeq);
 
         try {
-            ResponseMemberDto responseMemberDto = new ResponseMemberDto();
-
             responseShareBoardContentDto.setTitle(shareBoard.getTitle());
             responseShareBoardContentDto.setContent(shareBoard.getContent());
 
-            NicknameUrlMapping m = memberRepository.findNickNameAndUrlBySeq(shareBoard.getMemberSeq());
-            responseMemberDto.setNickname(m.getNickname());
-            responseMemberDto.setProfilePic(m.getUrl());
-
-            responseShareBoardContentDto.setMember(responseMemberDto);
+            responseShareBoardContentDto.setMember(getMemberNicknameUrl(shareBoard.getMemberSeq()));
 
             responseShareBoardContentDto.setRecordSeq(shareBoard.getRecordSeq());
             responseShareBoardContentDto.setCreate_at(String.valueOf(shareBoard.getCreatedAt()));
