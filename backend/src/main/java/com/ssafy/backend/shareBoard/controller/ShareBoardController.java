@@ -1,10 +1,7 @@
 package com.ssafy.backend.shareBoard.controller;
 
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseLikeDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseScrapDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardDto;
+import com.ssafy.backend.shareBoard.dto.response.*;
 import com.ssafy.backend.shareBoard.service.ShareBoardService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +28,9 @@ public class ShareBoardController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            try{
+            try {
                 shareBoardService.write(memberSeq, requestShareBoardWriteDto);
-            }catch (Exception e){
+            } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
@@ -135,6 +132,30 @@ public class ShareBoardController {
             }
 
             resultMap.put("data", scrapList);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/view/{shareBordSeq}/content")
+    public ResponseEntity<?> viewContent(HttpServletRequest request, @PathVariable Long shareBordSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+
+            ResponseShareBoardContentDto responseShareBoardContentDto;
+            try{
+                responseShareBoardContentDto = shareBoardService.viewContent(shareBordSeq);
+            }catch (Exception e){
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", responseShareBoardContentDto);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {
