@@ -191,11 +191,27 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
                 list.add(responseCommentDto);
             } catch (Exception e) {
-                throw new WTException(e.getMessage()); // Todo : 고치키
+                throw new WTException(e.getMessage()); // Todo : 고치기
             }
         }
 
         return list;
+    }
+
+    @Override
+    public ResponseLikeDto viewLike(Long shareBoardSeq, Long memberSeq) throws WTException {
+        ResponseLikeDto responseLikeDto = new ResponseLikeDto();
+
+        try {
+            responseLikeDto.setShareBoardSeq(shareBoardSeq);
+            responseLikeDto.setLikeCount(shareBoardLikeRepository.countAllByShareBoardSeq(shareBoardSeq));
+            responseLikeDto.setLiked(shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq));
+
+            return responseLikeDto;
+        } catch (Exception e) {
+            throw new WTException(e.getMessage()); // Todo : 고치기
+        }
+
     }
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {

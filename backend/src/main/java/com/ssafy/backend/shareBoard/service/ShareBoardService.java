@@ -18,4 +18,6 @@ public interface ShareBoardService {
     ResponseShareBoardContentDto viewContent(Long shareBoardSeq) throws WTException;
 
     List<ResponseCommentDto> viewComment(Long shareBoardSeq) throws WTException;
+
+    ResponseLikeDto viewLike(Long shareBoardSeq, Long memberSeq) throws WTException;
 }
