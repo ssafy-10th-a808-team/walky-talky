@@ -211,7 +211,25 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         } catch (Exception e) {
             throw new WTException(e.getMessage()); // Todo : 고치기
         }
+    }
 
+    @Override
+    public ResponseScrapDto viewScrap(Long shareBoardSeq, Long memberSeq) throws WTException {
+        ResponseScrapDto responseScrapDto = new ResponseScrapDto();
+
+        try {
+            responseScrapDto.setShareBoardSeq(shareBoardSeq);
+
+            Long recordSeq = shareBoardRepository.findRecordSeqBySeq(shareBoardSeq).getRecordSeq();
+
+            responseScrapDto.setRecordSeq(recordSeq);
+            responseScrapDto.setScrapCount(scrapRepository.countAllByRecordSeq(recordSeq));
+            responseScrapDto.setScraped(scrapRepository.existsByRecordSeqAndMemberSeq(recordSeq, memberSeq));
+
+            return responseScrapDto;
+        } catch (Exception e) {
+            throw new WTException(e.getMessage()); // Todo : 고치기
+        }
     }
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {

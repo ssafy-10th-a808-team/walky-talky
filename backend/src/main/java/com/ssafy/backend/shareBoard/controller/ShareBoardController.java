@@ -189,5 +189,30 @@ public class ShareBoardController {
         }
     }
 
+    @GetMapping("/view/{shareBoardSeq}/scrap")
+    public ResponseEntity<?> viewScrap(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            ResponseScrapDto responseScrapDto;
+            try {
+                responseScrapDto = shareBoardService.viewScrap(shareBoardSeq, memberSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", responseScrapDto);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
 
 }

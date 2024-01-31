@@ -9,4 +9,5 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     boolean existsByRecordSeqAndMemberSeq(Long recordSeq, Long memberSeq);
 
     int countAllByRecordSeq(Long recordSeq);
+
 }
