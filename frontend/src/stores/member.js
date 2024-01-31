@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import router from '@/router'
 import axios from 'axios'
 
-const REST_MEMBER_API = `http://localhost:8080/member`
+const REST_MEMBER_API = `https://i10a808.p.ssafy.io/api/member`
 
 export const useMemberStore = defineStore('member', () => {
   const memberList = ref([])
