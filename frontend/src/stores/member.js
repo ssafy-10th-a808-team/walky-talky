@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import router from '@/router'
 import axios from 'axios'
 
-const REST_MEMBER_API = `http://localhost:8080/member`
+const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
 
 export const useMemberStore = defineStore('member', () => {
   const memberList = ref([])
@@ -31,22 +31,34 @@ export const useMemberStore = defineStore('member', () => {
   }
 
   //회원가입
-  const createMember = function (member) {
+  const createMember = function (payload) {
+    const formData = new FormData()
+    formData.append('multipartFile', payload.profileImg)
+    formData.append('id', payload.memberId)
+    formData.append('password', payload.password)
+    formData.append('birth', payload.birth)
+    formData.append('gender', payload.gender)
+    formData.append('nickname', payload.nickname)
+    formData.append('introduce', payload.introduce)
+    formData.append('regionCd', payload.region_cd)
+
     axios({
-      url: REST_MEMBER_API + '/local-signup',
-      method: 'POST',
+      method: 'post',
+      url: `${REST_MEMBER_API}/api/member/local-signup`,
       headers: {
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token.value}`,
+        'Content-Type': 'multipart/form-data'
       },
-      data: member
+      data: formData
     })
       .then((res) => {
+        console.log(res)
         alert('회원가입을 축하드립니다! 로그인을 해주세요')
         router.push({ name: 'Login' })
       })
       .catch((err) => {
         console.log(err)
-        console.log(member.id)
+        console.log(err.message)
       })
   }
 

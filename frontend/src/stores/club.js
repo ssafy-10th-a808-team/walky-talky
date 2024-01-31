@@ -7,8 +7,10 @@ import axios from 'axios'
 const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api'
 
 export const useClubStore = defineStore('club', () => {
-    const router = useRouter()
-    const token = ref('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzZXEiOjI5LCJpYXQiOjE3MDY1MTcwNjIsImlzcyI6IndhbGt5dGFsa3kiLCJleHAiOjE3MDcxMjE4NjJ9.08uxxYF6uVN8I86ptutE_gAzyIesKxyh2dodYfVxEFs')
+  const router = useRouter()
+  const token = ref(
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzZXEiOjI5LCJpYXQiOjE3MDY1MTcwNjIsImlzcyI6IndhbGt5dGFsa3kiLCJleHAiOjE3MDcxMjE4NjJ9.08uxxYF6uVN8I86ptutE_gAzyIesKxyh2dodYfVxEFs'
+  )
 
 
     // 소모임 생성
