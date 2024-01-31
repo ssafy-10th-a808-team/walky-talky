@@ -20,7 +20,9 @@ public interface ShareBoardRepository extends JpaRepository<ShareBoard, Long> {
 
     ShareBoard findBySeqAndIsDeletedFalse(Long seq);
 
-    ShareBoardScrapMapping findRecordSeqBySeq(Long seq);
+    ShareBoardScrapMapping findRecordSeqBySeqAndIsDeletedFalse(Long seq);
+
+    ShareBoardMemberMapping findMemberSeqBySeqAndIsDeletedFalse(Long seq);
 
     @Modifying
     @Transactional

@@ -31,4 +31,6 @@ public interface ShareBoardService {
     void modify(Long memberSeq, Long shareBoardSeq, RequestShareBoardModifyDto requestShareBoardModifyDto) throws WTException;
 
     void delete(Long memberSeq, Long shareBoardSeq) throws WTException;
+
+    void like(Long shareBoardSeq, Long memberSeq) throws WTException;
 }

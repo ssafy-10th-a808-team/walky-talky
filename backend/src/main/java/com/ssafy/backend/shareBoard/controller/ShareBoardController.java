@@ -270,9 +270,9 @@ public class ShareBoardController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            try{
+            try {
                 shareBoardService.modify(memberSeq, shareBoardSeq, requestShareBoardModifyDto);
-            }catch (Exception e){
+            } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
@@ -293,9 +293,32 @@ public class ShareBoardController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            try{
+            try {
                 shareBoardService.delete(memberSeq, shareBoardSeq);
-            }catch (Exception e){
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @PostMapping("/{shareBoardSeq}/like")
+    public ResponseEntity<?> like(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            try {
+                shareBoardService.like(shareBoardSeq, memberSeq);
+            } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
