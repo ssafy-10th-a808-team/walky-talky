@@ -36,7 +36,6 @@ public class ClubServiceImpl implements ClubService {
     private final S3UploadService s3UploadService;
     private final RegionService regionService;
 
-
     @Override
     public ResponseEntity<ResponseClubCheckNameDto> clubCheckName(RequestClubCheckNameDto requestClubCheckNameDto) {
 
@@ -62,24 +61,43 @@ public class ClubServiceImpl implements ClubService {
 
         ResponseClubCreateDto responseClubCreateDto = new ResponseClubCreateDto();
 
+        Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
+        Member findedMember = memberRepository.findById(memberSeq).orElse(null);
+
+        // TODO : null 과 empty check
+//        private String name;
+//        private String introduce;
+//        private String regionCd;
+//        private String young_birth;
+//        private String old_birth;
+//        private String gender_type;
+//        private int max_capacity;
+//        private Boolean is_auto_recruit;
+
+//        // 지역 체크
+//        if (requestClubCreateDto.getRegionCd() == null || !regionService.existRegionCode(requestClubCreateDto.getRegionCd())) {
+//            responseClubCreateDto.setMessage("지역이 잘못 되었습니다.");
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+//        }
+
         // save club
         Club club = requestClubCreateDto.toEntity();
         Club savedClub = clubRepository.save(club);
 
-        // file data exist
+        // if file data exist
         if (requestClubCreateDto.getMultipartFile() != null && !requestClubCreateDto.getMultipartFile().isEmpty()) {
             String tmpUrl = s3UploadService.uploadClubProfileImg(requestClubCreateDto.getMultipartFile(), savedClub.getSeq());
             savedClub.setUrl(tmpUrl);
             clubRepository.save(savedClub);
         }
 
-        ///////////////////////////////////////////////////////////////////////////////////////////
-
         //  ClubMember save
-        Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
-        Member findedMember = memberRepository.findById(memberSeq).orElse(null);
-
-        ClubMember clubMember = ClubMember.builder().club(savedClub).member(findedMember).role("owner").build();
+        ClubMember clubMember = ClubMember
+                .builder()
+                .club(savedClub)
+                .member(findedMember)
+                .role("owner")
+                .build();
 
         clubMemberRepository.save(clubMember);
 
@@ -173,7 +191,14 @@ public class ClubServiceImpl implements ClubService {
             if (findedClubMember.getRole().equals("owner") || findedClubMember.getRole().equals("member")) {
                 Member tmpMember = findedClubMember.getMember();
 
-                ResponseClubDetailDtoMember responseClubDetailDtoMember = ResponseClubDetailDtoMember.builder().nickname(tmpMember.getNickname()).url(tmpMember.getUrl()).address(regionService.findAddress(tmpMember.getRegionCd())).role(findedClubMember.getRole()).build();
+                ResponseClubDetailDtoMember responseClubDetailDtoMember = ResponseClubDetailDtoMember
+                        .builder()
+                        .nickname(tmpMember.getNickname())
+                        .url(tmpMember.getUrl())
+                        .address(regionService.findAddress(tmpMember.getRegionCd()))
+                        .role(findedClubMember
+                                .getRole())
+                        .build();
 
 
                 responseClubDetailDto.getResponseClubDetailDtoMembers().add(responseClubDetailDtoMember);
@@ -187,17 +212,26 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     public ResponseEntity<ResponseClubModifyDto> clubModify(
-            MultipartFile multipartFile,
             RequestClubModifyDto requestClubModifyDto,
             HttpServletRequest httpServletRequest) throws IOException {
+
+        System.out.println("ClubServiceImpl clubModify 시작");
 
         ResponseClubModifyDto responseClubModifyDto;
 
         Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
 
+        System.out.println("memberSeq = " + memberSeq);
+
+        System.out.println("requestClubModifyDto.getClubSeq() = " + requestClubModifyDto.getClubSeq());
+        System.out.println("requestClubModifyDto.getMax_capacity() = " + requestClubModifyDto.getMax_capacity());
+        System.out.println("requestClubModifyDto.getName() = " + requestClubModifyDto.getName());
+
         // TODO : 삭제된 소모임이면 쫓아내기
 
         // TODO : requestClubModifyDto.get 했을 때 null 이나 empty가 있으면 쫓아내기
+
+        // TEST CODE
 
         // memberSeq가 club의 owner가 아니면 쫓아내기
         if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(requestClubModifyDto.getClubSeq(), memberSeq, "owner")) {
@@ -216,12 +250,12 @@ public class ClubServiceImpl implements ClubService {
         // DB에 club 값 변경하기
         Club curClub = clubRepository.findById(requestClubModifyDto.getClubSeq()).orElse(null);
 
-        // request 사진이 있을 경우
-        if (multipartFile != null && !multipartFile.isEmpty()) {
+        // if file data exist
+        if (requestClubModifyDto.getMultipartFile() != null && !requestClubModifyDto.getMultipartFile().isEmpty()) {
             // 현재 사진이 있는 경우
             if (curClub.getUrl() != null)
                 s3UploadService.deleteImg(curClub.getUrl());
-            String tmpUrl = s3UploadService.uploadClubProfileImg(multipartFile, curClub.getSeq());
+            String tmpUrl = s3UploadService.uploadClubProfileImg(requestClubModifyDto.getMultipartFile(), curClub.getSeq());
             curClub.setUrl(tmpUrl);
         }
 
