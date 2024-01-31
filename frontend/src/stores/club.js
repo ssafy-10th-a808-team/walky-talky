@@ -86,13 +86,37 @@ export const useClubStore = defineStore('club', () => {
       console.log(err)
     }
   }
-
+  // 소모임 디테일 관련 함수
+  const clubDetail = ref(null)
+  const findClub = (seq) => {
+    axios({
+      method : 'get',
+      url: `${REST_CLUB_API}/club/detail?clubSeq=${seq}`,
+      headers: {
+        Authorization: `Bearer ${token.value}`, 
+      }
+    })
+    .then((res) => {
+      console.log('res.data의 값')
+      console.log(res.data)
+      clubDetail.value = res.data
+      console.log('clubDetail.value의 값')
+      console.log(clubDetail.value)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+  }
 
   return { 
     createClub,
     checkDuplicate,
+    // 소모임 전체보기
     getClubs,
-    clubs
+    clubs,
+    // 소모임 디테일보기
+    findClub,
+    clubDetail,
   }
 
 })

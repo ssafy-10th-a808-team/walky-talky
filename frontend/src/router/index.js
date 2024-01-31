@@ -69,7 +69,8 @@ const router = createRouter({
     {
       path: '/club/detail/:seq',
       name: 'club-detail',
-      component: ClubDetail
+      component: ClubDetail,
+      props: true
     },
     {
       path: '/club/memory',

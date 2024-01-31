@@ -55,7 +55,7 @@
     })
 
     const godetail = (seq) => {
-        router.push({ name : 'ClubDetail', params: { seq:seq }})
+        router.push({ name : 'club-detail', params: { seq:seq }})
 }
 
 </script>
