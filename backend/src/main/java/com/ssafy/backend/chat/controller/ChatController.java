@@ -1,33 +1,29 @@
 package com.ssafy.backend.chat.controller;
 
-import com.ssafy.backend.chat.domain.ChatMessage;
+import com.ssafy.backend.chat.domain.dto.ChatMessageDto;
 import com.ssafy.backend.chat.service.ChatMessageService;
 import com.ssafy.backend.chat.service.ChatService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
     private final ChatService chatService;
     private final ChatMessageService chatMessageService;
 
-    @PostMapping("/chat/{clubSeq}")
-    public void createChatRoom(@PathVariable Long clubSeq) {
+    @PostMapping("/{clubSeq}")
+    public void createChatRoom(HttpServletRequest request, @PathVariable Long clubSeq) {
         chatService.createChatRoom(clubSeq);
     }
 
-//    @GetMapping("/chat")
-//    public List<Chat> findAllChatRoomByUser(Member member) {
-//        return chatService.findAllChatRoomByUser(member);
-//    }
-
-    @GetMapping("/chat/{chatSeq}/message")
-    public List<ChatMessage> loadMessage(@PathVariable Long chatSeq) {
+    @GetMapping("/{chatSeq}")
+    public List<ChatMessageDto> loadMessage(@PathVariable Long chatSeq) {
         return chatMessageService.loadMessage(chatSeq);
     }
 }

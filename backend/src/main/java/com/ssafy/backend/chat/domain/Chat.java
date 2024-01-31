@@ -1,10 +1,7 @@
 package com.ssafy.backend.chat.domain;
 
 import com.ssafy.backend.global.domain.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +11,7 @@ import java.io.Serializable;
 
 @Entity
 @Getter
+@Table(name = "club_chat")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,6 +22,5 @@ public class Chat extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-
     private Long clubSeq;
 }

@@ -1,11 +1,10 @@
 package com.ssafy.backend.chat.service;
 
-import com.ssafy.backend.chat.domain.ChatMessage;
-import com.ssafy.backend.clubMember.domain.ClubMember;
+import com.ssafy.backend.chat.domain.dto.ChatMessageDto;
 
 import java.util.List;
 
 public interface ChatMessageService {
-    void saveMessage(ChatMessage chatMessage);
-    List<ChatMessage> loadMessage(Long chatSeq);
+    void saveMessage(ChatMessageDto chatMessage);
+    List<ChatMessageDto> loadMessage(Long chatSeq);
 }
