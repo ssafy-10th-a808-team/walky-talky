@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public interface ClubService {
 
-    ResponseEntity<ResponseClubCreateDto> clubCreate(MultipartFile multipartFile, RequestClubCreateDto requestClubCreateDto, HttpServletRequest httpServletRequest) throws IOException;
+    ResponseEntity<ResponseClubCreateDto> clubCreate(RequestClubCreateDto requestClubCreateDto, HttpServletRequest httpServletRequest) throws IOException;
 
     ResponseEntity<ResponseClubListDto> clubList(HttpServletRequest httpServletRequest);
 
@@ -21,7 +21,7 @@ public interface ClubService {
 
     ResponseEntity<ResponseClubCheckNameDto> clubCheckName(RequestClubCheckNameDto requestClubCheckNameDto);
 
-    ResponseEntity<ResponseClubModifyDto> clubModify(MultipartFile multipartFile,RequestClubModifyDto requestClubModifyDto, HttpServletRequest httpServletRequest) throws IOException;
+    ResponseEntity<ResponseClubModifyDto> clubModify(MultipartFile multipartFile, RequestClubModifyDto requestClubModifyDto, HttpServletRequest httpServletRequest) throws IOException;
 
     ResponseEntity<ResponseClubDeleteDto> clubDelete(RequestClubDeleteDto requestClubDeleteDto, HttpServletRequest httpServletRequest);
 }
