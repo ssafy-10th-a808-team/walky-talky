@@ -1,5 +1,6 @@
 package com.ssafy.backend.shareBoard.controller;
 
+import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
 import com.ssafy.backend.shareBoard.service.ShareBoardService;
@@ -261,5 +262,27 @@ public class ShareBoardController {
         }
     }
 
+    @PostMapping("/modify/{shareBoardSeq}")
+    public ResponseEntity<?> modify(HttpServletRequest request, @PathVariable Long shareBoardSeq, @RequestBody RequestShareBoardModifyDto requestShareBoardModifyDto) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            try{
+                shareBoardService.modify(memberSeq, shareBoardSeq, requestShareBoardModifyDto);
+            }catch (Exception e){
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
 
 }

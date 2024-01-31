@@ -1,6 +1,7 @@
 package com.ssafy.backend.shareBoard.service;
 
 import com.ssafy.backend.global.error.WTException;
+import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
 
@@ -26,4 +27,6 @@ public interface ShareBoardService {
     ResponseLikeDto viewLike(Long shareBoardSeq, Long memberSeq) throws WTException;
 
     ResponseScrapDto viewScrap(Long shareBoardSeq, Long memberSeq) throws WTException;
+
+    void modify(Long memberSeq, Long shareBoardSeq, RequestShareBoardModifyDto requestShareBoardModifyDto) throws WTException;
 }
