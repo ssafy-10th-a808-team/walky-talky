@@ -29,10 +29,9 @@ public class ClubController {
 
     @PostMapping("/create")
     public ResponseEntity<ResponseClubCreateDto> clubCreate(
-            @RequestPart("profileImg") MultipartFile multipartFile,
-            @RequestPart("json") RequestClubCreateDto requestClubCreateDto,
+            RequestClubCreateDto requestClubCreateDto,
             HttpServletRequest httpServletRequest) throws IOException {
-        return clubService.clubCreate(multipartFile, requestClubCreateDto, httpServletRequest);
+        return clubService.clubCreate(requestClubCreateDto, httpServletRequest);
     }
 
     @GetMapping("/list")

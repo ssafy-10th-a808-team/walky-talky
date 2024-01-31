@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -12,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RequestClubCreateDto {
 
+    private MultipartFile multipartFile;
     private String name;
     private String introduce;
     private String regionCd;
