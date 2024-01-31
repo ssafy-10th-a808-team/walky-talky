@@ -66,6 +66,29 @@ public class ShareBoardController {
         }
     }
 
+    @GetMapping("/list/record")
+    public ResponseEntity<?> listRecord(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            List<ResponseRecordDto> recordList;
+            try {
+                recordList = shareBoardService.listRecord();
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", recordList);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
     @GetMapping("/list/like")
     public ResponseEntity<?> listLike(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -132,6 +155,30 @@ public class ShareBoardController {
             }
 
             resultMap.put("data", responseShareBoardContentDto);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/view/{shareBoardSeq}/record")
+    public ResponseEntity<?> viewRecord(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+
+            ResponseRecordDto responseRecordDto;
+            try {
+                responseRecordDto = shareBoardService.viewRecord(shareBoardSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", responseRecordDto);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {

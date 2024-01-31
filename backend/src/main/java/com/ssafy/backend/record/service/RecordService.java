@@ -33,6 +33,8 @@ public interface RecordService {
 
     ResponseViewDto view(Long memberSeq, Long recordSeq) throws WTException;
 
+    ResponseViewDto view(Long recordSeq) throws WTException;
+
     void modify(Long memberSeq, Long recordSeq, RequestRecordModify requestRecordModify) throws WTException;
 
     void delete(Long memberSeq, Long recordSeq) throws WTException;

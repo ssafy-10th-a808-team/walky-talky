@@ -3,10 +3,9 @@ package com.ssafy.backend.shareBoard.service;
 import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.repository.MemberRepository;
-import com.ssafy.backend.record.repository.RecordDetailRepository;
-import com.ssafy.backend.record.repository.RecordRepository;
+import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.ScrapRepository;
-import com.ssafy.backend.region.service.RegionService;
+import com.ssafy.backend.record.service.RecordService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.domain.ShareBoardComment;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
@@ -35,11 +34,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     private final MemberRepository memberRepository;
 
-    private final RecordRepository recordRepository;
-
-    private final RecordDetailRepository recordDetailRepository;
-
-    private final RegionService regionService;
+    private final RecordService recordService;
 
     private final ScrapRepository scrapRepository;
 
@@ -81,6 +76,23 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 list.add(responseShareBoardDto);
             } catch (Exception e) {
                 throw new WTException(e.getMessage()); // Todo : 개발 끝나고 고치기
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<ResponseRecordDto> listRecord() throws WTException {
+        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalse();
+        List<ResponseRecordDto> list = new ArrayList<>();
+
+        for (ShareBoardMemberMapping shareBoardMapping : boardList) {
+            try {
+                Long shareBoardSeq = shareBoardMapping.getSeq();
+                list.add(viewRecord(shareBoardSeq));
+            } catch (Exception e) {
+                throw new WTException(e.getMessage()); // Todo : 바꾸기
             }
         }
 
@@ -156,6 +168,30 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         }
 
         return responseShareBoardContentDto;
+    }
+
+    @Override
+    public ResponseRecordDto viewRecord(Long shareBoardSeq) throws WTException {
+        ResponseRecordDto responseRecordDto = new ResponseRecordDto();
+
+        try {
+            responseRecordDto.setShareBoardSeq(shareBoardSeq);
+
+            Long recordSeq = shareBoardRepository.findRecordSeqBySeq(shareBoardSeq).getRecordSeq();
+
+            responseRecordDto.setRecordSeq(recordSeq);
+
+            ResponseViewDto responseViewDto = recordService.view(recordSeq);
+            responseRecordDto.setAddress(responseViewDto.getAddress());
+            responseRecordDto.setPoints(responseViewDto.getPoints());
+            responseRecordDto.setDuration(responseViewDto.getDuration());
+            responseRecordDto.setDistance(responseViewDto.getDistance());
+
+            return responseRecordDto;
+        } catch (Exception e) {
+            throw new WTException(e.getMessage()); // Todo : 고치기
+        }
+
     }
 
     @Override
