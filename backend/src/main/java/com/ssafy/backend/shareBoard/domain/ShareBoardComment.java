@@ -39,4 +39,9 @@ public class ShareBoardComment extends BaseEntity {
         this.isDeleted = isDeleted;
     }
 
+    public ShareBoardComment update(String content) {
+        this.content = content;
+        return this;
+    }
+
 }
