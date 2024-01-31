@@ -21,7 +21,7 @@ public interface MemberService {
 
     boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto);
 
-    boolean localSignup(MultipartFile multipartFile, RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException;
+    boolean localSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException;
 
     public Map<String, String> reissue(Long seq);
 

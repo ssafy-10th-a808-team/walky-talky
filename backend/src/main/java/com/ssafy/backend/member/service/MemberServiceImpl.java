@@ -56,7 +56,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional(rollbackOn = IOException.class)
-    public boolean localSignup(MultipartFile multipartFile, RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
+    public boolean localSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
 
         Member member = requestLocalSignupDto.toEntity();
 
@@ -79,8 +79,9 @@ public class MemberServiceImpl implements MemberService {
 
         Member savedMember = memberRepository.save(member);
 
-        if (!multipartFile.isEmpty()) {
-            String tmpUrl = s3UploadService.uploadMemberProfileImg(multipartFile, savedMember.getSeq());
+        // if file data exist
+        if (requestLocalSignupDto.getMultipartFile() != null && !requestLocalSignupDto.getMultipartFile().isEmpty()) {
+            String tmpUrl = s3UploadService.uploadMemberProfileImg(requestLocalSignupDto.getMultipartFile(), savedMember.getSeq());
             savedMember.setUrl(tmpUrl);
         }
 

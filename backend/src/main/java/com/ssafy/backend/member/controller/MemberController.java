@@ -56,11 +56,12 @@ public class MemberController {
     }
 
     @PostMapping("/local-signup")
-    public ResponseEntity<ResponseLocalSignupDto> localSignup(@RequestPart("profileImg") MultipartFile multipartFile, @RequestPart("json") RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
+    public ResponseEntity<ResponseLocalSignupDto> localSignup(
+            RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
 
         ResponseLocalSignupDto responseLocalSignupDto = new ResponseLocalSignupDto();
 
-        if (memberService.localSignup(multipartFile, requestLocalSignupDto)) {
+        if (memberService.localSignup(requestLocalSignupDto)) {
             responseLocalSignupDto.setMessage("OK");
             return ResponseEntity.status(HttpStatus.OK).body(responseLocalSignupDto);
 
