@@ -1,31 +1,31 @@
 package com.ssafy.backend.chat.domain;
 
+import com.ssafy.backend.chat.domain.dto.MessageType;
 import com.ssafy.backend.clubMember.domain.ClubMember;
-import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "club_chat_message")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ChatMessage extends BaseEntity {
+public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    private Long chatSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_member_seq")
+    private ClubMember clubMember;
 
-//    @ManyToOne
-//    @JoinColumn(name = "clubmember_seq")
-//    private ClubMember clubMember;
-
-    private Long memberSeq;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_chat_seq")
+    private Chat chat;
+    private String sender;
     private String content;
+    private String createdAt;
     private MessageType type;
-    public enum MessageType {
-        ENTER, TALK, EXIT
-    }
 }
