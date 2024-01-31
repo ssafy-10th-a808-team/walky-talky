@@ -4,6 +4,7 @@ import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
+import com.ssafy.backend.record.dto.mapping.PointsMapping;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
@@ -275,6 +276,11 @@ public class RecordServiceImpl implements RecordService {
             throw new WTException("비정상적인 요청입니다.");
         }
 
+        return view(recordSeq);
+    }
+
+    @Transactional
+    public ResponseViewDto view(Long recordSeq) {
         ResponseViewDto responseViewDto = new ResponseViewDto();
 
         Optional<Record> recordOptional = recordRepository.findById(recordSeq);
@@ -301,20 +307,9 @@ public class RecordServiceImpl implements RecordService {
         }
 
         try {
-            List<RecordDetail> recordDetails = recordDetailRepository.findAllByRecordSeq(recordSeq);
+            List<PointsMapping> pointsMappings = recordDetailRepository.findAllByRecordSeq(recordSeq);
 
-            List<String[]> points = new ArrayList<>();
-            String[] p = new String[5];
-            for (RecordDetail recordDetail : recordDetails) {
-                p[0] = recordDetail.getLatitude();
-                p[1] = recordDetail.getLongitude();
-                p[2] = recordDetail.getTime();
-                p[3] = recordDetail.getUrl();
-                p[4] = recordDetail.getPointComment();
-                points.add(p);
-            }
-
-            responseViewDto.setPoints(points);
+            responseViewDto.setPoints(pointsMappings);
         } catch (Exception e) {
             throw new WTException("산책 기록 상세 보기에 실패하였습니다.");
         }
