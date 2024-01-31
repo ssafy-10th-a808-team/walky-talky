@@ -84,7 +84,39 @@
                       required
                     />
                   </div>
-                </div>
+                  <div class="col-md-4 cta-btn-container text-center" @click="checkDuplicate(clubname)">
+                    <a class="cta-btn align-middle" href="#">중복 확인</a>
+                  </div>
+                  
+                  <div class="form-group mt-3">
+                    <label for="name">소개글</label>
+                    <textarea class="form-control" name="message" rows="10" v-model.trim="introduce" required></textarea>
+                  </div>
+              
+
+                    <div class="form-group col-md-6">
+                      <label for="name">내 동네</label>
+                      <input type="text" name="name" class="form-control" id="name" v-model.trim="region_name" required>
+                    </div>
+                    <div class="col-md-4">
+                      
+                      <ButtonWithIcon 
+                      :selectedIcon="locationIcon"
+                      />
+                    </div>
+                
+
+                  <div class="row">
+                    <div class="form-group col-md-5 mt-3 mt-md-0">
+                      <label for="name">늙은 나이 </label>
+                      <input type="name" class="form-control" name="name" id="name" v-model.trim="old_birth" required>
+                    </div>
+                    <div class="form-group col-md-5 mt-3 mt-md-0">
+                      <label for="name">어린 나이</label>
+                      <input type="name" class="form-control" name="name" id="name" v-model.trim="young_birth" required>
+                    </div>
+                  </div>
+
               </div>
               <div class="form-group col-md-6 mt-3">
                 <label for="name">성별</label>
@@ -166,73 +198,62 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useClubStore } from '@/stores/club'
-import { useCounterStore } from '@/stores/counter'
-import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
+    import { ref } from 'vue'
+    import { useClubStore } from '@/stores/club'
+    import { useCounterStore } from '@/stores/counter';
+    import { useMemberStore } from '@/stores/member';
+    import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
+    
 
-const clubstore = useClubStore()
-const counterstore = useCounterStore()
-
-const locationIcon = counterstore.selectButton('LocationIcon')
-
-const profileImg = ref(null)
-const clubname = ref('테스트클럽이름')
-const introduce = ref('소모임생성테스트')
-const region_cd = ref('1121510300')
-const young_birth = ref('2000')
-const old_birth = ref('1996')
-const gender_type = ref('A')
-const max_capacity = ref(10)
-const is_auto_recruit = ref(true)
-
-const setrecruitType = (value) => {
-  is_auto_recruit.value = value
-  console.log(`selected recruit : ${is_auto_recruit.value}`)
-}
-const setGenderType = (value) => {
-  gender_type.value = value
-  console.log(`selected gender : ${gender_type.value}`)
-}
-
-const createClub = function () {
-  const payload = {
-    profileImg: profileImg.value,
-    clubname: clubname.value,
-    introduce: introduce.value,
-    region_cd: region_cd.value,
-    young_birth: young_birth.value,
-    old_birth: old_birth.value,
-    gender_type: gender_type.value,
-    max_capacity: max_capacity.value,
-    is_auto_recruit: is_auto_recruit.value
-  }
-  console.log(payload)
-  clubstore.createClub(payload)
-}
-
-const checkDuplicate = () => {
-  // 중복 확인 로직 구현
-  console.log(`${clubname.value} 중복 확인`)
-}
-const readInputFile = (e) => {
-  document.getElementById('imageFrame').innerHTML = ''
-  const files = e.target.files
-  const fileArr = Array.from(files)
-  console.log(fileArr[0])
-  profileImg.value = fileArr[0]
-  console.log(`현재 저장된 프로필 이미지 : ${profileImg.value}`)
-  fileArr.forEach(function (f) {
-    if (!f.type.match('image/.*')) {
-      alert('이미지 확장자만 업로드 가능합니다.')
-      return
+    const clubstore = useClubStore()
+    const counterstore = useCounterStore()
+    const memberstore = useMemberStore()
+    
+    const locationIcon = counterstore.selectButton('LocationIcon')
+  
+    const profileImg = ref(null)
+    const clubname = ref('테스트클럽이름')
+    const introduce = ref('소모임생성테스트')
+    const region_cd = ref('1121510300')
+    const young_birth = ref('2000')
+    const old_birth = ref('1996')
+    const gender_type = ref('A')
+    const max_capacity = ref(10)
+    const is_auto_recruit = ref(true)
+    const region_name = ref('')
+    region_name.value = memberstore.getLocationInfo()[0]
+    region_cd.value = memberstore.getLocationInfo()[1]
+    const setrecruitType = (value) => {
+      is_auto_recruit.value = value
+      console.log(`selected recruit : ${is_auto_recruit.value}`)
+    }
+    const setGenderType = (value) => {
+      gender_type.value = value
+      console.log(`selected gender : ${gender_type.value}`)
     }
     const reader = new FileReader()
     reader.onload = function (e) {
       const img = document.createElement('img')
       img.src = e.target.result
 
-      document.getElementById('imageFrame').appendChild(img)
+    const createClub = function () {
+        const payload = {
+            profileImg: profileImg.value,
+            clubname: clubname.value,
+            introduce: introduce.value,
+            region_cd: region_cd.value,
+            young_birth: young_birth.value,
+            old_birth: old_birth.value,
+            gender_type: gender_type.value,
+            max_capacity: max_capacity.value,
+            is_auto_recruit: is_auto_recruit.value,
+        }
+        console.log(payload)
+        clubstore.createClub(payload)
+    } 
+    
+    const checkDuplicate = (name) => {
+      clubstore.checkDuplicate(name)
     }
     reader.readAsDataURL(f)
   })

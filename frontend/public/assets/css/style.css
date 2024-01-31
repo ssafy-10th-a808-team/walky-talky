@@ -33,6 +33,19 @@ h6 {
   font-family: "Raleway", sans-serif;
 }
 
+button[type=submit] {
+  background: #5cb874;
+  border: 0;
+  padding: 10px 24px;
+  color: #fff;
+  transition: 0.4s;
+  border-radius: 4px;
+}
+
+button[type=submit]:hover {
+  background: #6ec083;
+}
+
 /*--------------------------------------------------------------
 # Back to top button
 --------------------------------------------------------------*/
