@@ -147,10 +147,8 @@ public class RecordController {
     }
 
     @PostMapping("/regist-image")
-    public ResponseEntity<?> registImage(HttpServletRequest request, @RequestPart("image") MultipartFile multipartFile, @RequestPart("json") RequestRegistImageDto requestRegistImageDto) {
+    public ResponseEntity<?> registImage(HttpServletRequest request, RequestRegistImageDto requestRegistImageDto) {
         Map<String, Object> resultMap = new HashMap<>();
-
-        requestRegistImageDto.setMultipartFile(multipartFile);
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
@@ -178,9 +176,8 @@ public class RecordController {
     }
 
     @PostMapping("/modify-image/{recordDetailSeq}")
-    public ResponseEntity<?> modifyImage(HttpServletRequest request, @RequestPart("image") MultipartFile multipartFile, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
+    public ResponseEntity<?> modifyImage(HttpServletRequest request, MultipartFile multipartFile, @PathVariable("recordDetailSeq") Long recordDetailSeq) {
         Map<String, Object> resultMap = new HashMap<>();
-
 
         String msg = (String) request.getAttribute("message");
         if (msg == null) {
