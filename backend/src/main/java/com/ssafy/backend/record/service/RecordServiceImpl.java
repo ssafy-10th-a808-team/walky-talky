@@ -124,24 +124,16 @@ public class RecordServiceImpl implements RecordService {
             throw new WTException("산책 중 한줄평 수정에 실패하였습니다.");
         }
 
+        RecordDetail recordDetail = recordDetailOptional.get();
+
+        Long recordSeq = recordDetail.getRecordSeq();
+        if (!validateRecord(recordSeq, memberSeq)) {
+            throw new WTException("비정상적인 요청입니다.");
+        }
+
         try {
-            RecordDetail recordDetail = recordDetailOptional.get();
-
-            Long recordSeq = recordDetail.getRecordSeq();
-            if (!validateRecord(recordSeq, memberSeq)) {
-                throw new WTException("비정상적인 요청입니다.");
-            }
-
-            RecordDetail updateRecordDetail = RecordDetail.builder()
-                    .seq(recordDetailSeq)
-                    .recordSeq(recordSeq)
-                    .pointComment(comment)
-                    .url(recordDetail.getUrl())
-                    .latitude(recordDetail.getLatitude())
-                    .longitude(recordDetail.getLongitude())
-                    .build();
-
-            recordDetailRepository.save(updateRecordDetail);
+            recordDetail.updateComment(comment);
+            recordDetailRepository.save(recordDetail);
         } catch (Exception e) {
             throw new WTException("산책 중 한줄평 수정에 실패하였습니다.");
         }
@@ -226,16 +218,8 @@ public class RecordServiceImpl implements RecordService {
         }
 
         try {
-            RecordDetail updateRecordDetail = RecordDetail.builder()
-                    .seq(recordDetailSeq)
-                    .recordSeq(recordSeq)
-                    .url(url)
-                    .latitude(recordDetail.getLatitude())
-                    .longitude(recordDetail.getLongitude())
-                    .pointComment(recordDetail.getPointComment())
-                    .build();
-
-            recordDetailRepository.save(updateRecordDetail);
+            recordDetail.updateUrl(url);
+            recordDetailRepository.save(recordDetail);
         } catch (Exception e) {
             throw new WTException("산책 중 사진 수정에 실패하였습니다.");
         }
@@ -323,14 +307,16 @@ public class RecordServiceImpl implements RecordService {
             throw new WTException("비정상적인 요청입니다.");
         }
 
-        try {
-            Record record = Record.builder()
-                    .seq(recordSeq)
-                    .memberSeq(memberSeq)
-                    .starRating(requestRecordModify.getStarRating())
-                    .comment(requestRecordModify.getComment())
-                    .build();
+        Optional<Record> recordOptional = recordRepository.findById(recordSeq);
 
+        if (recordOptional.isEmpty()) {
+            throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
+        }
+
+        Record record = recordOptional.get();
+
+        try {
+            record.update(requestRecordModify.getComment(), requestRecordModify.getStarRating());
             recordRepository.save(record);
         } catch (Exception e) {
             throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
@@ -347,24 +333,11 @@ public class RecordServiceImpl implements RecordService {
         if (recordOptional.isEmpty()) {
             throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
         }
+        Record record = recordOptional.get();
 
         try {
-            Record record = recordOptional.get();
-            Record deletedRecord = Record.builder()
-                    .seq(record.getSeq())
-                    .memberSeq(record.getMemberSeq())
-                    .groupSeq(record.getGroupSeq())
-                    .title(record.getTitle())
-                    .starRating(record.getStarRating())
-                    .comment(record.getComment())
-                    .usedCount(record.getUsedCount())
-                    .scrapedCount(record.getScrapedCount())
-                    .distance(record.getDistance())
-                    .duration(record.getDuration())
-                    .regionCd(record.getRegionCd())
-                    .isDeleted(true)
-                    .build();
-            recordRepository.save(deletedRecord);
+            record.delete(record);
+            recordRepository.save(record);
         } catch (Exception e) {
             throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
         }
