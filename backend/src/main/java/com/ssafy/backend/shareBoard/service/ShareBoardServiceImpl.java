@@ -10,6 +10,7 @@ import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.domain.ShareBoardComment;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardScrapMapping;
+import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
 import com.ssafy.backend.shareBoard.repository.ShareBoardCommentRepository;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -251,6 +254,30 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             throw new WTException(e.getMessage()); // Todo : 고치기
         }
     }
+
+    @Override
+    public void modify(Long memberSeq, Long shareBoardSeq, RequestShareBoardModifyDto requestShareBoardModifyDto) throws WTException {
+        Optional<ShareBoard> shareBoardOptional = shareBoardRepository.findById(shareBoardSeq);
+
+        if (shareBoardOptional.isEmpty()) {
+            throw new WTException("해당 게시글 없음"); // Todo : 고치기
+        }
+
+        ShareBoard shareBoard = shareBoardOptional.get();
+
+        if (!Objects.equals(memberSeq, shareBoard.getMemberSeq())) {
+            throw new WTException("게시글 수정 실패"); // Todo : 고치기
+        }
+
+        try {
+            shareBoard.update(requestShareBoardModifyDto.getTitle(), requestShareBoardModifyDto.getContent());
+            shareBoardRepository.save(shareBoard);
+        } catch (Exception e) {
+            throw new WTException("수정 실패"); // Todo : 고치기
+        }
+
+    }
+
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
         ResponseMemberDto responseMemberDto = new ResponseMemberDto();
