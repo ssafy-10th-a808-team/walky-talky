@@ -205,17 +205,17 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         List<ShareBoardComment> commentDomainList = shareBoardCommentRepository.findAllByShareBoardSeqAndIsDeletedFalse(shareBoardSeq);
         List<ResponseCommentDto> list = new ArrayList<>();
 
-
         for (ShareBoardComment shareBoardComment : commentDomainList) {
             try {
                 ResponseCommentDto responseCommentDto = new ResponseCommentDto();
+
+                responseCommentDto.setCommentSeq(shareBoardComment.getSeq());
                 responseCommentDto.setShareBoardSeq(shareBoardSeq);
                 responseCommentDto.setContent(shareBoardComment.getContent());
                 responseCommentDto.setMember(getMemberNicknameUrl(shareBoardComment.getMemberSeq()));
                 responseCommentDto.setCreated_at(shareBoardComment.getCreatedBy());
-                System.out.println("responseCommentDto = " + responseCommentDto);
+
                 list.add(responseCommentDto);
-                System.out.println("list = " + list);
             } catch (Exception e) {
                 throw new WTException(e.getMessage()); // Todo : 고치기
             }
@@ -356,6 +356,33 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         } catch (Exception e) {
             throw new WTException("댓글 등록 오류"); // Todo : 고치기
         }
+    }
+
+    @Override
+    public void commentModify(Long shareBoardSeq, Long commentSeq, Long memberSeq, String content) throws WTException {
+        Optional<ShareBoardComment> shareBoardCommentOptional = shareBoardCommentRepository.findById(commentSeq);
+
+        if (shareBoardCommentOptional.isEmpty()) {
+            throw new WTException("댓글 수정 오류");
+        }
+
+        ShareBoardComment shareBoardComment = shareBoardCommentOptional.get();
+
+        if (!Objects.equals(shareBoardComment.getMemberSeq(), memberSeq) || !Objects.equals(shareBoardComment.getShareBoardSeq(), shareBoardSeq)) {
+            throw new WTException("댓글 수정 오류입니다.");
+        }
+
+        if (shareBoardComment.isDeleted()) {
+            throw new WTException("이미 삭제된 댓글입니다.");
+        }
+
+        try {
+            shareBoardComment.update(content);
+            shareBoardCommentRepository.save(shareBoardComment);
+        } catch (Exception e) {
+            throw new WTException("댓글 수정 오류.");
+        }
+
     }
 
 

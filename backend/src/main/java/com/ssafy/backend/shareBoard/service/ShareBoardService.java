@@ -37,4 +37,6 @@ public interface ShareBoardService {
     void likeCancel(Long shareBoardSeq, Long memberSeq) throws WTException;
 
     void commentWrite(Long shareBoardSeq, Long memberSeq, String content) throws WTException;
+
+    void commentModify(Long shareBoardSeq, Long commentSeq, Long memberSeq, String content) throws WTException;
 }
