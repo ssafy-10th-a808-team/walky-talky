@@ -11,15 +11,17 @@
           </div>
           <div class="col-lg-15 d-flex align-items-stretch justify-content-center">
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
-            <form  method="post" role="form" class="php-name-form">
+            <form  method="post" role="form" class="php-email-form">
                 <div class="row">
+                  <!-- 이미지 -->
                   <div class="form-group col-md-8">
                     <label for="name">이미지</label>
                     <input type="file" name="name" class="form-control" id="name" @change="readInputFile" required/>
                     <div id="imageFrame">
-                      <img id="img" src=""/>
+                      <img id="img" height="200" alt="이미지미리보기"/>
                     </div>
                   </div>
+                  <!-- 이미지 end -->
                   <div class="form-group col-md-8">
                     <label for="name">모임명</label>
                     <input type="text" name="name" class="form-control" id="name" v-model.trim="clubname" required>
@@ -48,12 +50,12 @@
 
                   <div class="row">
                     <div class="form-group col-md-5 mt-3 mt-md-0">
-                      <label for="name">시작 연령</label>
-                      <input type="name" class="form-control" name="name" id="name" v-model.trim="young_birth" required>
-                    </div>
-                    <div class="form-group col-md-5 mt-3 mt-md-0">
                       <label for="name">늙은 나이 </label>
                       <input type="name" class="form-control" name="name" id="name" v-model.trim="old_birth" required>
+                    </div>
+                    <div class="form-group col-md-5 mt-3 mt-md-0">
+                      <label for="name">시작 연령</label>
+                      <input type="name" class="form-control" name="name" id="name" v-model.trim="young_birth" required>
                     </div>
                   </div>
 
@@ -63,9 +65,9 @@
                 <div class="row">
                   <div class="portfolio col-md-6 d-flex justify-content-center">
                     <ul id="portfolio-flters">
-                      <li data-filter="*" class="filter-active">남</li>
-                      <li data-filter=".filter-app">여</li>
-                      <li data-filter=".filter-card">무관</li>
+                      <li :class="{ 'filter-active': gender_type === 'M' }" @click="setGenderType('M')">남</li>
+                      <li :class="{ 'filter-active': gender_type === 'F' }" @click="setGenderType('F')">여</li>
+                      <li :class="{ 'filter-active': gender_type === 'A' }" @click="setGenderType('A')">무관</li>
                     </ul>
                   </div>
                 </div>
@@ -81,20 +83,20 @@
                 <div class="row">
                   <div class="portfolio col-md-8 d-flex justify-content-center">
                     <ul id="portfolio-flters">
-                      <li data-filter="*" class="filter-active">즉시가입</li>
-                      <li data-filter=".filter-app">가입승인</li>
+                      <li :class="{ 'filter-active': is_auto_recruite === true }" @click="setrecruiteType(true)">즉시가입</li>
+                      <li :class="{ 'filter-active': is_auto_recruite === false }" @click="setrecruiteType(false)">가입승인</li>
                     </ul>
                   </div>
                 </div>
                   
+                <div class="my-3">
+                  <div class="loading">Loading</div>
+                  <div class="error-message"></div>
+                  <div class="sent-message">Your message has been sent. Thank you!</div>
+                </div>
               </div>
-                  <div class="my-3">
-                    <div class="loading">Loading</div>
-                    <div class="error-message"></div>
-                    <div class="sent-message">Your message has been sent. Thank you!</div>
-                  </div>
-                  <div class="text-center"><button @click="createClub" type="submit">모임 생성</button></div>
-                </form>
+              <div class="text-center"><button @click="createClub" type="submit">모임 생성</button></div>
+            </form>
           </div>
         </div>
           
@@ -118,20 +120,30 @@
     const counterstore = useCounterStore()
     
     const locationIcon = counterstore.selectButton('LocationIcon')
-
-    const clubname = ref('')
-    const introduce = ref('')
+  
+    const profileImg = ref(null)
+    const clubname = ref('테스트클럽이름')
+    const introduce = ref('소모임생성테스트')
     const region_cd = ref('1121510300')
-    const young_birth = ref('')
-    const old_birth = ref('')
-    const gender_type = ref('')
+    const young_birth = ref('2000')
+    const old_birth = ref('1996')
+    const gender_type = ref('A')
     const max_capacity = ref(10)
     const is_auto_recruite = ref(true)
  
 
- 
+    const setrecruiteType = (value) => {
+      is_auto_recruite.value = value
+      console.log(`selected recruite : ${is_auto_recruite.value}`)
+    }
+    const setGenderType = (value) => {
+      gender_type.value = value
+      console.log(`selected gender : ${gender_type.value}`)
+    }
+
     const createClub = function () {
         const payload = {
+            profileImg: profileImg.value,
             clubname: clubname.value,
             introduce: introduce.value,
             region_cd: region_cd.value,
@@ -141,8 +153,8 @@
             max_capacity: max_capacity.value,
             is_auto_recruite: is_auto_recruite.value,
         }
-        clubstore.createClub(payload)
         console.log(payload)
+        clubstore.createClub(payload)
     } 
     
     const checkDuplicate = () => {
@@ -153,7 +165,9 @@
       document.getElementById('imageFrame').innerHTML = '';
       const files = e.target.files;
       const fileArr = Array.from(files);
-      console.log(fileArr);
+      console.log(fileArr[0]);
+      profileImg.value = fileArr[0]
+      console.log(`현재 저장된 프로필 이미지 : ${profileImg.value}`)
       fileArr.forEach(function(f) {
         if (!f.type.match("image/.*")) {
           alert("이미지 확장자만 업로드 가능합니다.");
@@ -163,11 +177,16 @@
         reader.onload = function(e) {
           const img = document.createElement('img');
           img.src = e.target.result;
-          document.getElementById('imagePreview').appendChild(img);
+          
+          document.getElementById('imageFrame').appendChild(img);
+
+
         };
         reader.readAsDataURL(f);
       });
     }
+    
+  
 </script>
 
 <style scoped>
