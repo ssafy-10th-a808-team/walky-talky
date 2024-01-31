@@ -29,4 +29,6 @@ public interface ShareBoardService {
     ResponseScrapDto viewScrap(Long shareBoardSeq, Long memberSeq) throws WTException;
 
     void modify(Long memberSeq, Long shareBoardSeq, RequestShareBoardModifyDto requestShareBoardModifyDto) throws WTException;
+
+    void delete(Long memberSeq, Long shareBoardSeq) throws WTException;
 }

@@ -278,6 +278,29 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     }
 
+    @Override
+    public void delete(Long memberSeq, Long shareBoardSeq) throws WTException {
+        Optional<ShareBoard> shareBoardOptional = shareBoardRepository.findById(shareBoardSeq);
+
+        if (shareBoardOptional.isEmpty()) {
+            throw new WTException("해당 게시글 없음"); // Todo : 고치기
+        }
+
+        ShareBoard shareBoard = shareBoardOptional.get();
+
+        if (!Objects.equals(memberSeq, shareBoard.getMemberSeq())) {
+            throw new WTException("게시글 삭제 실패"); // Todo : 고치기
+        }
+
+        try {
+            shareBoard.delete(shareBoard);
+            shareBoardRepository.save(shareBoard);
+        } catch (Exception e) {
+            throw new WTException(e.getMessage()); // Todo : 고치기
+        }
+
+    }
+
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
         ResponseMemberDto responseMemberDto = new ResponseMemberDto();
