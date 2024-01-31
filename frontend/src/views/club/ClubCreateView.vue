@@ -83,8 +83,8 @@
                 <div class="row">
                   <div class="portfolio col-md-8 d-flex justify-content-center">
                     <ul id="portfolio-flters">
-                      <li :class="{ 'filter-active': is_auto_recruite === true }" @click="setrecruiteType(true)">즉시가입</li>
-                      <li :class="{ 'filter-active': is_auto_recruite === false }" @click="setrecruiteType(false)">가입승인</li>
+                      <li :class="{ 'filter-active': is_auto_recruit === true }" @click="setrecruitType(true)">즉시가입</li>
+                      <li :class="{ 'filter-active': is_auto_recruit === false }" @click="setrecruitType(false)">가입승인</li>
                     </ul>
                   </div>
                 </div>
@@ -129,12 +129,12 @@
     const old_birth = ref('1996')
     const gender_type = ref('A')
     const max_capacity = ref(10)
-    const is_auto_recruite = ref(true)
+    const is_auto_recruit = ref(true)
  
 
-    const setrecruiteType = (value) => {
-      is_auto_recruite.value = value
-      console.log(`selected recruite : ${is_auto_recruite.value}`)
+    const setrecruitType = (value) => {
+      is_auto_recruit.value = value
+      console.log(`selected recruit : ${is_auto_recruit.value}`)
     }
     const setGenderType = (value) => {
       gender_type.value = value
@@ -151,7 +151,7 @@
             old_birth: old_birth.value,
             gender_type: gender_type.value,
             max_capacity: max_capacity.value,
-            is_auto_recruite: is_auto_recruite.value,
+            is_auto_recruit: is_auto_recruit.value,
         }
         console.log(payload)
         clubstore.createClub(payload)
