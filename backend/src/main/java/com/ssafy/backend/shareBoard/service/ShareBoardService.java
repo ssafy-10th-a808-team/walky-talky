@@ -20,4 +20,6 @@ public interface ShareBoardService {
     List<ResponseCommentDto> viewComment(Long shareBoardSeq) throws WTException;
 
     ResponseLikeDto viewLike(Long shareBoardSeq, Long memberSeq) throws WTException;
+
+    ResponseScrapDto viewScrap(Long shareBoardSeq, Long memberSeq) throws WTException;
 }
