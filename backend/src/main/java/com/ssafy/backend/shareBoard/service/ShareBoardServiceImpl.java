@@ -11,13 +11,11 @@ import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardScrapMapping;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseLikeDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseScrapDto;
-import com.ssafy.backend.shareBoard.dto.response.ResponseShareBoardDto;
+import com.ssafy.backend.shareBoard.dto.response.*;
 import com.ssafy.backend.shareBoard.repository.ShareBoardCommentRepository;
 import com.ssafy.backend.shareBoard.repository.ShareBoardLikeRepository;
 import com.ssafy.backend.shareBoard.repository.ShareBoardRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -165,4 +163,38 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
         return list;
     }
+
+    @Override
+    @Transactional
+    public ResponseShareBoardContentDto viewContent(Long shareBoardSeq) throws WTException {
+        ResponseShareBoardContentDto responseShareBoardContentDto = new ResponseShareBoardContentDto();
+
+        responseShareBoardContentDto.setShareBoardSeq(shareBoardSeq);
+
+        int isHitUpdated = shareBoardRepository.updateHit(shareBoardSeq);
+        if (isHitUpdated != 1) {
+            throw new WTException("글 상세 조회 오류");
+        }
+
+        Optional<ShareBoard> shareBoardOptional = shareBoardRepository.findById(shareBoardSeq);
+        if (shareBoardOptional.isEmpty()) {
+            throw new WTException("글 상세 조회 오류");
+        }
+
+        ShareBoard shareBoard = shareBoardOptional.get();
+
+        try {
+            responseShareBoardContentDto.setTitle(shareBoard.getTitle());
+            responseShareBoardContentDto.setContent(shareBoard.getContent());
+            responseShareBoardContentDto.setRecordSeq(shareBoard.getRecordSeq());
+            responseShareBoardContentDto.setCreate_at(String.valueOf(shareBoard.getCreatedAt()));
+            responseShareBoardContentDto.setHit(shareBoard.getHit());
+            responseShareBoardContentDto.setCommentCount(shareBoardCommentRepository.countByShareBoardSeqAndIsDeletedFalse(shareBoardSeq));
+        } catch (Exception e) {
+            throw new WTException(e.getMessage()); // Todo : 고치기
+        }
+
+        return responseShareBoardContentDto;
+    }
+
 }
