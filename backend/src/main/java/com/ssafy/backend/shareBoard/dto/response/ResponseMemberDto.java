@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseMemberDto {
-    private Long shareBoardSeq;
     private String nickname;
     private String profilePic;
 }

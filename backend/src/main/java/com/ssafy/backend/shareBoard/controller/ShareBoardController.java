@@ -66,30 +66,6 @@ public class ShareBoardController {
         }
     }
 
-    @GetMapping("/list/member")
-    public ResponseEntity<?> listMember(HttpServletRequest request) {
-        Map<String, Object> resultMap = new HashMap<>();
-
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            List<ResponseMemberDto> memberList;
-
-            try {
-                memberList = shareBoardService.listMember();
-            } catch (Exception e) {
-                resultMap.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
-
-            resultMap.put("data", memberList);
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
-        }
-    }
-
     @GetMapping("/list/like")
     public ResponseEntity<?> listLike(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -140,8 +116,8 @@ public class ShareBoardController {
         }
     }
 
-    @GetMapping("/view/{shareBordSeq}/content")
-    public ResponseEntity<?> viewContent(HttpServletRequest request, @PathVariable Long shareBordSeq) {
+    @GetMapping("/view/{shareBoardSeq}/content")
+    public ResponseEntity<?> viewContent(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
         String msg = (String) request.getAttribute("message");
@@ -149,13 +125,37 @@ public class ShareBoardController {
 
             ResponseShareBoardContentDto responseShareBoardContentDto;
             try{
-                responseShareBoardContentDto = shareBoardService.viewContent(shareBordSeq);
+                responseShareBoardContentDto = shareBoardService.viewContent(shareBoardSeq);
             }catch (Exception e){
                 resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
             resultMap.put("data", responseShareBoardContentDto);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/view/{shareBoardSeq}/comment")
+    public ResponseEntity<?> viewComment(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+
+            List<ResponseCommentDto> commentList;
+            try{
+                commentList = shareBoardService.viewComment(shareBoardSeq);
+            }catch (Exception e){
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", commentList);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {

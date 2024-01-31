@@ -1,13 +1,14 @@
 package com.ssafy.backend.shareBoard.service;
 
 import com.ssafy.backend.global.error.WTException;
-import com.ssafy.backend.member.domain.Member;
+import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.record.repository.ScrapRepository;
 import com.ssafy.backend.region.service.RegionService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
+import com.ssafy.backend.shareBoard.domain.ShareBoardComment;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardScrapMapping;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +69,9 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         for (ShareBoard shareBoard : boardList) {
             try {
                 responseShareBoardDto.setShareBoardSeq(shareBoard.getSeq());
+
+                responseShareBoardDto.setMember(getMemberNicknameUrl(shareBoard.getMemberSeq()));
+
                 responseShareBoardDto.setRecordSeq(shareBoard.getRecordSeq());
                 responseShareBoardDto.setTitle(shareBoard.getTitle());
                 responseShareBoardDto.setCreate_at(String.valueOf(shareBoard.getCreatedAt()));
@@ -78,35 +81,6 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 list.add(responseShareBoardDto);
             } catch (Exception e) {
                 throw new WTException(e.getMessage()); // Todo : 개발 끝나고 고치기
-            }
-        }
-
-        return list;
-    }
-
-    @Override
-    public List<ResponseMemberDto> listMember() throws WTException {
-        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalse();
-        List<ResponseMemberDto> list = new ArrayList<>();
-
-        ResponseMemberDto responseMemberDto = new ResponseMemberDto();
-        for (ShareBoardMemberMapping shareBoardMapping : boardList) {
-            try {
-                Long shareBoardSeq = shareBoardMapping.getSeq();
-                responseMemberDto.setShareBoardSeq(shareBoardSeq);
-
-                Optional<Member> m = memberRepository.findById(shareBoardMapping.getMemberSeq());
-                if (m.isEmpty()) {
-                    throw new WTException("멤버 null"); // Todo : 나중에 고치기
-                }
-
-                Member member = m.get();
-                responseMemberDto.setNickname(member.getNickname());
-                responseMemberDto.setProfilePic(member.getUrl());
-
-                list.add(responseMemberDto);
-            } catch (Exception e) {
-                throw new WTException(e.getMessage()); // Todo : 고치기
             }
         }
 
@@ -176,16 +150,19 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             throw new WTException("글 상세 조회 오류");
         }
 
-        Optional<ShareBoard> shareBoardOptional = shareBoardRepository.findById(shareBoardSeq);
-        if (shareBoardOptional.isEmpty()) {
-            throw new WTException("글 상세 조회 오류");
-        }
-
-        ShareBoard shareBoard = shareBoardOptional.get();
+        ShareBoard shareBoard = shareBoardRepository.findBySeqAndIsDeletedFalse(shareBoardSeq);
+        ResponseMemberDto responseMemberDto = new ResponseMemberDto();
 
         try {
             responseShareBoardContentDto.setTitle(shareBoard.getTitle());
             responseShareBoardContentDto.setContent(shareBoard.getContent());
+
+            NicknameUrlMapping m = memberRepository.findNickNameAndUrlBySeq(shareBoard.getMemberSeq());
+            responseMemberDto.setNickname(m.getNickname());
+            responseMemberDto.setProfilePic(m.getUrl());
+
+            responseShareBoardContentDto.setMember(responseMemberDto);
+
             responseShareBoardContentDto.setRecordSeq(shareBoard.getRecordSeq());
             responseShareBoardContentDto.setCreate_at(String.valueOf(shareBoard.getCreatedAt()));
             responseShareBoardContentDto.setHit(shareBoard.getHit());
@@ -197,4 +174,37 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         return responseShareBoardContentDto;
     }
 
+    @Override
+    public List<ResponseCommentDto> viewComment(Long shareBoardSeq) throws WTException {
+        List<ShareBoardComment> commentDomainList = shareBoardCommentRepository.findAllByShareBoardSeqAndIsDeletedFalse(shareBoardSeq);
+        List<ResponseCommentDto> list = new ArrayList<>();
+
+        ResponseCommentDto responseCommentDto = new ResponseCommentDto();
+
+        responseCommentDto.setShareBoardSeq(shareBoardSeq);
+
+        for (ShareBoardComment shareBoardComment : commentDomainList) {
+            try {
+                responseCommentDto.setContent(shareBoardComment.getContent());
+                responseCommentDto.setMember(getMemberNicknameUrl(shareBoardComment.getMemberSeq()));
+                responseCommentDto.setCreated_at(shareBoardComment.getCreatedBy());
+
+                list.add(responseCommentDto);
+            } catch (Exception e) {
+                throw new WTException(e.getMessage()); // Todo : 고치키
+            }
+        }
+
+        return list;
+    }
+
+    public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
+        ResponseMemberDto responseMemberDto = new ResponseMemberDto();
+
+        NicknameUrlMapping m = memberRepository.findNickNameAndUrlBySeq(memberSeq);
+        responseMemberDto.setNickname(m.getNickname());
+        responseMemberDto.setProfilePic(m.getUrl());
+
+        return responseMemberDto;
+    }
 }

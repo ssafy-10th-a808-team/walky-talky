@@ -11,11 +11,11 @@ public interface ShareBoardService {
 
     List<ResponseShareBoardDto> listContent() throws WTException;
 
-    List<ResponseMemberDto> listMember() throws WTException;
-
     List<ResponseLikeDto> listLike(Long memberSeq) throws WTException;
 
     List<ResponseScrapDto> listScrap(Long memberSeq) throws WTException;
 
-    ResponseShareBoardContentDto viewContent(Long shareBordSeq) throws WTException;
+    ResponseShareBoardContentDto viewContent(Long shareBoardSeq) throws WTException;
+
+    List<ResponseCommentDto> viewComment(Long shareBoardSeq) throws WTException;
 }

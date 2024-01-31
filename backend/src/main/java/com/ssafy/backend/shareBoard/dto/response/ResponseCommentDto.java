@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseCommentDto {
     private Long shareBoardSeq;
-    private String nickname;
+    private ResponseMemberDto member;
     private String content;
     private String created_at;
 }

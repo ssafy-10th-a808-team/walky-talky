@@ -13,6 +13,7 @@ public class ResponseShareBoardDto {
     private Long shareBoardSeq;
     private Long recordSeq;
     private String title;
+    private ResponseMemberDto member;
     private String create_at;
     private int hit;
     private int commentCount;
