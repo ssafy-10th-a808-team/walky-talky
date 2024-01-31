@@ -124,9 +124,9 @@ public class ShareBoardController {
         if (msg == null) {
 
             ResponseShareBoardContentDto responseShareBoardContentDto;
-            try{
+            try {
                 responseShareBoardContentDto = shareBoardService.viewContent(shareBoardSeq);
-            }catch (Exception e){
+            } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
@@ -148,14 +148,39 @@ public class ShareBoardController {
         if (msg == null) {
 
             List<ResponseCommentDto> commentList;
-            try{
+            try {
                 commentList = shareBoardService.viewComment(shareBoardSeq);
-            }catch (Exception e){
+            } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
             resultMap.put("data", commentList);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/view/{shareBoardSeq}/like")
+    public ResponseEntity<?> viewLike(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            ResponseLikeDto responseLikeDto;
+            try {
+                responseLikeDto = shareBoardService.viewLike(shareBoardSeq, memberSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", responseLikeDto);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {
