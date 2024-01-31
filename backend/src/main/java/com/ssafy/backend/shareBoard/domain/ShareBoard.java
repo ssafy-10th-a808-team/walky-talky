@@ -38,12 +38,6 @@ public class ShareBoard extends BaseEntity {
     @ColumnDefault("false")
     private boolean isDeleted;
 
-    public ShareBoard update(String title, String content){
-        this.title = title;
-        this.content = content;
-        return this;
-    }
-
     @Builder
     public ShareBoard(Long seq, Long memberSeq, Long recordSeq, String title, String content, int hit, boolean isDeleted) {
         this.seq = seq;
@@ -53,6 +47,23 @@ public class ShareBoard extends BaseEntity {
         this.content = content;
         this.hit = hit;
         this.isDeleted = isDeleted;
+    }
+
+    public ShareBoard update(String title, String content) {
+        this.title = title;
+        this.content = content;
+        return this;
+    }
+
+    public ShareBoard delete(ShareBoard shareBoard) {
+        this.seq = shareBoard.getSeq();
+        this.memberSeq = shareBoard.getMemberSeq();
+        this.recordSeq = shareBoard.getRecordSeq();
+        this.title = shareBoard.getTitle();
+        this.content = shareBoard.getContent();
+        this.hit = shareBoard.getHit();
+        this.isDeleted = true;
+        return this;
     }
 
 
