@@ -382,7 +382,32 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         } catch (Exception e) {
             throw new WTException("댓글 수정 오류.");
         }
+    }
 
+    @Override
+    public void commentDelete(Long shareBoardSeq, Long commentSeq, Long memberSeq) throws WTException {
+        Optional<ShareBoardComment> shareBoardCommentOptional = shareBoardCommentRepository.findById(commentSeq);
+
+        if (shareBoardCommentOptional.isEmpty()) {
+            throw new WTException("댓글 삭제 오류");
+        }
+
+        ShareBoardComment shareBoardComment = shareBoardCommentOptional.get();
+
+        if (!Objects.equals(shareBoardComment.getMemberSeq(), memberSeq) || !Objects.equals(shareBoardComment.getShareBoardSeq(), shareBoardSeq)) {
+            throw new WTException("댓글 삭제 오류입니다.");
+        }
+
+        if (shareBoardComment.isDeleted()) {
+            throw new WTException("이미 삭제된 댓글입니다.");
+        }
+
+        try {
+            shareBoardComment.delete(shareBoardComment);
+            shareBoardCommentRepository.save(shareBoardComment);
+        } catch (Exception e) {
+            throw new WTException("댓글 삭제 오류.");
+        }
     }
 
 
