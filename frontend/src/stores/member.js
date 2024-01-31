@@ -3,10 +3,12 @@ import { defineStore } from 'pinia'
 import router from '@/router'
 import axios from 'axios'
 
-const REST_MEMBER_API = `http://localhost:8080/member`
+const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
 
 export const useMemberStore = defineStore('member', () => {
   const memberList = ref([])
+  const address_name = ref('')
+  const address_code = ref('')
 
   //유저 리스트 가져오기
   const getMemberList = function () {
@@ -29,22 +31,34 @@ export const useMemberStore = defineStore('member', () => {
   }
 
   //회원가입
-  const createMember = function (member) {
+  const createMember = function (payload) {
+    const formData = new FormData()
+    formData.append('multipartFile', payload.profileImg)
+    formData.append('id', payload.memberId)
+    formData.append('password', payload.password)
+    formData.append('birth', payload.birth)
+    formData.append('gender', payload.gender)
+    formData.append('nickname', payload.nickname)
+    formData.append('introduce', payload.introduce)
+    formData.append('regionCd', payload.region_cd)
+
     axios({
-      url: REST_MEMBER_API + '/local-signup',
-      method: 'POST',
+      method: 'post',
+      url: `${REST_MEMBER_API}/api/member/local-signup`,
       headers: {
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token.value}`,
+        'Content-Type': 'multipart/form-data'
       },
-      data: member
+      data: formData
     })
       .then((res) => {
+        console.log(res)
         alert('회원가입을 축하드립니다! 로그인을 해주세요')
         router.push({ name: 'Login' })
       })
       .catch((err) => {
         console.log(err)
-        console.log(member.id)
+        console.log(err.message)
       })
   }
 
@@ -94,6 +108,10 @@ export const useMemberStore = defineStore('member', () => {
     })
   }
 
+  // 지역코드 및 주소 가져오기
+  const getLocationInfo = () => {
+    return [address_name.value, address_code.value]
+  }
   return {
     memberList,
     member,
@@ -105,6 +123,11 @@ export const useMemberStore = defineStore('member', () => {
     logout,
     selectedMember,
     clickMember,
-    updateMember
+    updateMember,
+    // 지역 가져오기 카카오맵
+    address_name,
+    address_code,
+    getLocationInfo,
+
   }
 })
