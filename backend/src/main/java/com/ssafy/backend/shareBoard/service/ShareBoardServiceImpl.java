@@ -315,6 +315,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             throw new WTException("자신의 글에 좋아요를 누를 수 없습니다.");
         }
 
+        if (shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq)) {
+            throw new WTException("이미 좋아요를 누른 글입니다.");
+        }
+
         try {
             ShareBoardLike shareBoardLike = ShareBoardLike.builder()
                     .shareBoardSeq(shareBoardSeq)
@@ -323,6 +327,19 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             shareBoardLikeRepository.save(shareBoardLike);
         } catch (Exception e) {
             throw new WTException("좋아요에 실패하였습니다.");
+        }
+    }
+
+    @Override
+    public void likeCancel(Long shareBoardSeq, Long memberSeq) throws WTException {
+        if (!shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq)) {
+            throw new WTException("좋아요 취소 실패");
+        }
+
+        try {
+            shareBoardLikeRepository.deleteByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq);
+        } catch (Exception e) {
+            throw new WTException("좋아요 취소에 실패하였습니다.");
         }
     }
 
