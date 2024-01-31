@@ -11,6 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseScrapDto {
     private Long shareBoardSeq;
+    private Long recordSeq;
     private boolean isScraped;
     private int scrapCount;
 }

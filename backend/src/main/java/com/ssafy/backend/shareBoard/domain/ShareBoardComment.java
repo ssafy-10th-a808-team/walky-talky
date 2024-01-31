@@ -28,15 +28,29 @@ public class ShareBoardComment extends BaseEntity {
 
     @Column(name = "is_deleted")
     @ColumnDefault("false")
-    private Boolean isDeleted;
+    private boolean isDeleted;
 
     @Builder
-    public ShareBoardComment(Long seq, Long shareBoardSeq, Long memberSeq, String content, boolean isDeleted){
+    public ShareBoardComment(Long seq, Long shareBoardSeq, Long memberSeq, String content, boolean isDeleted) {
         this.seq = seq;
         this.shareBoardSeq = shareBoardSeq;
         this.memberSeq = memberSeq;
         this.content = content;
         this.isDeleted = isDeleted;
+    }
+
+    public ShareBoardComment update(String content) {
+        this.content = content;
+        return this;
+    }
+
+    public ShareBoardComment delete(ShareBoardComment shareBoardComment) {
+        this.seq = shareBoardComment.getSeq();
+        this.shareBoardSeq = shareBoardComment.getShareBoardSeq();
+        this.memberSeq = shareBoardComment.getMemberSeq();
+        this.content = shareBoardComment.content;
+        this.isDeleted = true;
+        return this;
     }
 
 }

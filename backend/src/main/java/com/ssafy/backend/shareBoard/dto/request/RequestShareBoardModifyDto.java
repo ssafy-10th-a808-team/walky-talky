@@ -1,4 +1,4 @@
-package com.ssafy.backend.shareBoard.dto.response;
+package com.ssafy.backend.shareBoard.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseMemberDto {
-    private String nickname;
-    private String profilePic;
+public class RequestShareBoardModifyDto {
+    private String title;
+    private String content;
 }

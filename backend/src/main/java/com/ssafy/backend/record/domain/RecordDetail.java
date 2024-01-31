@@ -32,6 +32,17 @@ public class RecordDetail extends BaseEntity {
     @Column(name = "point_comment", length = 255)
     private String pointComment;
 
+    public RecordDetail updateComment(String pointComment){
+        this.pointComment = pointComment;
+        return this;
+    }
+
+    public RecordDetail updateUrl(String url){
+        this.url = url;
+        return this;
+    }
+
+    @Builder
     public RecordDetail(Long seq, Long recordSeq, String latitude, String longitude, String time, String url, String pointComment) {
         this.seq = seq;
         this.recordSeq = recordSeq;
