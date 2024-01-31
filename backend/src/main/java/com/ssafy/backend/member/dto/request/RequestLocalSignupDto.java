@@ -2,13 +2,16 @@ package com.ssafy.backend.member.dto.request;
 
 import com.ssafy.backend.member.domain.Member;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RequestLocalSignupDto {
 
+    private MultipartFile multipartFile;
     private String id;
     private String password;
     private String birth;
@@ -20,7 +23,7 @@ public class RequestLocalSignupDto {
     public Member toEntity() {
         return Member.builder()
                 .seq(null)
-                .loginType("0")
+                .loginType("local")
                 .memberId(id)
                 .password(password)
                 .birth(birth)

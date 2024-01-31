@@ -21,7 +21,7 @@ public interface ClubService {
 
     ResponseEntity<ResponseClubCheckNameDto> clubCheckName(RequestClubCheckNameDto requestClubCheckNameDto);
 
-    ResponseEntity<ResponseClubModifyDto> clubModify(MultipartFile multipartFile, RequestClubModifyDto requestClubModifyDto, HttpServletRequest httpServletRequest) throws IOException;
+    ResponseEntity<ResponseClubModifyDto> clubModify(RequestClubModifyDto requestClubModifyDto, HttpServletRequest httpServletRequest) throws IOException;
 
     ResponseEntity<ResponseClubDeleteDto> clubDelete(RequestClubDeleteDto requestClubDeleteDto, HttpServletRequest httpServletRequest);
 }
