@@ -354,4 +354,28 @@ public class ShareBoardController {
         }
     }
 
+    @PostMapping("/{shareBoardSeq}/comment/write")
+    public ResponseEntity<?> commentWrite(HttpServletRequest request, @RequestBody Map<String, String> map, @PathVariable Long shareBoardSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            try {
+                String content = map.get("content");
+                shareBoardService.commentWrite(shareBoardSeq, memberSeq, content);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
 }

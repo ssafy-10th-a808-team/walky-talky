@@ -152,9 +152,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         }
 
         ShareBoard shareBoard = shareBoardRepository.findBySeqAndIsDeletedFalse(shareBoardSeq);
-        ResponseMemberDto responseMemberDto = new ResponseMemberDto();
 
         try {
+            ResponseMemberDto responseMemberDto = new ResponseMemberDto();
+
             responseShareBoardContentDto.setTitle(shareBoard.getTitle());
             responseShareBoardContentDto.setContent(shareBoard.getContent());
 
@@ -204,17 +205,17 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         List<ShareBoardComment> commentDomainList = shareBoardCommentRepository.findAllByShareBoardSeqAndIsDeletedFalse(shareBoardSeq);
         List<ResponseCommentDto> list = new ArrayList<>();
 
-        ResponseCommentDto responseCommentDto = new ResponseCommentDto();
-
-        responseCommentDto.setShareBoardSeq(shareBoardSeq);
 
         for (ShareBoardComment shareBoardComment : commentDomainList) {
             try {
+                ResponseCommentDto responseCommentDto = new ResponseCommentDto();
+                responseCommentDto.setShareBoardSeq(shareBoardSeq);
                 responseCommentDto.setContent(shareBoardComment.getContent());
                 responseCommentDto.setMember(getMemberNicknameUrl(shareBoardComment.getMemberSeq()));
                 responseCommentDto.setCreated_at(shareBoardComment.getCreatedBy());
-
+                System.out.println("responseCommentDto = " + responseCommentDto);
                 list.add(responseCommentDto);
+                System.out.println("list = " + list);
             } catch (Exception e) {
                 throw new WTException(e.getMessage()); // Todo : 고치기
             }
@@ -340,6 +341,20 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             shareBoardLikeRepository.deleteByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq);
         } catch (Exception e) {
             throw new WTException("좋아요 취소에 실패하였습니다.");
+        }
+    }
+
+    @Override
+    public void commentWrite(Long shareBoardSeq, Long memberSeq, String content) throws WTException {
+        try {
+            ShareBoardComment shareBoardComment = ShareBoardComment.builder()
+                    .shareBoardSeq(shareBoardSeq)
+                    .memberSeq(memberSeq)
+                    .content(content)
+                    .build();
+            shareBoardCommentRepository.save(shareBoardComment);
+        } catch (Exception e) {
+            throw new WTException("댓글 등록 오류"); // Todo : 고치기
         }
     }
 
