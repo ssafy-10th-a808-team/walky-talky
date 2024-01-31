@@ -8,6 +8,7 @@ import com.ssafy.backend.record.repository.ScrapRepository;
 import com.ssafy.backend.record.service.RecordService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.domain.ShareBoardComment;
+import com.ssafy.backend.shareBoard.domain.ShareBoardLike;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardScrapMapping;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
@@ -43,6 +44,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public void write(Long memberSeq, RequestShareBoardWriteDto requestShareBoardWriteDto) throws WTException {
+        // Todo : 자기 기록으로만 글 쓸 수 있게 하기
         try {
             ShareBoard shareBoard = ShareBoard.builder()
                     .memberSeq(memberSeq)
@@ -180,7 +182,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         try {
             responseRecordDto.setShareBoardSeq(shareBoardSeq);
 
-            Long recordSeq = shareBoardRepository.findRecordSeqBySeq(shareBoardSeq).getRecordSeq();
+            Long recordSeq = shareBoardRepository.findRecordSeqBySeqAndIsDeletedFalse(shareBoardSeq).getRecordSeq();
 
             responseRecordDto.setRecordSeq(recordSeq);
 
@@ -243,7 +245,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         try {
             responseScrapDto.setShareBoardSeq(shareBoardSeq);
 
-            Long recordSeq = shareBoardRepository.findRecordSeqBySeq(shareBoardSeq).getRecordSeq();
+            Long recordSeq = shareBoardRepository.findRecordSeqBySeqAndIsDeletedFalse(shareBoardSeq).getRecordSeq();
 
             responseScrapDto.setRecordSeq(recordSeq);
             responseScrapDto.setScrapCount(scrapRepository.countAllByRecordSeq(recordSeq));
@@ -299,6 +301,29 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             throw new WTException(e.getMessage()); // Todo : 고치기
         }
 
+    }
+
+    @Override
+    public void like(Long shareBoardSeq, Long memberSeq) throws WTException {
+        ShareBoardMemberMapping shareBoardMemberMapping = shareBoardRepository.findMemberSeqBySeqAndIsDeletedFalse(shareBoardSeq);
+
+        if (shareBoardMemberMapping == null) {
+            throw new WTException("좋아요 오류");
+        }
+
+        if (Objects.equals(shareBoardMemberMapping.getMemberSeq(), memberSeq)) {
+            throw new WTException("자신의 글에 좋아요를 누를 수 없습니다.");
+        }
+
+        try {
+            ShareBoardLike shareBoardLike = ShareBoardLike.builder()
+                    .shareBoardSeq(shareBoardSeq)
+                    .memberSeq(memberSeq)
+                    .build();
+            shareBoardLikeRepository.save(shareBoardLike);
+        } catch (Exception e) {
+            throw new WTException("좋아요에 실패하였습니다.");
+        }
     }
 
 
