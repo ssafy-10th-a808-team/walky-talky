@@ -38,7 +38,7 @@ public class Record extends BaseEntity {
 
     @Column(name = "scraped_count")
     @ColumnDefault("0")
-    private int scrapedCount;
+    private int scrapedCount; // 필요없을듯?
 
     private Double distance;
 
@@ -50,6 +50,28 @@ public class Record extends BaseEntity {
     @Column(name = "is_deleted")
     @ColumnDefault("0")
     private Boolean isDeleted;
+
+    public Record update(String comment, int starRating){
+        this.comment = comment;
+        this.starRating = starRating;
+        return this;
+    }
+
+    public Record delete(Record delRecord){
+        this.seq = delRecord.getSeq();
+        this.memberSeq = delRecord.getMemberSeq();
+        this.groupSeq = delRecord.getGroupSeq();
+        this.title = delRecord.getTitle();
+        this.starRating = delRecord.getStarRating();
+        this.comment = delRecord.getComment();
+        this.usedCount = delRecord.usedCount;
+        this.scrapedCount = delRecord.getScrapedCount();
+        this.distance = delRecord.getDistance();
+        this.duration = delRecord.getDuration();
+        this.regionCd = delRecord.getRegionCd();
+        this.isDeleted = true;
+        return this;
+    }
 
     @Builder
     public Record(Long seq, Long memberSeq, Long groupSeq, String title, int starRating, String comment, int usedCount, int scrapedCount, Double distance, String duration, String regionCd, Boolean isDeleted) {
