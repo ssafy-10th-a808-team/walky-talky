@@ -2,7 +2,7 @@ package com.ssafy.backend.chat.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.chat.domain.ChatMessage;
+import com.ssafy.backend.chat.domain.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
@@ -16,13 +16,13 @@ public class RedisSubscriber implements MessageListener {
 
     private final ObjectMapper objectMapper;
     private final SimpMessagingTemplate messagingTemplate;
-    private final RedisTemplate<String, ChatMessage> redisTemplateMessage;
+    private final RedisTemplate<String, ChatMessageDto> redisTemplateMessage;
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            String publishMessage = (String) redisTemplateMessage.getStringSerializer().deserialize(message.getBody());
+            String publishMessage = redisTemplateMessage.getStringSerializer().deserialize(message.getBody());
 
-            ChatMessage chatMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
+            ChatMessageDto chatMessage = objectMapper.readValue(publishMessage, ChatMessageDto.class);
             messagingTemplate.convertAndSend("/sub/chat/" + chatMessage.getChatSeq(), chatMessage);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
