@@ -1,12 +1,12 @@
-package com.ssafy.backend.club.dto.response;
+package com.ssafy.backend.clubMember.dto.response;
 
 import lombok.*;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResponseClubModifyDto {
+public class ResponseClubMemberWithdrawDto {
     private String message;
 }
