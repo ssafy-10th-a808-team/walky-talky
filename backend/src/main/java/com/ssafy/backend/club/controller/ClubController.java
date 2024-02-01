@@ -80,6 +80,18 @@ public class ClubController {
 
     @GetMapping("/detail")
     public ResponseEntity<ResponseClubDetailDto> clubDetail(@RequestParam("clubSeq") Long clubSeq) {
+
+        ResponseClubDetailDto responseClubDetailDto;
+
+        if (clubSeq == null) {
+            responseClubDetailDto = ResponseClubDetailDto
+                    .builder()
+                    .message("null data not allowed")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
+        }
+
+
         return clubService.clubDetail(clubSeq);
     }
 
