@@ -16,8 +16,8 @@ public class ResponseClubListDtoClub {
     private String youngBirth;
     private String oldBirth;
     private String genderType;
-    private int nowCapacity;
-    private int maxCapacity;
-    private boolean isAutoRecruit;
-    private boolean isOpenRecruit;
+    private Integer nowCapacity;
+    private Integer maxCapacity;
+    private Boolean isAutoRecruit;
+    private Boolean isOpenRecruit;
 }

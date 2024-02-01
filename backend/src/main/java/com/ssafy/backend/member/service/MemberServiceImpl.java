@@ -218,7 +218,7 @@ public class MemberServiceImpl implements MemberService {
             if (member == null) { // 아이디에 해당하는 회원 없을때
                 throw new WTException("아이디 혹은 비밀번호를 확인해주세요.");
             } else {
-                if (member.isDeleted()) { // 탈퇴한 회원일때
+                if (member.getIsDeleted()) { // 탈퇴한 회원일때
                     throw new WTException("아이디 혹은 비밀번호를 확인해주세요.");
                 }
                 if (!hashPassword(loginDto.getPassword(), salt.getBytes()).equals(member.getPassword())) { // 비번 틀렸을때
