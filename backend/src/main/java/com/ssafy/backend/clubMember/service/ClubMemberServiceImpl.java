@@ -3,9 +3,7 @@ package com.ssafy.backend.clubMember.service;
 import com.ssafy.backend.club.domain.Club;
 import com.ssafy.backend.club.repository.ClubRepository;
 import com.ssafy.backend.clubMember.domain.ClubMember;
-import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyAcceptDto;
-import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyDto;
-import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyRejectDto;
+import com.ssafy.backend.clubMember.dto.request.*;
 import com.ssafy.backend.clubMember.dto.response.*;
 import com.ssafy.backend.clubMember.repository.ClubMemberRepository;
 import com.ssafy.backend.member.domain.Member;
@@ -261,5 +259,71 @@ public class ClubMemberServiceImpl implements ClubMemberService {
 
         return ResponseEntity.status(HttpStatus.OK).body(responseClubMemberApplyRejectDto);
 
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseClubMemberExcludeDto> clubMemberExclude(RequestClubMemberExcludeDto requestClubMemberExcludeDto, HttpServletRequest httpServletRequest) {
+
+        ResponseClubMemberExcludeDto responseClubMemberExcludeDto;
+
+        Long myMemberSeq = (Long) httpServletRequest.getAttribute("seq");
+        Long clubSeq = requestClubMemberExcludeDto.getClubSeq();
+        Long memberSeq = requestClubMemberExcludeDto.getMemberSeq();
+
+        // 해당 소모임의 주인이 아닙니다.
+        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(clubSeq, myMemberSeq, "owner")) {
+            responseClubMemberExcludeDto = ResponseClubMemberExcludeDto.builder()
+                    .message("해당 소모임의 주인이 아닙니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubMemberExcludeDto);
+        }
+
+        // 해당 소모임의 멤버가 아닙니다.
+        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(clubSeq, memberSeq, "member")) {
+            responseClubMemberExcludeDto = ResponseClubMemberExcludeDto.builder()
+                    .message("해당 소모임의 멤버가 아닙니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubMemberExcludeDto);
+        }
+
+        clubMemberRepository.deleteByClubSeqAndMemberSeq(clubSeq, memberSeq);
+
+        Club findedClub = clubRepository.findById(clubSeq).orElse(null);
+        findedClub.setNowCapacity(findedClub.getNowCapacity() - 1);
+        clubRepository.save(findedClub);
+
+        responseClubMemberExcludeDto = ResponseClubMemberExcludeDto.builder()
+                .message("OK")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubMemberExcludeDto);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<ResponseClubMemberWithdrawDto> clubMemberWithdraw(RequestClubMemberWithdrawDto requestClubMemberWithdrawDto, HttpServletRequest httpServletRequest) {
+        ResponseClubMemberWithdrawDto responseClubMemberWithdrawDto;
+
+        Long myMemberSeq = (Long) httpServletRequest.getAttribute("seq");
+        Long clubSeq = requestClubMemberWithdrawDto.getClubSeq();
+
+        // 해당 소모임의 멤버가 아닙니다.
+        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(clubSeq, myMemberSeq, "member")) {
+            responseClubMemberWithdrawDto = ResponseClubMemberWithdrawDto.builder()
+                    .message("해당 소모임의 멤버가 아닙니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubMemberWithdrawDto);
+        }
+
+        clubMemberRepository.deleteByClubSeqAndMemberSeq(clubSeq, myMemberSeq);
+
+        Club findedClub = clubRepository.findById(clubSeq).orElse(null);
+        findedClub.setNowCapacity(findedClub.getNowCapacity() - 1);
+        clubRepository.save(findedClub);
+
+        responseClubMemberWithdrawDto = ResponseClubMemberWithdrawDto.builder()
+                .message("OK")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseClubMemberWithdrawDto);
     }
 }
