@@ -7,7 +7,7 @@
         님 현재 위치가 {{ address_name }} 맞나요?
         <div class="col-lg-3 cta-btn-container text-center">
             <a class="cta-btn align-middle" href="#">확인</a>
-            <div class="text-center"><button type="submit">Send Message</button></div>
+            <div class="text-center"><button type="submit" @click="goBack">확인</button></div>
           </div>
     </div>
     <div>
@@ -17,12 +17,17 @@
 
 <script setup>
     import { ref, onMounted } from 'vue'
+    import { useMemberStore } from '@/stores/member';
+    import router from '@/router'
     const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
+  
+    const memberstore = useMemberStore()
     let map = null // map is not defined Reference Error 방지
     let lat = 0
     let lon = 0
     const address_name = ref("")
     const address_code = ref("")
+
     onMounted(() => {
         if (window.kakao && window.kakao.maps) {
             initMap();
@@ -94,6 +99,8 @@
                 // 법정동 코드일 경우에만 저장하기, 수정가능성 높음
                 address_name.value = result[0].address_name
                 address_code.value = result[0].code
+                memberstore.address_name = address_name.value
+                memberstore.address_code = address_code.value
             }
         } else {
             console.error("Failed to get address info")
@@ -102,6 +109,9 @@
         }
     }
 
+    const goBack = () => {
+        router.go(-1)
+    }
 
 
 // const searchDetailAddrFromCoords = (lat, lon, callback) => {

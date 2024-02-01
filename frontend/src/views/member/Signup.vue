@@ -9,6 +9,38 @@
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
             <form method="post" role="form" class="php-email-form">
               <div class="row">
+                <!-- 주소 -->
+                <div class="form-group col-md-6">
+                  <label>주소</label>
+                  <input type="text" name="name" class="form-control" v-model.trim="region_name" />
+                </div>
+                <div class="col-auto">
+                  <ButtonWithIcon :selectedIcon="locationIcon" />
+                </div>
+                <!-- 닉네임 -->
+                <div class="row g-3 align-items-center">
+                  <div class="col-auto">
+                    <label
+                      class="col-form-label"
+                      prop="nickname"
+                      :rules="[{ required: true, message: '내용을 입력해주세요.' }]"
+                      >닉네임</label
+                    >
+                  </div>
+                  <div class="col-auto">
+                    <input v-model="nickname" type="text" class="form-control" />
+                  </div>
+                  <!-- 닉네임 중복확인 버튼 -->
+                  <div class="col-md-4 cta-btn-container text-center col-auto">
+                    <button
+                      type="submit"
+                      class="cta-btn align-middle"
+                      @click="checkDuplicate('nickname')"
+                    >
+                      중복확인
+                    </button>
+                  </div>
+                </div>
                 <!-- 아이디 -->
                 <div class="form-group col-md-8">
                   <label>아이디</label>
@@ -38,14 +70,28 @@
                   type="password"
                   class="form-control"
                   id="inputPassword"
+                  maxlength="16"
                   v-model="password"
                   required
                 />
+                <p style="color: grey">
+                  ※ 비밀번호는 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.
+                </p>
               </div>
               <!-- 비밀번호확인 -->
               <div class="mb-3 row">
                 <label for="inputPassword" class="col-sm-2 col-form-label">비밀번호 확인</label>
-                <input type="password" class="form-control" id="confirmPassword" />
+                <input
+                  type="password"
+                  class="form-control"
+                  id="confirmPassword"
+                  maxlength="16"
+                  @blur="passwordCheckValid"
+                  v-model="repassword"
+                />
+                <div v-if="!passwordCheck">
+                  <p style="color: red">비밀번호가 동일하지 않습니다.</p>
+                </div>
               </div>
               <!-- 이미지 -->
               <div class="form-group col-md-8">
@@ -73,13 +119,7 @@
                   <label class="col-form-label">성별</label>
                 </div>
                 <div class="form-check,col-auto" style="text-align: left; margin-left: 50px">
-                  <input
-                    v-model="gender"
-                    class="form-check-input"
-                    type="radio"
-                    value="M"
-                    checked
-                  />&nbsp;
+                  <input v-model="gender" class="form-check-input" type="radio" value="M" />&nbsp;
                   <label class="form-check-label"> 남 </label>
                 </div>
                 <div class="form-check,col-auto" style="text-align: left; margin-left: 50px">
@@ -87,38 +127,7 @@
                   <label class="form-check-label"> 여 </label>
                 </div>
               </div>
-              <!-- 닉네임 -->
-              <div class="row g-3 align-items-center">
-                <div class="col-auto">
-                  <label
-                    class="col-form-label"
-                    prop="nickname"
-                    :rules="[{ required: true, message: '내용을 입력해주세요.' }]"
-                    >닉네임</label
-                  >
-                </div>
-                <div class="col-auto">
-                  <input v-model="nickname" type="text" class="form-control" />
-                </div>
-                <!-- 닉네임 중복확인 버튼 -->
-                <div class="col-md-4 cta-btn-container text-center col-auto">
-                  <button
-                    type="submit"
-                    class="cta-btn align-middle"
-                    @click="checkDuplicate('nickname')"
-                  >
-                    중복확인
-                  </button>
-                </div>
-              </div>
-              <!-- 주소 -->
-              <div class="form-group col-md-6">
-                <label>주소</label>
-                <input type="text" name="name" class="form-control" />
-              </div>
-              <div class="col-auto">
-                <ButtonWithIcon :selectedIcon="locationIcon" />
-              </div>
+
               <!-- 자기소개 -->
               <div class="form-group mt-3">
                 <label>자기소개</label>
@@ -154,6 +163,7 @@ import router from '../../router'
 import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
 
 const counterstore = useCounterStore()
+const memberStore = useMemberStore()
 const locationIcon = counterstore.selectButton('LocationIcon')
 
 const profileImg = ref(null)
@@ -165,8 +175,10 @@ const gender = ref('')
 const nickname = ref('')
 const introduce = ref('')
 const region_cd = ref('')
+const region_name = ref('')
 
-const memberStore = useMemberStore()
+region_name.value = memberStore.getLocationInfo()[0]
+region_cd.value = memberStore.getLocationInfo()[1]
 
 const createMember = function (e) {
   e.preventDefault()
@@ -182,13 +194,13 @@ const createMember = function (e) {
   }
   // console.log(`아이디 : ${form.value.id}`)
   memberStore.createMember(payload)
-  console.log(payload)
+  // console.log(payload)
 }
 
 const cancelRegistration = function () {
-  // 취소 버튼 클릭 시의 처리 (로그인 페이지로 이동:지금은 일단 홈으로)
+  // 취소 버튼 클릭 시의 처리 (로그인 페이지로 이동)
   console.log('회원가입 취소')
-  router.push({ name: 'home' })
+  router.push({ name: 'Login' })
 }
 
 const checkDuplicate = async function (field) {
@@ -208,11 +220,21 @@ const checkDuplicate = async function (field) {
   }
 }
 
+// 비밀번호 일치 확인
+const passwordCheck = ref(true)
+const passwordCheckValid = function () {
+  if (password.value === repassword.value) {
+    passwordCheck.value = true
+  } else {
+    passwordCheck.value = false
+  }
+}
+
 const readInputFile = (e) => {
   document.getElementById('imageFrame').innerHTML = ''
   const files = e.target.files
   const fileArr = Array.from(files)
-  console.log(fileArr[0])
+  // console.log(fileArr[0])
   profileImg.value = fileArr[0]
   console.log(`현재 저장된 프로필 이미지 : ${profileImg.value}`)
   fileArr.forEach(function (f) {

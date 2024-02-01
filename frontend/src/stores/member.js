@@ -7,9 +7,8 @@ const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
 
 export const useMemberStore = defineStore('member', () => {
   const memberList = ref([])
-  // const token = ref(
-  //   'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzZXEiOjI4LCJpYXQiOjE3MDY2NjI3NTksImlzcyI6IndhbGt5dGFsa3kiLCJleHAiOjE3MDcyNjc1NTl9.wRThHDgFntrbykO0b9tFSyIHTZSZPpleibJb20grlo4'
-  // )
+  const address_name = ref('')
+  const address_code = ref('')
 
   //유저 리스트 가져오기
   const getMemberList = function () {
@@ -54,16 +53,19 @@ export const useMemberStore = defineStore('member', () => {
       data: formData
     })
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         alert('회원가입을 축하드립니다! 로그인을 해주세요')
         router.push({ name: 'Login' })
       })
       .catch((err) => {
-        console.log(err)
-        console.log(err.message)
+        // console.log(err)
+        const errmsg = err.response.data.message
+        alert(errmsg)
+        console.log(errmsg)
       })
-  }
+  } // 회원가입 end
 
+  // 아이디 중복 체크
   const checkId = function (memberId) {
     axios({
       method: 'POST',
@@ -73,11 +75,11 @@ export const useMemberStore = defineStore('member', () => {
       }
     })
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         alert('사용가능한 아이디입니다')
       })
       .catch((err) => {
-        console.log(err)
+        // console.log(err)
         const errmsg = err.response.data.message
         console.log(errmsg)
         if (errmsg == 'id is empty') {
@@ -86,7 +88,9 @@ export const useMemberStore = defineStore('member', () => {
           alert('중복된 아이디입니다. 다른 아이디를 입력해주세요')
         }
       })
-  }
+  } // 아이디 중복 체크 end
+
+  // 닉네임 중복 체크
   const checkNickname = function (nickname) {
     axios({
       method: 'POST',
@@ -100,16 +104,16 @@ export const useMemberStore = defineStore('member', () => {
         alert('사용가능한 아이디입니다')
       })
       .catch((err) => {
-        console.log(err)
+        // console.log(err)
         const errmsg = err.response.data.message
-        console.log(errmsg)
+        // console.log(errmsg)
         if (errmsg == 'nickname is empty') {
-          alert('아이디를 입력해주세요')
+          alert('닉네임을 입력해주세요')
         } else if (errmsg == '중복된 닉네임입니다.') {
           alert('중복된 닉네임입니다. 다른 닉네임을 입력해주세요')
         }
       })
-  }
+  } //닉네임 중복 체크 end
 
   const loginMember = ref([])
   if (localStorage.getItem('loginMember') != null) {
@@ -157,6 +161,11 @@ export const useMemberStore = defineStore('member', () => {
     })
   }
 
+  // 지역코드 및 주소 가져오기
+  const getLocationInfo = () => {
+    return [address_name.value, address_code.value]
+  }
+
   return {
     memberList,
     member,
@@ -170,6 +179,10 @@ export const useMemberStore = defineStore('member', () => {
     logout,
     selectedMember,
     clickMember,
-    updateMember
+    updateMember,
+    // 지역 가져오기 카카오맵
+    address_name,
+    address_code,
+    getLocationInfo
   }
 })

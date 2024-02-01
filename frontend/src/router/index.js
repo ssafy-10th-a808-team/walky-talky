@@ -14,6 +14,7 @@ import WalkList from '@/views/walk/WalkList.vue'
 import ClubView from '@/views/club/ClubView.vue'
 import ClubMemory from '@/views/club/ClubMemoryView.vue'
 import ClubCreate from '@/views/club/ClubCreateView.vue'
+import ClubDetail from '@/views/club/ClubDetailView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
@@ -66,13 +67,19 @@ const router = createRouter({
       component: ClubView
     },
     {
+      path: '/club/detail/:seq',
+      name: 'club-detail',
+      component: ClubDetail,
+      props: true
+    },
+    {
       path: '/club/memory',
       name: 'club-memory',
       component: ClubMemory
     },
     {
       path: '/club/create',
-      name: 'ClubCreate',
+      name: 'club-create',
       component: ClubCreate
     },
 
