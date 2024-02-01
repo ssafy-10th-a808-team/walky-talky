@@ -10,4 +10,6 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
     int countAllByRecordSeq(Long recordSeq);
 
+    Scrap findBySeqAndMemberSeq(Long recordSeq, Long memberSeq);
+
 }

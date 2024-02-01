@@ -43,4 +43,23 @@ public class ScrapRecordServiceImpl implements ScrapRecordService {
 
 
     }
+
+    @Override
+    public void cancel(Long recordSeq, Long memberSeq) throws WTException {
+        if (!recordService.isRecordExist(recordSeq)) {
+            throw new WTException("존재하지 않는 기록입니다.");
+        }
+
+        if (recordService.isRecordDeleted(recordSeq)) {
+            throw new WTException("삭제된 기록입니다.");
+        }
+
+        Scrap scrap = scrapRepository.findBySeqAndMemberSeq(recordSeq, memberSeq);
+
+        try {
+            scrapRepository.delete(scrap);
+        } catch (Exception e) {
+            throw new WTException("스크랩 취소에 실패하였습니다.");
+        }
+    }
 }
