@@ -5,6 +5,7 @@ import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -23,5 +24,7 @@ public interface MemberService {
     boolean localSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException;
 
     public Map<String, String> reissue(Long seq);
+
+    ResponseMemberDto getMemberNicknameUrl(Long memberSeq);
 
 }

@@ -2,8 +2,7 @@ package com.ssafy.backend.shareBoard.service;
 
 
 import com.ssafy.backend.global.error.WTException;
-import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
-import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.ScrapRepository;
 import com.ssafy.backend.record.service.RecordService;
@@ -37,7 +36,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     private final ShareBoardLikeRepository shareBoardLikeRepository;
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     private final RecordService recordService;
 
@@ -45,7 +44,14 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public void write(Long memberSeq, RequestShareBoardWriteDto requestShareBoardWriteDto) throws WTException {
-        // Todo : 자기 기록으로만 글 쓸 수 있게 하기
+        try {
+            if (!recordService.isRecordCreatedByMember(requestShareBoardWriteDto.getRecordSeq(), memberSeq)) {
+                throw new WTException("자신의 기록으로만 게시글을 작성 할 수 있습니다.");
+            }
+        } catch (Exception e) {
+            throw new WTException("글 작성 오류");
+        }
+
         try {
             ShareBoard shareBoard = ShareBoard.builder()
                     .memberSeq(memberSeq)
@@ -71,7 +77,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
                 responseShareBoardDto.setShareBoardSeq(shareBoard.getSeq());
 
-                responseShareBoardDto.setMember(getMemberNicknameUrl(shareBoard.getMemberSeq()));
+                responseShareBoardDto.setMember(memberService.getMemberNicknameUrl(shareBoard.getMemberSeq()));
 
                 responseShareBoardDto.setRecordSeq(shareBoard.getRecordSeq());
                 responseShareBoardDto.setTitle(shareBoard.getTitle());
@@ -162,7 +168,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             responseShareBoardContentDto.setTitle(shareBoard.getTitle());
             responseShareBoardContentDto.setContent(shareBoard.getContent());
 
-            responseShareBoardContentDto.setMember(getMemberNicknameUrl(shareBoard.getMemberSeq()));
+            responseShareBoardContentDto.setMember(memberService.getMemberNicknameUrl(shareBoard.getMemberSeq()));
 
             responseShareBoardContentDto.setRecordSeq(shareBoard.getRecordSeq());
             responseShareBoardContentDto.setCreate_at(String.valueOf(shareBoard.getCreatedAt()));
@@ -219,7 +225,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 responseCommentDto.setCommentSeq(shareBoardComment.getSeq());
                 responseCommentDto.setShareBoardSeq(shareBoardSeq);
                 responseCommentDto.setContent(shareBoardComment.getContent());
-                responseCommentDto.setMember(getMemberNicknameUrl(shareBoardComment.getMemberSeq()));
+                responseCommentDto.setMember(memberService.getMemberNicknameUrl(shareBoardComment.getMemberSeq()));
                 responseCommentDto.setCreated_at(shareBoardComment.getCreatedBy());
 
                 list.add(responseCommentDto);
@@ -363,13 +369,5 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         }
     }
 
-    public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
-        ResponseMemberDto responseMemberDto = new ResponseMemberDto();
 
-        NicknameUrlMapping m = memberRepository.findNickNameAndUrlBySeq(memberSeq);
-        responseMemberDto.setNickname(m.getNickname());
-        responseMemberDto.setProfilePic(m.getUrl());
-
-        return responseMemberDto;
-    }
 }
