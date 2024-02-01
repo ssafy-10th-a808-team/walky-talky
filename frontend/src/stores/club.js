@@ -14,7 +14,9 @@ export const useClubStore = defineStore('club', () => {
     // 소모임 생성
     const createClub = function (payload) {
       const formData = new FormData()
-      formData.append('multipartFile', payload.profileImg)
+      if (payload.profileImg) {
+        formData.append('multipartFile', payload.profileImg)
+      }
       formData.append('name', payload.clubname)
       formData.append('introduce', payload.introduce)
       formData.append('regionCd', payload.region_cd)
