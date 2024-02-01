@@ -5,6 +5,10 @@ import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
+import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
+import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -12,16 +16,17 @@ import java.util.Map;
 
 public interface MemberService {
 
-    boolean checkId(RequestCheckIdDto requestCheckIdDto);
+    ResponseEntity<ResponseCheckIdDto> memberCheckId(RequestCheckIdDto requestCheckIdDto);
+
+    ResponseEntity<ResponseCheckNicknameDto> memberCheckNickname(RequestCheckNicknameDto requestCheckNicknameDto);
+
+    ResponseEntity<ResponseLocalSignupDto> memberLocalSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException;
 
     public Map<String, Object> localLogin(RequestLocalLoginDto loginDto) throws WTException;
 
     public void logout(Long seq);
 
-    boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto);
-
-    boolean localSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException;
-
     public Map<String, String> reissue(Long seq);
+
 
 }

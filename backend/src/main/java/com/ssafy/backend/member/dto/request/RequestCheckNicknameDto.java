@@ -1,14 +1,12 @@
 package com.ssafy.backend.member.dto.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RequestCheckNicknameDto {
     private String nickname;
 }
