@@ -67,9 +67,10 @@ const router = createRouter({
       component: ClubView
     },
     {
-      path: '/club/detail/',
+      path: '/club/detail/:seq',
       name: 'club-detail',
-      component: ClubDetail
+      component: ClubDetail,
+      props: true
     },
     {
       path: '/club/memory',
@@ -78,7 +79,7 @@ const router = createRouter({
     },
     {
       path: '/club/create',
-      name: 'ClubCreate',
+      name: 'club-create',
       component: ClubCreate
     },
 

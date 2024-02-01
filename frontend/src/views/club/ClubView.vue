@@ -1,8 +1,8 @@
 <template>
   
     <h1>소모임 조회 페이지</h1>
-    <div>
-        <h4>MyClubs</h4>
+    <div class="section-title">
+        <h2>MyClubs</h2>
         <div>
             <ClubList
                 v-for="(club, index) in clubs.myClubs"
@@ -13,8 +13,8 @@
             />
         </div>
     </div>
-    <div>
-        <h4>OtherClubs</h4>
+    <div class="section-title">
+        <h2>OtherClubs</h2>
         <div>
             <ClubList
                 v-for="(club, index) in clubs.otherClubs"
@@ -25,8 +25,8 @@
             />
         </div>
     </div>
-    <div>
-        <h4>recommendedClubs</h4>
+    <div class="section-title">
+        <h2>recommendedClubs</h2>
         <div>
             <ClubList
                 v-for="(club, index) in clubs.recommendClubs"
@@ -55,7 +55,7 @@
     })
 
     const godetail = (seq) => {
-        router.push({ name : 'ClubDetail', params: { seq:seq }})
+        router.push({ name : 'club-detail', params: { seq:seq }})
 }
 
 </script>
