@@ -102,6 +102,16 @@ public class ClubServiceImpl implements ClubService {
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
         }
+
+        // 소모임장의 나이가 소모임 나이 조건에 맞지 않습니다.
+        if (Long.parseLong(findedMember.getBirth()) < Long.parseLong(requestClubCreateDto.getOld_birth()) ||
+                Long.parseLong(findedMember.getBirth()) > Long.parseLong(requestClubCreateDto.getYoung_birth())) {
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("소모임장의 나이가 소모임 나이 조건에 맞지 않습니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
+
         // 올바르지 않은 성별조건입니다.
         if (!(requestClubCreateDto.getGender_type().equals("A")
                 || requestClubCreateDto.getGender_type().equals("M")
@@ -111,6 +121,19 @@ public class ClubServiceImpl implements ClubService {
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
         }
+
+        // 소모임장의 성별이 소모임 성별 조건에 맞지 않습니다.
+        if (!requestClubCreateDto.getGender_type().equals("A")) {
+            if (!requestClubCreateDto.getGender_type().equals(findedMember.getGender())) {
+                responseClubCreateDto = ResponseClubCreateDto.builder()
+                        .message("소모임장의 성별이 소모임 성별 조건에 맞지 않습니다.")
+                        .build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+
+            }
+        }
+
+
         // 올바르지 않은 최대 인원입니다.
         if (requestClubCreateDto.getMax_capacity() < 1) {
             responseClubCreateDto = ResponseClubCreateDto.builder()
