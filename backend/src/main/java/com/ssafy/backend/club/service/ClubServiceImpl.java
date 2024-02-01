@@ -12,6 +12,7 @@ import com.ssafy.backend.clubMember.repository.ClubMemberRepository;
 import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.region.repository.RegionRepository;
 import com.ssafy.backend.region.service.RegionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -35,23 +38,23 @@ public class ClubServiceImpl implements ClubService {
     private final ClubMemberRepository clubMemberRepository;
     private final S3UploadService s3UploadService;
     private final RegionService regionService;
+    private final RegionRepository regionRepository;
 
     @Override
     public ResponseEntity<ResponseClubCheckNameDto> clubCheckName(RequestClubCheckNameDto requestClubCheckNameDto) {
 
-        ResponseClubCheckNameDto responseClubCheckNameDto = new ResponseClubCheckNameDto();
-
-        if (requestClubCheckNameDto.getName() == null || requestClubCheckNameDto.getName().isEmpty()) {
-            responseClubCheckNameDto.setMessage("올바르지 않은 입력입니다.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCheckNameDto);
-        }
+        ResponseClubCheckNameDto responseClubCheckNameDto;
 
         if (clubRepository.existsByName(requestClubCheckNameDto.getName())) {
-            responseClubCheckNameDto.setMessage("이미 존재하는 소모임 명입니다.");
+            responseClubCheckNameDto = ResponseClubCheckNameDto.builder()
+                    .message("이미 존재하는 소모임 명입니다.")
+                    .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCheckNameDto);
         }
 
-        responseClubCheckNameDto.setMessage("OK");
+        responseClubCheckNameDto = ResponseClubCheckNameDto.builder()
+                .message("OK")
+                .build();
         return ResponseEntity.status(HttpStatus.OK).body(responseClubCheckNameDto);
     }
 
@@ -59,33 +62,72 @@ public class ClubServiceImpl implements ClubService {
     @Transactional(rollbackOn = IOException.class)
     public ResponseEntity<ResponseClubCreateDto> clubCreate(RequestClubCreateDto requestClubCreateDto, HttpServletRequest httpServletRequest) throws IOException {
 
-        ResponseClubCreateDto responseClubCreateDto = new ResponseClubCreateDto();
+        ResponseClubCreateDto responseClubCreateDto;
 
         Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
+
         Member findedMember = memberRepository.findById(memberSeq).orElse(null);
+        if (findedMember == null) {
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("해당 memberSeq를 가진 회원은 없습니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
 
-        // TODO : null 과 empty check
-//        private String name;
-//        private String introduce;
-//        private String regionCd;
-//        private String young_birth;
-//        private String old_birth;
-//        private String gender_type;
-//        private int max_capacity;
-//        private Boolean is_auto_recruit;
+        // 이미 존재하는 소모임 명입니다.
+        if (clubRepository.existsByName(requestClubCreateDto.getName())) {
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("이미 존재하는 소모임 명입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
+        // 올바르지 않은 지역입니다.
+        if (!regionRepository.existsByRegionCd(requestClubCreateDto.getRegionCd())) {
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("올바르지 않은 지역입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
+        // 올바르지 않은 나이조건입니다.
+        String pattern = "^\\d{4}$";
+        String inputString1 = requestClubCreateDto.getYoung_birth();
+        String inputString2 = requestClubCreateDto.getOld_birth();
+        Pattern regex = Pattern.compile(pattern);
+        Matcher matcher1 = regex.matcher(inputString1);
+        Matcher matcher2 = regex.matcher(inputString2);
 
-//        // 지역 체크
-//        if (requestClubCreateDto.getRegionCd() == null || !regionService.existRegionCode(requestClubCreateDto.getRegionCd())) {
-//            responseClubCreateDto.setMessage("지역이 잘못 되었습니다.");
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
-//        }
+        if (!matcher1.matches() || !matcher2.matches()) {
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("올바르지 않은 나이조건입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
+        // 올바르지 않은 성별조건입니다.
+        if (!(requestClubCreateDto.getGender_type().equals("A")
+                || requestClubCreateDto.getGender_type().equals("M")
+                || requestClubCreateDto.getGender_type().equals("F"))) {
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("올바르지 않은 성별조건입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
+        // 올바르지 않은 최대 인원입니다.
+        if (requestClubCreateDto.getMax_capacity() < 1) {
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("올바르지 않은 최대 인원입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
+
+        // correct club
 
         // save club
         Club club = requestClubCreateDto.toEntity();
         Club savedClub = clubRepository.save(club);
 
         // if file data exist
-        if (requestClubCreateDto.getMultipartFile() != null && !requestClubCreateDto.getMultipartFile().isEmpty()) {
+        if (requestClubCreateDto.getMultipartFile() != null && !requestClubCreateDto.getMultipartFile().
+                isEmpty()) {
             String tmpUrl = s3UploadService.uploadClubProfileImg(requestClubCreateDto.getMultipartFile(), savedClub.getSeq());
             savedClub.setUrl(tmpUrl);
             clubRepository.save(savedClub);
@@ -101,7 +143,9 @@ public class ClubServiceImpl implements ClubService {
 
         clubMemberRepository.save(clubMember);
 
-        responseClubCreateDto.setMessage("OK");
+        responseClubCreateDto = ResponseClubCreateDto.builder()
+                .message("OK")
+                .build();
         return ResponseEntity.status(HttpStatus.OK).body(responseClubCreateDto);
     }
 
