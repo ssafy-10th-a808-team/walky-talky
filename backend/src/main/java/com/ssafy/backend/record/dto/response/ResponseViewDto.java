@@ -15,11 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 public class ResponseViewDto {
     private String title;
-    private String startTime;
+    private String address;
     private String duration;
     private Double distance;
     private List<PointsMapping> points;
+    private String startTime;
     private int starRating;
     private String comment;
-    private String address;
 }

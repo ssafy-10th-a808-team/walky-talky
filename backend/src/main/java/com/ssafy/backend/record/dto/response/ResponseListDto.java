@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseListDto {
-    private Long seq;
+    private Long recordSeq;
     private String title;
     private int starRating;
     private String comment;
