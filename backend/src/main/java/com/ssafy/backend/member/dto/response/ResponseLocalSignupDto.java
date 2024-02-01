@@ -1,15 +1,13 @@
 package com.ssafy.backend.member.dto.response;
 
 import com.ssafy.backend.member.domain.Member;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ResponseLocalSignupDto {
     private String message;
 

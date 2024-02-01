@@ -31,49 +31,96 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/check-id")
-    public ResponseEntity<ResponseCheckIdDto> CheckId(@RequestBody RequestCheckIdDto requestCheckIdDto) {
+    public ResponseEntity<ResponseCheckIdDto> memberCheckId(@RequestBody RequestCheckIdDto requestCheckIdDto) {
 
-        ResponseCheckIdDto responseCheckIdDto = new ResponseCheckIdDto();
+        ResponseCheckIdDto responseCheckIdDto;
 
-        if (memberService.checkId(requestCheckIdDto)) {
-            responseCheckIdDto.setMessage("중복된 아이디입니다.");
+        if (requestCheckIdDto.getId() == null) {
+            responseCheckIdDto = ResponseCheckIdDto.builder()
+                    .message("id is null")
+                    .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckIdDto);
-        } else {
-            responseCheckIdDto.setMessage("OK");
-            return ResponseEntity.status(HttpStatus.OK).body(responseCheckIdDto);
         }
+
+        if (requestCheckIdDto.getId().isEmpty()) {
+            responseCheckIdDto = ResponseCheckIdDto.builder()
+                    .message("id is empty")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckIdDto);
+        }
+
+        return memberService.memberCheckId(requestCheckIdDto);
     }
 
     @PostMapping("/check-nickname")
-    public ResponseEntity<ResponseCheckNicknameDto> CheckNickname(@RequestBody RequestCheckNicknameDto requestCheckNicknameDto) {
+    public ResponseEntity<ResponseCheckNicknameDto> memberCheckNickname(@RequestBody RequestCheckNicknameDto requestCheckNicknameDto) {
 
-        ResponseCheckNicknameDto responseCheckNicknameDto = new ResponseCheckNicknameDto();
+        ResponseCheckNicknameDto responseCheckNicknameDto;
 
-        if (memberService.checkNickname(requestCheckNicknameDto)) {
-            responseCheckNicknameDto.setMessage("중복된 닉네임입니다.");
+        if (requestCheckNicknameDto.getNickname() == null) {
+            responseCheckNicknameDto = ResponseCheckNicknameDto.builder()
+                    .message("nickname is null")
+                    .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckNicknameDto);
-        } else {
-            responseCheckNicknameDto.setMessage("OK");
-            return ResponseEntity.status(HttpStatus.OK).body(responseCheckNicknameDto);
         }
+
+        if (requestCheckNicknameDto.getNickname().isEmpty()) {
+            responseCheckNicknameDto = ResponseCheckNicknameDto.builder()
+                    .message("nickname is empty")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckNicknameDto);
+        }
+
+        return memberService.memberCheckNickname(requestCheckNicknameDto);
     }
 
     @PostMapping("/local-signup")
-    public ResponseEntity<ResponseLocalSignupDto> localSignup(
+    public ResponseEntity<ResponseLocalSignupDto> memberLocalSignup(
             RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
 
-        ResponseLocalSignupDto responseLocalSignupDto = new ResponseLocalSignupDto();
+        ResponseLocalSignupDto responseLocalSignupDto;
 
-        if (memberService.localSignup(requestLocalSignupDto)) {
-            responseLocalSignupDto.setMessage("OK");
-            return ResponseEntity.status(HttpStatus.OK).body(responseLocalSignupDto);
+        // TODO : null check
 
-        } else {
-            responseLocalSignupDto.setMessage("회원가입 실패");
+        // TODO : empty check
+        if (requestLocalSignupDto.getId().isEmpty()) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("id is empty")
+                    .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
-
+        }
+        if (requestLocalSignupDto.getPassword().isEmpty()) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("password is empty")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+        if (requestLocalSignupDto.getBirth().isEmpty()) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("birth is empty")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+        if (requestLocalSignupDto.getGender().isEmpty()) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("gender is empty")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+        if (requestLocalSignupDto.getNickname().isEmpty()) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("nickname is empty")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+        if (requestLocalSignupDto.getRegionCd().isEmpty()) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("regionCd is empty")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
         }
 
+        return memberService.memberLocalSignup(requestLocalSignupDto);
     }
 
     @PostMapping("/local-login")
