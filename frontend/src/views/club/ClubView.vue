@@ -1,8 +1,8 @@
 <template>
   
     <h1>소모임 조회 페이지</h1>
-    <div>
-        <h4>MyClubs</h4>
+    <div class="section-title">
+        <h2>MyClubs</h2>
         <div>
             <ClubList
                 v-for="(club, index) in clubs.myClubs"
@@ -13,8 +13,8 @@
             />
         </div>
     </div>
-    <div>
-        <h4>OtherClubs</h4>
+    <div class="section-title">
+        <h2>OtherClubs</h2>
         <div>
             <ClubList
                 v-for="(club, index) in clubs.otherClubs"
@@ -25,8 +25,8 @@
             />
         </div>
     </div>
-    <div>
-        <h4>recommendedClubs</h4>
+    <div class="section-title">
+        <h2>recommendedClubs</h2>
         <div>
             <ClubList
                 v-for="(club, index) in clubs.recommendClubs"
@@ -37,6 +37,9 @@
             />
         </div>
     </div>
+    <RouterLink :to="{ name: 'club-create' }">
+        <button class="fixed-btn">소모임생성</button>
+    </RouterLink>
 </template>
 
 <script setup>
@@ -55,11 +58,28 @@
     })
 
     const godetail = (seq) => {
-        router.push({ name : 'ClubDetail', params: { seq:seq }})
+        router.push({ name : 'club-detail', params: { seq:seq }})
 }
 
 </script>
 
 <style scoped>
+.fixed-btn {
+  position: fixed;
+  right: 100px;
+  bottom: 500px;
+  z-index: 10;
+  background: #5cb874;
+  width: 100px;
+  height: 40px;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #fff;
+  line-height: 0;
+}
 
+.fixed-btn:hover {
+  background: #78c48c;
+  color: #fff;
+}
 </style>

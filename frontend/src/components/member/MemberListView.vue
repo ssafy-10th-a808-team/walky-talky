@@ -1,6 +1,8 @@
 <template>
     <div>
-        <img :src="member.profile" alt=""> {{ member.nickname }} {{ member.region }}
+        <div class="circular-small">
+            <img :src="member.url" alt="">
+        </div> {{ member.nickname }} {{ member.address }}
     </div>
 </template>
 
