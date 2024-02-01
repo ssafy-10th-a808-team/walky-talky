@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ChatMessageService {
     void saveMessage(ChatMessageDto chatMessage);
-    List<ChatMessageDto> loadMessage(Long chatSeq, Long offset);
+    List<ChatMessageDto> loadMessage(Long memberSeq, Long chatSeq, int offset);
 }
