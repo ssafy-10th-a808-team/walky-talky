@@ -4,7 +4,7 @@ package com.ssafy.backend.shareBoard.service;
 import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
-import com.ssafy.backend.record.repository.ScrapRepository;
+import com.ssafy.backend.scrapRecord.repository.ScrapRepository;
 import com.ssafy.backend.record.service.RecordService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.domain.ShareBoardLike;

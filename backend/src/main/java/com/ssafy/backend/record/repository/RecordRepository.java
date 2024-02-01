@@ -16,6 +16,8 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     boolean existsBySeqAndMemberSeqAndIsDeletedFalse(Long seq, Long memberSeq);
 
+    boolean existsBySeqAndIsDeletedTrue(Long seq);
+
     @Query("SELECT new com.ssafy.backend.record.dto.response.ResponseListDto(r.seq, r.title, r.starRating, r.comment, r.distance, r.duration) " +
             "FROM Record r WHERE r.memberSeq = :memberSeq AND r.isDeleted = false")
     List<ResponseListDto> findResponseListDtoByMemberSeq(@Param("memberSeq") Long memberSeq);
