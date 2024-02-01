@@ -3,7 +3,6 @@ package com.ssafy.backend.chat.controller;
 import com.ssafy.backend.chat.domain.dto.ChatMessageDto;
 import com.ssafy.backend.chat.domain.dto.MessageType;
 import com.ssafy.backend.chat.service.ChatMessageService;
-import com.ssafy.backend.chat.service.ChatService;
 import com.ssafy.backend.chat.service.RedisPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 public class ChatMessageController {
 
     private final RedisPublisher redisPublisher;
-    private final ChatService chatService;
     private final ChatMessageService chatMessageService;
     private final ChannelTopic topic;
 
