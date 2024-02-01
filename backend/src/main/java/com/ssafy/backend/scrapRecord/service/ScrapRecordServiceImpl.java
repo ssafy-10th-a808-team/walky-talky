@@ -1,11 +1,17 @@
 package com.ssafy.backend.scrapRecord.service;
 
 import com.ssafy.backend.global.error.WTException;
+import com.ssafy.backend.record.dto.mapping.ListMapping;
+import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
 import com.ssafy.backend.scrapRecord.domain.Scrap;
+import com.ssafy.backend.scrapRecord.dto.mapping.RecordSeqMapping;
 import com.ssafy.backend.scrapRecord.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,12 +60,43 @@ public class ScrapRecordServiceImpl implements ScrapRecordService {
             throw new WTException("삭제된 기록입니다.");
         }
 
-        Scrap scrap = scrapRepository.findBySeqAndMemberSeq(recordSeq, memberSeq);
+        Scrap scrap = scrapRepository.findByRecordSeqAndMemberSeq(recordSeq, memberSeq);
 
         try {
             scrapRepository.delete(scrap);
         } catch (Exception e) {
             throw new WTException("스크랩 취소에 실패하였습니다.");
         }
+    }
+
+    public List<ListMapping> list(Long memberSeq) throws WTException {
+        try {
+            List<RecordSeqMapping> recordSeqMappingList = scrapRepository.findRecordSeqByMemberSeq(memberSeq);
+
+            List<Long> recordSeqList = recordSeqMappingList.stream()
+                    .map(RecordSeqMapping::getRecordSeq)
+                    .collect(Collectors.<Long>toList());
+
+            return recordService.list(recordSeqList);
+        } catch (Exception e) {
+            throw new WTException("스크랩 목록 불러오기 실패");
+        }
+    }
+
+    @Override
+    public ResponseViewDto view(Long recordSeq, Long memberSeq) throws WTException {
+        if (!recordService.isRecordExist(recordSeq)) {
+            throw new WTException("존재하지 않는 기록입니다.");
+        }
+
+        if (recordService.isRecordDeleted(recordSeq)) {
+            throw new WTException("삭제된 기록입니다.");
+        }
+
+        if (scrapRepository.existsByRecordSeqAndMemberSeq(recordSeq, memberSeq)) {
+            throw new WTException("자신이 스크랩한 기록만 볼 수 있습니다.");
+        }
+
+        return recordService.view(recordSeq);
     }
 }

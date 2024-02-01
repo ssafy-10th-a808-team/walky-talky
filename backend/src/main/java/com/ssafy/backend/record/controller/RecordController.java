@@ -1,10 +1,10 @@
 package com.ssafy.backend.record.controller;
 
+import com.ssafy.backend.record.dto.mapping.ListMapping;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
-import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -229,9 +229,9 @@ public class RecordController {
         if (msg == null) {
             Long memberSeq = (Long) request.getAttribute("seq");
 
-            List<ResponseListDto> list = recordService.list(memberSeq);
+            List<ListMapping> list = recordService.list(memberSeq);
 
-            Map<String, List<ResponseListDto>> returnMap = new HashMap<>();
+            Map<String, List<ListMapping>> returnMap = new HashMap<>();
             returnMap.put("list", list);
 
             resultMap.put("data", returnMap);

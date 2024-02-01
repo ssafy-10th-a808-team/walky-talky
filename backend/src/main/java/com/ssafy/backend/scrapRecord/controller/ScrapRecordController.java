@@ -1,16 +1,16 @@
 package com.ssafy.backend.scrapRecord.controller;
 
+import com.ssafy.backend.record.dto.mapping.ListMapping;
+import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.scrapRecord.service.ScrapRecordService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -58,6 +58,56 @@ public class ScrapRecordController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
             }
 
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<?> list(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            List<ListMapping> scrapList;
+            try {
+                scrapList = scrapRecordService.list(memberSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", scrapList);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
+    @GetMapping("/view/{recordSeq}")
+    public ResponseEntity<?> view(HttpServletRequest request, @PathVariable Long recordSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            ResponseViewDto responseViewDto;
+            try {
+                responseViewDto = scrapRecordService.view(recordSeq, memberSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("data", responseViewDto);
             resultMap.put("message", "OK");
             return ResponseEntity.status(HttpStatus.OK).body(resultMap);
         } else {
