@@ -36,7 +36,9 @@ export const useMemberStore = defineStore('member', () => {
   //회원가입
   const createMember = function (payload) {
     const formData = new FormData()
-    formData.append('multipartFile', payload.profileImg)
+    if (payload.profileImg) {
+      formData.append('multipartFile', payload.profileImg)
+    }
     formData.append('id', payload.memberId)
     formData.append('password', payload.password)
     formData.append('birth', payload.birth)
@@ -46,24 +48,75 @@ export const useMemberStore = defineStore('member', () => {
     formData.append('regionCd', payload.region_cd)
 
     axios({
-      method: 'post',
+      method: 'POST',
       url: `${REST_MEMBER_API}/api/member/local-signup`,
       headers: {
-        Authorization: `Bearer ${token.value}`,
         'Content-Type': 'multipart/form-data'
       },
       data: formData
     })
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         alert('회원가입을 축하드립니다! 로그인을 해주세요')
         router.push({ name: 'Login' })
       })
       .catch((err) => {
-        console.log(err)
-        console.log(err.message)
+        // console.log(err)
+        const errmsg = err.response.data.message
+        alert(errmsg)
+        console.log(errmsg)
       })
-  }
+  } // 회원가입 end
+
+  // 아이디 중복 체크
+  const checkId = function (memberId) {
+    axios({
+      method: 'POST',
+      url: `${REST_MEMBER_API}/api/member/check-id`,
+      data: {
+        id: memberId
+      }
+    })
+      .then((res) => {
+        // console.log(res)
+        alert('사용가능한 아이디입니다')
+      })
+      .catch((err) => {
+        // console.log(err)
+        const errmsg = err.response.data.message
+        console.log(errmsg)
+        if (errmsg == 'id is empty') {
+          alert('아이디를 입력해주세요')
+        } else if (errmsg == '중복된 아이디입니다.') {
+          alert('중복된 아이디입니다. 다른 아이디를 입력해주세요')
+        }
+      })
+  } // 아이디 중복 체크 end
+
+  // 닉네임 중복 체크
+  const checkNickname = function (nickname) {
+    axios({
+      method: 'POST',
+      url: `${REST_MEMBER_API}/api/member/check-nickname`,
+      data: {
+        nickname: nickname
+      }
+    })
+      .then((res) => {
+        console.log(res)
+        alert('사용가능한 아이디입니다')
+      })
+      .catch((err) => {
+        // console.log(err)
+        const errmsg = err.response.data.message
+        // console.log(errmsg)
+        if (errmsg == 'nickname is empty') {
+          alert('닉네임을 입력해주세요')
+        } else if (errmsg == '중복된 닉네임입니다.') {
+          alert('중복된 닉네임입니다. 다른 닉네임을 입력해주세요')
+        }
+      })
+  } //닉네임 중복 체크 end
 
   const loginMember = ref([])
   if (localStorage.getItem('loginMember') != null) {
@@ -127,6 +180,7 @@ export const useMemberStore = defineStore('member', () => {
   const getLocationInfo = () => {
     return [address_name.value, address_code.value]
   }
+
   return {
     memberList,
     member,
@@ -134,6 +188,8 @@ export const useMemberStore = defineStore('member', () => {
     getMemberList,
     createMember,
     // 로그인
+    checkId,
+    checkNickname,
     login,
     token,
     nickname,
@@ -148,7 +204,6 @@ export const useMemberStore = defineStore('member', () => {
     // 지역 가져오기 카카오맵
     address_name,
     address_code,
-    getLocationInfo,
-
+    getLocationInfo
   }
 })
