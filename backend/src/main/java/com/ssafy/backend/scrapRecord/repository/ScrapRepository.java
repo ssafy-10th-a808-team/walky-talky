@@ -1,6 +1,6 @@
-package com.ssafy.backend.record.repository;
+package com.ssafy.backend.scrapRecord.repository;
 
-import com.ssafy.backend.record.domain.Scrap;
+import com.ssafy.backend.scrapRecord.domain.Scrap;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +9,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
     boolean existsByRecordSeqAndMemberSeq(Long recordSeq, Long memberSeq);
 
     int countAllByRecordSeq(Long recordSeq);
+
+    Scrap findBySeqAndMemberSeq(Long recordSeq, Long memberSeq);
 
 }

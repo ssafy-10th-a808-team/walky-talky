@@ -347,6 +347,16 @@ public class RecordServiceImpl implements RecordService {
         return recordRepository.existsBySeqAndMemberSeqAndIsDeletedFalse(recordSeq, memberSeq);
     }
 
+    @Override
+    public boolean isRecordDeleted(Long recordSeq) throws WTException {
+        return recordRepository.existsBySeqAndIsDeletedTrue(recordSeq);
+    }
+
+    @Override
+    public boolean isRecordExist(Long recordSeq) throws WTException {
+        return recordRepository.existsById(recordSeq);
+    }
+
     private boolean validateRecord(Long recordSeq, Long memberSeq) {
         if (!recordRepository.existsById(recordSeq)) {
             // 입력 받은 기록 식별번호에 해당하는 기록이 없는 경우이므로
