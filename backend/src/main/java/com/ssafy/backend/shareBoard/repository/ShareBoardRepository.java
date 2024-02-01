@@ -24,6 +24,8 @@ public interface ShareBoardRepository extends JpaRepository<ShareBoard, Long> {
 
     ShareBoardMemberMapping findMemberSeqBySeqAndIsDeletedFalse(Long seq);
 
+    boolean existsBySeqAndIsDeletedFalse(Long seq);
+
     @Modifying
     @Transactional
     @Query("update ShareBoard sb set sb.hit = sb.hit + 1 where sb.seq = :seq")

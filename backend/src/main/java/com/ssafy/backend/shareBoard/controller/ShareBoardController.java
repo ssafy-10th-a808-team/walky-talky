@@ -4,6 +4,7 @@ import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
 import com.ssafy.backend.shareBoard.service.ShareBoardService;
+import com.ssafy.backend.shareBoardCommet.dto.response.ResponseCommentDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -341,77 +342,6 @@ public class ShareBoardController {
 
             try {
                 shareBoardService.likeCancel(shareBoardSeq, memberSeq);
-            } catch (Exception e) {
-                resultMap.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
-
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
-        }
-    }
-
-    @PostMapping("/{shareBoardSeq}/comment/write")
-    public ResponseEntity<?> commentWrite(HttpServletRequest request, @RequestBody Map<String, String> map, @PathVariable Long shareBoardSeq) {
-        Map<String, Object> resultMap = new HashMap<>();
-
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            Long memberSeq = (Long) request.getAttribute("seq");
-
-            try {
-                String content = map.get("content");
-                shareBoardService.commentWrite(shareBoardSeq, memberSeq, content);
-            } catch (Exception e) {
-                resultMap.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
-
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
-        }
-    }
-
-    @PostMapping("/{shareBoardSeq}/comment/{commentSeq}/modify")
-    public ResponseEntity<?> commentModify(HttpServletRequest request, @RequestBody Map<String, String> map, @PathVariable Long shareBoardSeq, @PathVariable Long commentSeq) {
-        Map<String, Object> resultMap = new HashMap<>();
-
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            Long memberSeq = (Long) request.getAttribute("seq");
-
-            try {
-                String content = map.get("content");
-                shareBoardService.commentModify(shareBoardSeq, commentSeq, memberSeq, content);
-            } catch (Exception e) {
-                resultMap.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
-
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
-        }
-    }
-
-    @PostMapping("/{shareBoardSeq}/comment/{commentSeq}/delete")
-    public ResponseEntity<?> commentDelete(HttpServletRequest request, @PathVariable Long shareBoardSeq, @PathVariable Long commentSeq) {
-        Map<String, Object> resultMap = new HashMap<>();
-
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            Long memberSeq = (Long) request.getAttribute("seq");
-
-            try {
-                shareBoardService.commentDelete(shareBoardSeq, commentSeq, memberSeq);
             } catch (Exception e) {
                 resultMap.put("message", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);

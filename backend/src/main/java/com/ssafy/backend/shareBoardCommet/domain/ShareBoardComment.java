@@ -1,4 +1,4 @@
-package com.ssafy.backend.shareBoard.domain;
+package com.ssafy.backend.shareBoardCommet.domain;
 
 import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
