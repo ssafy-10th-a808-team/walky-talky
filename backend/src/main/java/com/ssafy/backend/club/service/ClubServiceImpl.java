@@ -113,7 +113,7 @@ public class ClubServiceImpl implements ClubService {
         }
 
         // 나이 조건을 반대로 설정 하셨습니다.
-        if(Long.parseLong(requestClubCreateDto.getOld_birth())>Long.parseLong(requestClubCreateDto.getYoung_birth())){
+        if (Long.parseLong(requestClubCreateDto.getOld_birth()) > Long.parseLong(requestClubCreateDto.getYoung_birth())) {
             responseClubCreateDto = ResponseClubCreateDto.builder()
                     .message("나이 조건을 반대로 설정 하셨습니다.")
                     .build();
@@ -187,6 +187,21 @@ public class ClubServiceImpl implements ClubService {
 
         Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
         Member findedMember = memberRepository.findById(memberSeq).orElse(null);
+
+        if (findedMember == null) {
+            responseClubListDto = ResponseClubListDto.builder()
+                    .message("해당 memberSeq를 가진 회원은 없습니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubListDto);
+        }
+
+        if (findedMember.getIsDeleted()) {
+            responseClubListDto = ResponseClubListDto.builder()
+                    .message("탈퇴한 회원 입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubListDto);
+        }
+
         List<Club> allClubs = clubRepository.findAll();
 
         responseClubListDto.setMyClubs(new ArrayList<>());
@@ -198,7 +213,28 @@ public class ClubServiceImpl implements ClubService {
             // 삭제된 클럽이면 넘기기
             if (curClub.getIsDeleted()) continue;
 
-            ResponseClubListDtoClub responseClubListDtoClub = ResponseClubListDtoClub.builder().seq(curClub.getSeq()).name(curClub.getName()).url(curClub.getUrl()).introduce(curClub.getIntroduce()).address(regionService.findAddress(curClub.getRegionCd())).youngBirth(curClub.getYoungBirth()).oldBirth(curClub.getOldBirth()).genderType(curClub.getGenderType()).nowCapacity(curClub.getNowCapacity()).maxCapacity(curClub.getMaxCapacity()).isAutoRecruit(curClub.getIsAutoRecruit()).isOpenRecruit(curClub.getIsOpenRecruit()).build();
+            if (!regionRepository.existsByRegionCd(curClub.getRegionCd())) {
+                responseClubListDto = ResponseClubListDto.builder()
+                        .message("올바르지 않은 지역입니다.")
+                        .build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubListDto);
+            }
+
+            ResponseClubListDtoClub responseClubListDtoClub = ResponseClubListDtoClub
+                    .builder()
+                    .seq(curClub.getSeq())
+                    .name(curClub.getName())
+                    .url(curClub.getUrl())
+                    .introduce(curClub.getIntroduce())
+                    .address(regionService.findAddress(curClub.getRegionCd()))
+                    .youngBirth(curClub.getYoungBirth())
+                    .oldBirth(curClub.getOldBirth())
+                    .genderType(curClub.getGenderType())
+                    .nowCapacity(curClub.getNowCapacity())
+                    .maxCapacity(curClub.getMaxCapacity())
+                    .isAutoRecruit(curClub.getIsAutoRecruit())
+                    .isOpenRecruit(curClub.getIsOpenRecruit())
+                    .build();
 
             boolean belong = clubMemberRepository.existsByClubSeqAndMemberSeqAndRoleIn(curClub.getSeq(), memberSeq, Arrays.asList("owner", "member"));
             if (belong) {
@@ -247,22 +283,69 @@ public class ClubServiceImpl implements ClubService {
     public ResponseEntity<ResponseClubDetailDto> clubDetail(Long clubSeq) {
 
         ResponseClubDetailDto responseClubDetailDto = new ResponseClubDetailDto();
+
         responseClubDetailDto.setResponseClubDetailDtoMembers(new ArrayList<>());
 
-        // clubSeq의 club을 찾아서 넣기
         Club findedClub = clubRepository.findById(clubSeq).orElse(null);
 
-        if (findedClub == null || findedClub.getIsDeleted()) {
-            responseClubDetailDto.setMessage("잘못된 소모임번호 입니다.");
+        if (findedClub == null) {
+            responseClubDetailDto = ResponseClubDetailDto.builder()
+                    .message("해당 clubSeq를 가진 모임은 없습니다.")
+                    .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
         }
 
-        responseClubDetailDto.setResponseClubDetailDtoClub(ResponseClubDetailDtoClub.builder().seq(findedClub.getSeq()).name(findedClub.getName()).url(findedClub.getUrl()).introduce(findedClub.getIntroduce()).address(regionService.findAddress(findedClub.getRegionCd())).youngBirth(findedClub.getYoungBirth()).oldBirth(findedClub.getOldBirth()).genderType(findedClub.getGenderType()).nowCapacity(findedClub.getNowCapacity()).maxCapacity(findedClub.getMaxCapacity()).isAutoRecruit(findedClub.getIsAutoRecruit()).isOpenRecruit(findedClub.getIsOpenRecruit()).build());
+        if (findedClub.getIsDeleted()) {
+            responseClubDetailDto = ResponseClubDetailDto.builder()
+                    .message("삭제된 모임 입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
+        }
+
+        if (!regionRepository.existsByRegionCd(findedClub.getRegionCd())) {
+            responseClubDetailDto = ResponseClubDetailDto.builder()
+                    .message("올바르지 않은 지역입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
+        }
+
+        responseClubDetailDto.setResponseClubDetailDtoClub(
+                ResponseClubDetailDtoClub
+                        .builder()
+                        .seq(findedClub.getSeq())
+                        .name(findedClub.getName())
+                        .url(findedClub.getUrl())
+                        .introduce(findedClub.getIntroduce())
+                        .address(regionService.findAddress(findedClub.getRegionCd()))
+                        .youngBirth(findedClub.getYoungBirth())
+                        .oldBirth(findedClub.getOldBirth())
+                        .genderType(findedClub.getGenderType())
+                        .nowCapacity(findedClub.getNowCapacity())
+                        .maxCapacity(findedClub.getMaxCapacity())
+                        .isAutoRecruit(findedClub.getIsAutoRecruit())
+                        .isOpenRecruit(findedClub.getIsOpenRecruit())
+                        .build());
 
         // 해당 club의 멤버 모두 찾아 넣기
         List<ClubMember> findedClubMembers = clubMemberRepository.findAllByClubSeq(clubSeq);
 
+        if (findedClubMembers == null || findedClubMembers.isEmpty()) {
+            responseClubDetailDto = ResponseClubDetailDto.builder()
+                    .message("해당 모임에 회원이 아무도 없습니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
+        }
+
+
         for (ClubMember findedClubMember : findedClubMembers) {
+
+            if (findedClubMember.getRole() == null) {
+                responseClubDetailDto = ResponseClubDetailDto.builder()
+                        .message("역할이 null인 회원 발견!!")
+                        .build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
+            }
+
             if (findedClubMember.getRole().equals("owner") || findedClubMember.getRole().equals("member")) {
                 Member tmpMember = findedClubMember.getMember();
 
@@ -275,8 +358,14 @@ public class ClubServiceImpl implements ClubService {
                                 .getRole())
                         .build();
 
-
                 responseClubDetailDto.getResponseClubDetailDtoMembers().add(responseClubDetailDtoMember);
+            } else if (findedClubMember.getRole().equals("applicant")) {
+
+            } else {
+                responseClubDetailDto = ResponseClubDetailDto.builder()
+                        .message("역할이 잘못된 회원 발견!!")
+                        .build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
             }
         }
 
