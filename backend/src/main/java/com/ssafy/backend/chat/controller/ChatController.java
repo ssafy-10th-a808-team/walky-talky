@@ -22,8 +22,8 @@ public class ChatController {
         chatService.createChatRoom(clubSeq);
     }
 
-    @GetMapping("/{chatSeq}")
-    public List<ChatMessageDto> loadMessage(@PathVariable Long chatSeq) {
-        return chatMessageService.loadMessage(chatSeq);
+    @GetMapping("/{chatSeq}/{offset}")
+    public List<ChatMessageDto> loadMessage(@PathVariable Long chatSeq, @PathVariable Long offset) {
+        return chatMessageService.loadMessage(chatSeq, offset);
     }
 }
