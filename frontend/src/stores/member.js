@@ -9,6 +9,9 @@ export const useMemberStore = defineStore('member', () => {
   const memberList = ref([])
   const address_name = ref('')
   const address_code = ref('')
+  const token = ref(null)
+  const nickname = ref('')
+  const profileImage = ref('')
 
   //유저 리스트 가져오기
   const getMemberList = function () {
@@ -68,25 +71,37 @@ export const useMemberStore = defineStore('member', () => {
     //페이지 로딩시 로컬스토리지에 로그인 정보가 남아있으면 바로 로그인 정보를 수토어 유저 정보에 할당
   }
 
-  const login = function (member) {
-    axios.interceptors.response.use(
-      function (response) {
-        return response
-      },
-      function (error) {
-        console.log(error)
-        alert('아이디나 비밀번호가 틀렸습니다.')
-        return Promise.rejecterror
+  // 로그인
+  const login = async (payload) => {
+    axios({
+      method:'post',
+      url: `${REST_MEMBER_API}/api/member/local-login`,
+      data: {
+        'memberId': payload.memberId,
+        'password': payload.password,
       }
-    )
-    axios.post('http://localhost:8080/login', member.value).then((response) => {
-      alert(`${response.data.memberName}님 반갑습니다!!`)
-      localStorage.setItem('loginMember', response.data)
-      loginMember.value.push(response.data)
-      console.log(loginMember.value)
-      router.push(`/ssafit/`)
     })
+    .then((res) => {
+      alert("로그인 성공")
+      token.value = res.headers.get('atk')
+      nickname.value=res.data.data.nickname
+      profileImage.value=(res.data.data.profileImage)
+      console.log(token.value)
+      router.push({ name : 'club'})
+    })
+    .catch((err) => {
+      alert("로그인 실패")
+      console.log(err)
+    }) 
   }
+
+  const isLogin = computed(() => {
+    if(token.value === null) {
+      return false
+    } else {
+      return true
+    }
+  })
 
   const logout = function () {
     axios.get('http://localhost:8080/logout').then((response) => {
@@ -118,8 +133,14 @@ export const useMemberStore = defineStore('member', () => {
     getMember,
     getMemberList,
     createMember,
+    // 로그인
     login,
+    token,
+    nickname,
+    profileImage,
     loginMember,
+    isLogin,
+    // 로그아웃
     logout,
     selectedMember,
     clickMember,
