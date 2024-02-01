@@ -104,8 +104,8 @@ public class ClubServiceImpl implements ClubService {
         }
 
         // 소모임장의 나이가 소모임 나이 조건에 맞지 않습니다.
-        if (Long.parseLong(findedMember.getBirth()) < Long.parseLong(requestClubCreateDto.getOld_birth()) ||
-                Long.parseLong(findedMember.getBirth()) > Long.parseLong(requestClubCreateDto.getYoung_birth())) {
+        if (Long.parseLong(findedMember.getBirth().substring(0,4)) < Long.parseLong(requestClubCreateDto.getOld_birth()) ||
+                Long.parseLong(findedMember.getBirth().substring(0,4)) > Long.parseLong(requestClubCreateDto.getYoung_birth())) {
             responseClubCreateDto = ResponseClubCreateDto.builder()
                     .message("소모임장의 나이가 소모임 나이 조건에 맞지 않습니다.")
                     .build();
