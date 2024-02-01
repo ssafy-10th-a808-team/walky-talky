@@ -39,4 +39,5 @@ public interface RecordService {
 
     void delete(Long memberSeq, Long recordSeq) throws WTException;
 
+    boolean isRecordCreatedByMember(Long recordSeq, Long memberSeq) throws WTException;
 }
