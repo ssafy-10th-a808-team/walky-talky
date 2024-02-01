@@ -4,16 +4,17 @@ import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
+import com.ssafy.backend.record.dto.mapping.ListMapping;
 import com.ssafy.backend.record.dto.mapping.PointsMapping;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
-import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
+import com.ssafy.backend.scrapRecord.service.ScrapRecordService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -250,8 +251,12 @@ public class RecordServiceImpl implements RecordService {
 
     }
 
-    public List<ResponseListDto> list(Long memberSeq) {
-        return recordRepository.findResponseListDtoByMemberSeq(memberSeq);
+    public List<ListMapping> list(Long memberSeq) throws WTException {
+        return recordRepository.findResponseListDtoByMemberSeqAndIsDeletedFalse(memberSeq);
+    }
+
+    public List<ListMapping> list(List<Long> recordSeq) throws WTException {
+        return recordRepository.findBySeqIn(recordSeq);
     }
 
     @Transactional
