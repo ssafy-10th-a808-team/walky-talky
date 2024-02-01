@@ -9,6 +9,9 @@ export const useMemberStore = defineStore('member', () => {
   const memberList = ref([])
   const address_name = ref('')
   const address_code = ref('')
+  const token = ref(null)
+  const nickname = ref('')
+  const profileImage = ref('')
 
   //유저 리스트 가져오기
   const getMemberList = function () {
@@ -33,7 +36,9 @@ export const useMemberStore = defineStore('member', () => {
   //회원가입
   const createMember = function (payload) {
     const formData = new FormData()
-    formData.append('multipartFile', payload.profileImg)
+    if (payload.profileImg) {
+      formData.append('multipartFile', payload.profileImg)
+    }
     formData.append('id', payload.memberId)
     formData.append('password', payload.password)
     formData.append('birth', payload.birth)
@@ -43,24 +48,75 @@ export const useMemberStore = defineStore('member', () => {
     formData.append('regionCd', payload.region_cd)
 
     axios({
-      method: 'post',
+      method: 'POST',
       url: `${REST_MEMBER_API}/api/member/local-signup`,
       headers: {
-        Authorization: `Bearer ${token.value}`,
         'Content-Type': 'multipart/form-data'
       },
       data: formData
     })
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         alert('회원가입을 축하드립니다! 로그인을 해주세요')
         router.push({ name: 'Login' })
       })
       .catch((err) => {
-        console.log(err)
-        console.log(err.message)
+        // console.log(err)
+        const errmsg = err.response.data.message
+        alert(errmsg)
+        console.log(errmsg)
       })
-  }
+  } // 회원가입 end
+
+  // 아이디 중복 체크
+  const checkId = function (memberId) {
+    axios({
+      method: 'POST',
+      url: `${REST_MEMBER_API}/api/member/check-id`,
+      data: {
+        id: memberId
+      }
+    })
+      .then((res) => {
+        // console.log(res)
+        alert('사용가능한 아이디입니다')
+      })
+      .catch((err) => {
+        // console.log(err)
+        const errmsg = err.response.data.message
+        console.log(errmsg)
+        if (errmsg == 'id is empty') {
+          alert('아이디를 입력해주세요')
+        } else if (errmsg == '중복된 아이디입니다.') {
+          alert('중복된 아이디입니다. 다른 아이디를 입력해주세요')
+        }
+      })
+  } // 아이디 중복 체크 end
+
+  // 닉네임 중복 체크
+  const checkNickname = function (nickname) {
+    axios({
+      method: 'POST',
+      url: `${REST_MEMBER_API}/api/member/check-nickname`,
+      data: {
+        nickname: nickname
+      }
+    })
+      .then((res) => {
+        console.log(res)
+        alert('사용가능한 아이디입니다')
+      })
+      .catch((err) => {
+        // console.log(err)
+        const errmsg = err.response.data.message
+        // console.log(errmsg)
+        if (errmsg == 'nickname is empty') {
+          alert('닉네임을 입력해주세요')
+        } else if (errmsg == '중복된 닉네임입니다.') {
+          alert('중복된 닉네임입니다. 다른 닉네임을 입력해주세요')
+        }
+      })
+  } //닉네임 중복 체크 end
 
   const loginMember = ref([])
   if (localStorage.getItem('loginMember') != null) {
@@ -68,25 +124,37 @@ export const useMemberStore = defineStore('member', () => {
     //페이지 로딩시 로컬스토리지에 로그인 정보가 남아있으면 바로 로그인 정보를 수토어 유저 정보에 할당
   }
 
-  const login = function (member) {
-    axios.interceptors.response.use(
-      function (response) {
-        return response
-      },
-      function (error) {
-        console.log(error)
-        alert('아이디나 비밀번호가 틀렸습니다.')
-        return Promise.rejecterror
+  // 로그인
+  const login = async (payload) => {
+    axios({
+      method:'post',
+      url: `${REST_MEMBER_API}/api/member/local-login`,
+      data: {
+        'memberId': payload.memberId,
+        'password': payload.password,
       }
-    )
-    axios.post('http://localhost:8080/login', member.value).then((response) => {
-      alert(`${response.data.memberName}님 반갑습니다!!`)
-      localStorage.setItem('loginMember', response.data)
-      loginMember.value.push(response.data)
-      console.log(loginMember.value)
-      router.push(`/ssafit/`)
     })
+    .then((res) => {
+      alert("로그인 성공")
+      token.value = res.headers.get('atk')
+      nickname.value=res.data.data.nickname
+      profileImage.value=(res.data.data.profileImage)
+      console.log(token.value)
+      router.push({ name : 'club'})
+    })
+    .catch((err) => {
+      alert("로그인 실패")
+      console.log(err)
+    }) 
   }
+
+  const isLogin = computed(() => {
+    if(token.value === null) {
+      return false
+    } else {
+      return true
+    }
+  })
 
   const logout = function () {
     axios.get('http://localhost:8080/logout').then((response) => {
@@ -112,14 +180,23 @@ export const useMemberStore = defineStore('member', () => {
   const getLocationInfo = () => {
     return [address_name.value, address_code.value]
   }
+
   return {
     memberList,
     member,
     getMember,
     getMemberList,
     createMember,
+    // 로그인
+    checkId,
+    checkNickname,
     login,
+    token,
+    nickname,
+    profileImage,
     loginMember,
+    isLogin,
+    // 로그아웃
     logout,
     selectedMember,
     clickMember,
@@ -127,7 +204,6 @@ export const useMemberStore = defineStore('member', () => {
     // 지역 가져오기 카카오맵
     address_name,
     address_code,
-    getLocationInfo,
-
+    getLocationInfo
   }
 })
