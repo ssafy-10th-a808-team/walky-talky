@@ -8,11 +8,17 @@ import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
 import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
+import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
+import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.region.repository.RegionRepository;
 import com.ssafy.backend.region.service.RegionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,6 +28,8 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Service
@@ -35,7 +43,9 @@ public class MemberServiceImpl implements MemberService {
     private final JwtProvider jwtProvider;
     private final RedisDao redisDao;
     private final S3UploadService s3UploadService;
-    private final RegionService regionService;
+    private final RegionRepository regionRepository;
+
+
     @Value("${security.salt}")
     private String salt;
 
@@ -63,39 +73,119 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean memberCheckId(RequestCheckIdDto requestCheckIdDto) {
-        return memberRepository.existsByMemberId(requestCheckIdDto.getId());
+    public ResponseEntity<ResponseCheckIdDto> memberCheckId(RequestCheckIdDto requestCheckIdDto) {
+
+        ResponseCheckIdDto responseCheckIdDto;
+
+        if (memberRepository.existsByMemberId(requestCheckIdDto.getId())) {
+            responseCheckIdDto = ResponseCheckIdDto.builder()
+                    .message("중복된 아이디입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckIdDto);
+        } else {
+            responseCheckIdDto = ResponseCheckIdDto.builder()
+                    .message("OK")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(responseCheckIdDto);
+        }
     }
 
     @Override
-    public boolean memberCheckNickname(RequestCheckNicknameDto requestCheckNicknameDto) {
-        return memberRepository.existsByNickname(requestCheckNicknameDto.getNickname());
+    public ResponseEntity<ResponseCheckNicknameDto> memberCheckNickname(RequestCheckNicknameDto requestCheckNicknameDto) {
+
+        ResponseCheckNicknameDto responseCheckNicknameDto;
+
+        if (memberRepository.existsByNickname(requestCheckNicknameDto.getNickname())) {
+            responseCheckNicknameDto = ResponseCheckNicknameDto.builder()
+                    .message("중복된 닉네임입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckNicknameDto);
+        } else {
+            responseCheckNicknameDto = ResponseCheckNicknameDto.builder()
+                    .message("OK")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).body(responseCheckNicknameDto);
+        }
     }
 
     @Override
     @Transactional(rollbackOn = IOException.class)
-    public boolean localSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
+    public ResponseEntity<ResponseLocalSignupDto> memberLocalSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException {
+
+        ResponseLocalSignupDto responseLocalSignupDto;
 
         Member member = requestLocalSignupDto.toEntity();
 
+        // 중복된 아이디입니다.
+        if (memberRepository.existsByMemberId(member.getMemberId())) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("중복된 아이디입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
 
-        // TODO : 비밀번호 패턴 매칭
-        // 최소 10자 이상, 대문자, 소문자, 특수문자를 각각 1개 이상 포함하는 정규표현식
-//        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{10,}$";
-//
-//        Pattern pattern = Pattern.compile(regex);
-//        Matcher matcher = pattern.matcher(member.getPassword());
-//
-//        if (!matcher.matches()) {
-//            return false;
-//        }
+        // 비밀번호 패턴 매칭 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.
+        String regex = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
 
-        // TODO: 비밀번호 암호화
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(member.getPassword());
+
+        if (!matcher.matches()) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("비밀번호 패턴 매칭 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+
+        // 올바르지 않은 생일입니다.
+        regex = "\\d{8}";
+        pattern = Pattern.compile(regex);
+        matcher = pattern.matcher(member.getBirth());
+
+        if (!matcher.matches()) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("올바르지 않은 생일입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+
+        // 올바르지 않은 성별입니다.
+        if (!(member.getGender().equals("M") || member.getGender().equals("F"))) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("올바르지 않은 성별입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+        // 중복된 닉네임입니다.
+        if (memberRepository.existsByNickname(member.getNickname())) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("중복된 닉네임입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+        // 올바르지 않은 지역입니다.
+        if (!regionRepository.existsByRegionCd(member.getRegionCd())) {
+            responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                    .message("올바르지 않은 지역입니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
+        }
+
+        // correct member
+
+        // 비밀번호 암호화
         String hashedPassword = hashPassword(member.getPassword(), salt.getBytes());
-
         member.setPassword(hashedPassword);
 
+        // save
         Member savedMember = memberRepository.save(member);
+
+        // TEST CODE
+        if (requestLocalSignupDto.getMultipartFile() == null) {
+            System.out.println("requestLocalSignupDto.getMultipartFile() == null");
+        } else if (requestLocalSignupDto.getMultipartFile().isEmpty()) {
+            System.out.println("requestLocalSignupDto.getMultipartFile().isEmpty()");
+        }
 
         // if file data exist
         if (requestLocalSignupDto.getMultipartFile() != null && !requestLocalSignupDto.getMultipartFile().isEmpty()) {
@@ -103,9 +193,13 @@ public class MemberServiceImpl implements MemberService {
             savedMember.setUrl(tmpUrl);
         }
 
+        // reSave
         memberRepository.save(savedMember);
 
-        return true;
+        responseLocalSignupDto = ResponseLocalSignupDto.builder()
+                .message("OK")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseLocalSignupDto);
 
     }
 
