@@ -343,6 +343,10 @@ public class RecordServiceImpl implements RecordService {
         }
     }
 
+    public boolean isRecordCreatedByMember(Long recordSeq, Long memberSeq) throws WTException {
+        return recordRepository.existsBySeqAndMemberSeqAndIsDeletedFalse(recordSeq, memberSeq);
+    }
+
     private boolean validateRecord(Long recordSeq, Long memberSeq) {
         if (!recordRepository.existsById(recordSeq)) {
             // 입력 받은 기록 식별번호에 해당하는 기록이 없는 경우이므로
