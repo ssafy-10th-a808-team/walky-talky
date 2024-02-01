@@ -78,25 +78,23 @@ public class MemberController {
 
     @PostMapping("/local-login")
     public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto) throws NoSuchAlgorithmException {
-        Map<String, Object> resultMap = memberService.localLogin(loginDto);
-
+        Map<String, Object> resultMap = new HashMap<>();
         try {
-            if (!resultMap.containsKey("message")) {
-                HttpHeaders headers = new HttpHeaders();
+            Map<String, Object> data = memberService.localLogin(loginDto);
 
-                headers.add("atk", (String) resultMap.get("atk"));
-                resultMap.remove("atk");
-                headers.add("rtk", (String) resultMap.get("rtk"));
-                resultMap.remove("rtk");
+            HttpHeaders headers = new HttpHeaders();
 
-                resultMap.put("message", "OK");
-                return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
+            headers.add("atk", (String) data.get("atk"));
+            data.remove("atk");
+            headers.add("rtk", (String) data.get("rtk"));
+            data.remove("rtk");
+
+            resultMap.put("data", data);
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
 
         } catch (Exception e) {
-            resultMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
+            resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
         }
 
