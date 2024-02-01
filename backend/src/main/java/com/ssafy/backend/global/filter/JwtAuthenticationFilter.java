@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -72,12 +73,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setCharacterEncoding("utf-8");
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
             Map<String, Object> resultMap = new HashMap<>();
             resultMap.put("message", e.getMessage());
 
             mapper.writeValue(response.getWriter(), resultMap);
         }
-
     }
 
     private String getToken(String header) {
