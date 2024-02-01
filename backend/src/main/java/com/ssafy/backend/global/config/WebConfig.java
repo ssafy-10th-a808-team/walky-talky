@@ -15,7 +15,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "https://i10a808.p.ssafy.io",
                         "http://localhost:5173"
                 )
-                .allowedMethods("GET", "POST");
+                .allowedMethods("GET", "POST")
+                .exposedHeaders("atk", "rtk");
 
     }
 }
