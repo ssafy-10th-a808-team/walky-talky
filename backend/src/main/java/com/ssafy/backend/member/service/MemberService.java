@@ -1,5 +1,6 @@
 package com.ssafy.backend.member.service;
 
+import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
@@ -21,7 +22,7 @@ public interface MemberService {
 
     ResponseEntity<ResponseLocalSignupDto> memberLocalSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException;
 
-    public Map<String, Object> localLogin(RequestLocalLoginDto loginDto) throws NoSuchAlgorithmException;
+    public Map<String, Object> localLogin(RequestLocalLoginDto loginDto) throws WTException;
 
     public void logout(Long seq);
 
