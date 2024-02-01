@@ -43,4 +43,27 @@ public class ScrapRecordController {
         }
     }
 
+    @PostMapping("{recordSeq}/cancel")
+    public ResponseEntity<?> cancel(HttpServletRequest request, @PathVariable Long recordSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String msg = (String) request.getAttribute("message");
+        if (msg == null) {
+            Long memberSeq = (Long) request.getAttribute("seq");
+
+            try {
+                scrapRecordService.cancel(recordSeq, memberSeq);
+            } catch (Exception e) {
+                resultMap.put("message", e.getMessage());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+            }
+
+            resultMap.put("message", "OK");
+            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+        } else {
+            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+    }
+
 }
