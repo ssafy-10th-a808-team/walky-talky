@@ -112,6 +112,14 @@ public class ClubServiceImpl implements ClubService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
         }
 
+        // 나이 조건을 반대로 설정 하셨습니다.
+        if(Long.parseLong(requestClubCreateDto.getOld_birth())>Long.parseLong(requestClubCreateDto.getYoung_birth())){
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("나이 조건을 반대로 설정 하셨습니다.")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
+
         // 올바르지 않은 성별조건입니다.
         if (!(requestClubCreateDto.getGender_type().equals("A")
                 || requestClubCreateDto.getGender_type().equals("M")
