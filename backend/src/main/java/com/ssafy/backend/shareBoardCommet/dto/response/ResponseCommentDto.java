@@ -1,5 +1,6 @@
-package com.ssafy.backend.shareBoard.dto.response;
+package com.ssafy.backend.shareBoardCommet.dto.response;
 
+import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

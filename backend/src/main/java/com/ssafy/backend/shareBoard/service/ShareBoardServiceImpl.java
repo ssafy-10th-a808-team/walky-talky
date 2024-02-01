@@ -7,16 +7,17 @@ import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.ScrapRepository;
 import com.ssafy.backend.record.service.RecordService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
-import com.ssafy.backend.shareBoard.domain.ShareBoardComment;
+import com.ssafy.backend.shareBoardCommet.domain.ShareBoardComment;
 import com.ssafy.backend.shareBoard.domain.ShareBoardLike;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardScrapMapping;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
-import com.ssafy.backend.shareBoard.repository.ShareBoardCommentRepository;
+import com.ssafy.backend.shareBoardCommet.repository.ShareBoardCommentRepository;
 import com.ssafy.backend.shareBoard.repository.ShareBoardLikeRepository;
 import com.ssafy.backend.shareBoard.repository.ShareBoardRepository;
+import com.ssafy.backend.shareBoardCommet.dto.response.ResponseCommentDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -341,73 +342,6 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             throw new WTException("좋아요 취소에 실패하였습니다.");
         }
     }
-
-    @Override
-    public void commentWrite(Long shareBoardSeq, Long memberSeq, String content) throws WTException {
-        try {
-            ShareBoardComment shareBoardComment = ShareBoardComment.builder()
-                    .shareBoardSeq(shareBoardSeq)
-                    .memberSeq(memberSeq)
-                    .content(content)
-                    .build();
-            shareBoardCommentRepository.save(shareBoardComment);
-        } catch (Exception e) {
-            throw new WTException("댓글 등록 오류"); // Todo : 고치기
-        }
-    }
-
-    @Override
-    public void commentModify(Long shareBoardSeq, Long commentSeq, Long memberSeq, String content) throws WTException {
-        Optional<ShareBoardComment> shareBoardCommentOptional = shareBoardCommentRepository.findById(commentSeq);
-
-        if (shareBoardCommentOptional.isEmpty()) {
-            throw new WTException("댓글 수정 오류");
-        }
-
-        ShareBoardComment shareBoardComment = shareBoardCommentOptional.get();
-
-        if (!Objects.equals(shareBoardComment.getMemberSeq(), memberSeq) || !Objects.equals(shareBoardComment.getShareBoardSeq(), shareBoardSeq)) {
-            throw new WTException("댓글 수정 오류입니다.");
-        }
-
-        if (shareBoardComment.isDeleted()) {
-            throw new WTException("이미 삭제된 댓글입니다.");
-        }
-
-        try {
-            shareBoardComment.update(content);
-            shareBoardCommentRepository.save(shareBoardComment);
-        } catch (Exception e) {
-            throw new WTException("댓글 수정 오류.");
-        }
-    }
-
-    @Override
-    public void commentDelete(Long shareBoardSeq, Long commentSeq, Long memberSeq) throws WTException {
-        Optional<ShareBoardComment> shareBoardCommentOptional = shareBoardCommentRepository.findById(commentSeq);
-
-        if (shareBoardCommentOptional.isEmpty()) {
-            throw new WTException("댓글 삭제 오류");
-        }
-
-        ShareBoardComment shareBoardComment = shareBoardCommentOptional.get();
-
-        if (!Objects.equals(shareBoardComment.getMemberSeq(), memberSeq) || !Objects.equals(shareBoardComment.getShareBoardSeq(), shareBoardSeq)) {
-            throw new WTException("댓글 삭제 오류입니다.");
-        }
-
-        if (shareBoardComment.isDeleted()) {
-            throw new WTException("이미 삭제된 댓글입니다.");
-        }
-
-        try {
-            shareBoardComment.delete(shareBoardComment);
-            shareBoardCommentRepository.save(shareBoardComment);
-        } catch (Exception e) {
-            throw new WTException("댓글 삭제 오류.");
-        }
-    }
-
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
         ResponseMemberDto responseMemberDto = new ResponseMemberDto();
