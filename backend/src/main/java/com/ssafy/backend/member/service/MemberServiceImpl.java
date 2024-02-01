@@ -5,6 +5,7 @@ import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
+import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
@@ -14,7 +15,7 @@ import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.region.repository.RegionRepository;
-import com.ssafy.backend.region.service.RegionService;
+import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +37,6 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-
     //    private static final long atkExp = 900000L; // 15분
     private static final long atkExp = 604800000L; // 일주일
     private static final long rtkExp = 604800000L; // 일주일
@@ -274,5 +274,15 @@ public class MemberServiceImpl implements MemberService {
         return returnMap;
     }
 
+
+    public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
+        ResponseMemberDto responseMemberDto = new ResponseMemberDto();
+
+        NicknameUrlMapping m = memberRepository.findNickNameAndUrlBySeq(memberSeq);
+        responseMemberDto.setNickname(m.getNickname());
+        responseMemberDto.setProfilePic(m.getUrl());
+
+        return responseMemberDto;
+    }
 
 }
