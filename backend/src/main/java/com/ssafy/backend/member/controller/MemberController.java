@@ -80,42 +80,17 @@ public class MemberController {
 
         ResponseLocalSignupDto responseLocalSignupDto;
 
-        // TODO : null check
-
-        // TODO : empty check
-        if (requestLocalSignupDto.getId().isEmpty()) {
+        // null check
+        if (requestLocalSignupDto.isAnyFieldNull()) {
             responseLocalSignupDto = ResponseLocalSignupDto.builder()
-                    .message("id is empty")
+                    .message("null data not allowed")
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
         }
-        if (requestLocalSignupDto.getPassword().isEmpty()) {
+        // empty check
+        if (requestLocalSignupDto.isAnyFieldEmpty()) {
             responseLocalSignupDto = ResponseLocalSignupDto.builder()
-                    .message("password is empty")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
-        }
-        if (requestLocalSignupDto.getBirth().isEmpty()) {
-            responseLocalSignupDto = ResponseLocalSignupDto.builder()
-                    .message("birth is empty")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
-        }
-        if (requestLocalSignupDto.getGender().isEmpty()) {
-            responseLocalSignupDto = ResponseLocalSignupDto.builder()
-                    .message("gender is empty")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
-        }
-        if (requestLocalSignupDto.getNickname().isEmpty()) {
-            responseLocalSignupDto = ResponseLocalSignupDto.builder()
-                    .message("nickname is empty")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
-        }
-        if (requestLocalSignupDto.getRegionCd().isEmpty()) {
-            responseLocalSignupDto = ResponseLocalSignupDto.builder()
-                    .message("regionCd is empty")
+                    .message("empty data not allowed")
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseLocalSignupDto);
         }

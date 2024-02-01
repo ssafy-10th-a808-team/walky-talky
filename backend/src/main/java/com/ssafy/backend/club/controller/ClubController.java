@@ -53,49 +53,22 @@ public class ClubController {
 
         ResponseClubCreateDto responseClubCreateDto;
 
-        //        private MultipartFile multipartFile;
-//        private String name;
-//        private String introduce;
-//        private String regionCd;
-//        private String young_birth;
-//        private String old_birth;
-//        private String gender_type;
-//        private int max_capacity;
-//        private Boolean is_auto_recruit;
-
-        // TODO : null check
+        // null check
+        if (requestClubCreateDto.isAnyFieldNull()) {
+            responseClubCreateDto = ResponseClubCreateDto.builder()
+                    .message("null data not allowed")
+                    .build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
+        }
 
         // empty check
-        if (requestClubCreateDto.getName().isEmpty()) {
+        if (requestClubCreateDto.isAnyFieldEmpty()) {
             responseClubCreateDto = ResponseClubCreateDto.builder()
-                    .message("name is empty")
+                    .message("empty data now allowed")
                     .build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
         }
-        if (requestClubCreateDto.getRegionCd().isEmpty()) {
-            responseClubCreateDto = ResponseClubCreateDto.builder()
-                    .message("regionCd is empty")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
-        }
-        if (requestClubCreateDto.getYoung_birth().isEmpty()) {
-            responseClubCreateDto = ResponseClubCreateDto.builder()
-                    .message("yong_birth is empty")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
-        }
-        if (requestClubCreateDto.getOld_birth().isEmpty()) {
-            responseClubCreateDto = ResponseClubCreateDto.builder()
-                    .message("old_birth is empty")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
-        }
-        if (requestClubCreateDto.getGender_type().isEmpty()) {
-            responseClubCreateDto = ResponseClubCreateDto.builder()
-                    .message("gender_type is empty")
-                    .build();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubCreateDto);
-        }
+
 
         return clubService.clubCreate(requestClubCreateDto, httpServletRequest);
     }
