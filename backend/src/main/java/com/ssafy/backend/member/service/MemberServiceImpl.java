@@ -1,6 +1,7 @@
 package com.ssafy.backend.member.service;
 
 import com.ssafy.backend.common.service.S3UploadService;
+import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
@@ -204,42 +205,50 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String, Object> localLogin(RequestLocalLoginDto loginDto) throws NoSuchAlgorithmException {
-        Member member = memberRepository.findByMemberId(loginDto.getMemberId());
-        Map<String, Object> returnMap = new HashMap<>();
+    public Map<String, Object> localLogin(RequestLocalLoginDto loginDto) throws WTException {
+        Map<String, Object> data = new HashMap<>();
 
-        if (member == null) { // 아이디에 해당하는 회원 없을때
-            returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-            return returnMap;
-        } else {
-            if (member.isDeleted()) { // 탈퇴한 회원일때
-                returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-                return returnMap;
-            }
-            if (!hashPassword(loginDto.getPassword(), salt.getBytes()).equals(member.getPassword())) { // 비번 틀렸을때
-                returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
-                return returnMap;
-            }
+        if (loginDto.getMemberId() == null || loginDto.getPassword() == null) {
+            throw new WTException("아이디 혹은 비밀번호를 확인해주세요.");
         }
-        // jwt
-        Long seq = member.getSeq();
-        String atk = jwtProvider.createAccessToken(seq, atkExp);
-        String rtk = jwtProvider.createRefreshToken(seq, rtkExp);
 
-        // redis에 jwt저장
-        redisDao.saveToRedis("atk:" + seq, atk, Duration.ofMillis(atkExp));
-        redisDao.saveToRedis("rtk:" + seq, rtk, Duration.ofMillis(rtkExp));
+        Member member = memberRepository.findByMemberId(loginDto.getMemberId());
 
-        returnMap.put("atk", atk);
-        returnMap.put("rtk", rtk);
+        try {
+            if (member == null) { // 아이디에 해당하는 회원 없을때
+                throw new WTException("아이디 혹은 비밀번호를 확인해주세요.");
+            } else {
+                if (member.isDeleted()) { // 탈퇴한 회원일때
+                    throw new WTException("아이디 혹은 비밀번호를 확인해주세요.");
+                }
+                if (!hashPassword(loginDto.getPassword(), salt.getBytes()).equals(member.getPassword())) { // 비번 틀렸을때
+                    throw new WTException("아이디 혹은 비밀번호를 확인해주세요.");
+                }
+            }
+        } catch (Exception e) {
+            throw new WTException("아이디 혹은 비밀번호를 확인해주세요.");
+        }
 
-        Map<String, String> data = new HashMap<>();
-        data.put("nickname", member.getNickname());
-        data.put("profileImage", member.getUrl());
+        try {
+            // jwt
+            Long seq = member.getSeq();
+            String atk = jwtProvider.createAccessToken(seq, atkExp);
+            String rtk = jwtProvider.createRefreshToken(seq, rtkExp);
 
-        returnMap.put("data", data);
+            // redis에 jwt저장
+            redisDao.saveToRedis("atk:" + seq, atk, Duration.ofMillis(atkExp));
+            redisDao.saveToRedis("rtk:" + seq, rtk, Duration.ofMillis(rtkExp));
 
-        return returnMap;
+            data.put("atk", atk);
+            data.put("rtk", rtk);
+
+            data.put("nickname", member.getNickname());
+            data.put("profileImage", member.getUrl());
+
+            return data;
+        } catch (Exception e) {
+            throw new WTException("로그인에 실패하였습니다.");
+        }
     }
 
     @Override
