@@ -1,5 +1,6 @@
 package com.ssafy.backend.shareBoard.service;
 
+
 import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.repository.MemberRepository;
@@ -7,17 +8,17 @@ import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.ScrapRepository;
 import com.ssafy.backend.record.service.RecordService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
-import com.ssafy.backend.shareBoardCommet.domain.ShareBoardComment;
 import com.ssafy.backend.shareBoard.domain.ShareBoardLike;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardScrapMapping;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
-import com.ssafy.backend.shareBoardCommet.repository.ShareBoardCommentRepository;
 import com.ssafy.backend.shareBoard.repository.ShareBoardLikeRepository;
 import com.ssafy.backend.shareBoard.repository.ShareBoardRepository;
+import com.ssafy.backend.shareBoardCommet.domain.ShareBoardComment;
 import com.ssafy.backend.shareBoardCommet.dto.response.ResponseCommentDto;
+import com.ssafy.backend.shareBoardCommet.repository.ShareBoardCommentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -65,10 +65,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         List<ShareBoard> boardList = shareBoardRepository.findAllByIsDeletedFalse();
         List<ResponseShareBoardDto> list = new ArrayList<>();
 
-        ResponseShareBoardDto responseShareBoardDto = new ResponseShareBoardDto();
-
         for (ShareBoard shareBoard : boardList) {
             try {
+                ResponseShareBoardDto responseShareBoardDto = new ResponseShareBoardDto();
+
                 responseShareBoardDto.setShareBoardSeq(shareBoard.getSeq());
 
                 responseShareBoardDto.setMember(getMemberNicknameUrl(shareBoard.getMemberSeq()));
@@ -143,6 +143,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
     @Override
     @Transactional
     public ResponseShareBoardContentDto viewContent(Long shareBoardSeq) throws WTException {
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
+        }
+
         ResponseShareBoardContentDto responseShareBoardContentDto = new ResponseShareBoardContentDto();
 
         responseShareBoardContentDto.setShareBoardSeq(shareBoardSeq);
@@ -173,6 +177,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public ResponseRecordDto viewRecord(Long shareBoardSeq) throws WTException {
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
+        }
+
         ResponseRecordDto responseRecordDto = new ResponseRecordDto();
 
         try {
@@ -197,7 +205,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public List<ResponseCommentDto> viewComment(Long shareBoardSeq) throws WTException {
-        if (!shareBoardRepository.existsById(shareBoardSeq)) {
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
             throw new WTException("존재하지 않는 게시글입니다.");
         }
 
@@ -225,6 +233,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public ResponseLikeDto viewLike(Long shareBoardSeq, Long memberSeq) throws WTException {
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
+        }
+
         ResponseLikeDto responseLikeDto = new ResponseLikeDto();
 
         try {
@@ -240,6 +252,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public ResponseScrapDto viewScrap(Long shareBoardSeq, Long memberSeq) throws WTException {
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
+        }
+
         ResponseScrapDto responseScrapDto = new ResponseScrapDto();
 
         try {
@@ -259,19 +275,17 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public void modify(Long memberSeq, Long shareBoardSeq, RequestShareBoardModifyDto requestShareBoardModifyDto) throws WTException {
-        Optional<ShareBoard> shareBoardOptional = shareBoardRepository.findById(shareBoardSeq);
-
-        if (shareBoardOptional.isEmpty()) {
-            throw new WTException("해당 게시글 없음"); // Todo : 고치기
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
         }
 
-        ShareBoard shareBoard = shareBoardOptional.get();
-
-        if (!Objects.equals(memberSeq, shareBoard.getMemberSeq())) {
-            throw new WTException("게시글 수정 실패"); // Todo : 고치기
-        }
 
         try {
+            ShareBoard shareBoard = shareBoardRepository.findBySeqAndIsDeletedFalse(shareBoardSeq);
+
+            if (!Objects.equals(memberSeq, shareBoard.getMemberSeq())) {
+                throw new WTException("게시글 수정 실패"); // Todo : 고치기
+            }
             shareBoard.update(requestShareBoardModifyDto.getTitle(), requestShareBoardModifyDto.getContent());
             shareBoardRepository.save(shareBoard);
         } catch (Exception e) {
@@ -282,13 +296,11 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public void delete(Long memberSeq, Long shareBoardSeq) throws WTException {
-        Optional<ShareBoard> shareBoardOptional = shareBoardRepository.findById(shareBoardSeq);
-
-        if (shareBoardOptional.isEmpty()) {
-            throw new WTException("해당 게시글 없음"); // Todo : 고치기
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
         }
 
-        ShareBoard shareBoard = shareBoardOptional.get();
+        ShareBoard shareBoard = shareBoardRepository.findBySeqAndIsDeletedFalse(shareBoardSeq);
 
         if (!Objects.equals(memberSeq, shareBoard.getMemberSeq())) {
             throw new WTException("게시글 삭제 실패"); // Todo : 고치기
@@ -305,6 +317,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public void like(Long shareBoardSeq, Long memberSeq) throws WTException {
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
+        }
+
         ShareBoardMemberMapping shareBoardMemberMapping = shareBoardRepository.findMemberSeqBySeqAndIsDeletedFalse(shareBoardSeq);
 
         if (shareBoardMemberMapping == null) {
@@ -332,6 +348,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public void likeCancel(Long shareBoardSeq, Long memberSeq) throws WTException {
+        if (!shareBoardRepository.existsById(shareBoardSeq) || !shareBoardRepository.existsBySeqAndIsDeletedFalse(shareBoardSeq)) {
+            throw new WTException("존재하지 않는 게시글입니다.");
+        }
+
         if (!shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq)) {
             throw new WTException("좋아요 취소 실패");
         }
