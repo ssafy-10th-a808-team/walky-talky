@@ -1,6 +1,6 @@
-package com.ssafy.backend.shareBoard.repository;
+package com.ssafy.backend.shareBoardCommet.repository;
 
-import com.ssafy.backend.shareBoard.domain.ShareBoardComment;
+import com.ssafy.backend.shareBoardCommet.domain.ShareBoardComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
