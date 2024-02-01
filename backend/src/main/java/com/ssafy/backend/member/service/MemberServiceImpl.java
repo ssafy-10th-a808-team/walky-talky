@@ -45,12 +45,12 @@ public class MemberServiceImpl implements MemberService {
     private static final long rtkExp = 604800000L; // 일주일
 
     @Override
-    public boolean checkId(RequestCheckIdDto requestCheckIdDto) {
+    public boolean memberCheckId(RequestCheckIdDto requestCheckIdDto) {
         return memberRepository.existsByMemberId(requestCheckIdDto.getId());
     }
 
     @Override
-    public boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto) {
+    public boolean memberCheckNickname(RequestCheckNicknameDto requestCheckNicknameDto) {
         return memberRepository.existsByNickname(requestCheckNicknameDto.getNickname());
     }
 

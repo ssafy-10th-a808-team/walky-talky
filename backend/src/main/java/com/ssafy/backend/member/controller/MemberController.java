@@ -28,11 +28,11 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/check-id")
-    public ResponseEntity<ResponseCheckIdDto> CheckId(@RequestBody RequestCheckIdDto requestCheckIdDto) {
+    public ResponseEntity<ResponseCheckIdDto> memberCheckId(@RequestBody RequestCheckIdDto requestCheckIdDto) {
 
         ResponseCheckIdDto responseCheckIdDto = new ResponseCheckIdDto();
 
-        if (memberService.checkId(requestCheckIdDto)) {
+        if (memberService.memberCheckId(requestCheckIdDto)) {
             responseCheckIdDto.setMessage("중복된 아이디입니다.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckIdDto);
         } else {
@@ -42,11 +42,11 @@ public class MemberController {
     }
 
     @PostMapping("/check-nickname")
-    public ResponseEntity<ResponseCheckNicknameDto> CheckNickname(@RequestBody RequestCheckNicknameDto requestCheckNicknameDto) {
+    public ResponseEntity<ResponseCheckNicknameDto> memberCheckNickname(@RequestBody RequestCheckNicknameDto requestCheckNicknameDto) {
 
         ResponseCheckNicknameDto responseCheckNicknameDto = new ResponseCheckNicknameDto();
 
-        if (memberService.checkNickname(requestCheckNicknameDto)) {
+        if (memberService.memberCheckNickname(requestCheckNicknameDto)) {
             responseCheckNicknameDto.setMessage("중복된 닉네임입니다.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseCheckNicknameDto);
         } else {
