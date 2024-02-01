@@ -11,7 +11,7 @@
               <div class="row">
                 <!-- 아이디 -->
                 <div class="form-group col-md-8">
-                  <label>모임명</label>
+                  <label>아이디</label>
                   <input
                     type="text"
                     name="name"
@@ -28,6 +28,7 @@
                   >
                     중복확인
                   </button>
+                  <!-- <input type="hidden" name="idDuplication" value="idUncheck"/> -->
                 </div>
               </div>
               <!-- 비밀번호 -->
@@ -158,16 +159,17 @@ const locationIcon = counterstore.selectButton('LocationIcon')
 const profileImg = ref(null)
 const memberId = ref('')
 const password = ref('')
+const repassword = ref('')
 const birth = ref('')
 const gender = ref('')
 const nickname = ref('')
 const introduce = ref('')
-// address: ''
 const region_cd = ref('')
 
 const memberStore = useMemberStore()
 
-const createMember = function () {
+const createMember = function (e) {
+  e.preventDefault()
   const payload = {
     profileImg: profileImg.value,
     memberId: memberId.value,
@@ -189,9 +191,21 @@ const cancelRegistration = function () {
   router.push({ name: 'home' })
 }
 
-const checkDuplicate = function (field) {
+const checkDuplicate = async function (field) {
   // 중복 확인 로직 구현
-  console.log(`${field} 중복 확인`)
+  try {
+    if (field === 'memberId') {
+      await memberStore.checkId(memberId.value)
+    } else if (field === 'nickname') {
+      await memberStore.checkNickname(nickname.value)
+    }
+    // 중복 확인이 성공적으로 이루어졌을 때의 처리
+    console.log(`${field} 중복 확인 성공`)
+  } catch (error) {
+    // 중복 확인에 실패했을 때의 처리
+    console.error(`${field} 중복 확인 실패:`, error.message)
+    // 실패에 대한 추가적인 처리를 여기에 추가할 수 있습니다.
+  }
 }
 
 const readInputFile = (e) => {
