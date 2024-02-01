@@ -1,12 +1,7 @@
 package com.ssafy.backend.clubMember.controller;
 
-import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyAcceptDto;
-import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyDto;
-import com.ssafy.backend.clubMember.dto.request.RequestClubMemberApplyRejectDto;
-import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyAcceptDto;
-import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyDto;
-import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyListDto;
-import com.ssafy.backend.clubMember.dto.response.ResponseClubMemberApplyRejectDto;
+import com.ssafy.backend.clubMember.dto.request.*;
+import com.ssafy.backend.clubMember.dto.response.*;
 import com.ssafy.backend.clubMember.service.ClubMemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -70,5 +65,15 @@ public class ClubMemberController {
     @PostMapping("/apply/reject")
     public ResponseEntity<ResponseClubMemberApplyRejectDto> clubMemberApplyReject(@RequestBody RequestClubMemberApplyRejectDto requestClubMemberApplyRejectDto, HttpServletRequest httpServletRequest) {
         return clubMemberService.clubMemberApplyReject(requestClubMemberApplyRejectDto, httpServletRequest);
+    }
+
+    @PostMapping("/exclude")
+    public ResponseEntity<ResponseClubMemberExcludeDto> clubMemberExclude(@RequestBody RequestClubMemberExcludeDto requestClubMemberExcludeDto, HttpServletRequest httpServletRequest) {
+        return clubMemberService.clubMemberExclude(requestClubMemberExcludeDto, httpServletRequest);
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<ResponseClubMemberWithdrawDto> clubMemberWithdraw(@RequestBody RequestClubMemberWithdrawDto requestClubMemberWithdrawDto, HttpServletRequest httpServletRequest) {
+        return clubMemberService.clubMemberWithdraw(requestClubMemberWithdrawDto, httpServletRequest);
     }
 }

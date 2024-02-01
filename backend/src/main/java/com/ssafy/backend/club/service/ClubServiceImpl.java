@@ -367,65 +367,97 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<ResponseClubModifyDto> clubModify(
             RequestClubModifyDto requestClubModifyDto,
             HttpServletRequest httpServletRequest) throws IOException {
 
-        System.out.println("ClubServiceImpl clubModify 시작");
-
         ResponseClubModifyDto responseClubModifyDto;
 
-        Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
+        // TODO : null empty check
 
-        System.out.println("memberSeq = " + memberSeq);
+        Long myMemberSeq = (Long) httpServletRequest.getAttribute("seq");
+        Long clubSeq = requestClubModifyDto.getClubSeq();
 
-        System.out.println("requestClubModifyDto.getClubSeq() = " + requestClubModifyDto.getClubSeq());
-        System.out.println("requestClubModifyDto.getMax_capacity() = " + requestClubModifyDto.getMax_capacity());
-        System.out.println("requestClubModifyDto.getName() = " + requestClubModifyDto.getName());
+        Club findedClub = clubRepository.findById(clubSeq).orElse(null);
 
-        // TODO : 삭제된 소모임이면 쫓아내기
-
-        // TODO : requestClubModifyDto.get 했을 때 null 이나 empty가 있으면 쫓아내기
-
-        // TEST CODE
-
-        // memberSeq가 club의 owner가 아니면 쫓아내기
-        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(requestClubModifyDto.getClubSeq(), memberSeq, "owner")) {
-            responseClubModifyDto = ResponseClubModifyDto.builder().message("소모임 장이 아닙니다.").build();
+        // 삭제된 소모임입니다.
+        if (findedClub.getIsDeleted()) {
+            responseClubModifyDto = ResponseClubModifyDto.builder().message("삭제된 소모임입니다.").build();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubModifyDto);
         }
 
-        // TODO : name이 다른 club과 중복되는지 검사하기
+        // 소모임장이 아닙니다.
+        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(clubSeq, myMemberSeq, "owner")) {
+            responseClubModifyDto = ResponseClubModifyDto.builder().message("소모임장이 아닙니다.").build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubModifyDto);
+        }
 
-        // TODO : 해당 club의 모든 member들이  new_old_birth <= member <= new_young_birth 인지 검사하기
+        // name이 중복됩니다.
+        if (!findedClub.getName().equals(requestClubModifyDto.getName()) && clubRepository.existsByName(requestClubModifyDto.getName())) {
+            responseClubModifyDto = ResponseClubModifyDto.builder().message("name이 중복됩니다.").build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubModifyDto);
+        }
 
-        // TODO : 해당 club의 모든 member들이 new_gender_type을 만족하는지 검사하기
+        List<ClubMember> findedClubMembers = clubMemberRepository.findAllByClubSeqAndRoleIn(clubSeq, Arrays.asList("owner", "member"));
 
-        // TODO : 해당 club의 현재 now_capacity <= new_max_capacity 인지 검사하기
+        // 해당 club의 모든 member들이  new_old_birth <= member <= new_young_birth 인지 검사하기
+        // 새로운 나이조건이 기존 멤버들과 맞지 않습니다.
+        for (ClubMember clubMember : findedClubMembers) {
+            Long tmpMemberBirth = Long.parseLong(clubMember.getMember().getBirth().substring(0, 4));
+            Long tmpOldBirth = Long.parseLong(requestClubModifyDto.getOld_birth());
+            Long tmpYongBirth = Long.parseLong(requestClubModifyDto.getYoung_birth());
+            if (tmpMemberBirth < tmpOldBirth || tmpMemberBirth > tmpYongBirth) {
+                responseClubModifyDto = ResponseClubModifyDto.builder().message("새로운 나이조건이 기존 멤버들과 맞지 않습니다.").build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubModifyDto);
+            }
+        }
+
+        // 해당 club의 모든 member들이 new_gender_type을 만족하는지 검사하기
+        // 새로운 성별조건이 기존 멤버들과 맞지 않습니다.
+        for (ClubMember clubMember : findedClubMembers) {
+            if (requestClubModifyDto.getGender_type().equals("A")) {
+
+            } else {
+                if (requestClubModifyDto.getGender_type().equals(clubMember.getMember().getGender())) {
+
+                } else {
+                    responseClubModifyDto = ResponseClubModifyDto.builder().message("새로운 성별조건이 기존 멤버들과 맞지 않습니다.").build();
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubModifyDto);
+                }
+            }
+        }
+
+        // 해당 club의 현재 now_capacity <= new_max_capacity 인지 검사하기
+        // 새로운 최대 인원 조건이 현재 인원보다 큽니다.
+        if (findedClub.getNowCapacity() > requestClubModifyDto.getMax_capacity()) {
+            responseClubModifyDto = ResponseClubModifyDto.builder().message("새로운 최대 인원 조건이 현재 인원보다 큽니다.").build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubModifyDto);
+        }
 
         // DB에 club 값 변경하기
-        Club curClub = clubRepository.findById(requestClubModifyDto.getClubSeq()).orElse(null);
 
         // if file data exist
         if (requestClubModifyDto.getMultipartFile() != null && !requestClubModifyDto.getMultipartFile().isEmpty()) {
             // 현재 사진이 있는 경우
-            if (curClub.getUrl() != null)
-                s3UploadService.deleteImg(curClub.getUrl());
-            String tmpUrl = s3UploadService.uploadClubProfileImg(requestClubModifyDto.getMultipartFile(), curClub.getSeq());
-            curClub.setUrl(tmpUrl);
+            if (findedClub.getUrl() != null)
+                s3UploadService.deleteImg(findedClub.getUrl());
+            String tmpUrl = s3UploadService.uploadClubProfileImg(requestClubModifyDto.getMultipartFile(), findedClub.getSeq());
+            findedClub.setUrl(tmpUrl);
         }
 
-        curClub.setName(requestClubModifyDto.getName());
-        curClub.setIntroduce(requestClubModifyDto.getIntroduce());
-        curClub.setRegionCd(requestClubModifyDto.getRegionCd());
-        curClub.setYoungBirth(requestClubModifyDto.getYoung_birth());
-        curClub.setOldBirth(requestClubModifyDto.getOld_birth());
-        curClub.setGenderType(requestClubModifyDto.getGender_type());
-        curClub.setMaxCapacity(requestClubModifyDto.getMax_capacity());
-        curClub.setIsAutoRecruit(requestClubModifyDto.getIs_auto_recruit());
-        curClub.setIsOpenRecruit(requestClubModifyDto.getIs_open_recruit());
+        findedClub.setName(requestClubModifyDto.getName());
+        if (requestClubModifyDto.getIntroduce() != null)
+            findedClub.setIntroduce(requestClubModifyDto.getIntroduce());
+        findedClub.setRegionCd(requestClubModifyDto.getRegionCd());
+        findedClub.setYoungBirth(requestClubModifyDto.getYoung_birth());
+        findedClub.setOldBirth(requestClubModifyDto.getOld_birth());
+        findedClub.setGenderType(requestClubModifyDto.getGender_type());
+        findedClub.setMaxCapacity(requestClubModifyDto.getMax_capacity());
+        findedClub.setIsAutoRecruit(requestClubModifyDto.getIs_auto_recruit());
+        findedClub.setIsOpenRecruit(requestClubModifyDto.getIs_open_recruit());
 
-        clubRepository.save(curClub);
+        clubRepository.save(findedClub);
 
         responseClubModifyDto = ResponseClubModifyDto.builder()
                 .message("OK")
