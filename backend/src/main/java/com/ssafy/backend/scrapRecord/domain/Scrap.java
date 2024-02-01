@@ -1,4 +1,4 @@
-package com.ssafy.backend.record.domain;
+package com.ssafy.backend.scrapRecord.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
