@@ -37,10 +37,21 @@ public class ClubMemberServiceImpl implements ClubMemberService {
         Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
         Long clubSeq = requestClubMemberApplyDto.getClubSeq();
 
+        if (clubSeq == null) {
+            responseClubMemberApplyDto.setMessage("null data not allowed");
+            return responseClubMemberApplyDto;
+        }
+
         Member findedMember = memberRepository.findById(memberSeq).orElse(null);
         Club findedClub = clubRepository.findById(clubSeq).orElse(null);
 
-        // 잘못된 소모임 번호
+        // 잘못된 멤버 번호 입니다.
+        if (findedMember == null) {
+            responseClubMemberApplyDto.setMessage("잘못된 멤버 번호 입니다.");
+            return responseClubMemberApplyDto;
+        }
+
+        // 잘못된 소모임 번호 입니다.
         if (findedClub == null) {
             responseClubMemberApplyDto.setMessage("잘못된 소모임 번호 입니다.");
             return responseClubMemberApplyDto;
@@ -111,20 +122,25 @@ public class ClubMemberServiceImpl implements ClubMemberService {
     }
 
     @Override
+    @Transactional
     public ResponseClubMemberApplyDto clubMemberApplyCancel(RequestClubMemberApplyDto requestClubMemberApplyDto, HttpServletRequest httpServletRequest) {
         ResponseClubMemberApplyDto responseClubMemberApplyDto = new ResponseClubMemberApplyDto();
 
         Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
         Long clubSeq = requestClubMemberApplyDto.getClubSeq();
 
+        if (clubSeq == null) {
+            responseClubMemberApplyDto.setMessage("null data not allowed");
+            return responseClubMemberApplyDto;
+        }
+
         if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(clubSeq, memberSeq, "applicant")) {
             responseClubMemberApplyDto.setMessage("해당 모임의 신청자가 아닙니다.");
             return responseClubMemberApplyDto;
         }
 
-        ClubMember findedClubMember = clubMemberRepository.findByMemberSeqAndClubSeq(memberSeq, clubSeq);
+        clubMemberRepository.deleteByClubSeqAndMemberSeq(clubSeq, memberSeq);
 
-        clubMemberRepository.deleteById(findedClubMember.getSeq());
         responseClubMemberApplyDto.setMessage("OK");
         return responseClubMemberApplyDto;
     }
@@ -135,6 +151,11 @@ public class ClubMemberServiceImpl implements ClubMemberService {
         ResponseClubMemberApplyListDto responseClubMemberApplyListDto = new ResponseClubMemberApplyListDto();
 
         Long memberSeq = (Long) httpServletRequest.getAttribute("seq");
+
+        if (clubSeq == null) {
+            responseClubMemberApplyListDto.setMessage("null data not allowed");
+            return responseClubMemberApplyListDto;
+        }
 
         if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRole(clubSeq, memberSeq, "owner")) {
             responseClubMemberApplyListDto.setMessage("소모임장이 아니므로 접근 불가능 합니다.");
