@@ -1,8 +1,8 @@
 package com.ssafy.backend.member.controller;
 
+import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
-import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
@@ -13,12 +13,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -75,19 +78,18 @@ public class MemberController {
 
     @PostMapping("/local-login")
     public ResponseEntity<?> localLogin(@RequestBody RequestLocalLoginDto loginDto) throws NoSuchAlgorithmException {
-        Map<String, String> resultMap = memberService.localLogin(loginDto);
+        Map<String, Object> resultMap = memberService.localLogin(loginDto);
 
         try {
             if (!resultMap.containsKey("message")) {
                 HttpHeaders headers = new HttpHeaders();
 
-                headers.add("atk", resultMap.get("atk"));
+                headers.add("atk", (String) resultMap.get("atk"));
                 resultMap.remove("atk");
-                headers.add("rtk", resultMap.get("rtk"));
+                headers.add("rtk", (String) resultMap.get("rtk"));
                 resultMap.remove("rtk");
 
                 resultMap.put("message", "OK");
-
                 return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);

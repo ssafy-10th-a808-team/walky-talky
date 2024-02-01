@@ -14,7 +14,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.MessageDigest;
@@ -23,26 +22,45 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-    @Value("${security.salt}")
-    private String salt;
-
+    //    private static final long atkExp = 900000L; // 15분
+    private static final long atkExp = 604800000L; // 일주일
+    private static final long rtkExp = 604800000L; // 일주일
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
     private final RedisDao redisDao;
     private final S3UploadService s3UploadService;
     private final RegionService regionService;
+    @Value("${security.salt}")
+    private String salt;
 
-    //    private static final long atkExp = 900000L; // 15분
-    private static final long atkExp = 604800000L; // 일주일
-    private static final long rtkExp = 604800000L; // 일주일
+    private static String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException {
+        String hashedPassword = null;
+
+        // Salt와 비밀번호를 합침
+        byte[] combined = concatenateByteArrays(password.getBytes(), salt);
+
+        // SHA-256 해시 알고리즘 사용
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        md.update(combined);
+
+        // 해시된 값을 Base64로 인코딩
+        hashedPassword = Base64.getEncoder().encodeToString(md.digest());
+
+        return hashedPassword;
+    }
+
+    private static byte[] concatenateByteArrays(byte[] a, byte[] b) {
+        byte[] result = new byte[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
 
     @Override
     public boolean memberCheckId(RequestCheckIdDto requestCheckIdDto) {
@@ -92,9 +110,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String, String> localLogin(RequestLocalLoginDto loginDto) throws NoSuchAlgorithmException {
+    public Map<String, Object> localLogin(RequestLocalLoginDto loginDto) throws NoSuchAlgorithmException {
         Member member = memberRepository.findByMemberId(loginDto.getMemberId());
-        Map<String, String> returnMap = new HashMap<>();
+        Map<String, Object> returnMap = new HashMap<>();
 
         if (member == null) { // 아이디에 해당하는 회원 없을때
             returnMap.put("message", "아이디 혹은 비밀번호를 확인해주세요.");
@@ -121,6 +139,12 @@ public class MemberServiceImpl implements MemberService {
         returnMap.put("atk", atk);
         returnMap.put("rtk", rtk);
 
+        Map<String, String> data = new HashMap<>();
+        data.put("nickname", member.getNickname());
+        data.put("profileImage", member.getUrl());
+
+        returnMap.put("data", data);
+
         return returnMap;
     }
 
@@ -145,30 +169,6 @@ public class MemberServiceImpl implements MemberService {
         returnMap.put("rtk", rtk);
 
         return returnMap;
-    }
-
-
-    private static String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException {
-        String hashedPassword = null;
-
-        // Salt와 비밀번호를 합침
-        byte[] combined = concatenateByteArrays(password.getBytes(), salt);
-
-        // SHA-256 해시 알고리즘 사용
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(combined);
-
-        // 해시된 값을 Base64로 인코딩
-        hashedPassword = Base64.getEncoder().encodeToString(md.digest());
-
-        return hashedPassword;
-    }
-
-    private static byte[] concatenateByteArrays(byte[] a, byte[] b) {
-        byte[] result = new byte[a.length + b.length];
-        System.arraycopy(a, 0, result, 0, a.length);
-        System.arraycopy(b, 0, result, a.length, b.length);
-        return result;
     }
 
 
