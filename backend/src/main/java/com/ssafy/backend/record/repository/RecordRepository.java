@@ -1,10 +1,8 @@
 package com.ssafy.backend.record.repository;
 
 import com.ssafy.backend.record.domain.Record;
-import com.ssafy.backend.record.dto.response.ResponseListDto;
+import com.ssafy.backend.record.dto.mapping.ListMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,8 +16,8 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     boolean existsBySeqAndIsDeletedTrue(Long seq);
 
-    @Query("SELECT new com.ssafy.backend.record.dto.response.ResponseListDto(r.seq, r.title, r.starRating, r.comment, r.distance, r.duration) " +
-            "FROM Record r WHERE r.memberSeq = :memberSeq AND r.isDeleted = false")
-    List<ResponseListDto> findResponseListDtoByMemberSeq(@Param("memberSeq") Long memberSeq);
+    List<ListMapping> findResponseListDtoByMemberSeqAndIsDeletedFalse(Long memberSeq);
+
+    List<ListMapping> findBySeqIn(List<Long> recordSeq);
 
 }

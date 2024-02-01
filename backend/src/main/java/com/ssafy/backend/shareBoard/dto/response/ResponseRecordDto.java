@@ -16,7 +16,7 @@ public class ResponseRecordDto {
     private Long shareBoardSeq;
     private Long recordSeq;
     private String address;
-    private List<PointsMapping> points;
     private String duration;
     private Double distance;
+    private List<PointsMapping> points;
 }
