@@ -37,9 +37,9 @@ public class Member extends BaseEntity {
     private String regionCd;
 
     @Column(name = "is_alert")
-    private boolean isAlert;
+    private Boolean isAlert;
 
     @Column(name = "is_deleted")
-    private boolean isDeleted;
+    private Boolean isDeleted;
 
 }
