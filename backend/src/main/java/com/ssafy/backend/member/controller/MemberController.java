@@ -119,54 +119,39 @@ public class MemberController {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
         }
-
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         Map<String, String> resultMap = new HashMap<>();
 
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            Long seq = (Long) request.getAttribute("seq");
+        Long seq = (Long) request.getAttribute("seq");
 
-            memberService.logout(seq);
-            resultMap.put("message", "OK");
+        memberService.logout(seq);
+        resultMap.put("message", "OK");
 
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
-        }
-
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request) { // rtk만 갖고온 사람한테 atk 재발급해줘야됨
         Map<String, String> resultMap = new HashMap<>();
 
-        String msg = (String) request.getAttribute("message");
+        Long seq = (Long) request.getAttribute("seq");
+        try {
+            Map<String, String> returnMap = memberService.reissue(seq);
+            HttpHeaders headers = new HttpHeaders();
 
-        if (msg == null) {
-            Long seq = (Long) request.getAttribute("seq");
-            try {
-                Map<String, String> returnMap = memberService.reissue(seq);
-                HttpHeaders headers = new HttpHeaders();
+            headers.add("atk", returnMap.get("atk"));
+            returnMap.remove("atk");
+            headers.add("rtk", returnMap.get("rtk"));
+            returnMap.remove("rtk");
 
-                headers.add("atk", returnMap.get("atk"));
-                returnMap.remove("atk");
-                headers.add("rtk", returnMap.get("rtk"));
-                returnMap.remove("rtk");
+            resultMap.put("message", "OK");
 
-                resultMap.put("message", "OK");
-
-                return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
-            } catch (Exception e) {
-                resultMap.put("message", "세션이 만료되었습니다.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
-            }
-        } else {
-            resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
+        } catch (Exception e) {
+            resultMap.put("message", "세션이 만료되었습니다.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
         }
     }
