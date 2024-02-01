@@ -8,15 +8,14 @@ import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
-import org.springframework.http.ResponseEntity;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 public interface MemberService {
-
     ResponseEntity<ResponseCheckIdDto> memberCheckId(RequestCheckIdDto requestCheckIdDto);
 
     ResponseEntity<ResponseCheckNicknameDto> memberCheckNickname(RequestCheckNicknameDto requestCheckNicknameDto);
@@ -27,11 +26,8 @@ public interface MemberService {
 
     public void logout(Long seq);
 
-    boolean checkNickname(RequestCheckNicknameDto requestCheckNicknameDto);
-
-    boolean localSignup(RequestLocalSignupDto requestLocalSignupDto) throws IOException, NoSuchAlgorithmException;
-
     public Map<String, String> reissue(Long seq);
+
 
     ResponseMemberDto getMemberNicknameUrl(Long memberSeq);
 

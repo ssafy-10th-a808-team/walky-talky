@@ -15,7 +15,6 @@ import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.region.repository.RegionRepository;
-import com.ssafy.backend.region.service.RegionService;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,6 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-
     //    private static final long atkExp = 900000L; // 15분
     private static final long atkExp = 604800000L; // 일주일
     private static final long rtkExp = 604800000L; // 일주일
@@ -275,6 +273,7 @@ public class MemberServiceImpl implements MemberService {
 
         return returnMap;
     }
+
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
         ResponseMemberDto responseMemberDto = new ResponseMemberDto();
