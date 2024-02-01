@@ -51,7 +51,6 @@
 import { onMounted } from 'vue';
 import TheFooter from './components/common/TheFooter.vue'
 import TheHeaderNav from './components/common/TheHeaderNav.vue'
-
     onMounted(() => {
       {
       // Vendor JS 파일 로드
@@ -70,7 +69,7 @@ import TheHeaderNav from './components/common/TheHeaderNav.vue'
         document.body.appendChild(scriptElement);
       });
     }
-      
+
     }) 
   
 
