@@ -1,14 +1,24 @@
 <template>
     <div class="portfolio-info">
         <div class="circular">
-            <img :src="club.url" alt="프로필"><h3>{{ club.name }}</h3>
+            <img :src="club.url" alt="프로필"/>
         </div>
-        <ul>
-        <li><div>{{ club.address }} {{ club.genderType }}</div></li>
-        <li>{{ club.introduce }}</li>
-        <li>{{ club.oldBirth }}부터 {{ club.youngBirth }}까지</li>
-        <li>{{ club.nowCapacity }} / {{ club.maxCapacity }}명</li>
-        </ul>
+        <div class="info-container">
+            <h3>{{ club.name }}</h3>
+            <ul>
+                <li><div>{{ club.address }} 
+
+                    </div></li>
+                <li>{{ 
+                    club.genderType === 'A' ? '남녀무관' 
+                    :club.genderType === 'M' ? '남자만'
+                    :club.genderType === 'F' ? '여자만'
+                    :club.genderType}}</li>
+                <li>{{ club.introduce }}</li>
+                <li>{{ club.oldBirth }}년생 ~ {{ club.youngBirth }}년생</li>
+                <li>{{ club.nowCapacity }} / {{ club.maxCapacity }}명</li>
+            </ul>
+        </div>
     </div>
 </template>
 

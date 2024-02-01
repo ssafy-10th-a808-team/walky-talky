@@ -1,6 +1,6 @@
 // import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, toRef } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 
@@ -87,25 +87,21 @@ export const useClubStore = defineStore('club', () => {
     }
   }
   // 소모임 디테일 관련 함수
-  const clubDetail = ref(null)
-  const findClub = (seq) => {
-    axios({
-      method : 'get',
-      url: `${REST_CLUB_API}/club/detail?clubSeq=${seq}`,
-      headers: {
-        Authorization: `Bearer ${token.value}`, 
-      }
-    })
-    .then((res) => {
-      console.log('res.data의 값')
-      console.log(res.data)
-      clubDetail.value = res.data
-      console.log('clubDetail.value의 값')
-      console.log(clubDetail.value)
-    })
-    .catch((err) => {
+  const findClub = async (seq) => {
+
+    try {
+      const res = await axios({
+        method : 'get',
+        url: `${REST_CLUB_API}/club/detail?clubSeq=${seq}`,
+        headers: {
+          Authorization: `Bearer ${token.value}`, 
+        }
+      })
+      return [res.data.responseClubDetailDtoClub, res.data.responseClubDetailDtoMembers]
+      
+    } catch(err) {
       console.log(err)
-    })
+    }
   }
 
   return { 
@@ -116,7 +112,6 @@ export const useClubStore = defineStore('club', () => {
     clubs,
     // 소모임 디테일보기
     findClub,
-    clubDetail,
   }
 
 })
