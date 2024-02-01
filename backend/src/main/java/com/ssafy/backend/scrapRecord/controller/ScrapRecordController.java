@@ -24,96 +24,72 @@ public class ScrapRecordController {
     public ResponseEntity<?> scrap(HttpServletRequest request, @PathVariable Long recordSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            Long memberSeq = (Long) request.getAttribute("seq");
+        Long memberSeq = (Long) request.getAttribute("seq");
 
-            try {
-                scrapRecordService.scrap(recordSeq, memberSeq);
-            } catch (Exception e) {
-                resultMap.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
-
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        try {
+            scrapRecordService.scrap(recordSeq, memberSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
         }
+
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
     @PostMapping("{recordSeq}/cancel")
     public ResponseEntity<?> cancel(HttpServletRequest request, @PathVariable Long recordSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            Long memberSeq = (Long) request.getAttribute("seq");
+        Long memberSeq = (Long) request.getAttribute("seq");
 
-            try {
-                scrapRecordService.cancel(recordSeq, memberSeq);
-            } catch (Exception e) {
-                resultMap.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
-
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        try {
+            scrapRecordService.cancel(recordSeq, memberSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
         }
+
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
     @GetMapping("/list")
     public ResponseEntity<?> list(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            Long memberSeq = (Long) request.getAttribute("seq");
+        Long memberSeq = (Long) request.getAttribute("seq");
 
-            List<ListMapping> scrapList;
-            try {
-                scrapList = scrapRecordService.list(memberSeq);
-            } catch (Exception e) {
-                resultMap.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
-
-            resultMap.put("data", scrapList);
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        List<ListMapping> scrapList;
+        try {
+            scrapList = scrapRecordService.list(memberSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
         }
+
+        resultMap.put("data", scrapList);
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
     @GetMapping("/view/{recordSeq}")
     public ResponseEntity<?> view(HttpServletRequest request, @PathVariable Long recordSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        String msg = (String) request.getAttribute("message");
-        if (msg == null) {
-            Long memberSeq = (Long) request.getAttribute("seq");
+        Long memberSeq = (Long) request.getAttribute("seq");
 
-            ResponseViewDto responseViewDto;
-            try {
-                responseViewDto = scrapRecordService.view(recordSeq, memberSeq);
-            } catch (Exception e) {
-                resultMap.put("message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
-            }
-
-            resultMap.put("data", responseViewDto);
-            resultMap.put("message", "OK");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
-        } else {
-            resultMap.put("message", msg);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        ResponseViewDto responseViewDto;
+        try {
+            responseViewDto = scrapRecordService.view(recordSeq, memberSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
         }
+
+        resultMap.put("data", responseViewDto);
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
 }
