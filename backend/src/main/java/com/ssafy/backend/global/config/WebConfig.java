@@ -16,7 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:5173"
                 )
                 .allowedMethods("GET", "POST")
-                .exposedHeaders("atk", "rtk", "Authorization");
+                .exposedHeaders("atk", "rtk", "Authorization")
+                .allowCredentials(true);
 
     }
 }
