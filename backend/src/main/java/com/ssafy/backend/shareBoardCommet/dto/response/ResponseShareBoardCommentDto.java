@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseCommentDto {
+public class ResponseShareBoardCommentDto {
     private Long commentSeq;
     private Long shareBoardSeq;
     private ResponseMemberDto member;
