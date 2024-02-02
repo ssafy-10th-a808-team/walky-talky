@@ -75,13 +75,16 @@ export const useClubStore = defineStore('club', () => {
   // 전체 소모임 보기, 전체 소모임 관련
   const clubs = ref([])
   const getClubs = async () => {
+    console.log(getCookie("atk"))
     try {
       const res = await axios({
         method: 'get',
         url: `${REST_CLUB_API}/club/list`,
         headers: {
-          Authorization: `Bearer ${token.value}`, 
-        },
+          Authorization: `Bearer ${getCookie("atk")}`, 
+        },withCredentials
+        : 
+        true
       })
       console.log(res)
       clubs.value = res.data
@@ -90,6 +93,19 @@ export const useClubStore = defineStore('club', () => {
       console.log(err)
     }
   }
+
+  ///////////////////////
+  function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+  }
+  ////////////////////////////
+
+
+
+
   // 소모임 디테일 관련 함수
   const findClub = async (seq) => {
 
