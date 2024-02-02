@@ -2,9 +2,11 @@
   <div>
     <div style="background-color: white">
       {{ count }}
-      <button @click="play">산책하기</button>
-      <button @click="stop">일시정지</button>
-      <button @click="reset">정지</button>
+      <div class="text-center">
+        <button @click="play" type="submit">산책하기</button>
+        <button @click="stop" type="submit">일시정지</button>
+        <button @click="reset" type="submit">정지</button>
+      </div>
     </div>
   </div>
 </template>
