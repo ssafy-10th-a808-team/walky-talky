@@ -14,24 +14,24 @@ export const useMemberStore = defineStore('member', () => {
   const profileImage = ref('')
 
   //유저 리스트 가져오기
-  const getMemberList = function () {
-    axios
-      .get(REST_MEMBER_API)
-      .then((response) => {
-        memberList.value = response.data
-      })
-      .catch((err) => {
-        // 오류나면 처리가능
-        console.log(err)
-      })
-  }
-  //회원정보 한개
-  const member = ref({})
-  const getMember = function (memberId) {
-    axios.get(`${REST_MEMBER_API}/${memberId}`).then((response) => {
-      member.value = response.data
-    })
-  }
+  // const getMemberList = function () {
+  //   axios
+  //     .get(REST_MEMBER_API)
+  //     .then((response) => {
+  //       memberList.value = response.data
+  //     })
+  //     .catch((err) => {
+  //       // 오류나면 처리가능
+  //       console.log(err)
+  //     })
+  // }
+  // //회원정보 한개
+  // const member = ref({})
+  // const getMember = function (memberId) {
+  //   axios.get(`${REST_MEMBER_API}/${memberId}`).then((response) => {
+  //     member.value = response.data
+  //   })
+  // }
 
   //회원가입
   const createMember = function (payload) {
@@ -109,7 +109,7 @@ export const useMemberStore = defineStore('member', () => {
       .catch((err) => {
         // console.log(err)
         const errmsg = err.response.data.message
-        // console.log(errmsg)
+        console.log(errmsg)
         if (errmsg == 'nickname is empty') {
           alert('닉네임을 입력해주세요')
         } else if (errmsg == '중복된 닉네임입니다.') {
@@ -127,29 +127,29 @@ export const useMemberStore = defineStore('member', () => {
   // 로그인
   const login = async (payload) => {
     axios({
-      method:'post',
+      method: 'post',
       url: `${REST_MEMBER_API}/api/member/local-login`,
       data: {
-        'memberId': payload.memberId,
-        'password': payload.password,
+        memberId: payload.memberId,
+        password: payload.password
       }
     })
-    .then((res) => {
-      alert("로그인 성공")
-      token.value = res.headers.get('atk')
-      nickname.value=res.data.data.nickname
-      profileImage.value=(res.data.data.profileImage)
-      console.log(token.value)
-      router.push({ name : 'club'})
-    })
-    .catch((err) => {
-      alert("로그인 실패")
-      console.log(err)
-    }) 
+      .then((res) => {
+        alert('로그인 성공')
+        token.value = res.headers.get('atk')
+        nickname.value = res.data.data.nickname
+        profileImage.value = res.data.data.profileImage
+        console.log(token.value)
+        router.push({ name: 'club' })
+      })
+      .catch((err) => {
+        alert('로그인 실패')
+        console.log(err)
+      })
   }
 
   const isLogin = computed(() => {
-    if(token.value === null) {
+    if (token.value === null) {
       return false
     } else {
       return true
@@ -183,9 +183,9 @@ export const useMemberStore = defineStore('member', () => {
 
   return {
     memberList,
-    member,
-    getMember,
-    getMemberList,
+    // member,
+    // getMember,
+    // getMemberList,
     createMember,
     // 로그인
     checkId,
