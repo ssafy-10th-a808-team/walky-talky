@@ -5,15 +5,16 @@
     <div class="map_wrap" style="position: relative">
       <div id="map" style="width: 100%; height: 350px">
         <!-- 산책하기 실행버튼 -->
-        <button
+        <!-- <button
           id="my_location_button"
           class="btn btn-primary"
           style="position: absolute; z-index: 2; top: 80%; left: 44%"
         >
           산책하기
-        </button>
+        </button> -->
+
         <!-- 산책하기 버튼을 눌렀을 때 스탑워치 실행되게 하기 -->
-        <StopWatch style="position: absolute; z-index: 2; top: 80%; left: 44%" />
+        <StopWatch style="position: absolute; z-index: 2; top: 70%; left: 40%" />
       </div>
     </div>
   </div>

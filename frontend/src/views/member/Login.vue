@@ -1,6 +1,6 @@
 <template>
-<div>
-  <section id="contact" class="contact">
+  <div>
+    <section id="contact" class="contact">
       <div class="container">
         <div class="section-title">
           <h1>로그인</h1>
@@ -32,6 +32,7 @@
                   required
                 />
               </div>
+              <RouterLink :to="{ name: 'Signup' }">회원가입</RouterLink>
               <div class="text-center">
                 <button type="submit" @click="login">로그인</button>
               </div>
@@ -40,7 +41,7 @@
         </div>
       </div>
     </section>
-</div>
+  </div>
 </template>
 
 <script setup>
@@ -53,8 +54,8 @@ const password = ref(null)
 
 const login = () => {
   const payload = {
-    memberId : memberId.value,
-    password : password.value,
+    memberId: memberId.value,
+    password: password.value
   }
   memberstore.login(payload)
 }
