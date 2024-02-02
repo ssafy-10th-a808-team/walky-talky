@@ -1,9 +1,8 @@
 package com.ssafy.backend.oauth.service;
 
-import com.ssafy.backend.oauth.domain.dto.response.ResponseOauthTokenDto;
+import java.util.Map;
 
 public interface OauthService {
-    ResponseOauthTokenDto getAccessToken(String code);
 
-    void saveUser(ResponseOauthTokenDto accessToken);
+    Map<String, Object> login(String code);
 }

@@ -1,59 +1,39 @@
 package com.ssafy.backend.oauth.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.global.error.WTException;
+import com.ssafy.backend.global.util.JwtProvider;
+import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.oauth.domain.dto.response.ResponseOauthInfoDto;
 import com.ssafy.backend.oauth.domain.dto.response.ResponseOauthTokenDto;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class OauthServiceImpl implements OauthService {
-
+    private final JwtProvider jwtProvider;
+    private final MemberRepository memberRepository;
+    private final RequestOauthService requestOauthService;
 
     @Override
-    public ResponseOauthTokenDto getAccessToken(String code) {
-        RestTemplate rt = new RestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "Content-type: application/x-www-form-urlencoded;charset=utf-8");
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", "authorization_code");
-        params.add("redirect_uri", "authorization_code");
-        params.add("code", "code");
-        params.add("client_secret", "client_secret");
-
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
-
-        ResponseEntity<String> accessTokenResponse = rt.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                kakaoTokenRequest,
-                String.class
-        );
-
-        ObjectMapper om = new ObjectMapper();
-        ResponseOauthTokenDto responseOauthTokenDto;
-        try {
-            responseOauthTokenDto = om.readValue(accessTokenResponse.getBody(), ResponseOauthTokenDto.class);
-        } catch (JsonProcessingException e) {
-            throw new WTException("회원가입에 실패하였습니다.");
+    public Map<String, Object> login(String code) {
+        ResponseOauthTokenDto responseOauthTokenDto = requestOauthService.requestAccessToken(code);
+        ResponseOauthInfoDto responseOauthInfoDto = requestOauthService.requestUserInfo(responseOauthTokenDto);
+        if (memberRepository.existsByMemberId(responseOauthInfoDto.getEmail())) {
+            /**
+             * 로그인
+             *
+             * atk, rtk 발급
+             */
+        } else {
+            /**
+             * 회원가입
+             *
+             * Map에 email, nickname, imgUrl 담아서 응답
+             * 이후 local-signup으로 요청
+             */
         }
-
-        return responseOauthTokenDto;
-
-    }
-
-    @Override
-    public void saveUser(ResponseOauthTokenDto accessToken) {
-
+        return null;
     }
 }
