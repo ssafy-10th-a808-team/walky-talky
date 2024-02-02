@@ -37,6 +37,9 @@
             />
         </div>
     </div>
+    <RouterLink :to="{ name: 'club-create' }">
+        <button class="fixed-btn">소모임생성</button>
+    </RouterLink>
 </template>
 
 <script setup>
@@ -61,5 +64,22 @@
 </script>
 
 <style scoped>
+.fixed-btn {
+  position: fixed;
+  right: 100px;
+  bottom: 500px;
+  z-index: 10;
+  background: #5cb874;
+  width: 100px;
+  height: 40px;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #fff;
+  line-height: 0;
+}
 
+.fixed-btn:hover {
+  background: #78c48c;
+  color: #fff;
+}
 </style>
