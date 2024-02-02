@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 public interface MemberService {
@@ -31,5 +32,5 @@ public interface MemberService {
 
     ResponseMemberDto getMemberNicknameUrl(Long memberSeq);
 
-
+    String getRegionCd(Long memberSeq) throws WTException;
 }

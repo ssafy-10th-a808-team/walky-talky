@@ -2,6 +2,7 @@ package com.ssafy.backend.member.repository;
 
 import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
+import com.ssafy.backend.member.dto.mapping.RegionCdMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +16,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findByMemberId(String memberId);
 
     NicknameUrlMapping findNickNameAndUrlBySeq(Long memberSeq);
+
+    RegionCdMapping findRegionCdBySeq(Long memberSeq);
 
 }
