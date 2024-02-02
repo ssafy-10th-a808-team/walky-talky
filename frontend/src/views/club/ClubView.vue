@@ -51,8 +51,8 @@
     const router = useRouter()
 
     const clubs = ref([])
-    onMounted(() => {
-        clubstore.getClubs() 
+    onMounted(async () => {
+        await clubstore.getClubs() 
         clubs.value = clubstore.clubs
         console.log(`현재 페이지에서 클럽 ${clubs.value}`)
     })
