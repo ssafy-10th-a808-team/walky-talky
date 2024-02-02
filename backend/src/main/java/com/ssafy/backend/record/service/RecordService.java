@@ -46,4 +46,10 @@ public interface RecordService {
     boolean isRecordDeleted(Long recordSeq) throws WTException;
 
     boolean isRecordExist(Long recordSeq) throws WTException;
+
+    List<ListMapping> recommendTown(Long memberSeq) throws WTException;
+
+    List<ListMapping> recommendInfo(Long memberSeq) throws WTException;
+
+    void dislike(Long recordSeq, Long memberSeq) throws WTException;
 }

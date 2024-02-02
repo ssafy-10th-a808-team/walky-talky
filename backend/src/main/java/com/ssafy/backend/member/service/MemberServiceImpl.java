@@ -6,6 +6,7 @@ import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
+import com.ssafy.backend.member.dto.mapping.RegionCdMapping;
 import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
@@ -29,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -274,6 +276,14 @@ public class MemberServiceImpl implements MemberService {
         return returnMap;
     }
 
+    @Override
+    public String getRegionCd(Long memberSeq) throws WTException {
+        RegionCdMapping regionCdMapping = memberRepository.findRegionCdBySeq(memberSeq);
+        if (regionCdMapping == null) {
+            throw new WTException("사용자의 동네를 확인해주세요.");
+        }
+        return regionCdMapping.getRegionCd();
+    }
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
         ResponseMemberDto responseMemberDto = new ResponseMemberDto();
