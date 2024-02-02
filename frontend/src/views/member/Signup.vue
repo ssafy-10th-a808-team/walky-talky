@@ -11,7 +11,7 @@
               <div class="row">
                 <!-- 주소 -->
                 <div class="form-group col-md-6">
-                  <label>주소</label>
+                  <label>* 주소</label>
                   <input type="text" name="name" class="form-control" v-model.trim="region_name" />
                 </div>
                 <div class="col-auto">
@@ -24,7 +24,7 @@
                       class="col-form-label"
                       prop="nickname"
                       :rules="[{ required: true, message: '내용을 입력해주세요.' }]"
-                      >닉네임</label
+                      >* 닉네임</label
                     >
                   </div>
                   <div class="col-auto">
@@ -32,18 +32,14 @@
                   </div>
                   <!-- 닉네임 중복확인 버튼 -->
                   <div class="col-md-4 cta-btn-container text-center col-auto">
-                    <button
-                      type="submit"
-                      class="cta-btn align-middle"
-                      @click="checkDuplicate('nickname')"
-                    >
+                    <button type="submit" class="cta-btn align-middle" @click="checkNickname()">
                       중복확인
                     </button>
                   </div>
                 </div>
                 <!-- 아이디 -->
                 <div class="form-group col-md-8">
-                  <label>아이디</label>
+                  <label>* 아이디</label>
                   <input
                     type="text"
                     name="name"
@@ -53,11 +49,7 @@
                   />
                 </div>
                 <div class="col-md-4 cta-btn-container text-center col-auto">
-                  <button
-                    type="submit"
-                    class="cta-btn align-middle"
-                    @click="checkDuplicate('memberId')"
-                  >
+                  <button type="submit" class="cta-btn align-middle" @click="checkId()">
                     중복확인
                   </button>
                   <!-- <input type="hidden" name="idDuplication" value="idUncheck"/> -->
@@ -65,7 +57,7 @@
               </div>
               <!-- 비밀번호 -->
               <div class="mb-3 row">
-                <label for="inputPassword" class="col-sm-2 col-form-label">비밀번호</label>
+                <label for="inputPassword" class="col-sm-10 col-form-label">* 비밀번호</label>
                 <input
                   type="password"
                   class="form-control"
@@ -80,7 +72,7 @@
               </div>
               <!-- 비밀번호확인 -->
               <div class="mb-3 row">
-                <label for="inputPassword" class="col-sm-2 col-form-label">비밀번호 확인</label>
+                <label for="inputPassword" class="col-sm-10 col-form-label">* 비밀번호 확인</label>
                 <input
                   type="password"
                   class="form-control"
@@ -89,7 +81,7 @@
                   @blur="passwordCheckValid"
                   v-model="repassword"
                 />
-                <div v-if="!passwordCheck">
+                <div v-if="!isPasswordMatch">
                   <p style="color: red">비밀번호가 동일하지 않습니다.</p>
                 </div>
               </div>
@@ -98,33 +90,35 @@
                 <label>이미지</label>
                 <input type="file" name="name" class="form-control" @change="readInputFile" />
                 <div id="imageFrame">
-                  <img id="img" height="200" alt="이미지미리보기" />
+                  <img width="200" alt="이미지미리보기" />
                 </div>
               </div>
               <!-- 생년월일 -->
               <div class="row g-3 align-items-center">
                 <div class="col-auto">
-                  <label class="col-form-label">생년월일</label>
+                  <label class="col-form-label">* 생년월일</label>
                 </div>
                 <div class="col-auto">
-                  <input type="text" class="form-control" v-model="birth" />
+                  <input type="text" class="form-control" v-model="birth" @input="validateBirth" />
                 </div>
                 <div class="col-auto">
                   <span class="form-text"> ex: 19910101 </span>
                 </div>
               </div>
               <!-- 성별 -->
-              <div class="row g-3 align-items-center">
-                <div class="col-auto">
-                  <label class="col-form-label">성별</label>
-                </div>
-                <div class="form-check,col-auto" style="text-align: left; margin-left: 50px">
-                  <input v-model="gender" class="form-check-input" type="radio" value="M" />&nbsp;
-                  <label class="form-check-label"> 남 </label>
-                </div>
-                <div class="form-check,col-auto" style="text-align: left; margin-left: 50px">
-                  <input v-model="gender" class="form-check-input" type="radio" value="F" />&nbsp;
-                  <label class="form-check-label"> 여 </label>
+              <div class="form-group col-md-6 mt-3">
+                <label>* 성별</label>
+                <div class="row">
+                  <div class="portfolio col-md-6 d-flex justify-content-center">
+                    <ul id="portfolio-flters">
+                      <li :class="{ 'filter-active': gender === 'M' }" @click="setGenderType('M')">
+                        남
+                      </li>
+                      <li :class="{ 'filter-active': gender === 'F' }" @click="setGenderType('F')">
+                        여
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 
@@ -171,7 +165,7 @@ const memberId = ref('')
 const password = ref('')
 const repassword = ref('')
 const birth = ref('')
-const gender = ref('')
+const gender = ref('M')
 const nickname = ref('')
 const introduce = ref('')
 const region_cd = ref('')
@@ -180,8 +174,72 @@ const region_name = ref('')
 region_name.value = memberStore.getLocationInfo()[0]
 region_cd.value = memberStore.getLocationInfo()[1]
 
+// 아이디 중복 체크
+const checkId = function () {
+  memberStore.checkId(memberId.value)
+  console.log(`${memberId.value}`)
+}
+
+// 닉네임 중복 체크
+const checkNickname = function () {
+  memberStore.checkNickname(nickname.value)
+  console.log(`${nickname.value}`)
+}
+
+// 비밀번호 일치 여부 확인 함수
+const isPasswordMatch = ref(true)
+const passwordCheckValid = function () {
+  isPasswordMatch.value = password.value === repassword.value
+}
+
+// 생년월일 유효성 검사
+const isBirthValid = ref(true)
+
+const validateBirth = function () {
+  const birthRegex = /^[0-9]{8}$/ // 8자리의 숫자만 허용
+
+  if (!birthRegex.test(birth.value)) {
+    // 잘못된 형식의 입력이면 상태를 false로 설정
+    isBirthValid.value = false
+  } else {
+    // 올바른 형식의 입력이면 상태를 true로 설정
+    const year = birth.value.substring(0, 4)
+    const month = birth.value.substring(4, 6) - 1 // 월은 0부터 시작하므로 1을 빼줍니다.
+    const day = birth.value.substring(6, 8)
+
+    const parsedDate = new Date(year, month, day)
+
+    // 날짜가 유효한지 확인
+    if (
+      parsedDate.getFullYear() == year &&
+      parsedDate.getMonth() == month &&
+      parsedDate.getDate() == day
+    ) {
+      isBirthValid.value = true
+    } else {
+      isBirthValid.value = false
+    }
+  }
+}
+
+const setGenderType = (value) => {
+  gender.value = value
+  console.log(`selected gender : ${gender.value}`)
+}
+
+// 회원가입
 const createMember = function (e) {
   e.preventDefault()
+
+  if (!isPasswordMatch.value) {
+    // 비밀번호가 일치하지 않으면 여기에서 처리 (예: 알림 메시지 등)
+    alert('비밀번호가 일치하지 않습니다.')
+    return
+  } else if (!isBirthValid.value) {
+    // 생년월일이 올바르지 않으면 여기에서 처리 (예: 알림 메시지 등)
+    alert('생년월일을 올바르게 입력해주세요.')
+    return
+  }
   const payload = {
     profileImg: profileImg.value,
     memberId: memberId.value,
@@ -201,33 +259,6 @@ const cancelRegistration = function () {
   // 취소 버튼 클릭 시의 처리 (로그인 페이지로 이동)
   console.log('회원가입 취소')
   router.push({ name: 'Login' })
-}
-
-const checkDuplicate = async function (field) {
-  // 중복 확인 로직 구현
-  try {
-    if (field === 'memberId') {
-      await memberStore.checkId(memberId.value)
-    } else if (field === 'nickname') {
-      await memberStore.checkNickname(nickname.value)
-    }
-    // 중복 확인이 성공적으로 이루어졌을 때의 처리
-    console.log(`${field} 중복 확인 성공`)
-  } catch (error) {
-    // 중복 확인에 실패했을 때의 처리
-    console.error(`${field} 중복 확인 실패:`, error.message)
-    // 실패에 대한 추가적인 처리를 여기에 추가할 수 있습니다.
-  }
-}
-
-// 비밀번호 일치 확인
-const passwordCheck = ref(true)
-const passwordCheckValid = function () {
-  if (password.value === repassword.value) {
-    passwordCheck.value = true
-  } else {
-    passwordCheck.value = false
-  }
 }
 
 const readInputFile = (e) => {
@@ -254,4 +285,17 @@ const readInputFile = (e) => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+#imageFrame {
+  max-width: 100%; /* 원하는 가로 크기로 조절 */
+  max-height: 300px; /* 원하는 세로 크기로 조절 */
+  overflow: auto; /* 크기를 벗어난 이미지를 감출 경우 사용 */
+}
+
+#img {
+  max-width: 100%; /* 이미지의 최대 가로 크기를 부모 요소의 너비에 맞춤 */
+  max-height: 100%; /* 이미지의 최대 세로 크기를 부모 요소의 높이에 맞춤 */
+  display: block; /* 인라인 요소 간격 제거 */
+  margin: auto; /* 가운데 정렬을 위해 사용 */
+}
+</style>
