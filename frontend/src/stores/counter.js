@@ -13,10 +13,8 @@ export const useCounterStore = defineStore('counter', () => {
     return icons.value.find((icon) => icon.name === alt)
   }
 
-
   return {
     icons,
-    selectButton,
-  
+    selectButton
   }
 })
