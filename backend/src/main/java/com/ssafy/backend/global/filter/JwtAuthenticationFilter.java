@@ -25,6 +25,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // OPTIONS로 api 요청 시 필터 통과
+        if (request.getMethod().equals("OPTIONS")) {
+            return;
+        }
+
         String requestURI = request.getRequestURI();
         try {
             if ("/api/member/reissue".equals(requestURI)) { // 토큰 재발급 요청
