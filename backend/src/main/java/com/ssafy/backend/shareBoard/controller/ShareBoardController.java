@@ -4,7 +4,7 @@ import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
 import com.ssafy.backend.shareBoard.service.ShareBoardService;
-import com.ssafy.backend.shareBoardCommet.dto.response.ResponseCommentDto;
+import com.ssafy.backend.shareBoardCommet.dto.response.ResponseShareBoardCommentDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -112,7 +112,7 @@ public class ShareBoardController {
     }
 
     @GetMapping("/view/{shareBoardSeq}/content")
-    public ResponseEntity<?> viewContent(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
+    public ResponseEntity<?> viewContent(@PathVariable Long shareBoardSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
         ResponseShareBoardContentDto responseShareBoardContentDto;
@@ -129,7 +129,7 @@ public class ShareBoardController {
     }
 
     @GetMapping("/view/{shareBoardSeq}/record")
-    public ResponseEntity<?> viewRecord(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
+    public ResponseEntity<?> viewRecord(@PathVariable Long shareBoardSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
         ResponseRecordDto responseRecordDto;
@@ -146,10 +146,10 @@ public class ShareBoardController {
     }
 
     @GetMapping("/view/{shareBoardSeq}/comment")
-    public ResponseEntity<?> viewComment(HttpServletRequest request, @PathVariable Long shareBoardSeq) {
+    public ResponseEntity<?> viewComment(@PathVariable Long shareBoardSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        List<ResponseCommentDto> commentList;
+        List<ResponseShareBoardCommentDto> commentList;
         try {
             commentList = shareBoardService.viewComment(shareBoardSeq);
         } catch (Exception e) {

@@ -4,7 +4,7 @@ import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
-import com.ssafy.backend.shareBoardCommet.dto.response.ResponseCommentDto;
+import com.ssafy.backend.shareBoardCommet.dto.response.ResponseShareBoardCommentDto;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public interface ShareBoardService {
 
     ResponseRecordDto viewRecord(Long shareBoardSeq) throws WTException;
 
-    List<ResponseCommentDto> viewComment(Long shareBoardSeq) throws WTException;
+    List<ResponseShareBoardCommentDto> viewComment(Long shareBoardSeq) throws WTException;
 
     ResponseLikeDto viewLike(Long shareBoardSeq, Long memberSeq) throws WTException;
 
