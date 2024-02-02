@@ -125,7 +125,7 @@ export const useMemberStore = defineStore('member', () => {
   }
 
   // 로그인
-  const login = async (payload) => {
+  const login = (payload) => {
     axios({
       method: 'post',
       url: `${REST_MEMBER_API}/api/member/local-login`,
@@ -134,19 +134,49 @@ export const useMemberStore = defineStore('member', () => {
         password: payload.password
       }
     })
-      .then((res) => {
-        alert('로그인 성공')
-        token.value = res.headers.get('atk')
-        nickname.value = res.data.data.nickname
-        profileImage.value = res.data.data.profileImage
-        console.log(token.value)
-        router.push({ name: 'club' })
-      })
-      .catch((err) => {
-        alert('로그인 실패')
-        console.log(err)
-      })
+    .then((res) => {
+      alert("로그인 성공")
+      token.value = res.headers.get('atk')
+      setCookie("atk", token.value);
+      nickname.value=res.data.data.nickname
+      profileImage.value=(res.data.data.profileImage)
+      console.log(token.value)
+      router.push({ name : 'club'})
+    })
+    .catch((err) => {
+      alert("로그인 실패")
+      console.log(err)
+    }) 
   }
+
+///////////////////////////
+function setCookie(name, value, options = {}) {
+
+  options = {
+    path: '/',
+    // 필요한 경우, 옵션 기본값을 설정할 수도 있습니다.
+    ...options
+  };
+
+  if (options.expires instanceof Date) {
+    options.expires = options.expires.toUTCString();
+  }
+
+  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+  for (let optionKey in options) {
+    updatedCookie += "; " + optionKey;
+    let optionValue = options[optionKey];
+    if (optionValue !== true) {
+      updatedCookie += "=" + optionValue;
+    }
+  }
+
+  document.cookie = updatedCookie;
+}
+////////////////////////////
+
+
 
   const isLogin = computed(() => {
     if (token.value === null) {
@@ -156,13 +186,13 @@ export const useMemberStore = defineStore('member', () => {
     }
   })
 
-  const logout = function () {
-    axios.get('http://localhost:8080/logout').then((response) => {
-      localStorage.removeItem('loginMember')
-      loginMember.value.pop()
-      router.push(`/ssafit`)
-    })
-  }
+  // const logout = function () {
+  //   axios.get('http://localhost:8080/logout').then((response) => {
+  //     localStorage.removeItem('loginMember')
+  //     loginMember.value.pop()
+  //     router.push(`/ssafit`)
+  //   })
+  // }
 
   const selectedMember = ref(null)
   const clickMember = function (member) {
@@ -197,7 +227,7 @@ export const useMemberStore = defineStore('member', () => {
     loginMember,
     isLogin,
     // 로그아웃
-    logout,
+    // logout,
     selectedMember,
     clickMember,
     updateMember,

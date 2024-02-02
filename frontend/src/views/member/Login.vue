@@ -34,7 +34,7 @@
               </div>
               <RouterLink :to="{ name: 'Signup' }">회원가입</RouterLink>
               <div class="text-center">
-                <button type="submit" @click="login">로그인</button>
+                <button type="button" @click="login">로그인</button>
               </div>
             </form>
           </div>
