@@ -14,7 +14,6 @@ import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
-import com.ssafy.backend.scrapRecord.service.ScrapRecordService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,15 +48,16 @@ public class RecordServiceImpl implements RecordService {
 
     @Transactional
     public void registRecord(Long memberSeq, RequestRegistRecordDto requestRegistRecordDto) throws WTException {
-        Long recordSeq;
+        if (requestRegistRecordDto == null) {
+            throw new WTException("산책 기록 등록 오류입니다.");
+        }
+
+        Long recordSeq = requestRegistRecordDto.getSeq();
+
+        validateRecord(recordSeq, memberSeq);
+
         try {
             // record table
-            recordSeq = requestRegistRecordDto.getSeq();
-
-            if (!validateRecord(recordSeq, memberSeq)) {
-                throw new WTException("비정상적인 요청입니다.");
-            }
-
             Record record = Record.builder()
                     .seq(recordSeq)
                     .memberSeq(memberSeq)
@@ -97,13 +97,15 @@ public class RecordServiceImpl implements RecordService {
 
     @Transactional
     public Long registComment(Long memberSeq, RequestRegistCommentDto requestRegistCommentDto) throws WTException {
+        if (requestRegistCommentDto == null) {
+            throw new WTException("산책 중 한줄평 등록에 실패하였습니다.");
+        }
+
+        Long recordSeq = requestRegistCommentDto.getSeq();
+
+        validateRecord(recordSeq, memberSeq);
+
         try {
-            Long recordSeq = requestRegistCommentDto.getSeq();
-
-            if (!validateRecord(recordSeq, memberSeq)) {
-                throw new WTException("비정상적인 요청입니다.");
-            }
-
             RecordDetail recordDetail = RecordDetail.builder()
                     .recordSeq(recordSeq)
                     .pointComment(requestRegistCommentDto.getComment())
@@ -128,9 +130,8 @@ public class RecordServiceImpl implements RecordService {
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
-        if (!validateRecord(recordSeq, memberSeq)) {
-            throw new WTException("비정상적인 요청입니다.");
-        }
+
+        validateRecord(recordSeq, memberSeq);
 
         try {
             recordDetail.updateComment(comment);
@@ -151,9 +152,8 @@ public class RecordServiceImpl implements RecordService {
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
-        if (!validateRecord(recordSeq, memberSeq)) {
-            throw new WTException("비정상적인 요청입니다.");
-        }
+
+        validateRecord(recordSeq, memberSeq);
 
         try {
             recordDetailRepository.delete(recordDetail);
@@ -166,9 +166,7 @@ public class RecordServiceImpl implements RecordService {
     public Long registImage(Long memberSeq, RequestRegistImageDto requestRegistImageDto) {
         Long recordSeq = requestRegistImageDto.getSeq();
 
-        if (!validateRecord(recordSeq, memberSeq)) {
-            throw new WTException("비정상적인 요청입니다.");
-        }
+        validateRecord(recordSeq, memberSeq);
 
         String url;
 
@@ -203,9 +201,8 @@ public class RecordServiceImpl implements RecordService {
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
-        if (!validateRecord(recordSeq, memberSeq)) {
-            throw new WTException("비정상적인 요청입니다.");
-        }
+
+        validateRecord(recordSeq, memberSeq);
 
         String existingUrl = recordDetail.getUrl();
 
@@ -236,9 +233,8 @@ public class RecordServiceImpl implements RecordService {
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
-        if (!validateRecord(recordSeq, memberSeq)) {
-            throw new WTException("비정상적인 요청입니다.");
-        }
+        validateRecord(recordSeq, memberSeq);
+
 
         try {
             String existingUrl = recordDetail.getUrl();
@@ -261,9 +257,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Transactional
     public ResponseViewDto view(Long memberSeq, Long recordSeq) {
-        if (!validateRecord(recordSeq, memberSeq)) {
-            throw new WTException("비정상적인 요청입니다.");
-        }
+        validateRecord(recordSeq, memberSeq);
 
         return view(recordSeq);
     }
@@ -308,9 +302,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Transactional
     public void modify(Long memberSeq, Long recordSeq, RequestRecordModify requestRecordModify) {
-        if (!validateRecord(recordSeq, memberSeq)) {
-            throw new WTException("비정상적인 요청입니다.");
-        }
+        validateRecord(recordSeq, memberSeq);
 
         Optional<Record> recordOptional = recordRepository.findById(recordSeq);
 
@@ -329,9 +321,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     public void delete(Long memberSeq, Long recordSeq) {
-        if (!validateRecord(recordSeq, memberSeq)) {
-            throw new WTException("비정상적인 요청입니다.");
-        }
+        validateRecord(recordSeq, memberSeq);
 
         Optional<Record> recordOptional = recordRepository.findById(recordSeq);
 
@@ -362,20 +352,18 @@ public class RecordServiceImpl implements RecordService {
         return recordRepository.existsById(recordSeq);
     }
 
-    private boolean validateRecord(Long recordSeq, Long memberSeq) {
+    private void validateRecord(Long recordSeq, Long memberSeq) throws WTException {
         if (!recordRepository.existsById(recordSeq)) {
             // 입력 받은 기록 식별번호에 해당하는 기록이 없는 경우이므로
             // 이는 사용자가 시작을 누르지 않은 비정상 요청임
-            return false;
+            throw new WTException("비정상적인 요청입니다.");
         }
 
         if (!memberSeq.equals(recordRepository.findMemberSeqBySeq(recordSeq).getMemberSeq())) {
             // 기존 저장되어있던 기록 식별번호를 등록한 사용자와
             // 지금 가져온 사용자 아이디에 해당하는 사람이 다르면 비정상 요청임
-            return false;
+            throw new WTException("비정상적인 요청입니다.");
         }
-
-        return true;
     }
 
 }

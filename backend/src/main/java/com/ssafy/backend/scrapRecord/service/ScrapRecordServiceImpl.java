@@ -79,7 +79,7 @@ public class ScrapRecordServiceImpl implements ScrapRecordService {
 
             return recordService.list(recordSeqList);
         } catch (Exception e) {
-            throw new WTException("스크랩 목록 불러오기 실패");
+            throw new WTException("스크랩 목록 불러오기에 실패하였습니다.");
         }
     }
 
