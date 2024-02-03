@@ -5,6 +5,7 @@ import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
+import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.dto.mapping.RegionCdMapping;
 import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
@@ -28,10 +29,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -279,10 +277,31 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public String getRegionCd(Long memberSeq) throws WTException {
         RegionCdMapping regionCdMapping = memberRepository.findRegionCdBySeq(memberSeq);
+
         if (regionCdMapping == null) {
             throw new WTException("사용자의 동네를 확인해주세요.");
         }
+
         return regionCdMapping.getRegionCd();
+    }
+
+    @Override
+    public List<MemberSeqMapping> getSimilarMemberList(Long memberSeq) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+        if (memberOptional.isEmpty()) {
+            throw new WTException("사용자 정보가 없습니다.");
+        }
+
+        Member member = memberOptional.get();
+        try {
+            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+            int birthYear = Integer.parseInt(member.getBirth().substring(0, 4));
+            int age = currentYear - birthYear + 1;
+
+            return memberRepository.findSeqInAgeAndGender((age / 10) * 10, (age / 10) * 10 + 9, member.getGender());
+        } catch (Exception e) {
+            throw new WTException("사용자 불러오기에 실패했습니다.");
+        }
     }
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
