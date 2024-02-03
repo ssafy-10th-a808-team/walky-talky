@@ -1,6 +1,7 @@
 package com.ssafy.backend.member.service;
 
 import com.ssafy.backend.global.error.WTException;
+import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
 import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
 import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 
 public interface MemberService {
@@ -31,5 +33,7 @@ public interface MemberService {
 
     ResponseMemberDto getMemberNicknameUrl(Long memberSeq);
 
+    String getRegionCd(Long memberSeq) throws WTException;
 
+    List<MemberSeqMapping> getSimilarMemberList(Long memberSeq) throws WTException;
 }

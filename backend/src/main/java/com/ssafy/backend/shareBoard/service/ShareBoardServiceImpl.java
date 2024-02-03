@@ -5,7 +5,7 @@ import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
-import com.ssafy.backend.scrapRecord.repository.ScrapRepository;
+import com.ssafy.backend.scrapRecord.service.ScrapRecordService;
 import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.domain.ShareBoardLike;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
@@ -17,7 +17,7 @@ import com.ssafy.backend.shareBoard.repository.ShareBoardLikeRepository;
 import com.ssafy.backend.shareBoard.repository.ShareBoardRepository;
 import com.ssafy.backend.shareBoardCommet.domain.ShareBoardComment;
 import com.ssafy.backend.shareBoardCommet.dto.response.ResponseShareBoardCommentDto;
-import com.ssafy.backend.shareBoardCommet.repository.ShareBoardCommentRepository;
+import com.ssafy.backend.shareBoardCommet.service.ShareBoardCommentService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,15 +32,15 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     private final ShareBoardRepository shareBoardRepository;
 
-    private final ShareBoardCommentRepository shareBoardCommentRepository;
-
     private final ShareBoardLikeRepository shareBoardLikeRepository;
+
+    private final ShareBoardCommentService shareBoardCommentService;
 
     private final MemberService memberService;
 
     private final RecordService recordService;
 
-    private final ScrapRepository scrapRepository;
+    private final ScrapRecordService scrapRecordService;
 
     @Override
     public void write(Long memberSeq, RequestShareBoardWriteDto requestShareBoardWriteDto) throws WTException {
@@ -49,7 +49,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 throw new WTException("자신의 기록으로만 게시글을 작성 할 수 있습니다.");
             }
         } catch (Exception e) {
-            throw new WTException("글 작성 오류");
+            throw new WTException(e.getMessage());
         }
 
         try {
@@ -83,7 +83,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 responseShareBoardDto.setTitle(shareBoard.getTitle());
                 responseShareBoardDto.setCreate_at(String.valueOf(shareBoard.getCreatedAt()));
                 responseShareBoardDto.setHit(shareBoard.getHit());
-                responseShareBoardDto.setCommentCount(shareBoardCommentRepository.countByShareBoardSeqAndIsDeletedFalse(shareBoard.getSeq()));
+                responseShareBoardDto.setCommentCount(shareBoardCommentService.getCommentCount(shareBoard.getSeq()));
 
                 list.add(responseShareBoardDto);
             } catch (Exception e) {
@@ -173,7 +173,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             responseShareBoardContentDto.setRecordSeq(shareBoard.getRecordSeq());
             responseShareBoardContentDto.setCreate_at(String.valueOf(shareBoard.getCreatedAt()));
             responseShareBoardContentDto.setHit(shareBoard.getHit());
-            responseShareBoardContentDto.setCommentCount(shareBoardCommentRepository.countByShareBoardSeqAndIsDeletedFalse(shareBoardSeq));
+            responseShareBoardContentDto.setCommentCount(shareBoardCommentService.getCommentCount(shareBoard.getSeq()));
         } catch (Exception e) {
             throw new WTException("게시글 상세 조회에 실패하였습니다.");
         }
@@ -215,10 +215,10 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             throw new WTException("존재하지 않는 게시글입니다.");
         }
 
-        List<ShareBoardComment> commentDomainList = shareBoardCommentRepository.findAllByShareBoardSeqAndIsDeletedFalse(shareBoardSeq);
+        List<ShareBoardComment> commentList = shareBoardCommentService.getComment(shareBoardSeq);
         List<ResponseShareBoardCommentDto> list = new ArrayList<>();
 
-        for (ShareBoardComment shareBoardComment : commentDomainList) {
+        for (ShareBoardComment shareBoardComment : commentList) {
             try {
                 ResponseShareBoardCommentDto responseShareBoardCommentDto = new ResponseShareBoardCommentDto();
 
@@ -270,8 +270,8 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             Long recordSeq = shareBoardRepository.findRecordSeqBySeqAndIsDeletedFalse(shareBoardSeq).getRecordSeq();
 
             responseScrapDto.setRecordSeq(recordSeq);
-            responseScrapDto.setScrapCount(scrapRepository.countAllByRecordSeq(recordSeq));
-            responseScrapDto.setScraped(scrapRepository.existsByRecordSeqAndMemberSeq(recordSeq, memberSeq));
+            responseScrapDto.setScrapCount(scrapRecordService.getScrapcount(recordSeq));
+            responseScrapDto.setScraped(scrapRecordService.getIsScraped(recordSeq, memberSeq));
 
             return responseScrapDto;
         } catch (Exception e) {
@@ -288,7 +288,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         ShareBoard shareBoard = shareBoardRepository.findBySeqAndIsDeletedFalse(shareBoardSeq);
 
         if (!Objects.equals(memberSeq, shareBoard.getMemberSeq())) {
-            throw new WTException("게시글 수정에 실패하였습니다");
+            throw new WTException("자신의 게시글만 수정할 수 있습니다.");
         }
 
         try {
@@ -309,7 +309,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         ShareBoard shareBoard = shareBoardRepository.findBySeqAndIsDeletedFalse(shareBoardSeq);
 
         if (!Objects.equals(memberSeq, shareBoard.getMemberSeq())) {
-            throw new WTException("게시글 삭제에 실패하였습니다.");
+            throw new WTException("자신의 게시글만 삭제할 수 있습니다.");
         }
 
         try {
@@ -338,7 +338,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         }
 
         if (shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq)) {
-            throw new WTException("이미 좋아요를 누른 글입니다.");
+            throw new WTException("이미 좋아요한 글입니다.");
         }
 
         try {
@@ -359,7 +359,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         }
 
         if (!shareBoardLikeRepository.existsByShareBoardSeqAndMemberSeq(shareBoardSeq, memberSeq)) {
-            throw new WTException("좋아요 취소 실패");
+            throw new WTException("좋아요 취소에 실패하였습니다.");
         }
 
         try {
