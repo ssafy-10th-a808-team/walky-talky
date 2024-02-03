@@ -179,12 +179,15 @@ public class RecordController {
 
         Long memberSeq = (Long) request.getAttribute("seq");
 
-        List<ListMapping> list = recordService.list(memberSeq);
+        List<ListMapping> list;
+        try {
+            list = recordService.list(memberSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
 
-        Map<String, List<ListMapping>> returnMap = new HashMap<>();
-        returnMap.put("list", list);
-
-        resultMap.put("data", returnMap);
+        resultMap.put("data", list);
         resultMap.put("message", "OK");
         return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
@@ -233,6 +236,61 @@ public class RecordController {
 
         try {
             recordService.delete(memberSeq, recordSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
+    @GetMapping("/recommend-town")
+    public ResponseEntity<?> recommendTown(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Long memberSeq = (Long) request.getAttribute("seq");
+
+        List<ListMapping> list;
+        try {
+            list = recordService.recommendTown(memberSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+        resultMap.put("data", list);
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
+    @GetMapping("/recommend-info")
+    public ResponseEntity<?> recommendInfo(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Long memberSeq = (Long) request.getAttribute("seq");
+
+        List<ListMapping> list;
+        try {
+            list = recordService.recommendInfo(memberSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+        resultMap.put("data", list);
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
+    @PostMapping("/dislike/{recordSeq}")
+    public ResponseEntity<?> dislike(HttpServletRequest request, @PathVariable("recordSeq") Long recordSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Long memberSeq = (Long) request.getAttribute("seq");
+
+        try {
+            recordService.dislike(recordSeq, memberSeq);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);

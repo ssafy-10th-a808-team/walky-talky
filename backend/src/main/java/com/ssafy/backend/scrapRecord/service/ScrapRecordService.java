@@ -14,4 +14,8 @@ public interface ScrapRecordService {
     ResponseViewDto view(Long recordSeq, Long memberSeq) throws WTException;
 
     List<ListMapping> list(Long memberSeq) throws WTException;
+
+    int getScrapcount(Long recordSeq) throws WTException;
+
+    boolean getIsScraped(Long recordSeq, Long memberSeq) throws WTException;
 }
