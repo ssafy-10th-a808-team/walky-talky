@@ -134,8 +134,8 @@ export const useMemberStore = defineStore('member', () => {
   }
 
   const isLogin = computed(() => {
-    const atkCookie = counterstore.getCookie("atk");
-    return atkCookie !== null;
+    const atkCookie = ref(counterstore.getCookie("atk"));
+    return atkCookie.value !== null;
   })
 
   const logout = () => {
@@ -148,13 +148,13 @@ export const useMemberStore = defineStore('member', () => {
     })
     .then((res) => {
       alert('로그아웃 성공')
-      console.log(res)
       nickname.value = null
       profileImage.value = null
-      counterstore.deleteCookie()
+      token.value = null
+      counterstore.deleteCookie("atk")
       router.push({ name : 'home'})  
     })
-    .then((err) => {
+    .catch((err) => {
       alert('로그아웃 실패')
       console.log(err)
     })

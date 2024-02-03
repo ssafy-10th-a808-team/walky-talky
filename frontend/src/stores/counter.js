@@ -48,7 +48,8 @@ const setCookie = (name, value, options = {}) => {
 
 const deleteCookie = (name) =>{
   setCookie(name, "", {
-    'max-age': -1
+    'max-age': -1,
+
   })
 }
 
@@ -59,6 +60,6 @@ const deleteCookie = (name) =>{
     getCookie,
     setCookie,
     deleteCookie,
-    
+
   }
 })
