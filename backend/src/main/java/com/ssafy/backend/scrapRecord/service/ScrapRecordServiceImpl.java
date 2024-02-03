@@ -40,13 +40,14 @@ public class ScrapRecordServiceImpl implements ScrapRecordService {
         }
 
         try {
-            Scrap scrap = Scrap.builder().recordSeq(recordSeq).memberSeq(memberSeq).build();
-
+            Scrap scrap = Scrap.builder()
+                    .recordSeq(recordSeq)
+                    .memberSeq(memberSeq)
+                    .build();
             scrapRepository.save(scrap);
         } catch (Exception e) {
             throw new WTException("스크랩에 실패하였습니다.");
         }
-
 
     }
 
@@ -81,6 +82,16 @@ public class ScrapRecordServiceImpl implements ScrapRecordService {
         } catch (Exception e) {
             throw new WTException("스크랩 목록 불러오기에 실패하였습니다.");
         }
+    }
+
+    @Override
+    public int getScrapcount(Long recordSeq) throws WTException {
+        return scrapRepository.countAllByRecordSeq(recordSeq);
+    }
+
+    @Override
+    public boolean getIsScraped(Long recordSeq, Long memberSeq) throws WTException {
+        return scrapRepository.existsByRecordSeqAndMemberSeq(recordSeq, memberSeq);
     }
 
     @Override

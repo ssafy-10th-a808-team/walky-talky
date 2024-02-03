@@ -6,6 +6,7 @@ import com.ssafy.backend.shareBoardCommet.repository.ShareBoardCommentRepository
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class ShareBoardCommentServiceImpl implements ShareBoardCommentService {
                     .build();
             shareBoardCommentRepository.save(shareBoardComment);
         } catch (Exception e) {
-            throw new WTException("댓글 등록 오류"); // Todo : 고치기
+            throw new WTException("댓글 등록에 실패하였습니다.");
         }
     }
 
@@ -34,13 +35,17 @@ public class ShareBoardCommentServiceImpl implements ShareBoardCommentService {
         Optional<ShareBoardComment> shareBoardCommentOptional = shareBoardCommentRepository.findById(commentSeq);
 
         if (shareBoardCommentOptional.isEmpty()) {
-            throw new WTException("댓글 수정 오류");
+            throw new WTException("댓글 수정에 실패하였습니다.");
         }
 
         ShareBoardComment shareBoardComment = shareBoardCommentOptional.get();
 
-        if (!Objects.equals(shareBoardComment.getMemberSeq(), memberSeq) || !Objects.equals(shareBoardComment.getShareBoardSeq(), shareBoardSeq)) {
-            throw new WTException("댓글 수정 오류입니다.");
+        if (!Objects.equals(shareBoardComment.getMemberSeq(), memberSeq)) {
+            throw new WTException("자신의 댓글만 수정할 수 있습니다.");
+        }
+
+        if (!Objects.equals(shareBoardComment.getShareBoardSeq(), shareBoardSeq)) {
+            throw new WTException("댓글 수정에 실패하였습니다.");
         }
 
         if (shareBoardComment.isDeleted()) {
@@ -51,7 +56,7 @@ public class ShareBoardCommentServiceImpl implements ShareBoardCommentService {
             shareBoardComment.update(content);
             shareBoardCommentRepository.save(shareBoardComment);
         } catch (Exception e) {
-            throw new WTException("댓글 수정 오류.");
+            throw new WTException("댓글 수정에 실패하였습니다.");
         }
     }
 
@@ -60,13 +65,17 @@ public class ShareBoardCommentServiceImpl implements ShareBoardCommentService {
         Optional<ShareBoardComment> shareBoardCommentOptional = shareBoardCommentRepository.findById(commentSeq);
 
         if (shareBoardCommentOptional.isEmpty()) {
-            throw new WTException("댓글 삭제 오류");
+            throw new WTException("댓글 삭제에 실패하였습니다.");
         }
 
         ShareBoardComment shareBoardComment = shareBoardCommentOptional.get();
 
-        if (!Objects.equals(shareBoardComment.getMemberSeq(), memberSeq) || !Objects.equals(shareBoardComment.getShareBoardSeq(), shareBoardSeq)) {
-            throw new WTException("댓글 삭제 오류입니다.");
+        if (!Objects.equals(shareBoardComment.getMemberSeq(), memberSeq)) {
+            throw new WTException("자신의 댓글만 삭제할 수 있습니다.");
+        }
+
+        if (!Objects.equals(shareBoardComment.getShareBoardSeq(), shareBoardSeq)) {
+            throw new WTException("댓글 삭제에 실패하였습니다.");
         }
 
         if (shareBoardComment.isDeleted()) {
@@ -77,7 +86,17 @@ public class ShareBoardCommentServiceImpl implements ShareBoardCommentService {
             shareBoardComment.delete(shareBoardComment);
             shareBoardCommentRepository.save(shareBoardComment);
         } catch (Exception e) {
-            throw new WTException("댓글 삭제 오류.");
+            throw new WTException("댓글 삭제에 실패하였습니다.");
         }
+    }
+
+    @Override
+    public int getCommentCount(Long seq) throws WTException {
+        return shareBoardCommentRepository.countByShareBoardSeqAndIsDeletedFalse(seq);
+    }
+
+    @Override
+    public List<ShareBoardComment> getComment(Long shareBoardSeq) throws WTException {
+        return shareBoardCommentRepository.findAllByShareBoardSeqAndIsDeletedFalse(shareBoardSeq);
     }
 }
