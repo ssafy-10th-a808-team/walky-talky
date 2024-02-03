@@ -123,7 +123,7 @@ export const useMemberStore = defineStore('member', () => {
       counterstore.setCookie("atk", token.value);
       nickname.value=res.data.data.nickname
       profileImage.value=(res.data.data.profileImage);
-      router.push({ name : 'club'})
+      router.push({ name : 'home'})
     })
     .catch((err) => {
       alert("로그인 실패")
