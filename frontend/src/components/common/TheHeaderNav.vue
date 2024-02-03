@@ -37,10 +37,10 @@
             </ul>
           </li> -->
           <!-- <li><a class="nav-link scrollto" href="#contact">Contact</a></li> -->
-          <li>
+          <li v-if="!memberstore.isLogin">
             <RouterLink :to="{ name: 'Login' }" class="getstarted scrollto">로그인</RouterLink>
           </li>
-          <li>
+          <li v-if="memberstore.isLogin">
             <RouterLink :to="{ name: 'Logout' }" class="getstarted scrollto">로그아웃</RouterLink>
           </li>
         </ul>
@@ -52,6 +52,10 @@
   <!-- End Header -->
 </template>
 
-<script setup></script>
+<script setup>
+import { useMemberStore } from '@/stores/member';
+const memberstore = useMemberStore()
+
+</script>
 
 <style scoped></style>
