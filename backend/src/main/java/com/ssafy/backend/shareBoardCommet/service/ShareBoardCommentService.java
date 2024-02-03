@@ -1,6 +1,9 @@
 package com.ssafy.backend.shareBoardCommet.service;
 
 import com.ssafy.backend.global.error.WTException;
+import com.ssafy.backend.shareBoardCommet.domain.ShareBoardComment;
+
+import java.util.List;
 
 public interface ShareBoardCommentService {
 
@@ -10,4 +13,7 @@ public interface ShareBoardCommentService {
 
     void commentDelete(Long seq, Long commentSeq, Long memberSeq) throws WTException;
 
+    int getCommentCount(Long seq) throws WTException;
+
+    List<ShareBoardComment> getComment(Long shareBoardSeq) throws WTException;
 }
