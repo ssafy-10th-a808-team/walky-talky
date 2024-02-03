@@ -17,6 +17,7 @@ public class WebMvcConfig {
         registrationBean.addUrlPatterns(
                 "/api/member/logout",
                 "/api/member/reissue",
+                "/api/member/mypage",
                 "/api/walk/*",
                 "/api/club/*",
                 "/api/club-member/*",
