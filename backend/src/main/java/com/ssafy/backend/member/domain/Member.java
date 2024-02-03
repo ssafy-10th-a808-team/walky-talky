@@ -62,4 +62,9 @@ public class Member extends BaseEntity {
         return this;
     }
 
+    public Member delete(){
+        this.isDeleted = true;
+        return this;
+    }
+
 }

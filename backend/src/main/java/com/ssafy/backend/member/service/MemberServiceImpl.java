@@ -402,6 +402,28 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.save(member);
     }
 
+    @Override
+    public void delete(Long memberSeq, RequestDeleteDto requestDeleteDto) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+
+        if (memberOptional.isEmpty()) {
+            throw new WTException("회원 탈퇴에 실패하였습니다.");
+        }
+
+        Member member = memberOptional.get();
+
+        try {
+            if (!hashPassword(requestDeleteDto.getPassword(), salt.getBytes()).equals(member.getPassword())) { // 비번 틀렸을때
+                throw new WTException("비밀번호를 확인해주세요.");
+            }
+        } catch (Exception e) {
+            throw new WTException(e.getMessage());
+        }
+
+        member.delete();
+        memberRepository.save(member);
+    }
+
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
         ResponseMemberDto responseMemberDto = new ResponseMemberDto();
 

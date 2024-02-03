@@ -20,6 +20,7 @@ public class WebMvcConfig {
                 "/api/member/mypage",
                 "/api/member/modify-info",
                 "/api/member/modify-password",
+                "/api/member/delete",
                 "/api/walk/*",
                 "/api/club/*",
                 "/api/club-member/*",
