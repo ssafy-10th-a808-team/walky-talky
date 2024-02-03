@@ -2,10 +2,12 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '@/router'
 import axios from 'axios'
+import { useCounterStore } from './counter'
 
 const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
 
 export const useMemberStore = defineStore('member', () => {
+  const counterstore = useCounterStore()
   const memberList = ref([])
   const address_name = ref('')
   const address_code = ref('')
@@ -137,7 +139,7 @@ export const useMemberStore = defineStore('member', () => {
     .then((res) => {
       alert("로그인 성공")
       token.value = res.headers.get('atk')
-      setCookie("atk", token.value);
+      counterstore.setCookie("atk", token.value);
       nickname.value=res.data.data.nickname
       profileImage.value=(res.data.data.profileImage)
       console.log(token.value)
@@ -148,35 +150,6 @@ export const useMemberStore = defineStore('member', () => {
       console.log(err)
     }) 
   }
-
-///////////////////////////
-function setCookie(name, value, options = {}) {
-
-  options = {
-    path: '/',
-    // 필요한 경우, 옵션 기본값을 설정할 수도 있습니다.
-    ...options
-  };
-
-  if (options.expires instanceof Date) {
-    options.expires = options.expires.toUTCString();
-  }
-
-  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-
-  for (let optionKey in options) {
-    updatedCookie += "; " + optionKey;
-    let optionValue = options[optionKey];
-    if (optionValue !== true) {
-      updatedCookie += "=" + optionValue;
-    }
-  }
-
-  document.cookie = updatedCookie;
-}
-////////////////////////////
-
-
 
   const isLogin = computed(() => {
     if (token.value === null) {
