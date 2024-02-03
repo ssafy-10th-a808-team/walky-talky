@@ -21,7 +21,8 @@ public class WebMvcConfig {
                 "/api/club/*",
                 "/api/club-member/*",
                 "/api/share-board/*",
-                "/api/scrap-record/*"
+                "/api/scrap-record/*",
+                "/api/plan/*"
         );
         return registrationBean;
     }

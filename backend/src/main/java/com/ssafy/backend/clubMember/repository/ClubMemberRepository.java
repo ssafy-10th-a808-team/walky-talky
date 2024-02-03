@@ -24,4 +24,8 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     void deleteByClubSeqAndMemberSeq(Long clubSeq, Long memberSeq);
 
     List<ClubMember> findAllByClubSeqAndRoleIn(Long clubSeq, List<String> list);
+
+    ClubMember findByMemberSeq(Long myMemberSeq);
+
+    List<ClubMember> findAllByMemberSeq(Long myMemberSeq);
 }
