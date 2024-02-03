@@ -83,7 +83,7 @@ public class ShareBoardCommentServiceImpl implements ShareBoardCommentService {
         }
 
         try {
-            shareBoardComment.delete(shareBoardComment);
+            shareBoardComment.delete();
             shareBoardCommentRepository.save(shareBoardComment);
         } catch (Exception e) {
             throw new WTException("댓글 삭제에 실패하였습니다.");

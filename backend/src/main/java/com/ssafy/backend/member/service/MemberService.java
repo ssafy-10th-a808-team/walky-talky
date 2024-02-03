@@ -2,13 +2,11 @@ package com.ssafy.backend.member.service;
 
 import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
-import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
-import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
-import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
-import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import com.ssafy.backend.member.dto.request.*;
 import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
+import com.ssafy.backend.member.dto.response.ResponseMypageDto;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import org.springframework.http.ResponseEntity;
 
@@ -30,10 +28,17 @@ public interface MemberService {
 
     public Map<String, String> reissue(Long seq);
 
-
     ResponseMemberDto getMemberNicknameUrl(Long memberSeq);
 
     String getRegionCd(Long memberSeq) throws WTException;
 
     List<MemberSeqMapping> getSimilarMemberList(Long memberSeq) throws WTException;
+
+    ResponseMypageDto mypage(Long memberSeq) throws WTException;
+
+    void modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException;
+
+    void modifyPassword(Long memberSeq, RequestModifyPasswordDto requestModifyPasswordDto) throws WTException;
+
+    void delete(Long memberSeq, RequestDeleteDto requestDeleteDto) throws WTException;
 }
