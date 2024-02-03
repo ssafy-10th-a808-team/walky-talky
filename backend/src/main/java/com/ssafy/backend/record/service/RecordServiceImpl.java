@@ -348,7 +348,7 @@ public class RecordServiceImpl implements RecordService {
         Record record = recordOptional.get();
 
         try {
-            record.delete(record);
+            record.delete();
             recordRepository.save(record);
         } catch (Exception e) {
             throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
