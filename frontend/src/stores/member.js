@@ -2,10 +2,12 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '@/router'
 import axios from 'axios'
+import { useCounterStore } from './counter'
 
 const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
 
 export const useMemberStore = defineStore('member', () => {
+  const counterstore = useCounterStore()
   const memberList = ref([])
   const address_name = ref('')
   const address_code = ref('')
@@ -13,25 +15,6 @@ export const useMemberStore = defineStore('member', () => {
   const nickname = ref('')
   const profileImage = ref('')
 
-  //유저 리스트 가져오기
-  // const getMemberList = function () {
-  //   axios
-  //     .get(REST_MEMBER_API)
-  //     .then((response) => {
-  //       memberList.value = response.data
-  //     })
-  //     .catch((err) => {
-  //       // 오류나면 처리가능
-  //       console.log(err)
-  //     })
-  // }
-  // //회원정보 한개
-  // const member = ref({})
-  // const getMember = function (memberId) {
-  //   axios.get(`${REST_MEMBER_API}/${memberId}`).then((response) => {
-  //     member.value = response.data
-  //   })
-  // }
 
   //회원가입
   const createMember = function (payload) {
@@ -118,11 +101,11 @@ export const useMemberStore = defineStore('member', () => {
       })
   } //닉네임 중복 체크 end
 
-  const loginMember = ref([])
-  if (localStorage.getItem('loginMember') != null) {
-    loginMember.value.push(localStorage.getItem('loginMember'))
-    //페이지 로딩시 로컬스토리지에 로그인 정보가 남아있으면 바로 로그인 정보를 수토어 유저 정보에 할당
-  }
+  // const loginMember = ref([])
+  // if (localStorage.getItem('loginMember') != null) {
+  //   loginMember.value.push(localStorage.getItem('loginMember'))
+  //   //페이지 로딩시 로컬스토리지에 로그인 정보가 남아있으면 바로 로그인 정보를 수토어 유저 정보에 할당
+  // }
 
   // 로그인
   const login = (payload) => {
@@ -137,11 +120,10 @@ export const useMemberStore = defineStore('member', () => {
     .then((res) => {
       alert("로그인 성공")
       token.value = res.headers.get('atk')
-      setCookie("atk", token.value);
+      counterstore.setCookie("atk", token.value);
       nickname.value=res.data.data.nickname
-      profileImage.value=(res.data.data.profileImage)
-      console.log(token.value)
-      router.push({ name : 'club'})
+      profileImage.value=(res.data.data.profileImage);
+      router.push({ name : 'home'})
     })
     .catch((err) => {
       alert("로그인 실패")
@@ -149,62 +131,48 @@ export const useMemberStore = defineStore('member', () => {
     }) 
   }
 
-///////////////////////////
-function setCookie(name, value, options = {}) {
+  // const isLogin = computed(() => {
+  //   if (counterstore.getCookie("atk") === null) {
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // })
+  const isLogin = computed(() => counterstore.getCookie("atk") !== undefined)
 
-  options = {
-    path: '/',
-    // 필요한 경우, 옵션 기본값을 설정할 수도 있습니다.
-    ...options
-  };
-
-  if (options.expires instanceof Date) {
-    options.expires = options.expires.toUTCString();
-  }
-
-  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-
-  for (let optionKey in options) {
-    updatedCookie += "; " + optionKey;
-    let optionValue = options[optionKey];
-    if (optionValue !== true) {
-      updatedCookie += "=" + optionValue;
-    }
-  }
-
-  document.cookie = updatedCookie;
-}
-////////////////////////////
-
-
-
-  const isLogin = computed(() => {
-    if (token.value === null) {
-      return false
-    } else {
-      return true
-    }
-  })
-
-  // const logout = function () {
-  //   axios.get('http://localhost:8080/logout').then((response) => {
-  //     localStorage.removeItem('loginMember')
-  //     loginMember.value.pop()
-  //     router.push(`/ssafit`)
-  //   })
-  // }
-
-  const selectedMember = ref(null)
-  const clickMember = function (member) {
-    selectedMember.value = member
-    router.push(`/ssafit/member/${selectedMember.value.memberId}`)
-  }
-  // 회원정보 수정
-  const updateMember = function () {
-    axios.put(REST_MEMBER_API, loginMember.value[0]).then(() => {
-      router.push(`/ssafit/member/${loginMember.value[0].memberId}`)
+  const logout = () => {
+    axios({
+      method:'post',
+      url: `${REST_MEMBER_API}/api/member/logout`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie("atk")}`, 
+      },
+    })
+    .then((res) => {
+      alert('로그아웃 성공')
+      nickname.value = null
+      profileImage.value = null
+      token.value = null
+      counterstore.deleteCookie("atk")
+      router.push({ name : 'home'})  
+    })
+    .catch((err) => {
+      alert('로그아웃 실패')
+      console.log(err)
     })
   }
+  
+  // const selectedMember = ref(null)
+  // const clickMember = function (member) {
+  //   selectedMember.value = member
+  //   router.push(`/ssafit/member/${selectedMember.value.memberId}`)
+  // }
+  // // 회원정보 수정
+  // const updateMember = function () {
+  //   axios.put(REST_MEMBER_API, loginMember.value[0]).then(() => {
+  //     router.push(`/ssafit/member/${loginMember.value[0].memberId}`)
+  //   })
+  // }
 
   // 지역코드 및 주소 가져오기
   const getLocationInfo = () => {
@@ -215,7 +183,7 @@ function setCookie(name, value, options = {}) {
     memberList,
     // member,
     // getMember,
-    // getMemberList,
+
     createMember,
     // 로그인
     checkId,
@@ -224,13 +192,13 @@ function setCookie(name, value, options = {}) {
     token,
     nickname,
     profileImage,
-    loginMember,
+    // loginMember,
     isLogin,
     // 로그아웃
-    // logout,
-    selectedMember,
-    clickMember,
-    updateMember,
+    logout,
+    // selectedMember,
+    // clickMember,
+    // updateMember,
     // 지역 가져오기 카카오맵
     address_name,
     address_code,

@@ -4,11 +4,13 @@ import { ref, toRef } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import axios from 'axios'
 import { useMemberStore } from './member'
+import { useCounterStore } from './counter'
 const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api'
 
 
 export const useClubStore = defineStore('club', () => {
   const router = useRouter()
+  const counterstore = useCounterStore()
   const memberstore = useMemberStore()
   const token = memberstore.token
 
@@ -32,7 +34,7 @@ export const useClubStore = defineStore('club', () => {
           method: 'post',
           url: `${REST_CLUB_API}/club/create`,
           headers: {
-            Authorization: `Bearer ${token.value}`,
+            Authorization: `Bearer ${counterstore.getCookie("atk")}`,
             'Content-Type': 'multipart/form-data',
           },
           data: formData,
@@ -59,7 +61,7 @@ export const useClubStore = defineStore('club', () => {
       method : 'post',
       url: `${REST_CLUB_API}/club/check-name`,
       headers: {
-        Authorization: `Bearer ${token.value}`, 
+        Authorization: `Bearer ${counterstore.getCookie("atk")}`, 
       },
       data : {
         "name": name
@@ -75,13 +77,13 @@ export const useClubStore = defineStore('club', () => {
   // 전체 소모임 보기, 전체 소모임 관련
   const clubs = ref([])
   const getClubs = async () => {
-    console.log(getCookie("atk"))
+    console.log(counterstore.getCookie("atk"))
     try {
       const res = await axios({
         method: 'get',
         url: `${REST_CLUB_API}/club/list`,
         headers: {
-          Authorization: `Bearer ${getCookie("atk")}`, 
+          Authorization: `Bearer ${counterstore.getCookie("atk")}`, 
         }
       })
       console.log(res)
@@ -93,19 +95,6 @@ export const useClubStore = defineStore('club', () => {
   }
 
 
-
-  ///////////////////////
-  function getCookie(name) {
-    let matches = document.cookie.match(new RegExp(
-      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-    ));
-    return matches ? decodeURIComponent(matches[1]) : undefined;
-  }
-  ////////////////////////////
-
-
-
-
   // 소모임 디테일 관련 함수
   const findClub = async (seq) => {
 
@@ -114,7 +103,7 @@ export const useClubStore = defineStore('club', () => {
         method : 'get',
         url: `${REST_CLUB_API}/club/detail?clubSeq=${seq}`,
         headers: {
-          Authorization: `Bearer ${token.value}`, 
+          Authorization: `Bearer ${counterstore.getCookie("atk")}`, 
         }
       })
       return [res.data.responseClubDetailDtoClub, res.data.responseClubDetailDtoMembers]

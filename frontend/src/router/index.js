@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 // member router 멤버
 import Signup from '@/views/member/Signup.vue'
 import Login from '@/views/member/Login.vue'
+import Logout from '@/views/member/Logout.vue'
 import RecordScrapList from '@/views/member/RecordScrapList.vue'
 import MyLocationView from '@/views/member/MyLocationView.vue'
 
@@ -36,6 +37,11 @@ const router = createRouter({
       path: '/member/local-login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/member/logout',
+      name: 'Logout',
+      component: Logout
     },
     {
       path: '/mylocation',
@@ -91,5 +97,18 @@ const router = createRouter({
     }
   ]
 })
+import { useMemberStore } from '@/stores/member'
+router.beforeEach((to, from) => {
+  const memberstore = useMemberStore()
+  if(to.name !== 'home'&& to.name !== 'Login' && !memberstore.isLogin) {
+    window.alert('로그인이 필요합니다')
+    return {name: 'home'}
+  }
+  if ((to.name === 'Signup' || to.name === 'Login') && (memberstore.isLogin)) {
+    window.alert('이미 로그인하셨습니다')
+    return { name : 'club'}
+  }
+})
+
 
 export default router
