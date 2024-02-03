@@ -8,10 +8,7 @@ import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.dto.mapping.RegionCdMapping;
-import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
-import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
-import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
-import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import com.ssafy.backend.member.dto.request.*;
 import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
@@ -331,6 +328,33 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return responseMypageDto;
+    }
+
+    @Override
+    public void modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+
+        if (memberOptional.isEmpty()) {
+            throw new WTException("마이페이지 불러오기에 실패하였습니다.");
+        }
+
+        Member member = memberOptional.get();
+
+        if (requestModifyInfoDto.getProfileImage() != null) {
+            s3UploadService.deleteImg(member.getUrl());
+
+            String url;
+            try {
+                url = s3UploadService.uploadMemberProfileImg(requestModifyInfoDto.getProfileImage(), memberSeq);
+            } catch (Exception e) {
+                throw new WTException("사진 업로드에 실패하였습니다.");
+            }
+            member.update(requestModifyInfoDto.getRegionCd(), requestModifyInfoDto.getIntroduce(), requestModifyInfoDto.getNickname(), url);
+        } else {
+            member.update(requestModifyInfoDto.getRegionCd(), requestModifyInfoDto.getIntroduce(), requestModifyInfoDto.getNickname());
+        }
+
+        memberRepository.save(member);
     }
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {

@@ -1,9 +1,6 @@
 package com.ssafy.backend.member.controller;
 
-import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
-import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
-import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
-import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import com.ssafy.backend.member.dto.request.*;
 import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
@@ -162,6 +159,22 @@ public class MemberController {
         try {
             ResponseMypageDto responseMypageDto = memberService.mypage(memberSeq);
             resultMap.put("data", responseMypageDto);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
+    @PostMapping("modify-info")
+    public ResponseEntity<?> modifyInfo(HttpServletRequest request, RequestModifyInfoDto requestModifyInfoDto) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Long memberSeq = (Long) request.getAttribute("seq");
+        try {
+            memberService.modifyInfo(memberSeq, requestModifyInfoDto);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);

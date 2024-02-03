@@ -2,10 +2,7 @@ package com.ssafy.backend.member.service;
 
 import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
-import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
-import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
-import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
-import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import com.ssafy.backend.member.dto.request.*;
 import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
@@ -39,4 +36,6 @@ public interface MemberService {
     List<MemberSeqMapping> getSimilarMemberList(Long memberSeq) throws WTException;
 
     ResponseMypageDto mypage(Long memberSeq) throws WTException;
+
+    void modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException;
 }
