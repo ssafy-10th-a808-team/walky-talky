@@ -22,4 +22,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     List<ListMapping> findByRegionCdAndSeqNotIn(String regionCd, List<Long> recordSeq);
 
+    List<ListMapping> findByMemberSeqInAndSeqNotIn(List<Long> memberSeq, List<Long> recordSeq);
+
 }

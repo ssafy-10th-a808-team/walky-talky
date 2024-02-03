@@ -2,6 +2,7 @@ package com.ssafy.backend.record.service;
 
 import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.global.error.WTException;
+import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.record.domain.Dislike;
 import com.ssafy.backend.record.domain.Record;
@@ -375,12 +376,12 @@ public class RecordServiceImpl implements RecordService {
         String regionCd = memberService.getRegionCd(memberSeq);
 
         try {
-            List<Long> dislikeList = dislikeRepository.findRecordSeqByMemberSeq(memberSeq).stream()
+            List<Long> dislikeList = dislikeRepository.findRecordSeqByMemberSeq(memberSeq)
+                    .stream()
                     .map(DislikeRecordMapping::getRecordSeq)
                     .toList();
 
-            List<ListMapping> list = recordRepository.findByRegionCdAndSeqNotIn(regionCd, dislikeList);
-            return list;
+            return recordRepository.findByRegionCdAndSeqNotIn(regionCd, dislikeList);
         } catch (Exception e) {
             throw new WTException("동네 기반 코스 추천에 실패하였습니다.");
         }
@@ -389,8 +390,26 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public List<ListMapping> recommendInfo(Long memberSeq) throws WTException {
-        // Todo : 성별, 나이 기반으로 추천하기
-        return null;
+        List<Long> memberList;
+        try {
+            memberList = memberService.getSimilarMemberList(memberSeq)
+                    .stream()
+                    .map(MemberSeqMapping::getSeq)
+                    .toList();
+        } catch (Exception e) {
+            throw new WTException(e.getMessage());
+        }
+
+        try {
+            List<Long> dislikeList = dislikeRepository.findRecordSeqByMemberSeq(memberSeq)
+                    .stream()
+                    .map(DislikeRecordMapping::getRecordSeq)
+                    .toList();
+
+            return recordRepository.findByMemberSeqInAndSeqNotIn(memberList, dislikeList);
+        } catch (Exception e) {
+            throw new WTException("사용자기반 코스 추천에 실패하였습니다.");
+        }
     }
 
     @Override
