@@ -34,7 +34,7 @@
               </div>
               <RouterLink :to="{ name: 'Signup' }">회원가입</RouterLink>
               <div class="text-center">
-                <button type="button" @click="login">로그인</button>
+                <button type="submit" @click="login">로그인</button>
               </div>
             </form>
           </div>
@@ -52,7 +52,8 @@ const memberstore = useMemberStore()
 const memberId = ref(null)
 const password = ref(null)
 
-const login = () => {
+const login = (event) => {
+  event.preventDefault()
   const payload = {
     memberId: memberId.value,
     password: password.value
