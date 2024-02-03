@@ -40,6 +40,9 @@
           <li>
             <RouterLink :to="{ name: 'Login' }" class="getstarted scrollto">로그인</RouterLink>
           </li>
+          <li>
+            <RouterLink :to="{ name: 'Logout' }" class="getstarted scrollto">로그아웃</RouterLink>
+          </li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav>
