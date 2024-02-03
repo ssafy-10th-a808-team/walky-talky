@@ -15,8 +15,10 @@ import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
+import com.ssafy.backend.member.dto.response.ResponseMypageDto;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.region.repository.RegionRepository;
+import com.ssafy.backend.region.service.RegionService;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,7 @@ public class MemberServiceImpl implements MemberService {
     private final RedisDao redisDao;
     private final S3UploadService s3UploadService;
     private final RegionRepository regionRepository;
+    private final RegionService regionService;
 
 
     @Value("${security.salt}")
@@ -302,6 +305,32 @@ public class MemberServiceImpl implements MemberService {
         } catch (Exception e) {
             throw new WTException("사용자 불러오기에 실패했습니다.");
         }
+    }
+
+    @Override
+    public ResponseMypageDto mypage(Long memberSeq) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+
+        if (memberOptional.isEmpty()) {
+            throw new WTException("마이페이지 불러오기에 실패하였습니다.");
+        }
+
+        Member member = memberOptional.get();
+
+        ResponseMypageDto responseMypageDto = new ResponseMypageDto();
+
+        try {
+            responseMypageDto.setMemberId(member.getMemberId());
+            responseMypageDto.setAddress(regionService.findAddress(member.getRegionCd()));
+            responseMypageDto.setBirth(member.getBirth());
+            responseMypageDto.setGender(member.getGender());
+            responseMypageDto.setProfileImage(member.getUrl());
+            responseMypageDto.setIntroduce(member.getIntroduce());
+        } catch (Exception e) {
+            throw new WTException("마이페이지 불러오기에 실패하였습니다.");
+        }
+
+        return responseMypageDto;
     }
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {
