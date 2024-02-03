@@ -51,7 +51,6 @@ public class RecordServiceImpl implements RecordService {
         Record record = Record.builder()
                 .memberSeq(memberSeq)
                 .build();
-
         Record returnRecord = recordRepository.save(record);
 
         return returnRecord.getSeq();
@@ -216,7 +215,6 @@ public class RecordServiceImpl implements RecordService {
         validateRecord(recordSeq, memberSeq);
 
         String existingUrl = recordDetail.getUrl();
-
         s3UploadService.deleteImg(existingUrl);
 
         String url;
@@ -244,8 +242,8 @@ public class RecordServiceImpl implements RecordService {
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
-        validateRecord(recordSeq, memberSeq);
 
+        validateRecord(recordSeq, memberSeq);
 
         try {
             String existingUrl = recordDetail.getUrl();
