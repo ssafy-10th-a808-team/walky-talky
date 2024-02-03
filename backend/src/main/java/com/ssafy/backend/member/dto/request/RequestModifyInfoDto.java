@@ -11,18 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestModifyInfoDto {
-    String regionCd;
-    String introduce;
-    String nickname;
-    MultipartFile profileImage;
-
-    @Override
-    public String toString() {
-        return "RequestModifyInfoDto{" +
-                "regionCd='" + regionCd + '\'' +
-                ", introduce='" + introduce + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", profileImage=" + profileImage +
-                '}';
-    }
+    private String regionCd;
+    private String introduce;
+    private String nickname;
+    private MultipartFile profileImage;
 }
