@@ -100,7 +100,7 @@ const router = createRouter({
 import { useMemberStore } from '@/stores/member'
 router.beforeEach((to, from) => {
   const memberstore = useMemberStore()
-  if(to.name !== 'home'&& to.name !== 'Login' && !memberstore.isLogin) {
+  if(to.name !== 'home'&& to.name !== 'Login' && to.name !== 'Signup'&& !memberstore.isLogin) {
     window.alert('로그인이 필요합니다')
     return {name: 'home'}
   }
