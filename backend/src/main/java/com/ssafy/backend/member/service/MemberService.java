@@ -38,4 +38,6 @@ public interface MemberService {
     ResponseMypageDto mypage(Long memberSeq) throws WTException;
 
     void modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException;
+
+    void modifyPassword(Long memberSeq, RequestModifyPasswordDto requestModifyPasswordDto) throws WTException;
 }

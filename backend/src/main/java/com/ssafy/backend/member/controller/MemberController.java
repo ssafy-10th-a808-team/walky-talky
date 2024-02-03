@@ -184,4 +184,20 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
+    @PostMapping("/modify-password")
+    public ResponseEntity<?> modifyPassword(HttpServletRequest request, @RequestBody RequestModifyPasswordDto requestModifyPasswordDto) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Long memberSeq = (Long) request.getAttribute("seq");
+        try {
+            memberService.modifyPassword(memberSeq, requestModifyPasswordDto);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
 }

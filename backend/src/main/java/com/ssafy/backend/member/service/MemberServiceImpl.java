@@ -335,7 +335,7 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> memberOptional = memberRepository.findById(memberSeq);
 
         if (memberOptional.isEmpty()) {
-            throw new WTException("마이페이지 불러오기에 실패하였습니다.");
+            throw new WTException("회원 정보 수정에 실패하였습니다.");
         }
 
         Member member = memberOptional.get();
@@ -352,6 +352,51 @@ public class MemberServiceImpl implements MemberService {
             member.update(requestModifyInfoDto.getRegionCd(), requestModifyInfoDto.getIntroduce(), requestModifyInfoDto.getNickname(), url);
         } else {
             member.update(requestModifyInfoDto.getRegionCd(), requestModifyInfoDto.getIntroduce(), requestModifyInfoDto.getNickname());
+        }
+
+        memberRepository.save(member);
+    }
+
+    @Override
+    public void modifyPassword(Long memberSeq, RequestModifyPasswordDto requestModifyPasswordDto) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+
+        if (memberOptional.isEmpty()) {
+            throw new WTException("비밀번호 변경에 실패하였습니다.");
+        }
+
+        Member member = memberOptional.get();
+
+        try {
+            if (!hashPassword(requestModifyPasswordDto.getPassword(), salt.getBytes()).equals(member.getPassword())) { // 현재 비번 틀렸을때
+                throw new WTException("현재 비밀번호를 확인해주세요.");
+            }
+        } catch (Exception e) {
+            throw new WTException(e.getMessage());
+        }
+
+        // 비밀번호 패턴 매칭 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.
+        String regex = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(requestModifyPasswordDto.getNewPassword());
+
+        if (!matcher.matches()) {
+            throw new WTException("비밀번호 패턴 매칭 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.");
+        }
+
+        if (Objects.equals(requestModifyPasswordDto.getNewPassword(), requestModifyPasswordDto.getPassword())) {
+            throw new WTException("이전과 동일한 비밀번호로 변경할 수 없습니다.");
+        }
+
+        if (!Objects.equals(requestModifyPasswordDto.getNewPassword(), requestModifyPasswordDto.getCheckNewPassword())) {
+            throw new WTException("새로운 비밀번호를 다시 확인해주세요.");
+        }
+
+        try {
+            member.update(hashPassword(requestModifyPasswordDto.getNewPassword(), salt.getBytes()));
+        } catch (Exception e) {
+            throw new WTException("비밀번호 변경에 실패하였습니다.");
         }
 
         memberRepository.save(member);
