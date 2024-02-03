@@ -16,7 +16,6 @@ export const useMemberStore = defineStore('member', () => {
   const profileImage = ref('')
 
 
-
   //회원가입
   const createMember = function (payload) {
     const formData = new FormData()
@@ -123,8 +122,7 @@ export const useMemberStore = defineStore('member', () => {
       token.value = res.headers.get('atk')
       counterstore.setCookie("atk", token.value);
       nickname.value=res.data.data.nickname
-      profileImage.value=(res.data.data.profileImage)
-      console.log(token.value)
+      profileImage.value=(res.data.data.profileImage);
       router.push({ name : 'club'})
     })
     .catch((err) => {
@@ -133,10 +131,14 @@ export const useMemberStore = defineStore('member', () => {
     }) 
   }
 
-  const isLogin = computed(() => {
-    const atkCookie = ref(counterstore.getCookie("atk"));
-    return atkCookie.value !== null;
-  })
+  // const isLogin = computed(() => {
+  //   if (counterstore.getCookie("atk") === null) {
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // })
+  const isLogin = computed(() => counterstore.getCookie("atk") !== undefined)
 
   const logout = () => {
     axios({

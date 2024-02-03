@@ -49,8 +49,10 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import { useCounterStore } from './stores/counter';
 import TheFooter from './components/common/TheFooter.vue'
 import TheHeaderNav from './components/common/TheHeaderNav.vue'
+const counterstore = useCounterStore()
 onMounted(() => {
   {
     // Vendor JS 파일 로드
@@ -70,6 +72,7 @@ onMounted(() => {
     })
   }
 })
+
 </script>
 
 <style lang="scss" scoped></style>
