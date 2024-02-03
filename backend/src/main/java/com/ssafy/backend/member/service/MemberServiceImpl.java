@@ -8,15 +8,14 @@ import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.dto.mapping.RegionCdMapping;
-import com.ssafy.backend.member.dto.request.RequestCheckIdDto;
-import com.ssafy.backend.member.dto.request.RequestCheckNicknameDto;
-import com.ssafy.backend.member.dto.request.RequestLocalLoginDto;
-import com.ssafy.backend.member.dto.request.RequestLocalSignupDto;
+import com.ssafy.backend.member.dto.request.*;
 import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
 import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
 import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
+import com.ssafy.backend.member.dto.response.ResponseMypageDto;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.region.repository.RegionRepository;
+import com.ssafy.backend.region.service.RegionService;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +44,7 @@ public class MemberServiceImpl implements MemberService {
     private final RedisDao redisDao;
     private final S3UploadService s3UploadService;
     private final RegionRepository regionRepository;
+    private final RegionService regionService;
 
 
     @Value("${security.salt}")
@@ -302,6 +302,126 @@ public class MemberServiceImpl implements MemberService {
         } catch (Exception e) {
             throw new WTException("사용자 불러오기에 실패했습니다.");
         }
+    }
+
+    @Override
+    public ResponseMypageDto mypage(Long memberSeq) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+
+        if (memberOptional.isEmpty()) {
+            throw new WTException("마이페이지 불러오기에 실패하였습니다.");
+        }
+
+        Member member = memberOptional.get();
+
+        ResponseMypageDto responseMypageDto = new ResponseMypageDto();
+
+        try {
+            responseMypageDto.setMemberId(member.getMemberId());
+            responseMypageDto.setAddress(regionService.findAddress(member.getRegionCd()));
+            responseMypageDto.setBirth(member.getBirth());
+            responseMypageDto.setGender(member.getGender());
+            responseMypageDto.setProfileImage(member.getUrl());
+            responseMypageDto.setIntroduce(member.getIntroduce());
+        } catch (Exception e) {
+            throw new WTException("마이페이지 불러오기에 실패하였습니다.");
+        }
+
+        return responseMypageDto;
+    }
+
+    @Override
+    public void modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+
+        if (memberOptional.isEmpty()) {
+            throw new WTException("회원 정보 수정에 실패하였습니다.");
+        }
+
+        Member member = memberOptional.get();
+
+        if (requestModifyInfoDto.getProfileImage() != null) {
+            s3UploadService.deleteImg(member.getUrl());
+
+            String url;
+            try {
+                url = s3UploadService.uploadMemberProfileImg(requestModifyInfoDto.getProfileImage(), memberSeq);
+            } catch (Exception e) {
+                throw new WTException("사진 업로드에 실패하였습니다.");
+            }
+            member.update(requestModifyInfoDto.getRegionCd(), requestModifyInfoDto.getIntroduce(), requestModifyInfoDto.getNickname(), url);
+        } else {
+            member.update(requestModifyInfoDto.getRegionCd(), requestModifyInfoDto.getIntroduce(), requestModifyInfoDto.getNickname());
+        }
+
+        memberRepository.save(member);
+    }
+
+    @Override
+    public void modifyPassword(Long memberSeq, RequestModifyPasswordDto requestModifyPasswordDto) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+
+        if (memberOptional.isEmpty()) {
+            throw new WTException("비밀번호 변경에 실패하였습니다.");
+        }
+
+        Member member = memberOptional.get();
+
+        try {
+            if (!hashPassword(requestModifyPasswordDto.getPassword(), salt.getBytes()).equals(member.getPassword())) { // 현재 비번 틀렸을때
+                throw new WTException("현재 비밀번호를 확인해주세요.");
+            }
+        } catch (Exception e) {
+            throw new WTException(e.getMessage());
+        }
+
+        // 비밀번호 패턴 매칭 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.
+        String regex = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(requestModifyPasswordDto.getNewPassword());
+
+        if (!matcher.matches()) {
+            throw new WTException("비밀번호 패턴 매칭 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.");
+        }
+
+        if (Objects.equals(requestModifyPasswordDto.getNewPassword(), requestModifyPasswordDto.getPassword())) {
+            throw new WTException("이전과 동일한 비밀번호로 변경할 수 없습니다.");
+        }
+
+        if (!Objects.equals(requestModifyPasswordDto.getNewPassword(), requestModifyPasswordDto.getCheckNewPassword())) {
+            throw new WTException("새로운 비밀번호를 다시 확인해주세요.");
+        }
+
+        try {
+            member.update(hashPassword(requestModifyPasswordDto.getNewPassword(), salt.getBytes()));
+        } catch (Exception e) {
+            throw new WTException("비밀번호 변경에 실패하였습니다.");
+        }
+
+        memberRepository.save(member);
+    }
+
+    @Override
+    public void delete(Long memberSeq, RequestDeleteDto requestDeleteDto) throws WTException {
+        Optional<Member> memberOptional = memberRepository.findById(memberSeq);
+
+        if (memberOptional.isEmpty()) {
+            throw new WTException("회원 탈퇴에 실패하였습니다.");
+        }
+
+        Member member = memberOptional.get();
+
+        try {
+            if (!hashPassword(requestDeleteDto.getPassword(), salt.getBytes()).equals(member.getPassword())) { // 비번 틀렸을때
+                throw new WTException("비밀번호를 확인해주세요.");
+            }
+        } catch (Exception e) {
+            throw new WTException(e.getMessage());
+        }
+
+        member.delete();
+        memberRepository.save(member);
     }
 
     public ResponseMemberDto getMemberNicknameUrl(Long memberSeq) {

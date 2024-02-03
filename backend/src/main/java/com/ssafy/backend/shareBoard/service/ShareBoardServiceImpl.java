@@ -313,7 +313,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
         }
 
         try {
-            shareBoard.delete(shareBoard);
+            shareBoard.delete();
             shareBoardRepository.save(shareBoard);
         } catch (Exception e) {
             throw new WTException("게시글 삭제에 실패하였습니다.");
