@@ -200,4 +200,20 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody RequestDeleteDto requestDeleteDto) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Long memberSeq = (Long) request.getAttribute("seq");
+        try {
+            memberService.delete(memberSeq, requestDeleteDto);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
 }

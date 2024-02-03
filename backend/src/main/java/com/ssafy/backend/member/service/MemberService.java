@@ -28,7 +28,6 @@ public interface MemberService {
 
     public Map<String, String> reissue(Long seq);
 
-
     ResponseMemberDto getMemberNicknameUrl(Long memberSeq);
 
     String getRegionCd(Long memberSeq) throws WTException;
@@ -40,4 +39,6 @@ public interface MemberService {
     void modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException;
 
     void modifyPassword(Long memberSeq, RequestModifyPasswordDto requestModifyPasswordDto) throws WTException;
+
+    void delete(Long memberSeq, RequestDeleteDto requestDeleteDto) throws WTException;
 }
