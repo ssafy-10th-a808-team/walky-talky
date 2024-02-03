@@ -23,7 +23,7 @@ public class ShareBoardLike extends BaseEntity {
     private Long memberSeq;
 
     @Builder
-    public ShareBoardLike(Long seq, Long shareBoardSeq, Long memberSeq){
+    public ShareBoardLike(Long seq, Long shareBoardSeq, Long memberSeq) {
         this.seq = seq;
         this.shareBoardSeq = shareBoardSeq;
         this.memberSeq = memberSeq;

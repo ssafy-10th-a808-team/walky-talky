@@ -42,4 +42,29 @@ public class Member extends BaseEntity {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    public Member update(String regionCd, String introduce, String nickname, String url) {
+        this.regionCd = regionCd;
+        this.introduce = introduce;
+        this.nickname = nickname;
+        this.url = url;
+        return this;
+    }
+
+    public Member update(String regionCd, String introduce, String nickname) {
+        this.regionCd = regionCd;
+        this.introduce = introduce;
+        this.nickname = nickname;
+        return this;
+    }
+
+    public Member update(String password) {
+        this.password = password;
+        return this;
+    }
+
+    public Member delete(){
+        this.isDeleted = true;
+        return this;
+    }
+
 }
