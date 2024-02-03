@@ -57,18 +57,7 @@ public class Record extends BaseEntity {
         return this;
     }
 
-    public Record delete(Record delRecord){
-        this.seq = delRecord.getSeq();
-        this.memberSeq = delRecord.getMemberSeq();
-        this.groupSeq = delRecord.getGroupSeq();
-        this.title = delRecord.getTitle();
-        this.starRating = delRecord.getStarRating();
-        this.comment = delRecord.getComment();
-        this.usedCount = delRecord.usedCount;
-        this.scrapedCount = delRecord.getScrapedCount();
-        this.distance = delRecord.getDistance();
-        this.duration = delRecord.getDuration();
-        this.regionCd = delRecord.getRegionCd();
+    public Record delete(){
         this.isDeleted = true;
         return this;
     }
