@@ -1,10 +1,8 @@
 package com.ssafy.backend.member.controller;
 
+import com.ssafy.backend.member.dto.mapping.StreakMapping;
 import com.ssafy.backend.member.dto.request.*;
-import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
-import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
-import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
-import com.ssafy.backend.member.dto.response.ResponseMypageDto;
+import com.ssafy.backend.member.dto.response.*;
 import com.ssafy.backend.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -159,6 +158,23 @@ public class MemberController {
         try {
             ResponseMypageDto responseMypageDto = memberService.mypage(memberSeq);
             resultMap.put("data", responseMypageDto);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
+    @GetMapping("/mystreak")
+    public ResponseEntity<?> myStreak(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Long memberSeq = (Long) request.getAttribute("seq");
+        try {
+            List<StreakMapping> list = memberService.myStreak(memberSeq);
+            resultMap.put("data", list);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
