@@ -2,8 +2,12 @@ package com.ssafy.backend.record.service;
 
 import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.global.error.WTException;
+import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
+import com.ssafy.backend.member.service.MemberService;
+import com.ssafy.backend.record.domain.Dislike;
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
+import com.ssafy.backend.record.dto.mapping.DislikeRecordMapping;
 import com.ssafy.backend.record.dto.mapping.ListMapping;
 import com.ssafy.backend.record.dto.mapping.PointsMapping;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
@@ -11,9 +15,11 @@ import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
+import com.ssafy.backend.record.repository.DislikeRepository;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
+import com.ssafy.backend.scrapRecord.dto.mapping.RecordSeqMapping;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +39,11 @@ public class RecordServiceImpl implements RecordService {
 
     private final RecordDetailRepository recordDetailRepository;
 
+    private final DislikeRepository dislikeRepository;
+
     private final RegionService regionService;
+
+    private final MemberService memberService;
 
     private final S3UploadService s3UploadService;
 
@@ -40,7 +51,6 @@ public class RecordServiceImpl implements RecordService {
         Record record = Record.builder()
                 .memberSeq(memberSeq)
                 .build();
-
         Record returnRecord = recordRepository.save(record);
 
         return returnRecord.getSeq();
@@ -205,7 +215,6 @@ public class RecordServiceImpl implements RecordService {
         validateRecord(recordSeq, memberSeq);
 
         String existingUrl = recordDetail.getUrl();
-
         s3UploadService.deleteImg(existingUrl);
 
         String url;
@@ -233,8 +242,8 @@ public class RecordServiceImpl implements RecordService {
         RecordDetail recordDetail = recordDetailOptional.get();
 
         Long recordSeq = recordDetail.getRecordSeq();
-        validateRecord(recordSeq, memberSeq);
 
+        validateRecord(recordSeq, memberSeq);
 
         try {
             String existingUrl = recordDetail.getUrl();
@@ -248,11 +257,19 @@ public class RecordServiceImpl implements RecordService {
     }
 
     public List<ListMapping> list(Long memberSeq) throws WTException {
-        return recordRepository.findResponseListDtoByMemberSeqAndIsDeletedFalse(memberSeq);
+        try {
+            return recordRepository.findResponseListDtoByMemberSeqAndIsDeletedFalse(memberSeq);
+        } catch (Exception e) {
+            throw new WTException("목록 불러오기에 실패하였습니다.");
+        }
     }
 
     public List<ListMapping> list(List<Long> recordSeq) throws WTException {
-        return recordRepository.findBySeqIn(recordSeq);
+        try {
+            return recordRepository.findBySeqIn(recordSeq);
+        } catch (Exception e) {
+            throw new WTException("목록 불러오기에 실패하였습니다.");
+        }
     }
 
     @Transactional
@@ -331,7 +348,7 @@ public class RecordServiceImpl implements RecordService {
         Record record = recordOptional.get();
 
         try {
-            record.delete(record);
+            record.delete();
             recordRepository.save(record);
         } catch (Exception e) {
             throw new WTException("한줄평 및 별점 수정에 실패하였습니다.");
@@ -350,6 +367,68 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public boolean isRecordExist(Long recordSeq) throws WTException {
         return recordRepository.existsById(recordSeq);
+    }
+
+    @Override
+    public List<ListMapping> recommendTown(Long memberSeq) throws WTException {
+        String regionCd = memberService.getRegionCd(memberSeq);
+
+        try {
+            List<Long> dislikeList = dislikeRepository.findRecordSeqByMemberSeq(memberSeq)
+                    .stream()
+                    .map(DislikeRecordMapping::getRecordSeq)
+                    .toList();
+
+            return recordRepository.findByRegionCdAndSeqNotIn(regionCd, dislikeList);
+        } catch (Exception e) {
+            throw new WTException("동네 기반 코스 추천에 실패하였습니다.");
+        }
+
+    }
+
+    @Override
+    public List<ListMapping> recommendInfo(Long memberSeq) throws WTException {
+        List<Long> memberList;
+        try {
+            memberList = memberService.getSimilarMemberList(memberSeq)
+                    .stream()
+                    .map(MemberSeqMapping::getSeq)
+                    .toList();
+        } catch (Exception e) {
+            throw new WTException(e.getMessage());
+        }
+
+        try {
+            List<Long> dislikeList = dislikeRepository.findRecordSeqByMemberSeq(memberSeq)
+                    .stream()
+                    .map(DislikeRecordMapping::getRecordSeq)
+                    .toList();
+
+            return recordRepository.findByMemberSeqInAndSeqNotIn(memberList, dislikeList);
+        } catch (Exception e) {
+            throw new WTException("사용자기반 코스 추천에 실패하였습니다.");
+        }
+    }
+
+    @Override
+    public void dislike(Long recordSeq, Long memberSeq) throws WTException {
+        if (!isRecordExist(recordSeq)) {
+            throw new WTException("존재하지 않는 기록입니다.");
+        }
+
+        if (isRecordDeleted(recordSeq)) {
+            throw new WTException("삭제된 기록입니다.");
+        }
+
+        try {
+            Dislike dislike = Dislike.builder()
+                    .recordSeq(recordSeq)
+                    .memberSeq(memberSeq)
+                    .build();
+            dislikeRepository.save(dislike);
+        } catch (Exception e) {
+            throw new WTException("싫어요에 실패하였습니다.");
+        }
     }
 
     private void validateRecord(Long recordSeq, Long memberSeq) throws WTException {
