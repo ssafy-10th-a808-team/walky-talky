@@ -1,35 +1,68 @@
 package com.ssafy.backend.oauth.domain.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ResponseOauthInfoDto {
 
-    private KakaoAccount kakao_account;
+    private long id;
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class KakaoAccount {
+    @JsonProperty("has_signed_up")
+    private boolean hasSignedUp;
+
+    @JsonProperty("connected_at")
+    private LocalDateTime connectedAt;
+
+    private KakaoProperties properties;
+
+    @JsonProperty("kakao_account")
+    private KakaoAccount kakaoAccount;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class KakaoProperties {
+        private String nickname;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class KakaoAccount {
+        @JsonProperty("profile_nickname_needs_agreement")
+        private boolean profileNicknameNeedsAgreement;
+
         private KakaoProfile profile;
+
+        @JsonProperty("has_email")
+        private boolean hasEmail;
+
+        @JsonProperty("email_needs_agreement")
+        private boolean emailNeedsAgreement;
+
+        @JsonProperty("is_email_valid")
+        private boolean isEmailValid;
+
+        @JsonProperty("is_email_verified")
+        private boolean isEmailVerified;
+
         private String email;
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class KakaoProfile {
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class KakaoProfile {
         private String nickname;
-        private String thumbnail_image_url;
-    }
-
-    public String getEmail() {
-        return kakao_account.email;
-    }
-
-    public String getNickname() {
-        return kakao_account.profile.nickname;
-    }
-
-    public String getImg() {
-        return kakao_account.profile.thumbnail_image_url;
+        @JsonProperty("profile_image_url")
+        private String profileImageUrl;
     }
 }
