@@ -8,12 +8,11 @@ import com.ssafy.backend.member.domain.Member;
 import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.dto.mapping.RegionCdMapping;
+import com.ssafy.backend.member.dto.mapping.StreakMapping;
 import com.ssafy.backend.member.dto.request.*;
-import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
-import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
-import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
-import com.ssafy.backend.member.dto.response.ResponseMypageDto;
+import com.ssafy.backend.member.dto.response.*;
 import com.ssafy.backend.member.repository.MemberRepository;
+import com.ssafy.backend.member.repository.StreakRepository;
 import com.ssafy.backend.region.repository.RegionRepository;
 import com.ssafy.backend.region.service.RegionService;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
@@ -45,6 +44,7 @@ public class MemberServiceImpl implements MemberService {
     private final S3UploadService s3UploadService;
     private final RegionRepository regionRepository;
     private final RegionService regionService;
+    private final StreakRepository streakRepository;
 
 
     @Value("${security.salt}")
@@ -328,6 +328,15 @@ public class MemberServiceImpl implements MemberService {
         }
 
         return responseMypageDto;
+    }
+
+    @Override
+    public List<StreakMapping> myStreak(Long memberSeq) throws WTException {
+        try {
+            return streakRepository.findAllByMemberSeq(memberSeq);
+        } catch (Exception e) {
+            throw new WTException("산책 스트릭 불러오기에 실패하였습니다.");
+        }
     }
 
     @Override
