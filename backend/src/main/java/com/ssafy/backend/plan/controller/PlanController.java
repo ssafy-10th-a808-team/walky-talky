@@ -1,11 +1,7 @@
 package com.ssafy.backend.plan.controller;
 
-import com.ssafy.backend.plan.dto.request.RequestPlanDeleteDto;
-import com.ssafy.backend.plan.dto.request.RequestPlanRegistDto;
-import com.ssafy.backend.plan.dto.response.ResponsePlanDeleteDto;
-import com.ssafy.backend.plan.dto.response.ResponsePlanDetailDto;
-import com.ssafy.backend.plan.dto.response.ResponsePlanListDto;
-import com.ssafy.backend.plan.dto.response.ResponsePlanRegistDto;
+import com.ssafy.backend.plan.dto.request.*;
+import com.ssafy.backend.plan.dto.response.*;
 import com.ssafy.backend.plan.service.PlanService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +46,23 @@ public class PlanController {
     public ResponseEntity<ResponsePlanDeleteDto> planDelete(@RequestBody RequestPlanDeleteDto requestPlanDeleteDto, HttpServletRequest httpServletRequest) {
         return planService.planDelete(requestPlanDeleteDto, httpServletRequest);
     }
+
+    @PostMapping("/modify")
+    public ResponseEntity<ResponsePlanModifyDto> planModify(@RequestBody RequestPlanModifyDto requestPlanModifyDto, HttpServletRequest httpServletRequest) {
+        return planService.planModify(requestPlanModifyDto, httpServletRequest);
+    }
+
+    @PostMapping("/record-overwrite")
+    public ResponseEntity<ResponsePlanOverwriteDto> planOverwriteDto(@RequestBody RequestPlanOverwriteDto requestPlanOverwriteDto,
+                                                                     HttpServletRequest httpServletRequest) {
+        return planService.planOverwrite(requestPlanOverwriteDto, httpServletRequest);
+    }
+
+    @PostMapping("/copy")
+    public ResponseEntity<ResponsePlanCopyDto> planCopy (@RequestBody RequestPlanCopyDto requestPlanCopyDto,
+                                                         HttpServletRequest httpServletRequest){
+        return planService.planCopy(requestPlanCopyDto,httpServletRequest);
+    }
+
 
 }
