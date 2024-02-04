@@ -28,4 +28,6 @@ public interface ClubMemberRepository extends JpaRepository<ClubMember, Long> {
     ClubMember findByMemberSeq(Long myMemberSeq);
 
     List<ClubMember> findAllByMemberSeq(Long myMemberSeq);
+
+    ClubMember findByClubSeqAndMemberSeq(Long clubSeq, Long myMemberSeq);
 }
