@@ -13,4 +13,6 @@ public interface PlanClubMemberRepository extends JpaRepository<PlanClubMember, 
     List<PlanClubMember> findAllByPlanSeq(Long planSeq);
 
     void deleteAllByPlanSeq(Long planSeq);
+
+    void deleteByClubMemberSeqAndPlanSeq(Long seq, Long planSeq);
 }
