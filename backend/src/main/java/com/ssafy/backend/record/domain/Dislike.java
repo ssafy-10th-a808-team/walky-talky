@@ -1,4 +1,4 @@
-package com.ssafy.backend.shareBoard.domain;
+package com.ssafy.backend.record.domain;
 
 import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -7,25 +7,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "share_board_like")
+@Table(name = "dislike")
 @Getter
 @NoArgsConstructor
 @Builder
-public class ShareBoardLike extends BaseEntity {
+public class Dislike extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(name = "share_board_seq", nullable = false)
-    private Long shareBoardSeq;
+    @Column(name = "record_seq", nullable = false)
+    private Long recordSeq;
 
     @Column(name = "member_seq", nullable = false)
     private Long memberSeq;
 
-    @Builder
-    public ShareBoardLike(Long seq, Long shareBoardSeq, Long memberSeq) {
+    public Dislike(Long seq, Long recordSeq, Long memberSeq) {
         this.seq = seq;
-        this.shareBoardSeq = shareBoardSeq;
+        this.recordSeq = recordSeq;
         this.memberSeq = memberSeq;
     }
 }

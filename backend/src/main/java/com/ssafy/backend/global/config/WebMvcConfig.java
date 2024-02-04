@@ -17,11 +17,16 @@ public class WebMvcConfig {
         registrationBean.addUrlPatterns(
                 "/api/member/logout",
                 "/api/member/reissue",
+                "/api/member/mypage",
+                "/api/member/modify-info",
+                "/api/member/modify-password",
+                "/api/member/delete",
                 "/api/walk/*",
                 "/api/club/*",
                 "/api/club-member/*",
                 "/api/share-board/*",
-                "/api/scrap-record/*"
+                "/api/scrap-record/*",
+                "/api/plan/*"
         );
         return registrationBean;
     }

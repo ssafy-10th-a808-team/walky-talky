@@ -55,13 +55,7 @@ public class ShareBoard extends BaseEntity {
         return this;
     }
 
-    public ShareBoard delete(ShareBoard shareBoard) {
-        this.seq = shareBoard.getSeq();
-        this.memberSeq = shareBoard.getMemberSeq();
-        this.recordSeq = shareBoard.getRecordSeq();
-        this.title = shareBoard.getTitle();
-        this.content = shareBoard.getContent();
-        this.hit = shareBoard.getHit();
+    public ShareBoard delete() {
         this.isDeleted = true;
         return this;
     }

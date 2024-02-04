@@ -82,8 +82,7 @@ export const useClubStore = defineStore('club', () => {
         url: `${REST_CLUB_API}/club/list`,
         headers: {
           Authorization: `Bearer ${getCookie("atk")}`, 
-        },
-        withCredentials : true
+        }
       })
       console.log(res)
       clubs.value = res.data
@@ -94,7 +93,7 @@ export const useClubStore = defineStore('club', () => {
   }
 
 
-  
+
   ///////////////////////
   function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
