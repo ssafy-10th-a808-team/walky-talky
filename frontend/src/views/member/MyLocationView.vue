@@ -5,6 +5,10 @@
     </div>
     <div>
         님 현재 위치가 {{ address_name }} 맞나요?
+        <div class="col-lg-3 cta-btn-container text-center">
+            <a class="cta-btn align-middle" href="#">확인</a>
+            <div class="text-center"><button type="submit">Send Message</button></div>
+          </div>
     </div>
     <div>
         지역 코드 : {{ address_code }}

@@ -1,0 +1,78 @@
+/*--------------------------------------------------------------
+# Top Bar
+--------------------------------------------------------------*/
+#topbar {
+  background: lighten($secondary, 85);
+  font-size: 15px;
+  height: 40px;
+  padding: 0;
+
+  .contact-info {
+    a {
+      line-height: 0;
+      color: $default;
+      transition: 0.3s;
+      &:hover {
+        color: $primary;
+      }
+    }
+
+    i {
+      color: $primary;
+      line-height: 0;
+      margin-right: 5px;
+    }
+    .phone-icon {
+      margin-left: 15px;
+    }
+  }
+
+  .social-links {
+    a {
+      color: lighten($secondary, 30);
+      padding: 4px 12px;
+      display: inline-block;
+      line-height: 1px;
+      transition: 0.3s;
+      &:hover {
+        color: $primary;
+      }
+    }
+  }
+}
+
+/*--------------------------------------------------------------
+# Header
+--------------------------------------------------------------*/
+#header {
+  background: $white;
+  transition: all 0.5s;
+  z-index: 997;
+  height: 70px;
+
+  &.header-scrolled {
+    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.10);
+  }
+
+  .logo {
+    font-size: 30px;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    a {
+      color: $primary;
+    }
+
+    img {
+      max-height: 40px;
+    }
+  }
+}
+
+.scrolled-offset {
+  margin-top: 70px;
+}
