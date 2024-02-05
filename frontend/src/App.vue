@@ -41,7 +41,9 @@
       <TheHeaderNav />
       <div>
         <RouterView />
-        <TheFooter />
+        <div>
+          <TheFooter />
+        </div>
       </div>
     </body>
   </div>

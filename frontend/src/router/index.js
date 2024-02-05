@@ -6,6 +6,8 @@ import Login from '@/views/member/Login.vue'
 import Logout from '@/views/member/Logout.vue'
 import RecordScrapList from '@/views/member/RecordScrapList.vue'
 import MyLocationView from '@/views/member/MyLocationView.vue'
+import Mypage from '@/views/member/Mypage.vue'
+import ModifyInfo from '@/views/member/ModifyInfo.vue'
 
 // walk router 산책
 import DoWalk from '@/views/walk/DoWalk.vue'
@@ -40,6 +42,16 @@ const router = createRouter({
       path: '/member/local-login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/member/mypage',
+      name: 'Mypage',
+      component: Mypage
+    },
+    {
+      path: '/member/modify-info',
+      name: 'ModifyInfo',
+      component: ModifyInfo
     },
     {
       path: '/member/logout',
@@ -113,9 +125,16 @@ const router = createRouter({
   ]
 })
 import { useMemberStore } from '@/stores/member'
+import ModifyInfoVue from '@/views/member/ModifyInfo.vue'
 router.beforeEach((to, from) => {
   const memberstore = useMemberStore()
-  if(to.name !== 'home'&& to.name !== 'Login' && to.name !== 'Signup'&& to.name !== 'mylocation'&& !memberstore.isLogin) {
+  if (
+    to.name !== 'home' &&
+    to.name !== 'Login' &&
+    to.name !== 'Signup' &&
+    to.name !== 'mylocation' &&
+    !memberstore.isLogin
+  ) {
     window.alert('로그인이 필요합니다')
     return { name: 'home' }
   }
