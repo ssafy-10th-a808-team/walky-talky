@@ -12,11 +12,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ShareBoardRepository extends JpaRepository<ShareBoard, Long> {
-    List<ShareBoard> findAllByIsDeletedFalse();
+    List<ShareBoard> findAllByIsDeletedFalseOrderBySeqAsc();
 
-    List<ShareBoardMemberMapping> findSeqAndMemberSeqByIsDeletedFalse();
+    List<ShareBoardMemberMapping> findSeqAndMemberSeqByIsDeletedFalseOrderBySeqAsc();
 
-    List<ShareBoardScrapMapping> findSeqAndRecordSeqByIsDeletedFalse();
+    List<ShareBoardScrapMapping> findSeqAndRecordSeqByIsDeletedFalseOrderBySeqAsc();
 
     ShareBoard findBySeqAndIsDeletedFalse(Long seq);
 
