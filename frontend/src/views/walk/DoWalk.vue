@@ -3,22 +3,49 @@
     <WalkHeaderNav />
     <h1>산책하기</h1>
     <div class="map_wrap" style="position: relative">
-      <div id="map" style="width: 100%; height: 350px">
+      <div id="map" style="width: 100%; height: 500px">
+        <!-- 산책하기 버튼을 눌렀을 때 스탑워치 실행되게 하기 -->
+        <!-- <StopWatch style="position: absolute; z-index: 2; top: 70%; left: 40%" /> -->
+
         <!-- 정보 및 버튼 -->
-        <div style="text-align: center">
-          <div :span="8" class="myRecord">
+        <div
+          style="
+            text-align: center;
+            position: absolute;
+            z-index: 2;
+            top: 60%;
+            left: 50%;
+            background-color: yellow;
+            display: flex;
+            width: 200px;
+            margin-left: -100px;
+          "
+        >
+          <div class="myRecord">
             <div id="run_desc time">시간</div>
-            <span id="time" style="font-weight: 700">{{ clock }}</span>
+            <span id="time" style="font-weight: 700; width: 100px; float: left">{{ clock }}</span>
           </div>
-          <div :span="8" class="myRecord">
+          <div class="myRecord">
             <div id="run_desc distance">거리</div>
-            <span id="acc_dis" style="font-weight: 700">
+            <span id="acc_dis" style="font-weight: 700; width: 100px; float: right">
               {{ accumulated_distance.toFixed(2) }}km
             </span>
           </div>
         </div>
 
-        <div class="btn_container">
+        <div
+          class="btn_container"
+          style="
+            text-align: center;
+            position: absolute;
+            z-index: 2;
+            top: 70%;
+            left: 50%;
+            background-color: yellow;
+            width: 200px;
+            margin-left: -100px;
+          "
+        >
           <!-- 걷지 않을때! -->
           <div v-if="!running">
             <section
@@ -34,7 +61,7 @@
             >
               <!-- 걷지않을때 : 맨 처음 시작할때 -->
               <div v-if="!isPause">
-                <button @click="startLocationUpdates">START</button>
+                <button @click="startWalk">START</button>
               </div>
               <!-- 걷지않을때 : 일시정지를 눌렀을 때 -->
               <div v-if="isPause">
@@ -70,7 +97,13 @@
 import { ref, onMounted } from 'vue'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
 import router from '../../router'
+import axios from 'axios'
 import moment from 'moment'
+
+import { useWalkStore } from '@/stores/walk'
+
+const walkStore = useWalkStore()
+
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
 let map = null // map is not defined Reference Error 방지
 let lat = 0
@@ -201,36 +234,6 @@ const addrCallback = (result, status) => {
   }
 }
 
-const startLocationUpdates = function () {
-  startTime.value = new Date()
-  startTime.value = moment(startTime).format('YYYY-MM-DDTHH:mm:ss')
-  watchLocationUpdates()
-}
-
-const zeroPrefix = function (num, digit) {
-  const zero = ''
-  for (var i = 0; i < digit; i++) {
-    zero.value += '0'
-  }
-  return (zero.value + num).slice(-digit)
-}
-
-const clockRunning = function () {
-  const currentTime = new Date()
-  //경과된 시간
-  const timeElapsed = new Date(currentTime - timeBegan.value - stoppedDuration.value)
-
-  const hour = timeElapsed.getUTCHours()
-  const min = timeElapsed.getUTCMinutes()
-  const sec = timeElapsed.getUTCSeconds()
-
-  clock.value = zeroPrefix(hour, 2) + ':' + zeroPrefix(min, 2) + ':' + zeroPrefix(sec, 2)
-
-  const realTime = ((currentTime - timeBegan.value - stoppedDuration.value) / 1000).toFixed(0)
-  accumulated_time.value = realTime
-  checkSecond.value = realTime
-}
-
 const resetLocations = function () {
   endTime.value = ''
   clock.value = '00:00:00'
@@ -241,9 +244,9 @@ const resetLocations = function () {
   checkSecond.value = 0
   checkOneKm.value = 0
   current.value.lat = 0
-  current.value.lng = 0
+  current.value.lon = 0
   previous.value.lat = 0
-  previous.value.lng = 0
+  previous.value.lon = 0
 }
 
 const watchLocationUpdates = function () {
@@ -264,18 +267,18 @@ const watchLocationUpdates = function () {
 
   //Map 시작
   const map = map
-  const marker = marker
+  const marker = marker.value
 
   watchPositionId.value = navigator.geolocation.watchPosition(
     (position) => {
       current.value.lat = position.coords.latitude
-      current.value.lng = position.coords.longitude
+      current.value.lon = position.coords.longitude
       const now = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
       // $store.commit('SET_IS_AGREE')
       axios
         .get(
           'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=' +
-            current.value.lng +
+            current.value.lon +
             '&y=' +
             current.value.lat,
           {
@@ -291,23 +294,23 @@ const watchLocationUpdates = function () {
       marker.setPosition(now)
       if (previous.value.lat == 0) {
         previous.value.lat = current.value.lat
-        previous.value.lng = current.value.lng
+        previous.value.lon = current.value.lon
 
         //런닝 시작
-        const currentLatLng = new kakao.maps.LatLng(current.value.lat, current.value.lng)
+        const currentLatLng = new kakao.maps.LatLng(current.value.lat, current.value.lon)
         linePath.value.push(currentLatLng)
       } else {
         const distance = computeDistance(previous, current)
         const threshold = 0.001
         previous.value.lat = current.value.lat
-        previous.value.lng = current.value.lng
+        previous.value.lon = current.value.lon
 
         if (distance > threshold) {
           // 일정속도 이상
           accumulated_distance.value += distance
           checkOneKm.value += distance
 
-          linePath.value.push(new kakao.maps.LatLng(current.value.lat, current.value.lng))
+          linePath.value.push(new kakao.maps.LatLng(current.value.lat, current.value.lon))
           // speed.value = (checkOneKm.value * 1000) / checkSecond.value
 
           drawLines()
@@ -321,8 +324,8 @@ const watchLocationUpdates = function () {
       }
     },
     () => {
-      $store.commit('SET_IS_NOT_AGREE')
-      router.push('/index')
+      // $store.commit('SET_IS_NOT_AGREE')
+      router.push('/')
     },
     {
       timeout: 5000,
@@ -331,8 +334,40 @@ const watchLocationUpdates = function () {
       distanceFilter: 40
     }
   )
-  map = map
+  const map = map.value
   cur_marker.value = marker
+}
+
+const startWalk = function () {
+  startTime.value = new Date()
+  startTime.value = moment(startTime.value).format('YYYY-MM-DDTHH:mm:ss')
+  console.log(startTime)
+  watchLocationUpdates()
+  walkStore.startWalk()
+}
+
+const zeroPrefix = function (num, digit) {
+  const zero = ref('')
+  for (var i = 0; i < digit; i++) {
+    zero.value += '0'
+  }
+  return (zero.value + num).slice(-digit)
+}
+
+const clockRunning = function () {
+  const currentTime = new Date()
+  //경과된 시간
+  const timeElapsed = new Date(currentTime - timeBegan.value - stoppedDuration.value)
+
+  const hour = timeElapsed.getUTCHours()
+  const min = timeElapsed.getUTCMinutes()
+  const sec = timeElapsed.getUTCSeconds()
+
+  clock.value = zeroPrefix(hour, 2) + ':' + zeroPrefix(min, 2) + ':' + zeroPrefix(sec, 2)
+
+  const realTime = ((currentTime - timeBegan.value - stoppedDuration.value) / 1000).toFixed(0)
+  accumulated_time.value = realTime
+  checkSecond.value = realTime
 }
 
 // 위치 저장하기
@@ -402,9 +437,9 @@ const stopLocationUpdates = function () {
 
 const computeDistance = function (startCoords, destCoords) {
   var startLatRads = degreesToRadians(startCoords.lat)
-  var startLongRads = degreesToRadians(startCoords.lng)
+  var startLongRads = degreesToRadians(startCoords.lon)
   var destLatRads = degreesToRadians(destCoords.lat)
-  var destLongRads = degreesToRadians(destCoords.lng)
+  var destLongRads = degreesToRadians(destCoords.lon)
 
   var Radius = 6371 //지구의 반경(km)
   var distance =
