@@ -12,19 +12,19 @@ const likes = ref([])
 const scraps = ref([])
 
 onMounted(async () => {
-  await shareBoardStore.getContent()
-  await shareBoardStore.getRecord()
-  await shareBoardStore.getLike()
-  await shareBoardStore.getScrap()
+  await shareBoardStore.getContentList()
+  await shareBoardStore.getRecordList()
+  await shareBoardStore.getLikeList()
+  await shareBoardStore.getScrapList()
 
-  contents.value = shareBoardStore.shareContent
-  records.value = shareBoardStore.shareRecord
-  likes.value = shareBoardStore.shareLike
-  scraps.value = shareBoardStore.shareScrap
+  contents.value = shareBoardStore.shareContentList
+  records.value = shareBoardStore.shareRecordList
+  likes.value = shareBoardStore.shareLikeList
+  scraps.value = shareBoardStore.shareScrapList
 })
 
-const shareBoardDetail = (key) => {
-  router.push({ name: 'share-board-detail', params: { seq: key } })
+const shareBoardDetail = (seq) => {
+  router.push({ name: 'share-board-view', params: { seq } })
 }
 </script>
 
@@ -38,7 +38,7 @@ const shareBoardDetail = (key) => {
       :record="records[key]"
       :like="likes[key]"
       :scrap="scraps[key]"
-      @click="shareBoardDetail(key)"
+      @click="shareBoardDetail(content.shareBoardSeq)"
     />
   </div>
 </template>
