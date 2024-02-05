@@ -15,7 +15,6 @@ export const useMemberStore = defineStore('member', () => {
   const nickname = ref('')
   const profileImage = ref('')
 
-
   //회원가입
   const createMember = function (payload) {
     const formData = new FormData()
@@ -117,18 +116,18 @@ export const useMemberStore = defineStore('member', () => {
         password: payload.password
       }
     })
-    .then((res) => {
-      alert("로그인 성공")
-      token.value = res.headers.get('atk')
-      counterstore.setCookie("atk", token.value);
-      nickname.value=res.data.data.nickname
-      profileImage.value=(res.data.data.profileImage);
-      router.push({ name : 'home'})
-    })
-    .catch((err) => {
-      alert("로그인 실패")
-      console.log(err)
-    }) 
+      .then((res) => {
+        alert('로그인 성공')
+        token.value = res.headers.get('atk')
+        counterstore.setCookie('atk', token.value)
+        nickname.value = res.data.data.nickname
+        profileImage.value = res.data.data.profileImage
+        router.push({ name: 'home' })
+      })
+      .catch((err) => {
+        alert('로그인 실패')
+        console.log(err)
+      })
   }
 
   // const isLogin = computed(() => {
@@ -138,30 +137,76 @@ export const useMemberStore = defineStore('member', () => {
   //     return true
   //   }
   // })
-  const isLogin = computed(() => counterstore.getCookie("atk") !== undefined)
+  const isLogin = computed(() => counterstore.getCookie('atk') !== undefined)
 
   const logout = () => {
     axios({
-      method:'post',
+      method: 'post',
       url: `${REST_MEMBER_API}/api/member/logout`,
       headers: {
-        Authorization: `Bearer ${counterstore.getCookie("atk")}`, 
-      },
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
     })
-    .then((res) => {
-      alert('로그아웃 성공')
-      nickname.value = null
-      profileImage.value = null
-      token.value = null
-      counterstore.deleteCookie("atk")
-      router.push({ name : 'home'})  
-    })
-    .catch((err) => {
-      alert('로그아웃 실패')
-      console.log(err)
-    })
+      .then((res) => {
+        alert('로그아웃 성공')
+        nickname.value = null
+        profileImage.value = null
+        token.value = null
+        counterstore.deleteCookie('atk')
+        router.push({ name: 'home' })
+      })
+      .catch((err) => {
+        alert('로그아웃 실패')
+        console.log(err)
+      })
   }
-  
+
+  // 내 정보
+  const mypage = ref([])
+  const getMypage = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_MEMBER_API}/api/member/mypage`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      console.log(res)
+      mypage.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const modifyInfo = (payload) => {
+    const formData = new FormData()
+    if (payload.profileImg) {
+      formData.append('multipartFile', payload.profileImage)
+    }
+    formData.append('id', payload.memberId)
+    formData.append('nickname', payload.nickname)
+    formData.append('introduce', payload.introduce)
+    formData.append('regionCd', payload.regionCd)
+    axios({
+      method: 'post',
+      url: `${REST_MEMBER_API}/api/member/modify-info`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      },
+      data: formData
+    })
+      .then((res) => {
+        console.log(res)
+        alert('정보 변경 성공')
+        getMypage()
+        router.push({ name: 'Mypage' })
+      })
+      .catch((err) => {
+        console.log(err)
+        alert('정보 변경 실패')
+      })
+  }
   // const selectedMember = ref(null)
   // const clickMember = function (member) {
   //   selectedMember.value = member
@@ -196,6 +241,10 @@ export const useMemberStore = defineStore('member', () => {
     isLogin,
     // 로그아웃
     logout,
+    // 마이페이지
+    mypage,
+    getMypage,
+    modifyInfo,
     // selectedMember,
     // clickMember,
     // updateMember,
