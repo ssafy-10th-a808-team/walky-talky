@@ -12,6 +12,7 @@
           <div class="member">
             <img :src="mypage.profileImage" alt="프사" />
             <div>
+              <h4>닉네임</h4>
               <h4>{{ mypage.nickname }}</h4>
             </div>
 
