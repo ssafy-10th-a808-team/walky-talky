@@ -10,7 +10,7 @@
         <ul>
           <li>
             <RouterLink :to="{ name: 'club' }" class="nav-link scrollto active"
-              >소모임찾기</RouterLink
+              >소모임</RouterLink
             >
           </li>
           <li>

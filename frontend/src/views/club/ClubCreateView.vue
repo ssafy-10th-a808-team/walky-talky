@@ -2,29 +2,24 @@
   <div>
     <section id="contact" class="contact">
       <div class="container">
-
         <div class="section-title">
           <h2>소모임 생성</h2>
         </div>
 
-
         <div class="col-lg-15 d-flex align-items-stretch justify-content-center">
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
-
             <form @submit.prevent="createClub" class="php-email-form">
               <h1>소모임 정보</h1>
-              <hr>
+              <hr />
               <!-- 내 동네 입력 필드 -->
               <div class="form-group">
-                <ButtonWithIcon :selectedIcon="locationIcon">
-                </ButtonWithIcon>
+                <ButtonWithIcon :selectedIcon="locationIcon"> </ButtonWithIcon>
                 ← 내 동네 인증하기
                 <div>
                   {{ region_name }}
                 </div>
               </div>
-              <hr>
-
+              <hr />
 
               <!-- 이미지 업로드 -->
               <div class="form-group">
@@ -32,32 +27,45 @@
                 <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
                 <div id="imageFrame" class="circular"></div>
               </div>
-              <hr>
-
+              <hr />
 
               <!-- 모임명 입력 필드 -->
               <div class="form-group">
                 <label for="club-name">모임명</label>
-                <input type="text" class="form-control" id="club-name" v-model.trim="clubname" required>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="club-name"
+                  v-model.trim="clubname"
+                  required
+                />
                 <div class="cta-btn-container text-center">
-                  <button type="button" class="cta-btn align-middle btn-check-duplicate"
-                    @click="checkDuplicate(clubname)">
+                  <button
+                    type="button"
+                    class="cta-btn align-middle btn-check-duplicate"
+                    @click="checkDuplicate(clubname)"
+                  >
                     중복 확인
                   </button>
                 </div>
               </div>
-              <hr>
-
+              <hr />
 
               <!-- 소개글 -->
               <div class="form-group">
                 <label for="introduction">소개글</label>
-                <textarea class="form-control" id="introduction" rows="10" v-model.trim="introduce" required></textarea>
+                <textarea
+                  class="form-control"
+                  id="introduction"
+                  rows="10"
+                  v-model.trim="introduce"
+                  required
+                ></textarea>
               </div>
-              <hr>
+              <hr />
 
               <h1>소모임 설정</h1>
-              <hr>
+              <hr />
 
               <!-- 나이 -->
               <div class="form-group">
@@ -74,28 +82,45 @@
                   <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                 </select>
               </div>
-              <hr>
+              <hr />
 
               <!-- 성별 선택 -->
               <div class="form-group">
                 <label>성별</label>
                 <div class="portfolio d-flex justify-content-center">
                   <ul id="portfolio-flters">
-                    <li :class="{ 'filter-active': gender_type === 'M' }" @click="setGenderType('M')">남</li>
-                    <li :class="{ 'filter-active': gender_type === 'F' }" @click="setGenderType('F')">여</li>
-                    <li :class="{ 'filter-active': gender_type === 'A' }" @click="setGenderType('A')">무관</li>
+                    <li
+                      :class="{ 'filter-active': gender_type === 'M' }"
+                      @click="setGenderType('M')"
+                    >
+                      남
+                    </li>
+                    <li
+                      :class="{ 'filter-active': gender_type === 'F' }"
+                      @click="setGenderType('F')"
+                    >
+                      여
+                    </li>
+                    <li
+                      :class="{ 'filter-active': gender_type === 'A' }"
+                      @click="setGenderType('A')"
+                    >
+                      무관
+                    </li>
                   </ul>
                 </div>
               </div>
-              <hr>
+              <hr />
 
               <!-- 최대인원 입력 필드 -->
               <div class="form-group">
                 <label for="max-capacity">최대 인원</label>
-                <input type="number" class="form-control" id="max-capacity" v-model.trim="max_capacity" min="1" max="100"
-                  required>
+                <select class="form-control" id="max-capacity" v-model.trim="max_capacity" required>
+                  <option value="" disabled selected>선택하세요</option>
+                  <option v-for="num in 100" :value="num">{{ num }}</option>
+                </select>
               </div>
-              <hr>
+              <hr />
 
               <!-- 설정 -->
               <div class="form-group col-md-6 mt-3">
@@ -103,32 +128,40 @@
                 <div class="row">
                   <div class="portfolio col-md-8 d-flex justify-content-center">
                     <ul id="portfolio-flters">
-                      <li :class="{ 'filter-active': is_auto_recruit === true }" @click="setrecruitType(true)">즉시 가입 허용
+                      <li
+                        :class="{ 'filter-active': is_auto_recruit === true }"
+                        @click="setrecruitType(true)"
+                      >
+                        즉시 가입 허용
                       </li>
-                      <li :class="{ 'filter-active': is_auto_recruit === false }" @click="setrecruitType(false)">승인 후 가입
+                      <li
+                        :class="{ 'filter-active': is_auto_recruit === false }"
+                        @click="setrecruitType(false)"
+                      >
+                        승인 후 가입
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
-              <hr>
+              <hr />
 
               <!-- 제출 -->
               <div class="text-center">
-                <button type="button" class="cta-btn align-middle btn-check-duplicate" @click="createClub"
-                  :disabled="!isNameAvailable || !region_name">
+                <button
+                  type="button"
+                  class="cta-btn align-middle btn-check-duplicate"
+                  @click="createClub"
+                  :disabled="!isNameAvailable || !region_name"
+                >
                   모임 생성
                 </button>
               </div>
             </form>
           </div>
         </div>
-
-
-
       </div>
     </section>
-
   </div>
 </template>
 
@@ -136,8 +169,8 @@
 import { ref, computed } from 'vue'
 import axios from 'axios'
 import { useClubStore } from '@/stores/club'
-import { useCounterStore } from '@/stores/counter';
-import { useMemberStore } from '@/stores/member';
+import { useCounterStore } from '@/stores/counter'
+import { useMemberStore } from '@/stores/member'
 import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
 import { useRouter, useRoute } from 'vue-router'
 
@@ -154,38 +187,38 @@ const region_cd = ref('')
 region_name.value = memberstore.getLocationInfo()[0]
 region_cd.value = memberstore.getLocationInfo()[1]
 
-const profileImg = ref(null);
-const clubname = ref('');
-const isNameAvailable = ref(false);
-const introduce = ref('');
-const old_birth = ref('');
-const young_birth = ref('');
-const gender_type = ref('');
-const max_capacity = ref('');
-const is_auto_recruit = ref(false);
+const profileImg = ref(null)
+const clubname = ref('')
+const isNameAvailable = ref(false)
+const introduce = ref('')
+const old_birth = ref('')
+const young_birth = ref('')
+const gender_type = ref('')
+const max_capacity = ref('')
+const is_auto_recruit = ref(false)
 
 ///////////////////////////////////////////////////////////////////////////
 
 const readInputFile = (e) => {
-  document.getElementById('imageFrame').innerHTML = '';
-  const files = e.target.files;
-  const fileArr = Array.from(files);
-  console.log(fileArr[0]);
+  document.getElementById('imageFrame').innerHTML = ''
+  const files = e.target.files
+  const fileArr = Array.from(files)
+  console.log(fileArr[0])
   profileImg.value = fileArr[0]
   console.log(`현재 저장된 프로필 이미지 : ${profileImg.value}`)
   fileArr.forEach(function (f) {
-    if (!f.type.match("image/.*")) {
-      alert("이미지 확장자만 업로드 가능합니다.");
-      return;
+    if (!f.type.match('image/.*')) {
+      alert('이미지 확장자만 업로드 가능합니다.')
+      return
     }
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onload = function (e) {
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      document.getElementById('imageFrame').appendChild(img);
-    };
-    reader.readAsDataURL(f);
-  });
+      const img = document.createElement('img')
+      img.src = e.target.result
+      document.getElementById('imageFrame').appendChild(img)
+    }
+    reader.readAsDataURL(f)
+  })
 }
 
 // 소모임 이름 중복 확인
@@ -209,14 +242,14 @@ const checkDuplicate = (name) => {
 }
 
 const years = computed(() => {
-  const currentYear = new Date().getFullYear();
-  const startYear = 1900;
-  let years = [];
+  const currentYear = new Date().getFullYear()
+  const startYear = 1900
+  let years = []
   for (let year = currentYear; year >= startYear; year--) {
-    years.push(year);
+    years.push(year)
   }
-  return years;
-});
+  return years
+})
 
 const setGenderType = (value) => {
   gender_type.value = value
@@ -229,22 +262,20 @@ const setrecruitType = (value) => {
 }
 
 const createClub = () => {
-
   // FormData 인스턴스 생성
-  const formData = new FormData();
+  const formData = new FormData()
   if (profileImg.value) {
-    formData.append('multipartFile', profileImg.value);
+    formData.append('multipartFile', profileImg.value)
   }
 
-  formData.append('name', clubname.value);
-  if (introduce.value)
-    formData.append('introduce', introduce.value);
-  formData.append('regionCd', region_cd.value);
-  formData.append('young_birth', young_birth.value.toString());
-  formData.append('old_birth', old_birth.value.toString());
-  formData.append('gender_type', gender_type.value);
-  formData.append('max_capacity', max_capacity.value.toString());
-  formData.append('is_auto_recruit', is_auto_recruit.value.toString());
+  formData.append('name', clubname.value)
+  if (introduce.value) formData.append('introduce', introduce.value)
+  formData.append('regionCd', region_cd.value)
+  formData.append('young_birth', young_birth.value.toString())
+  formData.append('old_birth', old_birth.value.toString())
+  formData.append('gender_type', gender_type.value)
+  formData.append('max_capacity', max_capacity.value.toString())
+  formData.append('is_auto_recruit', is_auto_recruit.value.toString())
 
   // Axios를 사용한 API 호출
   axios({
@@ -257,17 +288,16 @@ const createClub = () => {
     data: formData
   })
     .then((res) => {
-      console.log(res);
-      alert('소모임 생성 성공');
+      console.log(res)
+      alert('소모임 생성 성공')
       // 생성 후에 페이지 이동이나 상태 업데이트 로직
       router.push({ name: 'club' })
     })
     .catch((err) => {
-      console.error(err);
-      alert('소모임 생성 실패');
-    });
+      console.error(err)
+      alert(err.response.data.message)
+    })
 }
-
 </script>
 
 <style scoped>
@@ -294,7 +324,7 @@ const createClub = () => {
 }
 
 .cta-btn-container .btn-check-duplicate {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   /* 예시 색상 */
   color: white;
   border: none;
