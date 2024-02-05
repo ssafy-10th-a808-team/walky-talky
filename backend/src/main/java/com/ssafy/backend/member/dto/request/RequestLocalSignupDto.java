@@ -22,6 +22,8 @@ public class RequestLocalSignupDto {
     private String nickname;
     private String introduce;
     private String regionCd;
+    private String imgUrl;
+    private String loginType;
 
     public Member toEntity() {
         return Member.builder()
@@ -32,7 +34,7 @@ public class RequestLocalSignupDto {
                 .birth(birth)
                 .gender(gender)
                 .nickname(nickname)
-                .url(null)
+                .url(imgUrl)
                 .introduce(introduce)
                 .regionCd(regionCd)
                 .isAlert(true)
@@ -72,13 +74,13 @@ public class RequestLocalSignupDto {
 
     // DTO 전체의 Null 체크
     public boolean isAnyFieldNull() {
-        return isNull(id) || isNull(password) || isNull(birth) || isNull(gender) ||
+        return isNull(id) || (isNull(loginType) && isNull(password)) || isNull(birth) || isNull(gender) ||
                 isNull(nickname) || isNull(regionCd);
     }
 
     // DTO 전체의 Empty 체크
     public boolean isAnyFieldEmpty() {
-        return isEmpty(id) || isEmpty(password) || isEmpty(birth) || isEmpty(gender) ||
+        return isEmpty(id) || (isNull(loginType) && isEmpty(password)) || isEmpty(birth) || isEmpty(gender) ||
                 isEmpty(nickname) || isEmpty(regionCd);
     }
 }
