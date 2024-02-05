@@ -249,94 +249,94 @@ const resetLocations = function () {
   previous.value.lon = 0
 }
 
-const watchLocationUpdates = function () {
-  if (running.value) return
+// const watchLocationUpdates = function () {
+//   if (running.value) return
 
-  if (timeBegan.value === null) {
-    resetLocations()
-    timeBegan.value = new Date()
-  }
+//   if (timeBegan.value === null) {
+//     resetLocations()
+//     timeBegan.value = new Date()
+//   }
 
-  if (timeStopped.value !== null) {
-    stoppedDuration.value += new Date() - timeStopped.value
-  }
+//   if (timeStopped.value !== null) {
+//     stoppedDuration.value += new Date() - timeStopped.value
+//   }
 
-  started.value = setInterval(clockRunning, 1000)
-  running.value = true
-  isPause.value = false
+//   started.value = setInterval(clockRunning, 1000)
+//   running.value = true
+//   isPause.value = false
 
-  //Map 시작
-  const map = map
-  const marker = marker.value
+//   //Map 시작
+//   const map = map
+//   const marker = marker.value
 
-  watchPositionId.value = navigator.geolocation.watchPosition(
-    (position) => {
-      current.value.lat = position.coords.latitude
-      current.value.lon = position.coords.longitude
-      const now = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
-      // $store.commit('SET_IS_AGREE')
-      axios
-        .get(
-          'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=' +
-            current.value.lon +
-            '&y=' +
-            current.value.lat,
-          {
-            headers: {
-              Authorization: 'KakaoAK bacd72f58ac01490602415c683ad8c05'
-            }
-          }
-        )
-        .then((response) => {
-          address.value = response.data.documents[0].address_name
-        })
-      map.setCenter(now)
-      marker.setPosition(now)
-      if (previous.value.lat == 0) {
-        previous.value.lat = current.value.lat
-        previous.value.lon = current.value.lon
+//   watchPositionId.value = navigator.geolocation.watchPosition(
+//     (position) => {
+//       current.value.lat = position.coords.latitude
+//       current.value.lon = position.coords.longitude
+//       const now = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
+//       // $store.commit('SET_IS_AGREE')
+//       axios
+//         .get(
+//           'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=' +
+//             current.value.lon +
+//             '&y=' +
+//             current.value.lat,
+//           {
+//             headers: {
+//               Authorization: 'KakaoAK bacd72f58ac01490602415c683ad8c05'
+//             }
+//           }
+//         )
+//         .then((response) => {
+//           address.value = response.data.documents[0].address_name
+//         })
+//       map.setCenter(now)
+//       marker.setPosition(now)
+//       if (previous.value.lat == 0) {
+//         previous.value.lat = current.value.lat
+//         previous.value.lon = current.value.lon
 
-        //런닝 시작
-        const currentLatLng = new kakao.maps.LatLng(current.value.lat, current.value.lon)
-        linePath.value.push(currentLatLng)
-      } else {
-        const distance = computeDistance(previous, current)
-        const threshold = 0.001
-        previous.value.lat = current.value.lat
-        previous.value.lon = current.value.lon
+//         //런닝 시작
+//         const currentLatLng = new kakao.maps.LatLng(current.value.lat, current.value.lon)
+//         linePath.value.push(currentLatLng)
+//       } else {
+//         const distance = computeDistance(previous, current)
+//         const threshold = 0.001
+//         previous.value.lat = current.value.lat
+//         previous.value.lon = current.value.lon
 
-        if (distance > threshold) {
-          // 일정속도 이상
-          accumulated_distance.value += distance
-          checkOneKm.value += distance
+//         if (distance > threshold) {
+//           // 일정속도 이상
+//           accumulated_distance.value += distance
+//           checkOneKm.value += distance
 
-          linePath.value.push(new kakao.maps.LatLng(current.value.lat, current.value.lon))
-          // speed.value = (checkOneKm.value * 1000) / checkSecond.value
+//           linePath.value.push(new kakao.maps.LatLng(current.value.lat, current.value.lon))
+//           // speed.value = (checkOneKm.value * 1000) / checkSecond.value
 
-          drawLines()
-        }
-        if (checkOneKm.value >= 1) {
-          //1km 도달
-          savePosition()
-          checkOneKm.value -= 1
-          checkSecond.value = 0
-        }
-      }
-    },
-    () => {
-      // $store.commit('SET_IS_NOT_AGREE')
-      router.push('/')
-    },
-    {
-      timeout: 5000,
-      maximumAge: 0,
-      enableHighAccuracy: true,
-      distanceFilter: 40
-    }
-  )
-  const map = map.value
-  cur_marker.value = marker
-}
+//           drawLines()
+//         }
+//         if (checkOneKm.value >= 1) {
+//           //1km 도달
+//           savePosition()
+//           checkOneKm.value -= 1
+//           checkSecond.value = 0
+//         }
+//       }
+//     },
+//     () => {
+//       // $store.commit('SET_IS_NOT_AGREE')
+//       router.push('/')
+//     },
+//     {
+//       timeout: 5000,
+//       maximumAge: 0,
+//       enableHighAccuracy: true,
+//       distanceFilter: 40
+//     }
+//   )
+//   map = map.value
+//   cur_marker.value = marker
+// }
 
 const startWalk = function () {
   startTime.value = new Date()
