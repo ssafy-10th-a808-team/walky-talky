@@ -20,6 +20,8 @@ import ClubModify from '@/views/club/ClubModifyView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
+import ShareBoardDetailView from '@/views/shareboard/ShareBoardDetailView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -99,9 +101,14 @@ const router = createRouter({
 
     // shareboard router 산책공유게시판
     {
-      path: '/share-board',
+      path: '/shareBoard',
       name: 'share-board',
       component: ShareBoardView
+    },
+    {
+      path: '/shareBoard/view/:seq',
+      name: 'share-board-view',
+      component: ShareBoardDetailView
     }
   ]
 })
@@ -110,13 +117,12 @@ router.beforeEach((to, from) => {
   const memberstore = useMemberStore()
   if(to.name !== 'home'&& to.name !== 'Login' && to.name !== 'Signup'&& to.name !== 'mylocation'&& !memberstore.isLogin) {
     window.alert('로그인이 필요합니다')
-    return {name: 'home'}
+    return { name: 'home' }
   }
-  if ((to.name === 'Signup' || to.name === 'Login') && (memberstore.isLogin)) {
+  if ((to.name === 'Signup' || to.name === 'Login') && memberstore.isLogin) {
     window.alert('이미 로그인하셨습니다')
-    return { name : 'club'}
+    return { name: 'club' }
   }
 })
-
 
 export default router
