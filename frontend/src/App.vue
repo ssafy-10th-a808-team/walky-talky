@@ -38,8 +38,8 @@
         ======================================================== -->
     </head>
     <body>
-      <TheHeaderNav />
       <div>
+      <TheHeaderNav />
         <RouterView />
         <TheFooter />
       </div>
