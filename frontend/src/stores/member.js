@@ -131,6 +131,32 @@ export const useMemberStore = defineStore('member', () => {
     }) 
   }
 
+  const kakaoLogin = () => {
+    const clientId = import.meta.env.VITE_KAKAO_CLIENT_Id
+    const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI
+    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
+    window.location.href = url;
+  }
+
+  const isMember = (code) => {
+    axios({
+      method:'get',
+      url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
+    })
+    .then((res) => {
+      if(res.status === 201) {
+        router.push({ name : 'Signup'})
+      } else if(res.status === 200){
+        alert("로그인 성공")
+        token.value = res.headers.get('atk')
+        counterstore.setCookie("atk", token.value);
+        nickname.value=res.data.data.nickname
+        profileImage.value=(res.data.data.profileImage);
+        router.push({ name : 'home'})
+      }
+    })
+    .catch()
+  }
   // const isLogin = computed(() => {
   //   if (counterstore.getCookie("atk") === null) {
   //     return false
@@ -189,6 +215,8 @@ export const useMemberStore = defineStore('member', () => {
     checkId,
     checkNickname,
     login,
+    kakaoLogin,
+    isMember,
     token,
     nickname,
     profileImage,
