@@ -115,7 +115,11 @@ public class MemberServiceImpl implements MemberService {
 
         ResponseLocalSignupDto responseLocalSignupDto;
 
+        String loginType = requestLocalSignupDto.getLoginType();
         Member member = requestLocalSignupDto.toEntity();
+        if (loginType != null) {
+            member.setLoginType(loginType);
+        }
 
         // 중복된 아이디입니다.
         if (memberRepository.existsByMemberId(member.getMemberId())) {
