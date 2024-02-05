@@ -33,8 +33,13 @@
               <p>{{ mypage.birth }}</p>
             </div>
             <div class="address">
+              <div v-if="modals.address">
+                <MyLocation />
+              </div>
               <h4>내 동네</h4>
-              <p>{{ mypage.address }}</p>
+              <p @click="openModal('address')">
+                {{ address }}
+              </p>
             </div>
 
             <div class="email">
@@ -72,14 +77,22 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useMemberStore } from '@/stores/member'
+import { useCounterStore } from '@/stores/counter';
+import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue';
+import MyLocation from './MyLocationView.vue';
+defineProps(['closemodal'])
 const memberstore = useMemberStore()
+const counterstore = useCounterStore()
 const mypage = ref(null)
 
 const profileImage = ref(null)
+const address = ref('')
 const nickname = ref('')
 const introduce = ref('')
 const regionCd = ref('')
-
+const locationIcon = counterstore.selectButton('LocationIcon')
+address.value = memberstore.getLocationInfo()[0]
+regionCd.value = memberstore.getLocationInfo()[1]
 onMounted(async () => {
   await memberstore.getMypage()
   mypage.value = memberstore.mypage
@@ -92,12 +105,14 @@ onMounted(async () => {
   console.log(nickname.value)
   console.log(introduce.value)
   console.log(regionCd.value)
+
 })
 
 // modal창 띄우기 위한 스위치들
 const modals = ref({
   nickname: false,
-  introduce: false
+  introduce: false,
+  address: false,
 })
 const openModal = (modalName) => {
   modals.value[modalName] = true
