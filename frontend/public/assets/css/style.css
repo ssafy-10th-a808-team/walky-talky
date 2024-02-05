@@ -33,7 +33,7 @@ h6 {
   font-family: "Raleway", sans-serif;
 }
 
-button[type=submit] {
+button {
   background: #5cb874;
   border: 0;
   padding: 10px 24px;
@@ -42,7 +42,7 @@ button[type=submit] {
   border-radius: 4px;
 }
 
-button[type=submit]:hover {
+button:hover {
   background: #6ec083;
 }
 
