@@ -326,6 +326,9 @@ public class MemberServiceImpl implements MemberService {
             responseMypageDto.setNickname(member.getNickname());
             responseMypageDto.setMemberId(member.getMemberId());
             responseMypageDto.setAddress(regionService.findAddress(member.getRegionCd()));
+
+            responseMypageDto.setRegionCd(member.getRegionCd());
+            
             responseMypageDto.setBirth(member.getBirth());
             responseMypageDto.setGender(member.getGender());
             responseMypageDto.setProfileImage(member.getUrl());
