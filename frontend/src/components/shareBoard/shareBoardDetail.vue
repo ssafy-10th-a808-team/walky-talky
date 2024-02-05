@@ -1,7 +1,8 @@
 <template>
   <div>
-    <shareBoardTitle :title="content.title" :commentCount="content.commentCount" />
+    <shareBoardTitle v-if="content" :title="content.title" :commentCount="content.commentCount" />
     <shareBoardMember
+      v-if="content && record"
       :nickname="content.member.nickname"
       :profilePic="content.member.profilePic"
       :create_at="content.create_at"
@@ -9,15 +10,24 @@
       :hit="content.hit"
     />
     <shareBoardRecord
+      v-if="record"
       :duration="record.duration"
       :distance="record.distance"
       :points="record.points"
       :address="record.address"
     />
-    <div>{{ content.content }}</div>
-    <div class="like-scrap-container">
-      <shareBoardLike :likeCount="like.likeCount" :liked="like.liked" />
-      <shareBoardScrap :scrapCount="scrap.scrapCount" :scraped="scrap.scraped" />
+    <div v-if="content">{{ content.content }}</div>
+    <div v-if="like && scrap" class="like-scrap-container">
+      <shareBoardLike
+        :likeCount="like.likeCount"
+        :liked="like.liked"
+        @click="pushLike(content.shareBoardSeq)"
+      />
+      <shareBoardScrap
+        :scrapCount="scrap.scrapCount"
+        :scraped="scrap.scraped"
+        @click="pushScrap(content.recordSeq)"
+      />
     </div>
   </div>
 </template>
