@@ -89,7 +89,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
-      shareContent.value = res.data
+      shareContent.value = res.data.data
     } catch (err) {
       console.log(err)
     }
@@ -105,14 +105,14 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
-      shareRecord.value = res.data
+      shareRecord.value = res.data.data
     } catch (err) {
       console.log(err)
     }
   }
 
   const shareLike = ref([])
-  const getLike = async () => {
+  const getLike = async (seq) => {
     try {
       const res = await axios({
         method: 'get',
@@ -121,14 +121,14 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
-      shareLike.value = res.data
+      shareLike.value = res.data.data
     } catch (err) {
       console.log(err)
     }
   }
 
   const shareScrap = ref([])
-  const getScrap = async () => {
+  const getScrap = async (seq) => {
     try {
       const res = await axios({
         method: 'get',
@@ -137,7 +137,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
-      shareScrap.value = res.data
+      shareScrap.value = res.data.data
     } catch (err) {
       console.log(err)
     }
