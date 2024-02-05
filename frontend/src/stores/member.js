@@ -149,7 +149,6 @@ export const useMemberStore = defineStore('member', () => {
         profileImage.value = res.data.profileImage
         router.push({ name: 'Signup' })
       } else if (res.status === 200) {
-        alert('로그인 성공')
         token.value = res.headers.get('atk')
         counterstore.setCookie('atk', token.value)
         nickname.value = res.data.data.nickname
