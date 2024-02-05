@@ -37,6 +37,9 @@
                 <button type="submit" @click="login">로그인</button>
               </div>
             </form>
+            <button type="submit" @click="kakaoLogin">
+              <img src="/src/assets/img/KakaoLoginIcon.png" alt="Kakao Login" />
+            </button>
           </div>
         </div>
       </div>
@@ -59,6 +62,10 @@ const login = (event) => {
     password: password.value
   }
   memberstore.login(payload)
+}
+
+const kakaoLogin = () => {
+  memberstore.kakaoLogin()
 }
 </script>
 

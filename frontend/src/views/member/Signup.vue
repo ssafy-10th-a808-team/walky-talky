@@ -148,7 +148,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { useMemberStore } from '@/stores/member'
 
@@ -173,6 +173,17 @@ const region_name = ref('')
 
 region_name.value = memberStore.getLocationInfo()[0]
 region_cd.value = memberStore.getLocationInfo()[1]
+
+onMounted(() => {
+  const code = new URL(window.location.href).searchParams.get('code')
+  if (code != null) {
+    isMember(code)
+  }
+})
+
+const isMember = (code) => {
+  memberStore.isMember(code)
+}
 
 // 아이디 중복 체크
 const checkId = function () {
