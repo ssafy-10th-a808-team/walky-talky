@@ -14,8 +14,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   const token = memberstore.token
 
   // 기록 공유 게시판 목록 보기
-  const shareContent = ref([])
-  const getContent = async () => {
+  const shareContentList = ref([])
+  const getContentList = async () => {
     try {
       const res = await axios({
         method: 'get',
@@ -24,14 +24,14 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
-      shareContent.value = res.data.data
+      shareContentList.value = res.data.data
     } catch (err) {
       console.log(err)
     }
   }
 
-  const shareRecord = ref([])
-  const getRecord = async () => {
+  const shareRecordList = ref([])
+  const getRecordList = async () => {
     try {
       const res = await axios({
         method: 'get',
@@ -40,7 +40,72 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
-      shareRecord.value = res.data.data
+      shareRecordList.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const shareLikeList = ref([])
+  const getLikeList = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_CLUB_API}/share-board/list/like`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      shareLikeList.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const shareScrapList = ref([])
+  const getScrapList = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_CLUB_API}/share-board/list/scrap`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      shareScrapList.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 기록 공유 게시판 상세 보기/////
+  const shareContent = ref([])
+  const getContent = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_CLUB_API}/share-board/view/${seq}/content`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      shareContent.value = res.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const shareRecord = ref([])
+  const getRecord = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_CLUB_API}/share-board/view/${seq}/record`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      shareRecord.value = res.data
     } catch (err) {
       console.log(err)
     }
@@ -51,12 +116,12 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/list/like`,
+        url: `${REST_CLUB_API}/share-board/view/${seq}/like`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
-      shareLike.value = res.data.data
+      shareLike.value = res.data
     } catch (err) {
       console.log(err)
     }
@@ -67,18 +132,28 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/list/scrap`,
+        url: `${REST_CLUB_API}/share-board/view/${seq}/scrap`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
-      shareScrap.value = res.data.data
+      shareScrap.value = res.data
     } catch (err) {
       console.log(err)
     }
   }
 
   return {
+    // 목록 조회
+    getContentList,
+    shareContentList,
+    getRecordList,
+    shareRecordList,
+    getLikeList,
+    shareLikeList,
+    getScrapList,
+    shareScrapList,
+    // 상세 조회
     getContent,
     shareContent,
     getRecord,

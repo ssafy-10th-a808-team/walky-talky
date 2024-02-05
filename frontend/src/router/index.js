@@ -93,13 +93,13 @@ const router = createRouter({
 
     // shareboard router 산책공유게시판
     {
-      path: '/share-board',
+      path: '/shareBoard',
       name: 'share-board',
       component: ShareBoardView
     },
     {
-      path: '/share-board-detail',
-      name: 'share-board',
+      path: '/shareBoard/view/:seq',
+      name: 'share-board-view',
       component: ShareBoardDetailView
     }
   ]
