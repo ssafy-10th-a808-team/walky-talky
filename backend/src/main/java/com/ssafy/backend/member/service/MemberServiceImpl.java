@@ -328,7 +328,7 @@ public class MemberServiceImpl implements MemberService {
         } catch (Exception e) {
             throw new WTException("마이페이지 불러오기에 실패하였습니다.");
         }
-
+        System.out.println(responseMypageDto);
         return responseMypageDto;
     }
 
