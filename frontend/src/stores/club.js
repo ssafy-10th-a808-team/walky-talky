@@ -112,6 +112,46 @@ export const useClubStore = defineStore('club', () => {
       console.log(err)
     }
   }
+  // 소모임 정보 수정
+  const modifyClub = function (payload) {
+    const formData = new FormData()
+    if (payload.profileImg) {
+      formData.append('multipartFile', payload.profileImg)
+    }
+    formData.append('clubSeq', payload.clubSeq)
+    formData.append('name', payload.clubname)
+    formData.append('introduce', payload.introduce)
+    formData.append('regionCd', payload.region_cd)
+    formData.append('young_birth', payload.young_birth)
+    formData.append('old_birth', payload.old_birth)
+    formData.append('gender_type', payload.gender_type)
+    formData.append('max_capacity', payload.max_capacity)
+    formData.append('is_auto_recruit', payload.is_auto_recruit)
+    formData.append('is_open_recruit', payload.is_auto_recruit)
+      axios({
+        method: 'post',
+        url: `${REST_CLUB_API}/club/modify`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie("atk")}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        data: formData,
+
+      })
+      .then((res) => {
+          console.log(res)
+          alert('소모임 수정 성공')
+          router.push({name : 'club-detail'})
+      })
+      .catch((err) => {
+        // for (var pair of formData.entries()) {
+        //   console.log(pair[0] + ', ' + pair[1]);
+        // }
+        console.log(err)
+        console.log(err.message)
+        
+      })
+    }
 
   return { 
     createClub,
