@@ -1,5 +1,11 @@
 <template>
-  <shareBoardDetail :content="content" :record="record" :like="like" :scrap="scrap" />
+  <shareBoardDetail
+    :content="content"
+    :record="record"
+    :like="like"
+    :scrap="scrap"
+    :comments="comments"
+  />
 </template>
 
 <script setup>
@@ -16,18 +22,20 @@ const content = ref(null)
 const record = ref(null)
 const like = ref(null)
 const scrap = ref(null)
+const comments = ref(null)
 
 const loadData = async (seq) => {
   await shareBoardStore.getContent(seq)
   await shareBoardStore.getRecord(seq)
   await shareBoardStore.getLike(seq)
   await shareBoardStore.getScrap(seq)
+  await shareBoardStore.getComment(seq)
 
   content.value = shareBoardStore.shareContent
-  console.log(content.value)
   record.value = shareBoardStore.shareRecord
   like.value = shareBoardStore.shareLike
   scrap.value = shareBoardStore.shareScrap
+  comments.value = shareBoardStore.shareComment
 }
 
 onMounted(() => {
