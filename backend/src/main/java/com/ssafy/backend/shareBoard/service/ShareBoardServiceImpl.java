@@ -226,7 +226,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
                 responseShareBoardCommentDto.setShareBoardSeq(shareBoardSeq);
                 responseShareBoardCommentDto.setContent(shareBoardComment.getContent());
                 responseShareBoardCommentDto.setMember(memberService.getMemberNicknameUrl(shareBoardComment.getMemberSeq()));
-                responseShareBoardCommentDto.setCreated_at(shareBoardComment.getCreatedBy());
+                responseShareBoardCommentDto.setCreated_at(String.valueOf(shareBoardComment.getCreatedAt()));
 
                 list.add(responseShareBoardCommentDto);
             } catch (Exception e) {
