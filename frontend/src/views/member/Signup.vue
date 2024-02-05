@@ -20,12 +20,7 @@
                 <!-- 닉네임 -->
                 <div class="row g-3 align-items-center">
                   <div class="col-auto">
-                    <label
-                      class="col-form-label"
-                      prop="nickname"
-                      :rules="[{ required: true, message: '내용을 입력해주세요.' }]"
-                      >* 닉네임</label
-                    >
+                    <label class="col-form-label" prop="nickname">* 닉네임</label>
                   </div>
                   <div class="col-auto">
                     <input v-model="nickname" type="text" class="form-control" />
@@ -167,7 +162,7 @@ const repassword = ref('')
 const birth = ref('')
 const gender = ref('M')
 const nickname = ref('')
-const introduce = ref('')
+const introduce = ref('안녕하세요! ')
 const region_cd = ref('')
 const region_name = ref('')
 
