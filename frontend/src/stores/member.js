@@ -12,6 +12,7 @@ export const useMemberStore = defineStore('member', () => {
   const address_name = ref('')
   const address_code = ref('')
   const token = ref(null)
+  const memberId = ref('')
   const nickname = ref('')
   const profileImage = ref('')
 
@@ -130,6 +131,32 @@ export const useMemberStore = defineStore('member', () => {
       })
   }
 
+  const kakaoLogin = () => {
+    const clientId = import.meta.env.VITE_KAKAO_CLIENT_Id
+    const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI
+    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
+    window.location.href = url
+  }
+
+  const isMember = async (code) => {
+    await axios({
+      method: 'get',
+      url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
+    }).then((res) => {
+      if (res.status === 201) {
+        memberId.value = res.data.id
+        nickname.value = res.data.nickname
+        profileImage.value = res.data.profileImage
+        router.push({ name: 'Signup' })
+      } else if (res.status === 200) {
+        token.value = res.headers.get('atk')
+        counterstore.setCookie('atk', token.value)
+        nickname.value = res.data.data.nickname
+        profileImage.value = res.data.data.profileImage
+        router.push({ name: 'home' })
+      }
+    })
+  }
   // const isLogin = computed(() => {
   //   if (counterstore.getCookie("atk") === null) {
   //     return false
@@ -224,6 +251,18 @@ export const useMemberStore = defineStore('member', () => {
     return [address_name.value, address_code.value]
   }
 
+  const getMemberId = () => {
+    return memberId.value
+  }
+
+  const getNickname = () => {
+    return nickname.value
+  }
+
+  const getProfileImage = () => {
+    return profileImage.value
+  }
+
   return {
     memberList,
     // member,
@@ -234,6 +273,8 @@ export const useMemberStore = defineStore('member', () => {
     checkId,
     checkNickname,
     login,
+    kakaoLogin,
+    isMember,
     token,
     nickname,
     profileImage,
@@ -251,6 +292,9 @@ export const useMemberStore = defineStore('member', () => {
     // 지역 가져오기 카카오맵
     address_name,
     address_code,
-    getLocationInfo
+    getLocationInfo,
+    getMemberId,
+    getNickname,
+    getProfileImage
   }
 })

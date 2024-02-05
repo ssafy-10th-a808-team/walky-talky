@@ -22,6 +22,8 @@ import ClubModify from '@/views/club/ClubModifyView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
+import ShareBoardDetailView from '@/views/shareboard/ShareBoardDetailView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -111,9 +113,14 @@ const router = createRouter({
 
     // shareboard router 산책공유게시판
     {
-      path: '/share-board',
+      path: '/shareBoard',
       name: 'share-board',
       component: ShareBoardView
+    },
+    {
+      path: '/shareBoard/view/:seq',
+      name: 'share-board-view',
+      component: ShareBoardDetailView
     }
   ]
 })
