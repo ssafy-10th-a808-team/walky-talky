@@ -13,6 +13,7 @@ public class ResponseMypageDto {
     String gender;
     String memberId;
     String address;
+    String regionCd;
     String introduce;
     String profileImage;
 }
