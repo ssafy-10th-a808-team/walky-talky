@@ -68,7 +68,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public List<ResponseShareBoardDto> listContent() throws WTException {
-        List<ShareBoard> boardList = shareBoardRepository.findAllByIsDeletedFalse();
+        List<ShareBoard> boardList = shareBoardRepository.findAllByIsDeletedFalseOrderBySeqAsc();
         List<ResponseShareBoardDto> list = new ArrayList<>();
 
         for (ShareBoard shareBoard : boardList) {
@@ -96,7 +96,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public List<ResponseRecordDto> listRecord() throws WTException {
-        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalse();
+        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalseOrderBySeqAsc();
         List<ResponseRecordDto> list = new ArrayList<>();
 
         for (ShareBoardMemberMapping shareBoardMapping : boardList) {
@@ -113,7 +113,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public List<ResponseLikeDto> listLike(Long memberSeq) throws WTException {
-        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalse();
+        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalseOrderBySeqAsc();
         List<ResponseLikeDto> list = new ArrayList<>();
 
         for (ShareBoardMemberMapping shareBoardMapping : boardList) {
@@ -130,7 +130,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
 
     @Override
     public List<ResponseScrapDto> listScrap(Long memberSeq) throws WTException {
-        List<ShareBoardScrapMapping> boardList = shareBoardRepository.findSeqAndRecordSeqByIsDeletedFalse();
+        List<ShareBoardScrapMapping> boardList = shareBoardRepository.findSeqAndRecordSeqByIsDeletedFalseOrderBySeqAsc();
         List<ResponseScrapDto> list = new ArrayList<>();
 
         for (ShareBoardScrapMapping shareBoardScrapMapping : boardList) {
