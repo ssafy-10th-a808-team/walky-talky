@@ -131,7 +131,7 @@ public class MemberServiceImpl implements MemberService {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(member.getPassword());
 
-        if (!matcher.matches()) {
+        if ("local".equals(member.getLoginType()) && !matcher.matches()) {
             responseLocalSignupDto = ResponseLocalSignupDto.builder()
                     .message("비밀번호 패턴 매칭 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.")
                     .build();
@@ -174,9 +174,11 @@ public class MemberServiceImpl implements MemberService {
 
         // correct member
 
-        // 비밀번호 암호화
-        String hashedPassword = hashPassword(member.getPassword(), salt.getBytes());
-        member.setPassword(hashedPassword);
+        if ("local".equals(member.getLoginType())) {
+            // 비밀번호 암호화
+            String hashedPassword = hashPassword(member.getPassword(), salt.getBytes());
+            member.setPassword(hashedPassword);
+        }
 
         // save
         Member savedMember = memberRepository.save(member);
@@ -320,7 +322,6 @@ public class MemberServiceImpl implements MemberService {
             responseMypageDto.setNickname(member.getNickname());
             responseMypageDto.setMemberId(member.getMemberId());
             responseMypageDto.setAddress(regionService.findAddress(member.getRegionCd()));
-            responseMypageDto.setRegionCd(member.getRegionCd());
             responseMypageDto.setBirth(member.getBirth());
             responseMypageDto.setGender(member.getGender());
             responseMypageDto.setProfileImage(member.getUrl());
