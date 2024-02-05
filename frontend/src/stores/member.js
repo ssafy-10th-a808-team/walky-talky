@@ -12,9 +12,9 @@ export const useMemberStore = defineStore('member', () => {
   const address_name = ref('')
   const address_code = ref('')
   const token = ref(null)
+  const memberId = ref('')
   const nickname = ref('')
   const profileImage = ref('')
-
 
   //회원가입
   const createMember = function (payload) {
@@ -117,20 +117,46 @@ export const useMemberStore = defineStore('member', () => {
         password: payload.password
       }
     })
-    .then((res) => {
-      alert("로그인 성공")
-      token.value = res.headers.get('atk')
-      counterstore.setCookie("atk", token.value);
-      nickname.value=res.data.data.nickname
-      profileImage.value=(res.data.data.profileImage);
-      router.push({ name : 'home'})
-    })
-    .catch((err) => {
-      alert("로그인 실패")
-      console.log(err)
-    }) 
+      .then((res) => {
+        alert('로그인 성공')
+        token.value = res.headers.get('atk')
+        counterstore.setCookie('atk', token.value)
+        nickname.value = res.data.data.nickname
+        profileImage.value = res.data.data.profileImage
+        router.push({ name: 'home' })
+      })
+      .catch((err) => {
+        alert('로그인 실패')
+        console.log(err)
+      })
   }
 
+  const kakaoLogin = () => {
+    const clientId = import.meta.env.VITE_KAKAO_CLIENT_Id
+    const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI
+    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
+    window.location.href = url
+  }
+
+  const isMember = async (code) => {
+    await axios({
+      method: 'get',
+      url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
+    }).then((res) => {
+      if (res.status === 201) {
+        memberId.value = res.data.id
+        nickname.value = res.data.nickname
+        profileImage.value = res.data.profileImage
+        router.push({ name: 'Signup' })
+      } else if (res.status === 200) {
+        token.value = res.headers.get('atk')
+        counterstore.setCookie('atk', token.value)
+        nickname.value = res.data.data.nickname
+        profileImage.value = res.data.data.profileImage
+        router.push({ name: 'home' })
+      }
+    })
+  }
   // const isLogin = computed(() => {
   //   if (counterstore.getCookie("atk") === null) {
   //     return false
@@ -138,30 +164,76 @@ export const useMemberStore = defineStore('member', () => {
   //     return true
   //   }
   // })
-  const isLogin = computed(() => counterstore.getCookie("atk") !== undefined)
+  const isLogin = computed(() => counterstore.getCookie('atk') !== undefined)
 
   const logout = () => {
     axios({
-      method:'post',
+      method: 'post',
       url: `${REST_MEMBER_API}/api/member/logout`,
       headers: {
-        Authorization: `Bearer ${counterstore.getCookie("atk")}`, 
-      },
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
     })
-    .then((res) => {
-      alert('로그아웃 성공')
-      nickname.value = null
-      profileImage.value = null
-      token.value = null
-      counterstore.deleteCookie("atk")
-      router.push({ name : 'home'})  
-    })
-    .catch((err) => {
-      alert('로그아웃 실패')
-      console.log(err)
-    })
+      .then((res) => {
+        alert('로그아웃 성공')
+        nickname.value = null
+        profileImage.value = null
+        token.value = null
+        counterstore.deleteCookie('atk')
+        router.push({ name: 'home' })
+      })
+      .catch((err) => {
+        alert('로그아웃 실패')
+        console.log(err)
+      })
   }
-  
+
+  // 내 정보
+  const mypage = ref([])
+  const getMypage = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_MEMBER_API}/api/member/mypage`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      console.log(res)
+      mypage.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const modifyInfo = (payload) => {
+    const formData = new FormData()
+    if (payload.profileImg) {
+      formData.append('multipartFile', payload.profileImage)
+    }
+    formData.append('id', payload.memberId)
+    formData.append('nickname', payload.nickname)
+    formData.append('introduce', payload.introduce)
+    formData.append('regionCd', payload.regionCd)
+    axios({
+      method: 'post',
+      url: `${REST_MEMBER_API}/api/member/modify-info`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      },
+      data: formData
+    })
+      .then((res) => {
+        console.log(res)
+        alert('정보 변경 성공')
+        getMypage()
+        router.push({ name: 'Mypage' })
+      })
+      .catch((err) => {
+        console.log(err)
+        alert('정보 변경 실패')
+      })
+  }
   // const selectedMember = ref(null)
   // const clickMember = function (member) {
   //   selectedMember.value = member
@@ -179,6 +251,18 @@ export const useMemberStore = defineStore('member', () => {
     return [address_name.value, address_code.value]
   }
 
+  const getMemberId = () => {
+    return memberId.value
+  }
+
+  const getNickname = () => {
+    return nickname.value
+  }
+
+  const getProfileImage = () => {
+    return profileImage.value
+  }
+
   return {
     memberList,
     // member,
@@ -189,6 +273,8 @@ export const useMemberStore = defineStore('member', () => {
     checkId,
     checkNickname,
     login,
+    kakaoLogin,
+    isMember,
     token,
     nickname,
     profileImage,
@@ -196,12 +282,19 @@ export const useMemberStore = defineStore('member', () => {
     isLogin,
     // 로그아웃
     logout,
+    // 마이페이지
+    mypage,
+    getMypage,
+    modifyInfo,
     // selectedMember,
     // clickMember,
     // updateMember,
     // 지역 가져오기 카카오맵
     address_name,
     address_code,
-    getLocationInfo
+    getLocationInfo,
+    getMemberId,
+    getNickname,
+    getProfileImage
   }
 })

@@ -20,12 +20,7 @@
                 <!-- 닉네임 -->
                 <div class="row g-3 align-items-center">
                   <div class="col-auto">
-                    <label
-                      class="col-form-label"
-                      prop="nickname"
-                      :rules="[{ required: true, message: '내용을 입력해주세요.' }]"
-                      >* 닉네임</label
-                    >
+                    <label class="col-form-label" prop="nickname">* 닉네임</label>
                   </div>
                   <div class="col-auto">
                     <input v-model="nickname" type="text" class="form-control" />
@@ -148,7 +143,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { useMemberStore } from '@/stores/member'
 
@@ -167,12 +162,28 @@ const repassword = ref('')
 const birth = ref('')
 const gender = ref('M')
 const nickname = ref('')
-const introduce = ref('')
+const introduce = ref('안녕하세요! ')
 const region_cd = ref('')
 const region_name = ref('')
 
 region_name.value = memberStore.getLocationInfo()[0]
 region_cd.value = memberStore.getLocationInfo()[1]
+
+onMounted(() => {
+  const code = new URL(window.location.href).searchParams.get('code')
+  if (code != null) {
+    isMember(code)
+  }
+})
+
+const isMember = async (code) => {
+  await memberStore.isMember(code)
+  memberId.value = memberStore.getMemberId()
+  nickname.value = memberStore.getNickname()
+  profileImg.value = memberStore.getProfileImage()
+  loadImage()
+  console.log(memberId.value)
+}
 
 // 아이디 중복 체크
 const checkId = function () {
@@ -259,6 +270,14 @@ const cancelRegistration = function () {
   // 취소 버튼 클릭 시의 처리 (로그인 페이지로 이동)
   console.log('회원가입 취소')
   router.push({ name: 'Login' })
+}
+
+const loadImage = () => {
+  document.getElementById('imageFrame').innerHTML = ''
+  const img = document.createElement('img')
+  img.src = profileImg.value
+
+  document.getElementById('imageFrame').appendChild(img)
 }
 
 const readInputFile = (e) => {
