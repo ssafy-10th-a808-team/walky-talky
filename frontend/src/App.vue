@@ -38,10 +38,12 @@
         ======================================================== -->
     </head>
     <body>
-      <div>
       <TheHeaderNav />
+      <div>
         <RouterView />
-        <TheFooter />
+        <div>
+          <TheFooter />
+        </div>
       </div>
     </body>
   </div>
@@ -49,7 +51,7 @@
 
 <script setup>
 import { onMounted } from 'vue'
-import { useCounterStore } from './stores/counter';
+import { useCounterStore } from './stores/counter'
 import TheFooter from './components/common/TheFooter.vue'
 import TheHeaderNav from './components/common/TheHeaderNav.vue'
 const counterstore = useCounterStore()
@@ -72,7 +74,6 @@ onMounted(() => {
     })
   }
 })
-
 </script>
 
 <style lang="scss" scoped></style>
