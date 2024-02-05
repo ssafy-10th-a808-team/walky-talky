@@ -181,8 +181,13 @@ onMounted(() => {
   }
 })
 
-const isMember = (code) => {
-  memberStore.isMember(code)
+const isMember = async (code) => {
+  await memberStore.isMember(code)
+  memberId.value = memberStore.getMemberId()
+  nickname.value = memberStore.getNickname()
+  profileImg.value = memberStore.getProfileImage()
+  loadImage()
+  console.log(memberId.value)
 }
 
 // 아이디 중복 체크
@@ -270,6 +275,14 @@ const cancelRegistration = function () {
   // 취소 버튼 클릭 시의 처리 (로그인 페이지로 이동)
   console.log('회원가입 취소')
   router.push({ name: 'Login' })
+}
+
+const loadImage = () => {
+  document.getElementById('imageFrame').innerHTML = ''
+  const img = document.createElement('img')
+  img.src = profileImg.value
+
+  document.getElementById('imageFrame').appendChild(img)
 }
 
 const readInputFile = (e) => {
