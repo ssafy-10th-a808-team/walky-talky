@@ -188,6 +188,52 @@ export const useMemberStore = defineStore('member', () => {
       })
   }
 
+  // 내 정보
+  const mypage = ref([])
+  const getMypage = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_MEMBER_API}/api/member/mypage`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      console.log(res)
+      mypage.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const modifyInfo = (payload) => {
+    const formData = new FormData()
+    if (payload.profileImg) {
+      formData.append('multipartFile', payload.profileImage)
+    }
+    formData.append('id', payload.memberId)
+    formData.append('nickname', payload.nickname)
+    formData.append('introduce', payload.introduce)
+    formData.append('regionCd', payload.regionCd)
+    axios({
+      method: 'post',
+      url: `${REST_MEMBER_API}/api/member/modify-info`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      },
+      data: formData
+    })
+      .then((res) => {
+        console.log(res)
+        alert('정보 변경 성공')
+        getMypage()
+        router.push({ name: 'Mypage' })
+      })
+      .catch((err) => {
+        console.log(err)
+        alert('정보 변경 실패')
+      })
+  }
   // const selectedMember = ref(null)
   // const clickMember = function (member) {
   //   selectedMember.value = member
@@ -236,6 +282,10 @@ export const useMemberStore = defineStore('member', () => {
     isLogin,
     // 로그아웃
     logout,
+    // 마이페이지
+    mypage,
+    getMypage,
+    modifyInfo,
     // selectedMember,
     // clickMember,
     // updateMember,
