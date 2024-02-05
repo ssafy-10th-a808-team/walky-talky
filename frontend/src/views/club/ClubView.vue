@@ -1,65 +1,63 @@
 <template>
-  
-    <h1>소모임 조회 페이지</h1>
-    <div class="section-title">
-        <h2>MyClubs</h2>
-        <div>
-            <ClubList
-                v-for="(club, index) in clubs.myClubs"
-                    :key="club.seq"
-                    :index="index"
-                    :club="club"
-                    @click="godetail(club.seq)"
-            />
-        </div>
+  <h1>소모임 조회 페이지</h1>
+  <div class="section-title">
+    <h2>MyClubs</h2>
+    <div>
+      <ClubList
+        v-for="(club, index) in clubs.myClubs"
+        :key="club.seq"
+        :index="index"
+        :club="club"
+        @click="godetail(club.seq)"
+      />
     </div>
-    <div class="section-title">
-        <h2>OtherClubs</h2>
-        <div>
-            <ClubList
-                v-for="(club, index) in clubs.otherClubs"
-                    :key="club.seq"
-                    :index="index"
-                    :club="club"
-                    @click="godetail(club.seq)"
-            />
-        </div>
+  </div>
+  <div class="section-title">
+    <h2>OtherClubs</h2>
+    <div>
+      <ClubList
+        v-for="(club, index) in clubs.otherClubs"
+        :key="club.seq"
+        :index="index"
+        :club="club"
+        @click="godetail(club.seq)"
+      />
     </div>
-    <div class="section-title">
-        <h2>recommendedClubs</h2>
-        <div>
-            <ClubList
-                v-for="(club, index) in clubs.recommendClubs"
-                    :key="club.seq"
-                    :index="index"
-                    :club="club"
-                    @click="godetail(club.seq)"
-            />
-        </div>
+  </div>
+  <div class="section-title">
+    <h2>recommendedClubs</h2>
+    <div>
+      <ClubList
+        v-for="(club, index) in clubs.recommendClubs"
+        :key="club.seq"
+        :index="index"
+        :club="club"
+        @click="godetail(club.seq)"
+      />
     </div>
-    <RouterLink :to="{ name: 'club-create' }">
-        <button class="fixed-btn">소모임생성</button>
-    </RouterLink>
+  </div>
+  <RouterLink :to="{ name: 'club-create' }">
+    <button class="fixed-btn">소모임생성</button>
+  </RouterLink>
 </template>
 
 <script setup>
-    import { onMounted, ref } from 'vue'
-    import { useClubStore } from "@/stores/club";
-    import ClubList from "@/components/club/ClubList.vue"
-    import { useRouter } from 'vue-router';
-    const clubstore = useClubStore()
-    const router = useRouter()
+import { onMounted, ref } from 'vue'
+import { useClubStore } from '@/stores/club'
+import ClubList from '@/components/club/ClubList.vue'
+import { useRouter } from 'vue-router'
+const clubstore = useClubStore()
+const router = useRouter()
 
-    const clubs = ref([])
-    onMounted(async () => {
-        await clubstore.getClubs() 
-        clubs.value = clubstore.clubs
-    })
+const clubs = ref([])
+onMounted(async () => {
+  await clubstore.getClubs()
+  clubs.value = clubstore.clubs
+})
 
-    const godetail = (seq) => {
-        router.push({ name : 'club-detail', params: { seq:seq }})
+const godetail = (seq) => {
+  router.push({ name: 'club-detail', params: { seq: seq } })
 }
-
 </script>
 
 <style scoped>
