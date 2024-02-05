@@ -22,6 +22,9 @@ public class RequestOauthServiceImpl implements RequestOauthService {
     @Value("${oauth.kakao.redirect-uri}")
     private String redirectUri;
 
+    @Value("${oauth.kakao.request-token-uri}")
+    private String requestTokenUri;
+
     @Value("${oauth.kakao.request-user-info-uri}")
     private String requestUserInfoUri;
 
@@ -32,7 +35,7 @@ public class RequestOauthServiceImpl implements RequestOauthService {
 
     @Override
     public ResponseOauthTokenDto requestAccessToken(String code) {
-        String url = "https://kauth.kakao.com/oauth/token";
+        String url = requestTokenUri;
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
