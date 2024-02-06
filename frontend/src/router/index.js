@@ -25,6 +25,8 @@ import ClubModify from '@/views/club/ClubModifyView.vue'
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
 import ShareBoardDetailView from '@/views/shareboard/ShareBoardDetailView.vue'
 
+import ChatView from '@/views/chat/ChatView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -127,6 +129,14 @@ const router = createRouter({
       path: '/shareBoard/view/:seq',
       name: 'share-board-view',
       component: ShareBoardDetailView
+    },
+
+    // chatting
+    {
+      path: '/club/chat/:seq',
+      name: 'club-chat',
+      component: ChatView,
+      props: true
     }
   ]
 })
