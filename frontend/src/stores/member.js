@@ -7,6 +7,7 @@ import { useCounterStore } from './counter'
 const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export const useMemberStore = defineStore(
   'member',
   () => {
@@ -20,6 +21,8 @@ export const useMemberStore = defineStore(
     const profileImage = ref('')
     const introduce = ref('')
 =======
+=======
+>>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
 export const useMemberStore = defineStore('member', () => {
   const counterstore = useCounterStore()
   const memberList = ref([])
@@ -30,7 +33,10 @@ export const useMemberStore = defineStore('member', () => {
   const nickname = ref('')
   const profileImage = ref('')
   const isOauth = ref(false)
+<<<<<<< HEAD
 >>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
+=======
+>>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
 
     //회원가입
     const createMember = function (payload) {
@@ -155,9 +161,12 @@ export const useMemberStore = defineStore('member', () => {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     const isMember = async (code) => {
       await axios({
 =======
+=======
+>>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
   // 아이디 중복 체크
   const checkId = function (memberId) {
     axios({
@@ -301,7 +310,10 @@ export const useMemberStore = defineStore('member', () => {
   const getMypage = async () => {
     try {
       const res = await axios({
+<<<<<<< HEAD
 >>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
+=======
+>>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
         method: 'get',
         url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
       }).then((res) => {
@@ -432,6 +444,7 @@ export const useMemberStore = defineStore('member', () => {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     return {
       memberList,
       // member,
@@ -473,6 +486,8 @@ export const useMemberStore = defineStore('member', () => {
   { persist: true }
 )
 =======
+=======
+>>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
   const getIsOauth = () => {
     return profileImage.value
   }
@@ -514,4 +529,7 @@ export const useMemberStore = defineStore('member', () => {
     getIsOauth
   }
 })
+<<<<<<< HEAD
 >>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
+=======
+>>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
