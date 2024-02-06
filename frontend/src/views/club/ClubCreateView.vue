@@ -25,26 +25,19 @@
               <div class="form-group">
                 <label for="image-upload">이미지</label>
                 <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
-                <div id="imageFrame" class="circular"></div>
+                <div id="imageFrame" class="circular">
+                  <img :src="profileImg">
+                </div>
               </div>
               <hr />
 
               <!-- 모임명 입력 필드 -->
               <div class="form-group">
                 <label for="club-name">모임명</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="club-name"
-                  v-model.trim="clubname"
-                  required
-                />
+                <input type="text" class="form-control" id="club-name" v-model.trim="clubname" required />
                 <div class="cta-btn-container text-center">
-                  <button
-                    type="button"
-                    class="cta-btn align-middle btn-check-duplicate"
-                    @click="checkDuplicate(clubname)"
-                  >
+                  <button type="button" class="cta-btn align-middle btn-check-duplicate"
+                    @click="checkDuplicate(clubname)">
                     중복 확인
                   </button>
                 </div>
@@ -54,13 +47,7 @@
               <!-- 소개글 -->
               <div class="form-group">
                 <label for="introduction">소개글</label>
-                <textarea
-                  class="form-control"
-                  id="introduction"
-                  rows="10"
-                  v-model.trim="introduce"
-                  required
-                ></textarea>
+                <textarea class="form-control" id="introduction" rows="10" v-model.trim="introduce" required></textarea>
               </div>
               <hr />
 
@@ -89,22 +76,13 @@
                 <label>성별</label>
                 <div class="portfolio d-flex justify-content-center">
                   <ul id="portfolio-flters">
-                    <li
-                      :class="{ 'filter-active': gender_type === 'M' }"
-                      @click="setGenderType('M')"
-                    >
+                    <li :class="{ 'filter-active': gender_type === 'M' }" @click="setGenderType('M')">
                       남
                     </li>
-                    <li
-                      :class="{ 'filter-active': gender_type === 'F' }"
-                      @click="setGenderType('F')"
-                    >
+                    <li :class="{ 'filter-active': gender_type === 'F' }" @click="setGenderType('F')">
                       여
                     </li>
-                    <li
-                      :class="{ 'filter-active': gender_type === 'A' }"
-                      @click="setGenderType('A')"
-                    >
+                    <li :class="{ 'filter-active': gender_type === 'A' }" @click="setGenderType('A')">
                       무관
                     </li>
                   </ul>
@@ -117,7 +95,7 @@
                 <label for="max-capacity">최대 인원</label>
                 <select class="form-control" id="max-capacity" v-model.trim="max_capacity" required>
                   <option value="" disabled selected>선택하세요</option>
-                  <option v-for="num in 100" :value="num">{{ num }}</option>
+                  <option v-for="num in 100" :key="num" :value="num">{{ num }}</option>
                 </select>
               </div>
               <hr />
@@ -128,16 +106,10 @@
                 <div class="row">
                   <div class="portfolio col-md-8 d-flex justify-content-center">
                     <ul id="portfolio-flters">
-                      <li
-                        :class="{ 'filter-active': is_auto_recruit === true }"
-                        @click="setrecruitType(true)"
-                      >
+                      <li :class="{ 'filter-active': is_auto_recruit === true }" @click="setrecruitType(true)">
                         즉시 가입 허용
                       </li>
-                      <li
-                        :class="{ 'filter-active': is_auto_recruit === false }"
-                        @click="setrecruitType(false)"
-                      >
+                      <li :class="{ 'filter-active': is_auto_recruit === false }" @click="setrecruitType(false)">
                         승인 후 가입
                       </li>
                     </ul>
@@ -148,12 +120,8 @@
 
               <!-- 제출 -->
               <div class="text-center">
-                <button
-                  type="button"
-                  class="cta-btn align-middle btn-check-duplicate"
-                  @click="createClub"
-                  :disabled="!isNameAvailable || !region_name"
-                >
+                <button type="button" class="cta-btn align-middle btn-check-duplicate" @click="createClub"
+                  :disabled="!isNameAvailable || !region_name">
                   모임 생성
                 </button>
               </div>
@@ -168,28 +136,28 @@
 <script setup>
 import { ref, computed } from 'vue'
 import axios from 'axios'
-import { useClubStore } from '@/stores/club'
 import { useCounterStore } from '@/stores/counter'
 import { useMemberStore } from '@/stores/member'
 import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+// 기본 이미지를 import 합니다.
+import defaultLogoPath from '@/assets/img/Logo.png';
 
 const router = useRouter()
-const clubstore = useClubStore()
 const counterstore = useCounterStore()
 const memberstore = useMemberStore()
 const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api/club'
-
 const locationIcon = counterstore.selectButton('LocationIcon')
+
+const isNameAvailable = ref(false)
 
 const region_name = ref('')
 const region_cd = ref('')
 region_name.value = memberstore.getLocationInfo()[0]
 region_cd.value = memberstore.getLocationInfo()[1]
 
-const profileImg = ref(null)
+const profileImg = ref(defaultLogoPath);
 const clubname = ref('')
-const isNameAvailable = ref(false)
 const introduce = ref('')
 const old_birth = ref('')
 const young_birth = ref('')
@@ -200,6 +168,7 @@ const is_auto_recruit = ref(false)
 ///////////////////////////////////////////////////////////////////////////
 
 const readInputFile = (e) => {
+
   document.getElementById('imageFrame').innerHTML = ''
   const files = e.target.files
   const fileArr = Array.from(files)
@@ -231,11 +200,11 @@ const checkDuplicate = (name) => {
     },
     data: { name }
   })
-    .then((res) => {
+    .then(() => {
       alert('사용 가능한 모임명입니다.')
       isNameAvailable.value = true
     })
-    .catch((err) => {
+    .catch(() => {
       alert('사용 불가능한 모임명입니다.')
       isNameAvailable.value = false
     })
@@ -264,7 +233,9 @@ const setrecruitType = (value) => {
 const createClub = () => {
   // FormData 인스턴스 생성
   const formData = new FormData()
-  if (profileImg.value) {
+
+  console.log('profileImg.value  = ' + profileImg.value);
+  if (profileImg.value !== '/src/assets/img/Logo.png') {
     formData.append('multipartFile', profileImg.value)
   }
 
