@@ -1,5 +1,6 @@
 package com.ssafy.backend.club.service;
 
+import com.ssafy.backend.chat.service.ChatService;
 import com.ssafy.backend.club.domain.Club;
 import com.ssafy.backend.club.dto.request.RequestClubCheckNameDto;
 import com.ssafy.backend.club.dto.request.RequestClubCreateDto;
@@ -39,6 +40,7 @@ public class ClubServiceImpl implements ClubService {
     private final S3UploadService s3UploadService;
     private final RegionService regionService;
     private final RegionRepository regionRepository;
+    private final ChatService chatService;
 
     @Override
     public ResponseEntity<ResponseClubCheckNameDto> clubCheckName(RequestClubCheckNameDto requestClubCheckNameDto) {
@@ -153,7 +155,7 @@ public class ClubServiceImpl implements ClubService {
         }
 
         // if file data exist
-        else if (requestClubCreateDto.getMultipartFile() != null && !requestClubCreateDto.getMultipartFile().
+        if (requestClubCreateDto.getMultipartFile() != null && !requestClubCreateDto.getMultipartFile().
                 isEmpty()) {
             String tmpUrl = s3UploadService.uploadClubProfileImg(requestClubCreateDto.getMultipartFile(), savedClub.getSeq());
             savedClub.setUrl(tmpUrl);
@@ -169,6 +171,7 @@ public class ClubServiceImpl implements ClubService {
                 .build();
 
         clubMemberRepository.save(clubMember);
+        chatService.createChatRoom(savedClub.getSeq());
 
         responseClubCreateDto = ResponseClubCreateDto.builder()
                 .message("OK")
