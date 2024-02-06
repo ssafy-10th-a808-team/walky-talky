@@ -50,6 +50,10 @@ public class OauthServiceImpl implements OauthService {
              *
              * atk, rtk 발급
              */
+
+            if (findMember.getIsDeleted()) {
+                returnMap.put("isDeleted", true);
+            }
             // jwt
             Long seq = findMember.getSeq();
             String atk = jwtProvider.createAccessToken(seq, atkExp);
