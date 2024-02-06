@@ -1,24 +1,24 @@
 <template>
-  <!-- <ClubDetailHeaderNav></ClubDetailHeaderNav> -->
+  <ClubDetailHeaderNav />
   <h2>소모임 정보</h2>
-  <div>
+  <div v-if="clubDetail.responseClubDetailDtoClub">
     <div class="circular">
-      <img v-if="clubDetail.responseClubDetailDtoClub?.url" :src="clubDetail.responseClubDetailDtoClub.url" />
+      <img :src="clubDetail.responseClubDetailDtoClub.url" />
     </div>
 
-    <p v-if="clubDetail.responseClubDetailDtoClub?.name">
+    <p>
       {{ clubDetail.responseClubDetailDtoClub.name }}
     </p>
 
-    <p v-if="clubDetail.responseClubDetailDtoClub?.introduce">
+    <p>
       {{ clubstore.clubDetail.responseClubDetailDtoClub.introduce }}
     </p>
 
-    <p v-if="clubDetail.responseClubDetailDtoClub?.oldBirth">
+    <p>
       {{ clubstore.clubDetail.responseClubDetailDtoClub.oldBirth }}년생 ~ {{
         clubstore.clubDetail.responseClubDetailDtoClub.youngBirth }}년생
     </p>
-    <div v-if="clubDetail.responseClubDetailDtoClub?.genderType">
+    <div>
       <p v-if="clubstore.clubDetail.responseClubDetailDtoClub.genderType === 'A'">
         남녀무관
       </p>
@@ -29,11 +29,11 @@
         여자만
       </p>
     </div>
-    <p v-if="clubDetail.responseClubDetailDtoClub?.nowCapacity">
+    <p>
       {{ clubstore.clubDetail.responseClubDetailDtoClub.nowCapacity }} / {{
         clubstore.clubDetail.responseClubDetailDtoClub.maxCapacity }} 명
     </p>
-    <div v-if="clubDetail.responseClubDetailDtoClub?.autoRecruit">
+    <div>
       <p v-if="clubstore.clubDetail.responseClubDetailDtoClub.autoRecruit">
         즉시 가입
       </p>
@@ -41,7 +41,7 @@
         승인 후 가입
       </p>
     </div>
-    <div v-if="clubDetail.responseClubDetailDtoClub?.openRecruit">
+    <div>
       <p v-if="clubstore.clubDetail.responseClubDetailDtoClub.openRecruit">
         모집 열려 있음
       </p>
@@ -50,19 +50,19 @@
       </p>
     </div>
   </div>
-
-  <!-- <h2>소모임원</h2>
-  <div v-for="clubmember in clubstore.clubDetail.responseClubDetailDtoMembers" :key="clubmember.nickname">
-    <MemberList :member="clubmember" />
-  </div> -->
+  <div v-if="clubDetail.responseClubDetailDtoClub">
+    <h2>소모임원</h2>
+    <div v-for="clubmember in clubstore.clubDetail.responseClubDetailDtoMembers" :key="clubmember.nickname">
+      <MemberList :member="clubmember" />
+    </div>
+  </div>
 </template>
 
 <script setup>
+import ClubDetailHeaderNav from '@/components/common/ClubDetailHeaderNav.vue'
 import { onMounted, ref } from 'vue'
 import { useClubStore } from '@/stores/club'
 import MemberList from '@/components/member/MemberListView.vue'
-// import ClubDetailHeaderNav from '@/components/common/ClubDetailHeaderNav.vue';
-import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useCounterStore } from '@/stores/counter'
 
@@ -70,7 +70,6 @@ const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api/club'
 
 const counterstore = useCounterStore()
 const clubstore = useClubStore()
-const router = useRouter()
 const clubDetail = ref({})
 
 const { seq } = defineProps({
@@ -84,24 +83,13 @@ const findClub = (seq) => {
     headers: {
       Authorization: `Bearer ${counterstore.getCookie('atk')}`
     }
-  })
-    .then(res => {
-      console.log(res)
-      clubDetail.value = res.data // 응답 데이터로 상태 업데이트
-      console.log(clubDetail.value)
-    })
-    .catch(err => {
-      console.error(err)
-      alert('소모임 정보를 가져오는데 실패했습니다.')
-    });
+  }).then(res => {
+    clubDetail.value = res.data // 응답 데이터로 상태 업데이트
+  }).catch(err => {
+    console.error(err)
+    alert('소모임 정보를 가져오는데 실패했습니다.')
+  });
 }
-
-// onMounted(
-//   async function () {
-//     await clubstore.findClub(seq);
-//     console.log(clubstore.clubDetail);
-//   }
-// )
 
 onMounted(() => {
   findClub(seq); // 컴포넌트가 마운트될 때 소모임 데이터를 가져옵니다.
