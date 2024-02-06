@@ -26,8 +26,8 @@ const commentInput = ref('')
 
 const submitComment = async () => {
   shareBoardStore.commentWrite(shareBoardSeq, commentInput.value)
-  commentInput.value = ''
   await loadComment(shareBoardSeq)
+  commentInput.value = ''
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="comment-container">
+  <div class="comment-container" v-if="isNotDeleted">
     <shareBoardMember :nickname="nickname" :profilePic="profilePic" />
     <div class="content">{{ content }}</div>
     <div class="comment-info-container">
@@ -14,6 +14,7 @@
 
 <script setup>
 import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
+import { ref } from 'vue'
 import { useShareBoardStore } from '@/stores/shareBoard'
 const shareBoardStore = useShareBoardStore()
 
@@ -31,6 +32,8 @@ const { nickname, profilePic, created_at, content, shareBoardSeq, commentSeq, lo
 const commentEdit = () => {
   // 여기서 이제 수정 창을 띄워줘야함
 }
+
+const isNotDeleted = ref(true)
 
 const commentDel = async () => {
   shareBoardStore.commentDel(shareBoardSeq, commentSeq)
