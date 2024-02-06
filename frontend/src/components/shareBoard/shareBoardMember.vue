@@ -1,7 +1,7 @@
 <template>
   <div class="member-container">
     <img :src="profilePic" class="rounded-image" width="50" height="50" />
-    <h5>{{ nickname }}</h5>
+    <p>{{ nickname }}</p>
   </div>
 </template>
 
