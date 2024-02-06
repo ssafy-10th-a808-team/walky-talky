@@ -29,6 +29,8 @@
   /* 푸터의 내부 패딩을 상하 10px, 좌우 0으로 설정 */
   text-align: center;
   /* 텍스트를 중앙에 배치 */
+  position: absolute;
+  width: 100%;
 }
 
 #footer .container {

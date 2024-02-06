@@ -11,6 +11,7 @@ import ModifyInfo from '@/views/member/ModifyInfo.vue'
 
 // walk router 산책
 import DoWalk from '@/views/walk/DoWalk.vue'
+import dowalk2 from '@/views/walk/dowalk2.vue' //임시
 import WalkList from '@/views/walk/WalkList.vue'
 
 // club router 소모임
@@ -76,6 +77,11 @@ const router = createRouter({
       path: '/walk/do-walk',
       name: 'DoWalk',
       component: DoWalk
+    },
+    {
+      path: '/walk/do-walk2',
+      name: 'dowalk2',
+      component: dowalk2
     },
     {
       path: '/walk/list',
