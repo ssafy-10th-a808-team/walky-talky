@@ -5,27 +5,35 @@
       <h3>WalkyTalky</h3>
       <p>산책해듀오</p>
       <div class="copyright">
-        &copy; Copyright <strong><span>WalkyTalky</span></strong>. All Rights Reserved
+        &copy; Copyright <strong><span>WalkyTalky</span></strong
+        >. All Rights Reserved
       </div>
-
     </div>
-  </footer><!-- End Footer -->
+  </footer>
+  <!-- End Footer -->
 
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-      class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"
+    ><i class="bi bi-arrow-up-short"></i
+  ></a>
 </template>
 
 <script setup></script>
 
 <style scoped>
 #footer {
+  position: -webkit-sticky; /* Safari 브라우저 지원 */
+  position: sticky;
   padding: 10px 0;
   /* 푸터의 내부 패딩을 상하 10px, 좌우 0으로 설정 */
   text-align: center;
   /* 텍스트를 중앙에 배치 */
+  position: absolute;
+  width: 100%;
 }
 
 #footer .container {
+  bottom: 0;
+  width: 100%;
   max-width: none;
   /* 컨테이너의 최대 너비 설정을 해제 (필요한 경우) */
 }

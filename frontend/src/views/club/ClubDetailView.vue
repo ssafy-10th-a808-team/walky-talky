@@ -1,55 +1,134 @@
 <template>
-    hi
+  <!-- <ClubDetailHeaderNav></ClubDetailHeaderNav> -->
+  <h2>소모임 정보</h2>
+  <div>
+    <div class="circular">
+      <img v-if="clubDetail.responseClubDetailDtoClub?.url" :src="clubDetail.responseClubDetailDtoClub.url" />
+    </div>
+
+    <p v-if="clubDetail.responseClubDetailDtoClub?.name">
+      {{ clubDetail.responseClubDetailDtoClub.name }}
+    </p>
+
+    <p v-if="clubDetail.responseClubDetailDtoClub?.introduce">
+      {{ clubstore.clubDetail.responseClubDetailDtoClub.introduce }}
+    </p>
+
+    <p v-if="clubDetail.responseClubDetailDtoClub?.oldBirth">
+      {{ clubstore.clubDetail.responseClubDetailDtoClub.oldBirth }}년생 ~ {{
+        clubstore.clubDetail.responseClubDetailDtoClub.youngBirth }}년생
+    </p>
+    <div v-if="clubDetail.responseClubDetailDtoClub?.genderType">
+      <p v-if="clubstore.clubDetail.responseClubDetailDtoClub.genderType === 'A'">
+        남녀무관
+      </p>
+      <p v-else-if="clubstore.clubDetail.responseClubDetailDtoClub.genderType === 'M'">
+        남자만
+      </p>
+      <p v-else>
+        여자만
+      </p>
+    </div>
+    <p v-if="clubDetail.responseClubDetailDtoClub?.nowCapacity">
+      {{ clubstore.clubDetail.responseClubDetailDtoClub.nowCapacity }} / {{
+        clubstore.clubDetail.responseClubDetailDtoClub.maxCapacity }} 명
+    </p>
+    <div v-if="clubDetail.responseClubDetailDtoClub?.autoRecruit">
+      <p v-if="clubstore.clubDetail.responseClubDetailDtoClub.autoRecruit">
+        즉시 가입
+      </p>
+      <p v-else>
+        승인 후 가입
+      </p>
+    </div>
+    <div v-if="clubDetail.responseClubDetailDtoClub?.openRecruit">
+      <p v-if="clubstore.clubDetail.responseClubDetailDtoClub.openRecruit">
+        모집 열려 있음
+      </p>
+      <p v-else>
+        모집 닫혀 있음
+      </p>
+    </div>
+  </div>
+
+  <!-- <h2>소모임원</h2>
+  <div v-for="clubmember in clubstore.clubDetail.responseClubDetailDtoMembers" :key="clubmember.nickname">
+    <MemberList :member="clubmember" />
+  </div> -->
 </template>
 
 <script setup>
-import { ref, toRef, onMounted } from 'vue'
-import { useClubStore } from '@/stores/club';
+import { onMounted, ref } from 'vue'
+import { useClubStore } from '@/stores/club'
 import MemberList from '@/components/member/MemberListView.vue'
+// import ClubDetailHeaderNav from '@/components/common/ClubDetailHeaderNav.vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { useCounterStore } from '@/stores/counter'
 
+const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api/club'
+
+const counterstore = useCounterStore()
 const clubstore = useClubStore()
+const router = useRouter()
+const clubDetail = ref({})
 
 const { seq } = defineProps({
-    seq: String,
+  seq: String
 })
 
-// const clubDetail = ref(null)
-// const clubMembers = ref(null)
+const findClub = (seq) => {
+  axios({
+    method: 'get',
+    url: `${REST_CLUB_API}/detail?clubSeq=${seq}`,
+    headers: {
+      Authorization: `Bearer ${counterstore.getCookie('atk')}`
+    }
+  })
+    .then(res => {
+      console.log(res)
+      clubDetail.value = res.data // 응답 데이터로 상태 업데이트
+      console.log(clubDetail.value)
+    })
+    .catch(err => {
+      console.error(err)
+      alert('소모임 정보를 가져오는데 실패했습니다.')
+    });
+}
 
-onMounted(async () => {
-    const result = await clubstore.findClub(seq)
-    console.log(result);
+// onMounted(
+//   async function () {
+//     await clubstore.findClub(seq);
+//     console.log(clubstore.clubDetail);
+//   }
+// )
 
-    // clubDetail.value = result[0]
-    // console.log(clubDetail.value)
-    // clubMembers.value = result[1]
-    // console.log(clubMembers.value)
+onMounted(() => {
+  findClub(seq); // 컴포넌트가 마운트될 때 소모임 데이터를 가져옵니다.
 })
-
 
 </script>
 
-<style scoped></style>
+<style scoped>
+.circular {
+  width: 200px;
+  /* 고정 가로 크기 */
+  height: 200px;
+  /* 고정 세로 크기 */
+  border-radius: 50%;
+  /* 원 모양으로 만듦 */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  /* 이미지를 중앙에 정렬 */
+  justify-content: center;
+}
 
-
-<!-- <div>
-    <h1>소모임 세부 페이지</h1>
-    <div class="circular">
-        <img v-if="clubDetail && clubDetail.url" :src="clubDetail.url" />
-    </div>
-<p>Club Seq : {{ seq }}</p>
-<p>Club Name : {{ clubstore.clubDetail.name }}</p>
-<p>Club Profile : {{ clubstore.clubDetail.url }}</p>
-<p v-if="clubDetail && clubDetail.name">Club 이름 : {{ clubDetail.name }}</p>
-<p v-if="clubDetail && clubDetail.introduce">Club 소개 : {{ clubDetail.introduce }}</p>
-<p v-if="clubDetail && clubDetail.oldBirth && clubDetail.youngBirth">{{ clubDetail.oldBirth }}년생 ~ {{
-    clubDetail.youngBirth }}년생</p>
-<p v-if="clubDetail && clubDetail.nowCapacity && clubDetail.maxCapacity">{{ clubDetail.nowCapacity }}/ {{
-    clubDetail.maxCapacity }} 명</p>
-<p>Club Detail : {{ clubDetail }}</p>
-<p>Club Member : {{ clubMember }}</p>
-</div>
-<h2>클럽원들</h2>
-<div v-if="clubMembers" v-for="clubmember in clubMembers" :key="clubmember.nickname">
-    <MemberList :member="clubmember" />
-</div> -->
+.circular img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 이미지 비율 유지하며 컨테이너 채움 */
+  border-radius: 50%;
+}
+</style>

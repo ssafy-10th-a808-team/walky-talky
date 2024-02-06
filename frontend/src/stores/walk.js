@@ -25,7 +25,7 @@ export const useWalkStore = defineStore('walk', () => {
         data.value = res.data
         // console.log(res.data.data.seq)
         // console.log(data.value.data.seq)
-        console.log(res)
+        // console.log(res)
         console.log('산책을 시작합니다')
       })
       .catch((err) => {
@@ -37,6 +37,7 @@ export const useWalkStore = defineStore('walk', () => {
   } // 산책시작
 
   return {
+    data,
     startWalk
   }
 })
