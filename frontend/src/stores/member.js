@@ -6,8 +6,6 @@ import { useCounterStore } from './counter'
 
 const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 export const useMemberStore = defineStore(
   'member',
   () => {
@@ -19,24 +17,8 @@ export const useMemberStore = defineStore(
     const memberId = ref('')
     const nickname = ref('')
     const profileImage = ref('')
+    const isOauth = ref(false)
     const introduce = ref('')
-=======
-=======
->>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
-export const useMemberStore = defineStore('member', () => {
-  const counterstore = useCounterStore()
-  const memberList = ref([])
-  const address_name = ref('')
-  const address_code = ref('')
-  const token = ref(null)
-  const memberId = ref('')
-  const nickname = ref('')
-  const profileImage = ref('')
-  const isOauth = ref(false)
-<<<<<<< HEAD
->>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
-=======
->>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
 
     //회원가입
     const createMember = function (payload) {
@@ -152,7 +134,6 @@ export const useMemberStore = defineStore('member', () => {
           console.log(err)
         })
     }
-
     const kakaoLogin = () => {
       const clientId = import.meta.env.VITE_KAKAO_CLIENT_Id
       const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI
@@ -160,160 +141,8 @@ export const useMemberStore = defineStore('member', () => {
       window.location.href = url
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     const isMember = async (code) => {
       await axios({
-=======
-=======
->>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
-  // 아이디 중복 체크
-  const checkId = function (memberId) {
-    axios({
-      method: 'POST',
-      url: `${REST_MEMBER_API}/api/member/check-id`,
-      data: {
-        id: memberId
-      }
-    })
-      .then((res) => {
-        // console.log(res)
-        alert('사용가능한 아이디입니다')
-      })
-      .catch((err) => {
-        // console.log(err)
-        const errmsg = err.response.data.message
-        console.log(errmsg)
-        if (errmsg == 'id is empty') {
-          alert('아이디를 입력해주세요')
-        } else if (errmsg == '중복된 아이디입니다.') {
-          alert('중복된 아이디입니다. 다른 아이디를 입력해주세요')
-        }
-      })
-  } // 아이디 중복 체크 end
-
-  // 닉네임 중복 체크
-  const checkNickname = function (nickname) {
-    axios({
-      method: 'POST',
-      url: `${REST_MEMBER_API}/api/member/check-nickname`,
-      data: {
-        nickname: nickname
-      }
-    })
-      .then((res) => {
-        console.log(res)
-        alert('사용가능한 닉네임입니다')
-      })
-      .catch((err) => {
-        // console.log(err)
-        const errmsg = err.response.data.message
-        console.log(errmsg)
-        if (errmsg == 'nickname is empty') {
-          alert('닉네임을 입력해주세요')
-        } else if (errmsg == '중복된 닉네임입니다.') {
-          alert('중복된 닉네임입니다. 다른 닉네임을 입력해주세요')
-        }
-      })
-  } //닉네임 중복 체크 end
-
-  // const loginMember = ref([])
-  // if (localStorage.getItem('loginMember') != null) {
-  //   loginMember.value.push(localStorage.getItem('loginMember'))
-  //   //페이지 로딩시 로컬스토리지에 로그인 정보가 남아있으면 바로 로그인 정보를 수토어 유저 정보에 할당
-  // }
-
-  // 로그인
-  const login = (payload) => {
-    axios({
-      method: 'post',
-      url: `${REST_MEMBER_API}/api/member/local-login`,
-      data: {
-        memberId: payload.memberId,
-        password: payload.password
-      }
-    })
-      .then((res) => {
-        alert('로그인 성공')
-        token.value = res.headers.get('atk')
-        counterstore.setCookie('atk', token.value)
-        nickname.value = res.data.data.nickname
-        profileImage.value = res.data.data.profileImage
-        router.push({ name: 'home' })
-      })
-      .catch((err) => {
-        alert('로그인 실패')
-        console.log(err)
-      })
-  }
-
-  const kakaoLogin = () => {
-    const clientId = import.meta.env.VITE_KAKAO_CLIENT_Id
-    const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI
-    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
-    window.location.href = url
-  }
-
-  const isMember = async (code) => {
-    await axios({
-      method: 'get',
-      url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
-    }).then((res) => {
-      if (res.status === 201) {
-        memberId.value = res.data.id
-        nickname.value = res.data.nickname
-        profileImage.value = res.data.profileImage
-        isOauth.value = true
-        router.push({ name: 'Signup' })
-      } else if (res.status === 200) {
-        token.value = res.headers.get('atk')
-        counterstore.setCookie('atk', token.value)
-        nickname.value = res.data.data.nickname
-        profileImage.value = res.data.data.profileImage
-        router.push({ name: 'home' })
-      }
-    })
-  }
-  // const isLogin = computed(() => {
-  //   if (counterstore.getCookie("atk") === null) {
-  //     return false
-  //   } else {
-  //     return true
-  //   }
-  // })
-  const isLogin = computed(() => counterstore.getCookie('atk') !== undefined)
-
-  const logout = () => {
-    axios({
-      method: 'post',
-      url: `${REST_MEMBER_API}/api/member/logout`,
-      headers: {
-        Authorization: `Bearer ${counterstore.getCookie('atk')}`
-      }
-    })
-      .then((res) => {
-        alert('로그아웃 성공')
-        nickname.value = null
-        profileImage.value = null
-        token.value = null
-        counterstore.deleteCookie('atk')
-        router.push({ name: 'home' })
-      })
-      .catch((err) => {
-        alert('로그아웃 실패')
-        console.log(err)
-      })
-  }
-
-  // 내 정보
-  const mypage = ref([])
-  const getMypage = async () => {
-    try {
-      const res = await axios({
-<<<<<<< HEAD
->>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
-=======
->>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
         method: 'get',
         url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
       }).then((res) => {
@@ -321,6 +150,7 @@ export const useMemberStore = defineStore('member', () => {
           memberId.value = res.data.id
           nickname.value = res.data.nickname
           profileImage.value = res.data.profileImage
+          isOauth.value = true
           router.push({ name: 'Signup' })
         } else if (res.status === 200) {
           token.value = res.headers.get('atk')
@@ -331,13 +161,7 @@ export const useMemberStore = defineStore('member', () => {
         }
       })
     }
-    // const isLogin = computed(() => {
-    //   if (counterstore.getCookie("atk") === null) {
-    //     return false
-    //   } else {
-    //     return true
-    //   }
-    // })
+
     const isLogin = computed(() => counterstore.getCookie('atk') !== undefined)
 
     const logout = () => {
@@ -368,13 +192,21 @@ export const useMemberStore = defineStore('member', () => {
       try {
         const res = await axios({
           method: 'get',
-          url: `${REST_MEMBER_API}/api/member/mypage`,
-          headers: {
-            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
+        }).then((res) => {
+          if (res.status === 201) {
+            memberId.value = res.data.id
+            nickname.value = res.data.nickname
+            profileImage.value = res.data.profileImage
+            router.push({ name: 'Signup' })
+          } else if (res.status === 200) {
+            token.value = res.headers.get('atk')
+            counterstore.setCookie('atk', token.value)
+            nickname.value = res.data.data.nickname
+            profileImage.value = res.data.data.profileImage
+            router.push({ name: 'home' })
           }
         })
-        console.log(res)
-        mypage.value = res.data.data
       } catch (err) {
         console.log(err)
       }
@@ -408,17 +240,6 @@ export const useMemberStore = defineStore('member', () => {
           alert('정보 변경 실패')
         })
     }
-    // const selectedMember = ref(null)
-    // const clickMember = function (member) {
-    //   selectedMember.value = member
-    //   router.push(`/ssafit/member/${selectedMember.value.memberId}`)
-    // }
-    // // 회원정보 수정
-    // const updateMember = function () {
-    //   axios.put(REST_MEMBER_API, loginMember.value[0]).then(() => {
-    //     router.push(`/ssafit/member/${loginMember.value[0].memberId}`)
-    //   })
-    // }
 
     // 지역코드 및 주소 가져오기
     const getLocationInfo = () => {
@@ -443,8 +264,10 @@ export const useMemberStore = defineStore('member', () => {
       introduce.value = introduce
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+    const getIsOauth = () => {
+      return profileImage.value
+    }
+
     return {
       memberList,
       // member,
@@ -459,8 +282,8 @@ export const useMemberStore = defineStore('member', () => {
       isMember,
       token,
       nickname,
-      introduce,
       profileImage,
+      isOauth,
       // loginMember,
       isLogin,
       // 로그아웃
@@ -469,8 +292,7 @@ export const useMemberStore = defineStore('member', () => {
       mypage,
       getMypage,
       modifyInfo,
-      setNickname,
-      setIntroduce,
+      introduce,
       // selectedMember,
       // clickMember,
       // updateMember,
@@ -480,56 +302,9 @@ export const useMemberStore = defineStore('member', () => {
       getLocationInfo,
       getMemberId,
       getNickname,
-      getProfileImage
+      getProfileImage,
+      getIsOauth
     }
   },
   { persist: true }
 )
-=======
-=======
->>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
-  const getIsOauth = () => {
-    return profileImage.value
-  }
-
-  return {
-    memberList,
-    // member,
-    // getMember,
-
-    createMember,
-    // 로그인
-    checkId,
-    checkNickname,
-    login,
-    kakaoLogin,
-    isMember,
-    token,
-    nickname,
-    profileImage,
-    isOauth,
-    // loginMember,
-    isLogin,
-    // 로그아웃
-    logout,
-    // 마이페이지
-    mypage,
-    getMypage,
-    modifyInfo,
-    // selectedMember,
-    // clickMember,
-    // updateMember,
-    // 지역 가져오기 카카오맵
-    address_name,
-    address_code,
-    getLocationInfo,
-    getMemberId,
-    getNickname,
-    getProfileImage,
-    getIsOauth
-  }
-})
-<<<<<<< HEAD
->>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
-=======
->>>>>>> dc23ad1ec1abb1a068019f4677656c0da8f3ce1e
