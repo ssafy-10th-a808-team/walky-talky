@@ -1,6 +1,6 @@
 <template>
   <div>
-    <shareBoardMember
+    <shareBoardListUpper
       :nickname="content.member.nickname"
       :profilePic="content.member.profilePic"
       :create_at="content.create_at"
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
+import shareBoardListUpper from '@/components/shareBoard/shareBoardListUpper.vue'
 import shareBoardTitle from '@/components/shareBoard/shareBoardTitle.vue'
 import shareBoardLike from '@/components/shareBoard/shareBoardLike.vue'
 import shareBoardScrap from '@/components/shareBoard/shareBoardScrap.vue'
