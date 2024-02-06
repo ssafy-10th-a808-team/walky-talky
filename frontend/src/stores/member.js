@@ -6,6 +6,7 @@ import { useCounterStore } from './counter'
 
 const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
 
+<<<<<<< HEAD
 export const useMemberStore = defineStore(
   'member',
   () => {
@@ -18,6 +19,18 @@ export const useMemberStore = defineStore(
     const nickname = ref('')
     const profileImage = ref('')
     const introduce = ref('')
+=======
+export const useMemberStore = defineStore('member', () => {
+  const counterstore = useCounterStore()
+  const memberList = ref([])
+  const address_name = ref('')
+  const address_code = ref('')
+  const token = ref(null)
+  const memberId = ref('')
+  const nickname = ref('')
+  const profileImage = ref('')
+  const isOauth = ref(false)
+>>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
 
     //회원가입
     const createMember = function (payload) {
@@ -141,8 +154,154 @@ export const useMemberStore = defineStore(
       window.location.href = url
     }
 
+<<<<<<< HEAD
     const isMember = async (code) => {
       await axios({
+=======
+  // 아이디 중복 체크
+  const checkId = function (memberId) {
+    axios({
+      method: 'POST',
+      url: `${REST_MEMBER_API}/api/member/check-id`,
+      data: {
+        id: memberId
+      }
+    })
+      .then((res) => {
+        // console.log(res)
+        alert('사용가능한 아이디입니다')
+      })
+      .catch((err) => {
+        // console.log(err)
+        const errmsg = err.response.data.message
+        console.log(errmsg)
+        if (errmsg == 'id is empty') {
+          alert('아이디를 입력해주세요')
+        } else if (errmsg == '중복된 아이디입니다.') {
+          alert('중복된 아이디입니다. 다른 아이디를 입력해주세요')
+        }
+      })
+  } // 아이디 중복 체크 end
+
+  // 닉네임 중복 체크
+  const checkNickname = function (nickname) {
+    axios({
+      method: 'POST',
+      url: `${REST_MEMBER_API}/api/member/check-nickname`,
+      data: {
+        nickname: nickname
+      }
+    })
+      .then((res) => {
+        console.log(res)
+        alert('사용가능한 닉네임입니다')
+      })
+      .catch((err) => {
+        // console.log(err)
+        const errmsg = err.response.data.message
+        console.log(errmsg)
+        if (errmsg == 'nickname is empty') {
+          alert('닉네임을 입력해주세요')
+        } else if (errmsg == '중복된 닉네임입니다.') {
+          alert('중복된 닉네임입니다. 다른 닉네임을 입력해주세요')
+        }
+      })
+  } //닉네임 중복 체크 end
+
+  // const loginMember = ref([])
+  // if (localStorage.getItem('loginMember') != null) {
+  //   loginMember.value.push(localStorage.getItem('loginMember'))
+  //   //페이지 로딩시 로컬스토리지에 로그인 정보가 남아있으면 바로 로그인 정보를 수토어 유저 정보에 할당
+  // }
+
+  // 로그인
+  const login = (payload) => {
+    axios({
+      method: 'post',
+      url: `${REST_MEMBER_API}/api/member/local-login`,
+      data: {
+        memberId: payload.memberId,
+        password: payload.password
+      }
+    })
+      .then((res) => {
+        alert('로그인 성공')
+        token.value = res.headers.get('atk')
+        counterstore.setCookie('atk', token.value)
+        nickname.value = res.data.data.nickname
+        profileImage.value = res.data.data.profileImage
+        router.push({ name: 'home' })
+      })
+      .catch((err) => {
+        alert('로그인 실패')
+        console.log(err)
+      })
+  }
+
+  const kakaoLogin = () => {
+    const clientId = import.meta.env.VITE_KAKAO_CLIENT_Id
+    const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI
+    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
+    window.location.href = url
+  }
+
+  const isMember = async (code) => {
+    await axios({
+      method: 'get',
+      url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
+    }).then((res) => {
+      if (res.status === 201) {
+        memberId.value = res.data.id
+        nickname.value = res.data.nickname
+        profileImage.value = res.data.profileImage
+        isOauth.value = true
+        router.push({ name: 'Signup' })
+      } else if (res.status === 200) {
+        token.value = res.headers.get('atk')
+        counterstore.setCookie('atk', token.value)
+        nickname.value = res.data.data.nickname
+        profileImage.value = res.data.data.profileImage
+        router.push({ name: 'home' })
+      }
+    })
+  }
+  // const isLogin = computed(() => {
+  //   if (counterstore.getCookie("atk") === null) {
+  //     return false
+  //   } else {
+  //     return true
+  //   }
+  // })
+  const isLogin = computed(() => counterstore.getCookie('atk') !== undefined)
+
+  const logout = () => {
+    axios({
+      method: 'post',
+      url: `${REST_MEMBER_API}/api/member/logout`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        alert('로그아웃 성공')
+        nickname.value = null
+        profileImage.value = null
+        token.value = null
+        counterstore.deleteCookie('atk')
+        router.push({ name: 'home' })
+      })
+      .catch((err) => {
+        alert('로그아웃 실패')
+        console.log(err)
+      })
+  }
+
+  // 내 정보
+  const mypage = ref([])
+  const getMypage = async () => {
+    try {
+      const res = await axios({
+>>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
         method: 'get',
         url: `${REST_MEMBER_API}/api/oauth/kakao?code=${code}`
       }).then((res) => {
@@ -272,6 +431,7 @@ export const useMemberStore = defineStore(
       introduce.value = introduce
     }
 
+<<<<<<< HEAD
     return {
       memberList,
       // member,
@@ -312,3 +472,46 @@ export const useMemberStore = defineStore(
   },
   { persist: true }
 )
+=======
+  const getIsOauth = () => {
+    return profileImage.value
+  }
+
+  return {
+    memberList,
+    // member,
+    // getMember,
+
+    createMember,
+    // 로그인
+    checkId,
+    checkNickname,
+    login,
+    kakaoLogin,
+    isMember,
+    token,
+    nickname,
+    profileImage,
+    isOauth,
+    // loginMember,
+    isLogin,
+    // 로그아웃
+    logout,
+    // 마이페이지
+    mypage,
+    getMypage,
+    modifyInfo,
+    // selectedMember,
+    // clickMember,
+    // updateMember,
+    // 지역 가져오기 카카오맵
+    address_name,
+    address_code,
+    getLocationInfo,
+    getMemberId,
+    getNickname,
+    getProfileImage,
+    getIsOauth
+  }
+})
+>>>>>>> 562b1d472a2fc8516bf1846cc18afe078d527d1b
