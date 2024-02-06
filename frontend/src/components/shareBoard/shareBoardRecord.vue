@@ -1,6 +1,6 @@
 <template>
   <div class="map-container">
-    <div id="map" style="width: 100%; height: 400px; justify-content: center" />
+    <div id="map" style="width: 80%; height: 400px; justify-content: center" />
     <div class="record-container">
       <div>
         <p>소요 시간</p>
