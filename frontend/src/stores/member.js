@@ -15,7 +15,6 @@ export const useMemberStore = defineStore('member', () => {
   const memberId = ref('')
   const nickname = ref('')
   const profileImage = ref('')
-  const isOauth = ref(false)
 
   //회원가입
   const createMember = function (payload) {
@@ -125,6 +124,7 @@ export const useMemberStore = defineStore('member', () => {
         nickname.value = res.data.data.nickname
         profileImage.value = res.data.data.profileImage
         router.push({ name: 'home' })
+        console.log(nickname.value)
       })
       .catch((err) => {
         alert('로그인 실패')
@@ -148,7 +148,6 @@ export const useMemberStore = defineStore('member', () => {
         memberId.value = res.data.id
         nickname.value = res.data.nickname
         profileImage.value = res.data.profileImage
-        isOauth.value = true
         router.push({ name: 'Signup' })
       } else if (res.status === 200) {
         token.value = res.headers.get('atk')
@@ -265,14 +264,10 @@ export const useMemberStore = defineStore('member', () => {
     return profileImage.value
   }
 
-  const getIsOauth = () => {
-    return profileImage.value
-  }
-
-  return {
-    memberList,
-    // member,
-    // getMember,
+    return {
+      memberList,
+      // member,
+      // getMember,
 
     createMember,
     // 로그인
@@ -284,7 +279,6 @@ export const useMemberStore = defineStore('member', () => {
     token,
     nickname,
     profileImage,
-    isOauth,
     // loginMember,
     isLogin,
     // 로그아웃
@@ -302,7 +296,6 @@ export const useMemberStore = defineStore('member', () => {
     getLocationInfo,
     getMemberId,
     getNickname,
-    getProfileImage,
-    getIsOauth
+    getProfileImage
   }
 })

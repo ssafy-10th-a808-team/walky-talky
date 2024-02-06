@@ -16,7 +16,11 @@
           <li>
             <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
           </li>
-          <li><a class="nav-link scrollto" href="#services">산책공유</a></li>
+          <li>
+            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto"
+              >산책공유</RouterLink
+            >
+          </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
           <li>
