@@ -33,7 +33,7 @@
                   </div>
                 </div>
                 <!-- 아이디 -->
-                <div class="form-group col-md-8">
+                <div v-if="!isOauth" class="form-group col-md-8">
                   <label>* 아이디</label>
                   <input
                     type="text"
@@ -43,7 +43,7 @@
                     required
                   />
                 </div>
-                <div class="col-md-4 cta-btn-container text-center col-auto">
+                <div v-if="!isOauth" class="col-md-4 cta-btn-container text-center col-auto">
                   <button type="submit" class="cta-btn align-middle" @click="checkId()">
                     중복확인
                   </button>
@@ -51,7 +51,7 @@
                 </div>
               </div>
               <!-- 비밀번호 -->
-              <div class="mb-3 row">
+              <div v-if="!isOauth" class="mb-3 row">
                 <label for="inputPassword" class="col-sm-10 col-form-label">* 비밀번호</label>
                 <input
                   type="password"
@@ -66,7 +66,7 @@
                 </p>
               </div>
               <!-- 비밀번호확인 -->
-              <div class="mb-3 row">
+              <div v-if="!isOauth" class="mb-3 row">
                 <label for="inputPassword" class="col-sm-10 col-form-label">* 비밀번호 확인</label>
                 <input
                   type="password"
@@ -165,6 +165,7 @@ const nickname = ref('')
 const introduce = ref('안녕하세요! ')
 const region_cd = ref('')
 const region_name = ref('')
+const isOauth = ref(false)
 
 region_name.value = memberStore.getLocationInfo()[0]
 region_cd.value = memberStore.getLocationInfo()[1]
@@ -181,8 +182,8 @@ const isMember = async (code) => {
   memberId.value = memberStore.getMemberId()
   nickname.value = memberStore.getNickname()
   profileImg.value = memberStore.getProfileImage()
+  isOauth.value = memberStore.getIsOauth()
   loadImage()
-  console.log(memberId.value)
 }
 
 // 아이디 중복 체크
