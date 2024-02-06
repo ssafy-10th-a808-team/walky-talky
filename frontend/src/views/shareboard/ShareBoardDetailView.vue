@@ -111,12 +111,12 @@ console.log(myProfileImage.value)
 
 const loadComment = async (seq) => {
   await shareBoardStore.getComment(seq)
-
   comments.value = shareBoardStore.shareComment
 }
 
 const loadLike = async (seq) => {
   await shareBoardStore.getLike(seq)
+  console.log('like')
   like.value = shareBoardStore.shareLike
 }
 
@@ -130,22 +130,22 @@ const pushLike = (liked, shareBoardSeq) => {
     like.value.liked = false
     like.value.likeCount -= 1
     shareBoardStore.dislike(shareBoardSeq)
-    loadLike(shareBoardSeq)
   } else {
     like.value.liked = true
-    like.value.likeCount += 1 // Todo : 깜빡이는거 고치기
+    like.value.likeCount += 1
     shareBoardStore.like(shareBoardSeq)
-    loadLike(shareBoardSeq)
   }
 }
 
 const pushScrap = (scraped, recordSeq, shareBoardSeq) => {
   if (scraped) {
+    scrap.value.scraped = false
+    scrap.value.scrapCount -= 1
     shareBoardStore.unscrap(recordSeq)
-    loadScrap(shareBoardSeq)
   } else {
+    scrap.value.scraped = true
+    scrap.value.scrapCount += 1
     shareBoardStore.scrap(recordSeq)
-    loadScrap(shareBoardSeq)
   }
 }
 </script>
