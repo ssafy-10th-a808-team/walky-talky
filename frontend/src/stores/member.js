@@ -124,6 +124,7 @@ export const useMemberStore = defineStore('member', () => {
         nickname.value = res.data.data.nickname
         profileImage.value = res.data.data.profileImage
         router.push({ name: 'home' })
+        console.log(nickname.value)
       })
       .catch((err) => {
         alert('로그인 실패')
@@ -263,10 +264,10 @@ export const useMemberStore = defineStore('member', () => {
     return profileImage.value
   }
 
-  return {
-    memberList,
-    // member,
-    // getMember,
+    return {
+      memberList,
+      // member,
+      // getMember,
 
     createMember,
     // 로그인
