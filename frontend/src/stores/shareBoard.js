@@ -162,17 +162,25 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
 
   ///// 게시글 좋아요, 취소/////
   const like = (shareBoardSeq) => {
-    const res = axios({
-      method: 'post',
-      url: `${REST_CLUB_API}/share-board/${shareBoardSeq}/like`,
-      headers: {
-        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+    try {
+      const res = axios({
+        method: 'post',
+        url: `${REST_CLUB_API}/share-board/${shareBoardSeq}/like`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      }).catch(function (err) {
+        if (err.response.status == 400) {
+          alert(err.response.data.message)
+        }
+      })
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('좋아요 중 오류 발생:', error)
       }
-    }).catch(function (err) {
-      if (err.response.status == 400) {
-        alert(err.response.data.message)
-      }
-    })
+    }
   }
 
   const dislike = (shareBoardSeq) => {
@@ -182,6 +190,10 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         url: `${REST_CLUB_API}/share-board/${shareBoardSeq}/like-cancel`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      }).catch(function (err) {
+        if (err.response.status == 400) {
+          alert(err.response.data.message)
         }
       })
     } catch (error) {
@@ -202,6 +214,10 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
+      }).catch(function (err) {
+        if (err.response.status == 400) {
+          alert(err.response.data.message)
+        }
       })
     } catch (error) {
       if (error.response) {
@@ -219,6 +235,10 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         url: `${REST_CLUB_API}/scrap-record/${recordSeq}/cancel`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      }).catch(function (err) {
+        if (err.response.status == 400) {
+          alert(err.response.data.message)
         }
       })
     } catch (error) {
