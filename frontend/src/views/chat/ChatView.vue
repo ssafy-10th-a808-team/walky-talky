@@ -24,7 +24,7 @@ const newMessage = ref('')
 const chatStroe = useChatStore()
 
 onMounted(() => {
-  getConnection
+  chatStroe.getConnection(1)
 })
 
 // 메시지 리스트의 변화를 감지
