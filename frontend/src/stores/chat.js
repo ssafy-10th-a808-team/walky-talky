@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
 import webstomp from 'webstomp-client'
 import axios from 'axios'
+import { ref } from 'vue'
 
 export const useChatStore = defineStore('chat', () => {
-  const STOMP = 'ws://i10a808.p.ssafy.io/ws'
+  const STOMP = 'wss://i10a808.p.ssafy.io:8082/ws'
   const REST_CHAT_API = 'https://i10a808.p.ssafy.io/api/chat'
   const client = ref(null)
 
@@ -34,7 +35,7 @@ export const useChatStore = defineStore('chat', () => {
         console.log('Connected: ' + frame)
 
         // 특정 목적지를 구독
-        client.subscribe(`/sub/message/${chatSeq}`, function (message) {
+        client.value.subscribe(`/sub/message/${chatSeq}`, function (message) {
           // 받은 메시지를 처리
           console.log(JSON.parse(message.body).content)
         })
