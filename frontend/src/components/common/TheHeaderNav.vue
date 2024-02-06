@@ -10,7 +10,7 @@
         <ul>
           <li>
             <RouterLink :to="{ name: 'club' }" class="nav-link scrollto active"
-              >소모임찾기</RouterLink
+              >소모임</RouterLink
             >
           </li>
           <li>
@@ -23,6 +23,11 @@
           </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
+          <li>
+            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto"
+              >채팅테스트</RouterLink
+            >
+          </li>
           <li class="dropdown" v-if="memberstore.isLogin">
             <a href="#"
               ><span>{{ memberstore.nickname }}</span> <i class="bi bi-chevron-down"></i

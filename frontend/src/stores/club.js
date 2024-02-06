@@ -1,14 +1,13 @@
 import { defineStore } from 'pinia'
-import { ref, toRef } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { ref } from 'vue'
 import axios from 'axios'
-import { useMemberStore } from './member'
 import { useCounterStore } from './counter'
 
 export const useClubStore = defineStore(
   'club',
   () => {
     const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api/club'
+<<<<<<< HEAD
 
     const counterstore = useCounterStore()
 
@@ -28,6 +27,28 @@ export const useClubStore = defineStore(
           console.error(err)
           alert('소모임 정보를 가져오는데 실패했습니다.')
         })
+=======
+    const counterstore = useCounterStore()
+
+    const clubDetail = ref({}) // 스토어 상태에 추가
+
+    async function findClub(seq) {
+      try {
+        const response = await axios({
+          method: 'get',
+          url: `${REST_CLUB_API}/detail?clubSeq=${seq}`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        })
+        console.log(response)
+        clubDetail.value = response.data // 응답 데이터로 상태 업데이트
+        console.log(clubDetail.value)
+      } catch (err) {
+        console.error(err)
+        alert('소모임 정보를 가져오는데 실패했습니다.')
+      }
+>>>>>>> b58a29fc1a6e95f38559e4c7f712263bcc779a94
     }
 
     // // 소모임 정보 수정
@@ -72,8 +93,26 @@ export const useClubStore = defineStore(
     //   }
 
     return {
+<<<<<<< HEAD
       findClub
     }
   },
   { persist: true }
+=======
+      clubDetail,
+      findClub
+    }
+  },
+  {
+    persist: {
+      enabled: true,
+      strategies: [
+        {
+          key: 'club',
+          storage: window.localStorage // 또는 window.sessionStorage
+        }
+      ]
+    }
+  }
+>>>>>>> b58a29fc1a6e95f38559e4c7f712263bcc779a94
 )
