@@ -133,7 +133,7 @@ const pushLike = (liked, shareBoardSeq) => {
     loadLike(shareBoardSeq)
   } else {
     like.value.liked = true
-    like.value.likeCountlikeCount += 1
+    like.value.likeCount += 1 // Todo : 깜빡이는거 고치기
     shareBoardStore.like(shareBoardSeq)
     loadLike(shareBoardSeq)
   }
