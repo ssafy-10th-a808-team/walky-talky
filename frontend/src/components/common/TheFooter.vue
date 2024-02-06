@@ -23,8 +23,6 @@
 #footer {
   position: -webkit-sticky; /* Safari 브라우저 지원 */
   position: sticky;
-  bottom: 0;
-  width: 100%;
   padding: 10px 0;
   /* 푸터의 내부 패딩을 상하 10px, 좌우 0으로 설정 */
   text-align: center;
@@ -34,6 +32,8 @@
 }
 
 #footer .container {
+  bottom: 0;
+  width: 100%;
   max-width: none;
   /* 컨테이너의 최대 너비 설정을 해제 (필요한 경우) */
 }
