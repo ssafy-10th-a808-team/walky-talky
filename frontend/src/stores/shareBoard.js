@@ -154,6 +154,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         }
       })
       shareComment.value = res.data.data
+      console.log(shareComment.value)
     } catch (err) {
       console.log(err)
     }
@@ -167,11 +168,13 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       headers: {
         Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
-    }).catch(function (err) {
-      if (err.response.status == 400) {
-        alert(err.response.data.message)
-      }
     })
+      .then(alert('좋아요 성공!'))
+      .catch(function (err) {
+        if (err.response.status == 400) {
+          alert(err.response.data.message)
+        }
+      })
   }
 
   const dislike = (shareBoardSeq) => {
@@ -181,11 +184,13 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       headers: {
         Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
-    }).catch(function (err) {
-      if (err.response.status == 400) {
-        alert(err.response.data.message)
-      }
     })
+      .then(alert('좋아요를 취소하였습니다.'))
+      .catch(function (err) {
+        if (err.response.status == 400) {
+          alert(err.response.data.message)
+        }
+      })
   }
 
   ///// 기록 스크랩, 취소/////
@@ -196,11 +201,13 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       headers: {
         Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
-    }).catch(function (err) {
-      if (err.response.status == 400) {
-        alert(err.response.data.message)
-      }
     })
+      .then(alert('스크랩 성공!'))
+      .catch(function (err) {
+        if (err.response.status == 400) {
+          alert(err.response.data.message)
+        }
+      })
   }
 
   const unscrap = (recordSeq) => {
@@ -210,11 +217,77 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       headers: {
         Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
-    }).catch(function (err) {
-      if (err.response.status == 400) {
-        alert(err.response.data.message)
-      }
     })
+      .then(alert('스크랩을 취소하였습니다.'))
+      .catch(function (err) {
+        if (err.response.status == 400) {
+          alert(err.response.data.message)
+        }
+      })
+  }
+
+  ///// 댓글 작성/////
+  const commentWrite = async (shareBoardSeq, content) => {
+    try {
+      const response = await axios.post(
+        `${REST_CLUB_API}/share-board/${shareBoardSeq}/comment/write`,
+        { content },
+        {
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        }
+      )
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('댓글 작성 중 오류 발생:', error)
+      }
+    }
+  }
+
+  ///// 댓글 수정/////
+  const commentEdit = async (shareBoardSeq, commentSeq, content) => {
+    try {
+      const response = await axios.post(
+        `${REST_CLUB_API}/share-board/${shareBoardSeq}/comment/${commentSeq}/modify`,
+        { content },
+        {
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        }
+      )
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('댓글 수정 중 오류 발생:', error)
+      }
+    }
+  }
+
+  ///// 댓글 삭제/////
+  const commentDel = async (shareBoardSeq, commentSeq) => {
+    try {
+      const response = await axios.post(
+        `${REST_CLUB_API}/share-board/${shareBoardSeq}/comment/${commentSeq}/delete`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        }
+      )
+      alert('댓글 삭제 성공!')
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('댓글 삭제 중 오류 발생:', error)
+      }
+    }
   }
 
   return {
@@ -243,6 +316,10 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     dislike,
     //스크랩
     scrap,
-    unscrap
+    unscrap,
+    // 댓글
+    commentWrite,
+    commentEdit,
+    commentDel
   }
 })

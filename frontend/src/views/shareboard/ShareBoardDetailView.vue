@@ -1,21 +1,77 @@
 <template>
-  <shareBoardDetail
-    :content="content"
-    :record="record"
-    :like="like"
-    :scrap="scrap"
-    :comments="comments"
-  />
+  <div>
+    <shareBoardTitle v-if="content" :title="content.title" :commentCount="content.commentCount" />
+    <shareBoardListUpper
+      v-if="content && record"
+      :nickname="content.member.nickname"
+      :profilePic="content.member.profilePic"
+      :create_at="content.create_at"
+      :address="record.address"
+      :hit="content.hit"
+    />
+    <shareBoardRecord
+      v-if="record"
+      :duration="record.duration"
+      :distance="record.distance"
+      :points="record.points"
+      :address="record.address"
+    />
+    <div v-if="content">{{ content.content }}</div>
+    <div v-if="like && scrap" class="like-scrap-container">
+      <shareBoardLike
+        :likeCount="like.likeCount"
+        :liked="like.liked"
+        @click="pushLike(like.liked, content.shareBoardSeq)"
+      />
+      <shareBoardScrap
+        :scrapCount="scrap.scrapCount"
+        :scraped="scrap.scraped"
+        @click="pushScrap(scrap.scraped, content.recordSeq, content.shareBoardSeq)"
+      />
+    </div>
+
+    <div v-if="content">
+      <shareBoardCommentFormVue
+        :shareBoardSeq="content.shareBoardSeq"
+        :nickname="myNickname"
+        :profilePic="myProfileImage"
+        :loadComment="loadComment"
+      />
+    </div>
+
+    <div v-if="comments">
+      <div v-for="comment in comments" :key="comment.commentSeq">
+        <shareBoardComment
+          :nickname="comment.member.nickname"
+          :profilePic="comment.member.profilePic"
+          :content="comment.content"
+          :created_at="comment.created_at"
+          :shareBoardSeq="content.shareBoardSeq"
+          :commentSeq="comment.commentSeq"
+          :loadComment="loadComment"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { onMounted, ref, onBeforeMount } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
-import shareBoardDetail from '@/components/shareBoard/shareBoardDetail.vue'
-const shareBoardStore = useShareBoardStore()
+import { useMemberStore } from '@/stores/member'
 
-const router = useRouter()
+import shareBoardListUpper from '@/components/shareBoard/shareBoardListUpper.vue'
+import shareBoardTitle from '@/components/shareBoard/shareBoardTitle.vue'
+import shareBoardLike from '@/components/shareBoard/shareBoardLike.vue'
+import shareBoardScrap from '@/components/shareBoard/shareBoardScrap.vue'
+import shareBoardRecord from '@/components/shareBoard/shareBoardRecord.vue'
+import shareBoardComment from '@/components/shareBoard/shareBoardComment.vue'
+import shareBoardCommentFormVue from '@/components/shareBoard/shareBoardCommentForm.vue'
+
+const shareBoardStore = useShareBoardStore()
+const memberStore = useMemberStore()
+
 const route = useRoute()
 
 const content = ref(null)
@@ -41,4 +97,59 @@ const loadData = async (seq) => {
 onMounted(() => {
   loadData(route.params.seq)
 })
+
+///////////////////////
+const myNickname = ref('')
+myNickname.value = memberStore.getNickname()
+
+const myProfileImage = ref('')
+myProfileImage.value = memberStore.getProfileImage()
+
+console.log(myNickname.value)
+console.log(myProfileImage.value)
+///////////////////////
+
+const loadComment = async (seq) => {
+  await shareBoardStore.getComment(seq)
+
+  comments.value = shareBoardStore.shareComment
+}
+
+const loadLike = async (seq) => {
+  await shareBoardStore.getLike(seq)
+  like.value = shareBoardStore.shareLike
+}
+
+const loadScrap = async (seq) => {
+  await shareBoardStore.getScrap(seq)
+  scrap.value = shareBoardStore.shareScrap
+}
+
+const pushLike = (liked, shareBoardSeq) => {
+  if (liked) {
+    shareBoardStore.dislike(shareBoardSeq)
+    loadLike(shareBoardSeq)
+  } else {
+    shareBoardStore.like(shareBoardSeq)
+    loadLike(shareBoardSeq)
+  }
+}
+
+const pushScrap = (scraped, recordSeq, shareBoardSeq) => {
+  if (scraped) {
+    shareBoardStore.unscrap(recordSeq)
+    loadScrap(shareBoardSeq)
+  } else {
+    shareBoardStore.scrap(recordSeq)
+    loadScrap(shareBoardSeq)
+  }
+}
 </script>
+
+<style scoped>
+.like-scrap-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+</style>
