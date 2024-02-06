@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
 import { useMemberStore } from '@/stores/member'
@@ -115,9 +115,10 @@ const loadComment = async (seq) => {
 }
 
 const loadLike = async (seq) => {
+  like.value.loading = true // 로딩 상태 설정
   await shareBoardStore.getLike(seq)
-  console.log('like')
   like.value = shareBoardStore.shareLike
+  like.value.loading = false // 로딩 상태 해제
 }
 
 const loadScrap = async (seq) => {
@@ -135,9 +136,10 @@ const pushLike = (liked, shareBoardSeq) => {
     like.value.likeCount += 1
     shareBoardStore.like(shareBoardSeq)
   }
+  loadLike(shareBoardSeq)
 }
 
-const pushScrap = (scraped, recordSeq, shareBoardSeq) => {
+const pushScrap = (scraped, recordSeq) => {
   if (scraped) {
     scrap.value.scraped = false
     scrap.value.scrapCount -= 1
@@ -147,6 +149,7 @@ const pushScrap = (scraped, recordSeq, shareBoardSeq) => {
     scrap.value.scrapCount += 1
     shareBoardStore.scrap(recordSeq)
   }
+  loadScrap(recordSeq)
 }
 </script>
 
