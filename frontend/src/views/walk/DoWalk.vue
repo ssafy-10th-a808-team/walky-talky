@@ -105,7 +105,7 @@ import { useWalkStore } from '@/stores/walk'
 const walkStore = useWalkStore()
 
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
-let map = null // map is not defined Reference Error 방지
+const map = ref(null) // map is not defined Reference Error 방지
 let lat = 0
 let lon = 0
 // const address = ref('')
@@ -132,6 +132,7 @@ const endTime = ref('')
 // const thumbnail = ref('')
 const tempRecords = ref([])
 const stringTempRecords = ref([])
+const seq = ref(null)
 
 // 스톱워치
 const clock = ref('00:00:00')
@@ -195,7 +196,7 @@ const initMap = () => {
     center: new kakao.maps.LatLng(lat, lon),
     level: 5
   }
-  map = new kakao.maps.Map(container, options)
+  map.value = new kakao.maps.Map(container, options)
 
   marker.setMap(map)
 
@@ -249,96 +250,104 @@ const resetLocations = function () {
   previous.value.lon = 0
 }
 
-// const watchLocationUpdates = function () {
-//   if (running.value) return
+const watchLocationUpdates = function () {
+  if (running.value) return
 
-//   if (timeBegan.value === null) {
-//     resetLocations()
-//     timeBegan.value = new Date()
-//   }
+  if (timeBegan.value === null) {
+    resetLocations()
+    timeBegan.value = new Date()
+  }
 
-//   if (timeStopped.value !== null) {
-//     stoppedDuration.value += new Date() - timeStopped.value
-//   }
+  if (timeStopped.value !== null) {
+    stoppedDuration.value += new Date() - timeStopped.value
+  }
 
-//   started.value = setInterval(clockRunning, 1000)
-//   running.value = true
-//   isPause.value = false
+  started.value = setInterval(clockRunning, 1000)
+  running.value = true
+  isPause.value = false
 
-//   //Map 시작
-//   const map = map
-//   const marker = marker.value
+  //Map 시작
+  // const map = map
+  // const marker = marker.value
+  // const marker = cur_marker.value
 
-//   watchPositionId.value = navigator.geolocation.watchPosition(
-//     (position) => {
-//       current.value.lat = position.coords.latitude
-//       current.value.lon = position.coords.longitude
-//       const now = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
-//       // $store.commit('SET_IS_AGREE')
-//       axios
-//         .get(
-//           'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=' +
-//             current.value.lon +
-//             '&y=' +
-//             current.value.lat,
-//           {
-//             headers: {
-//               Authorization: 'KakaoAK bacd72f58ac01490602415c683ad8c05'
-//             }
-//           }
-//         )
-//         .then((response) => {
-//           address.value = response.data.documents[0].address_name
-//         })
-//       map.setCenter(now)
-//       marker.setPosition(now)
-//       if (previous.value.lat == 0) {
-//         previous.value.lat = current.value.lat
-//         previous.value.lon = current.value.lon
+  const marker = new kakao.maps.Marker({
+    position: new kakao.maps.LatLng(lat, lon)
+  })
+  cur_marker.value = marker
+  marker.setMap(map.value)
 
-//         //런닝 시작
-//         const currentLatLng = new kakao.maps.LatLng(current.value.lat, current.value.lon)
-//         linePath.value.push(currentLatLng)
-//       } else {
-//         const distance = computeDistance(previous, current)
-//         const threshold = 0.001
-//         previous.value.lat = current.value.lat
-//         previous.value.lon = current.value.lon
+  watchPositionId.value = navigator.geolocation.watchPosition(
+    (position) => {
+      current.value.lat = position.coords.latitude
+      current.value.lon = position.coords.longitude
+      const now = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
+      // $store.commit('SET_IS_AGREE')
+      axios
+        .get(
+          'https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?x=' +
+            current.value.lon +
+            '&y=' +
+            current.value.lat,
+          {
+            headers: {
+              Authorization: 'KakaoAK bacd72f58ac01490602415c683ad8c05'
+            }
+          }
+        )
+        .then((response) => {
+          address.value = response.data.documents[0].address_name
+        })
+      map.value.setCenter(now)
+      marker.setPosition(now)
+      if (previous.value.lat == 0) {
+        previous.value.lat = current.value.lat
+        previous.value.lon = current.value.lon
 
-//         if (distance > threshold) {
-//           // 일정속도 이상
-//           accumulated_distance.value += distance
-//           checkOneKm.value += distance
+        //런닝 시작
+        const currentLatLng = new kakao.maps.LatLng(current.value.lat, current.value.lon)
+        linePath.value.push(currentLatLng)
+      } else {
+        const distance = computeDistance(previous, current)
+        const threshold = 0.001
+        previous.value.lat = current.value.lat
+        previous.value.lon = current.value.lon
 
-//           linePath.value.push(new kakao.maps.LatLng(current.value.lat, current.value.lon))
-//           // speed.value = (checkOneKm.value * 1000) / checkSecond.value
+        if (distance > threshold) {
+          // 일정속도 이상
+          accumulated_distance.value += distance
+          checkOneKm.value += distance
 
-//           drawLines()
-//         }
-//         if (checkOneKm.value >= 1) {
-//           //1km 도달
-//           savePosition()
-//           checkOneKm.value -= 1
-//           checkSecond.value = 0
-//         }
-//       }
-//     },
-//     () => {
-//       // $store.commit('SET_IS_NOT_AGREE')
-//       router.push('/')
-//     },
-//     {
-//       timeout: 5000,
-//       maximumAge: 0,
-//       enableHighAccuracy: true,
-//       distanceFilter: 40
-//     }
-//   )
-//   map = map.value
-//   cur_marker.value = marker
-// }
+          linePath.value.push(new kakao.maps.LatLng(current.value.lat, current.value.lon))
+          // speed.value = (checkOneKm.value * 1000) / checkSecond.value
+
+          drawLines()
+        }
+        if (checkOneKm.value >= 1) {
+          //1km 도달
+          savePosition()
+          checkOneKm.value -= 1
+          checkSecond.value = 0
+        }
+      }
+    },
+    () => {
+      // $store.commit('SET_IS_NOT_AGREE')
+      router.push('/')
+    },
+    {
+      timeout: 5000,
+      maximumAge: 0,
+      enableHighAccuracy: true,
+      distanceFilter: 40
+    }
+  )
+  // map = map.value
+  // cur_marker.value = marker
+}
 
 const startWalk = function () {
+  resetLocations()
   startTime.value = new Date()
   startTime.value = moment(startTime.value).format('YYYY-MM-DDTHH:mm:ss')
   console.log(startTime)
@@ -371,40 +380,69 @@ const clockRunning = function () {
 }
 
 // 위치 저장하기
-const savePosition = function () {
-  // const speed = 0
-  // if (checkOneKm <= 0 || checkSecond <= 0) {
-  //   speed = 0.001
-  // } else {
-  //   speed = speed + 0.001
-  // }
+// const savePosition = function () {
 
-  let tempRecord = {
-    accDistance: accumulated_distance.value + 0.001,
-    accTime: accumulated_time
-    // speed: speed
+//   let tempRecord = {
+//     accDistance: accumulated_distance.value + 0.001,
+//     accTime: accumulated_time
+//     // speed: speed
+//   }
+
+//   tempRecords.value.push(tempRecord)
+
+//   let stringTempRecord = {
+//     accDistance: (accumulated_distance.value + 0.001).toString(),
+//     accTime: accumulated_time.value.toString()
+//     // speed: speed.toString()
+//   }
+//   stringTempRecords.value.push(stringTempRecord)
+
+//   https.post('/main/finishrecord', {
+//     userId: $store.getters.getLoginUserInfo.userId,
+//     courseId: course.id,
+//     distance: accumulated_distance,
+//     time: accumulated_time,
+//     calorie: accumulated_time * 0.06
+//   })
+// }
+const savePosition = async function () {
+  try {
+    // 아래의 URL은 실제 서버의 엔드포인트로 수정해야 합니다.
+    const url = '/api/walk/regist-record'
+
+    // 서버로 보낼 데이터를 구성합니다.
+    const data = {
+      seq: '기록식별번호',
+      duration: accumulated_time.value,
+      distance: accumulated_distance.value,
+      points: tempRecords.value.map((record) => [record.lat, record.lon, record.time]),
+      starRating: 1,
+      comment: '한줄평',
+      title: '제목',
+      regionCd: '지역 코드'
+    }
+
+    // 서버로 보낼 때 헤더에 Bearer 토큰을 추가합니다.
+    const accessToken = '여기에_실제_토큰_값_추가' // 실제 토큰 값으로 대체해야 합니다.
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    }
+
+    // axios를 사용하여 서버로 POST 요청을 보냅니다.
+    const response = await axios.post(url, data, { headers })
+
+    // 서버 응답을 처리합니다.
+    console.log(response.data) // 서버에서 반환하는 데이터를 확인하거나 필요에 맞게 처리합니다.
+  } catch (error) {
+    console.error('Error while saving position:', error)
+    // 에러 처리를 추가할 수 있습니다.
   }
-
-  tempRecords.value.push(tempRecord)
-
-  let stringTempRecord = {
-    accDistance: (accumulated_distance.value + 0.001).toString(),
-    accTime: accumulated_time.value.toString()
-    // speed: speed.toString()
-  }
-  stringTempRecords.value.push(stringTempRecord)
-
-  https.post('/main/finishrecord', {
-    userId: $store.getters.getLoginUserInfo.userId,
-    courseId: course.id,
-    distance: accumulated_distance,
-    time: accumulated_time,
-    calorie: accumulated_time * 0.06
-  })
 }
 
-// 기록 중지(기록)
+// 산책 끝내기
 const endLocationUpdates = function () {
+  // alert(walkStore.data)
+  // console.log(walkStore.data)
   stopLocationUpdates()
   alert('산책 기록이 저장되었습니다 📬')
 
@@ -421,17 +459,17 @@ const endLocationUpdates = function () {
   checkOneKm.value = 0
   endTime.value = new Date()
   endTime.value = moment(endTime).format('YYYY-MM-DDTHH:mm:ss')
-  router.push('/main')
+  router.push('/') // 어디로 가지? -> 내 코스 기록 페이지로 가자
 }
 
-// 기록 중지
+// 일시정지
 const stopLocationUpdates = function () {
   isPause.value = true
   running.value = false
   timeStopped.value = new Date()
-  clearInterval(started)
+  clearInterval(started.value)
 
-  navigator.geolocation.clearWatch(watchPositionId)
+  navigator.geolocation.clearWatch(watchPositionId.value)
   drawLines()
 }
 
@@ -460,6 +498,9 @@ const degreesToRadians = function (degrees) {
 // }
 
 const drawLines = function () {
+  if (poly.value) {
+    poly.value.setMap(null) // Remove existing polyline
+  }
   poly.value = new kakao.maps.Polyline({
     path: linePath.value,
     geodesic: true,
@@ -469,7 +510,9 @@ const drawLines = function () {
     map: map.value
   })
 
-  poly.value.setMap(map)
+  if (map.value) {
+    poly.value.setMap(map.value)
+  }
 }
 </script>
 
