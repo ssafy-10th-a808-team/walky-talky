@@ -15,6 +15,7 @@
               <div v-if="modals.nickname" class="modal">
                 <div class="modal-content">
                   <h2>닉네임 수정</h2>
+
                   <form @submit.prevent="submitForm">
                     <input type="text" v-model="nickname" />
                     <p>{{ nickname }}</p>
@@ -24,7 +25,7 @@
               </div>
               <div>
                 <h4>닉네임</h4>
-                <p @click="openModal('nickname')">{{ nickname }}</p>
+                <p v-if="nickname" @click="openModal('nickname')">{{ nickname }}</p>
               </div>
             </div>
 
@@ -32,11 +33,13 @@
               <h4>생일</h4>
               <p>{{ mypage.birth }}</p>
             </div>
+            <h4>내 동네</h4>
             <div class="address">
               <div v-if="modals.address">
-                <MyLocation />
+                <MyLocationView>
+                  <div class="text-center"><button @click="closeModal">확인</button></div>
+                </MyLocationView>
               </div>
-              <h4>내 동네</h4>
               <p @click="openModal('address')">
                 {{ address }}
               </p>
@@ -62,9 +65,7 @@
               <p @click="openModal('introduce')">{{ introduce }}</p>
             </div>
             <div>
-              <RouterLink :to="{ name: 'Mypage' }">
-                <button @click="modifyInfo">완료</button>
-              </RouterLink>
+              <button @click="modifyInfo">완료</button>
             </div>
           </div>
         </div>
@@ -77,10 +78,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useMemberStore } from '@/stores/member'
-import { useCounterStore } from '@/stores/counter';
-import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue';
-import MyLocation from './MyLocationView.vue';
-defineProps(['closemodal'])
+import { useCounterStore } from '@/stores/counter'
+import MyLocationView from './MyLocationView.vue'
+
 const memberstore = useMemberStore()
 const counterstore = useCounterStore()
 const mypage = ref(null)
@@ -90,9 +90,7 @@ const address = ref('')
 const nickname = ref('')
 const introduce = ref('')
 const regionCd = ref('')
-const locationIcon = counterstore.selectButton('LocationIcon')
-address.value = memberstore.getLocationInfo()[0]
-regionCd.value = memberstore.getLocationInfo()[1]
+
 onMounted(async () => {
   await memberstore.getMypage()
   mypage.value = memberstore.mypage
@@ -105,14 +103,13 @@ onMounted(async () => {
   console.log(nickname.value)
   console.log(introduce.value)
   console.log(regionCd.value)
-
 })
 
 // modal창 띄우기 위한 스위치들
 const modals = ref({
   nickname: false,
   introduce: false,
-  address: false,
+  address: false
 })
 const openModal = (modalName) => {
   modals.value[modalName] = true

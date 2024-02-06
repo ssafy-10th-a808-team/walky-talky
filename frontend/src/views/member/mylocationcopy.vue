@@ -1,30 +1,38 @@
 <template>
-  <div>
-    <h1>내 위치 확인하는 페이지</h1>
-    <div id="map" style="width: 500px; height: 400px"></div>
-  </div>
-  <div>
-    님 현재 위치가 {{ address_name }} 맞나요?
-    <div class="col-lg-3 cta-btn-container text-center">
-      <div class="text-center"><button type="submit" @click="goBack">확인</button></div>
+  <div v-if="viewModal" class="modal">
+    <div class="modal-content">
+      <h1>내 위치 확인하는 페이지</h1>
+      <div id="map"></div>
+      <div>
+        현재 위치가 {{ address_name }} 맞나요?
+        <div class="col-lg-3 cta-btn-container text-center">
+          <div class="text-center"><button type="submit" @click="closeModal">확인</button></div>
+          <!-- <div class="text-center"><button type="submit" @click="goBack">확인</button></div> -->
+        </div>
+      </div>
+      <!-- <div style="display: none">지역 코드 : {{ address_code }}</div> -->
+      <div>지역 코드 : {{ address_code }}</div>
     </div>
   </div>
-  <div style="display: none">지역 코드 : {{ address_code }}</div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useMemberStore } from '@/stores/member'
+import ModifyInfo from './ModifyInfo.vue'
 import router from '@/router'
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
-
+const viewModal = ref(true)
+const closeModal = () => {
+  viewModal.value = false
+  ModifyInfo.close = false
+}
 const memberstore = useMemberStore()
 let map = null // map is not defined Reference Error 방지
 let lat = 0
 let lon = 0
 const address_name = ref('')
 const address_code = ref('')
-
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
     initMap()
@@ -97,10 +105,6 @@ const addrCallback = (result, status) => {
   }
 }
 
-const goBack = () => {
-  router.go(-1)
-}
-
 // const searchDetailAddrFromCoords = (lat, lon, callback) => {
 //     console.log("좌표 가져오는 코드")
 //         this.geocoder.coord2Address(lat, lon, callback);
@@ -113,5 +117,27 @@ const goBack = () => {
 #map {
   width: 400px;
   height: 400px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal content styling */
+.modal-content {
+  /* Add your modal content styles (position, size, etc.) */
+  background-color: white;
+  /* Example background color for the content */
+  padding: 20px;
+  border-radius: 10px;
 }
 </style>
