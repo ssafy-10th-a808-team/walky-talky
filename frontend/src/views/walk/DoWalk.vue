@@ -109,11 +109,13 @@ const memberStore = useMemberStore()
 const counterstore = useCounterStore()
 
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
-let map = null // map is not defined Reference Error 방지
+// const map = ref(null) // map is not defined Reference Error 방지
+let map = null
 let lat = 0
 let lon = 0
 const address_name = ref('')
 const address_code = ref('')
+const region_cd = ref('')
 // const address = ref('')
 
 const current = ref({ lat: 0, lon: 0 })
@@ -138,6 +140,7 @@ const endTime = ref('')
 // const thumbnail = ref('')
 const tempRecords = ref([])
 const stringTempRecords = ref([])
+const seq = ref(null)
 
 // 스톱워치
 const clock = ref('00:00:00')
@@ -213,7 +216,7 @@ const initMap = () => {
   marker.setMap(map)
 
   const geocoder = new kakao.maps.services.Geocoder()
-  geocoder.coord2Address(lon, lat, addrCallback)
+  geocoder.coord2RegionCode(lon, lat, addrCallback)
 }
 
 const addrCallback = (result, status) => {
@@ -228,7 +231,7 @@ const addrCallback = (result, status) => {
       memberStore.address_name = address_name.value
       memberStore.address_code = address_code.value
     }
-    address.value = result[0].address.address_name
+    address.value = result[0].address_name
   } else {
     console.error('Failed to get address info')
     console.log(kakao.maps.services.Status)
@@ -258,8 +261,9 @@ const watchLocationUpdates = function () {
     resetLocations()
     timeBegan.value = new Date()
   }
-
+  // 일시정지를 했을때!
   if (timeStopped.value !== null) {
+    //stoppedDuration -> 일시정지를 지속한 시간
     stoppedDuration.value += new Date() - timeStopped.value
   }
 
@@ -307,6 +311,7 @@ const watchLocationUpdates = function () {
         linePath.value.push(currentLatLng)
         // setLinePathArr 호출 추가
         setLinePathArr(position)
+        tempRecords.value.push({ lat: current.value.lat, lon: current.value.lon, time: new Date() })
         // makeLine 호출 추가
         makeLine(linePath.value)
       } else {
@@ -331,6 +336,17 @@ const watchLocationUpdates = function () {
           checkSecond.value = 0
         }
       }
+      // 5초마다 찍힌 위치를 표시
+      if (checkSecond.value >= 5) {
+        tempRecords.value.push({
+          lat: current.value.lat,
+          lon: current.value.lon,
+          time: new Date()
+        })
+        checkSecond.value = 0
+      } else {
+        checkSecond.value++
+      }
     },
     () => {
       router.push('/')
@@ -348,6 +364,8 @@ const startWalk = function () {
   resetLocations()
   startTime.value = new Date()
   startTime.value = moment(startTime.value).format('YYYY-MM-DDTHH:mm:ss')
+  // region_cd에 주소 코드 할당
+  region_cd.value = address_code.value
   console.log(startTime)
   watchLocationUpdates()
   walkStore.startWalk()
@@ -372,6 +390,7 @@ const clockRunning = function () {
 
   clock.value = zeroPrefix(hour, 2) + ':' + zeroPrefix(min, 2) + ':' + zeroPrefix(sec, 2)
 
+  //realtime -> 순수 걸은 시간
   const realTime = ((currentTime - timeBegan.value - stoppedDuration.value) / 1000).toFixed(0)
   accumulated_time.value = realTime
   checkSecond.value = realTime
@@ -381,7 +400,7 @@ const savePosition = async function () {
   console.log(walkStore.data.data.seq)
   console.log(accumulated_time.value)
   console.log(accumulated_distance.value)
-  console.log(tempRecords.value.map((record) => [record.lat, record.lon, record.time]))
+  console.log(tempRecords.value)
   try {
     // 아래의 URL은 실제 서버의 엔드포인트로 수정해야 합니다.
     const url = 'https://i10a808.p.ssafy.io/api/walk/regist-record'
@@ -508,7 +527,7 @@ const makeLine = (position) => {
   })
 
   if (map) {
-    poly.value.setMap(map)
+    poly.value.setMap(map.value)
   }
 }
 
@@ -538,6 +557,12 @@ watchEffect(() => {
       clearInterval(interval)
     }
   }
+  // if (tempRecords.value.length > 0 && checkOneKm.value >= 60) {
+  //   savePosition()
+  //   checkOneKm.value = 0
+  // } else {
+  //   checkOneKm.value++
+  // }
 })
 </script>
 
