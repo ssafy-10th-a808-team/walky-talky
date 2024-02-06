@@ -11,6 +11,7 @@ import ModifyInfo from '@/views/member/ModifyInfo.vue'
 
 // walk router 산책
 import DoWalk from '@/views/walk/DoWalk.vue'
+import dowalk2 from '@/views/walk/dowalk2.vue' //임시
 import WalkList from '@/views/walk/WalkList.vue'
 
 // club router 소모임
@@ -23,6 +24,8 @@ import ClubModify from '@/views/club/ClubModifyView.vue'
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
 import ShareBoardDetailView from '@/views/shareboard/ShareBoardDetailView.vue'
+
+import ChatView from '@/views/chat/ChatView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -76,6 +79,11 @@ const router = createRouter({
       component: DoWalk
     },
     {
+      path: '/walk/do-walk2',
+      name: 'dowalk2',
+      component: dowalk2
+    },
+    {
       path: '/walk/list',
       name: 'WalkList',
       component: WalkList
@@ -121,6 +129,14 @@ const router = createRouter({
       path: '/shareBoard/view/:seq',
       name: 'share-board-view',
       component: ShareBoardDetailView
+    },
+
+    // chatting
+    {
+      path: '/club/chat/:seq',
+      name: 'club-chat',
+      component: ChatView,
+      props: true
     }
   ]
 })
