@@ -170,11 +170,11 @@ onMounted(() => {
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
     //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
     document.head.appendChild(script)
-    resetLocations()
-    accumulated_distance.value = 0
-    accumulated_time.value = 0
-    checkSecond.value = 0
-    checkOneKm.value = 0
+    // resetLocations()
+    // accumulated_distance.value = 0
+    // accumulated_time.value = 0
+    // checkSecond.value = 0
+    // checkOneKm.value = 0
   }
 
   if (navigator.geolocation) {
