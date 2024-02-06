@@ -168,62 +168,66 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       headers: {
         Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
+    }).catch(function (err) {
+      if (err.response.status == 400) {
+        alert(err.response.data.message)
+      }
     })
-      .then(alert('좋아요 성공!'))
-      .catch(function (err) {
-        if (err.response.status == 400) {
-          alert(err.response.data.message)
-        }
-      })
   }
 
   const dislike = (shareBoardSeq) => {
-    const res = axios({
-      method: 'post',
-      url: `${REST_CLUB_API}/share-board/${shareBoardSeq}/like-cancel`,
-      headers: {
-        Authorization: `Bearer ${counterstore.getCookie('atk')}`
-      }
-    })
-      .then(alert('좋아요를 취소하였습니다.'))
-      .catch(function (err) {
-        if (err.response.status == 400) {
-          alert(err.response.data.message)
+    try {
+      const res = axios({
+        method: 'post',
+        url: `${REST_CLUB_API}/share-board/${shareBoardSeq}/like-cancel`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('좋아요 취소 중 오류 발생:', error)
+      }
+    }
   }
 
   ///// 기록 스크랩, 취소/////
   const scrap = (recordSeq) => {
-    const res = axios({
-      method: 'post',
-      url: `${REST_CLUB_API}/scrap-record/${recordSeq}/scrap`,
-      headers: {
-        Authorization: `Bearer ${counterstore.getCookie('atk')}`
-      }
-    })
-      .then(alert('스크랩 성공!'))
-      .catch(function (err) {
-        if (err.response.status == 400) {
-          alert(err.response.data.message)
+    try {
+      const res = axios({
+        method: 'post',
+        url: `${REST_CLUB_API}/scrap-record/${recordSeq}/scrap`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('기록 스크랩 중 오류 발생:', error)
+      }
+    }
   }
 
   const unscrap = (recordSeq) => {
-    const res = axios({
-      method: 'post',
-      url: `${REST_CLUB_API}/scrap-record/${recordSeq}/cancel`,
-      headers: {
-        Authorization: `Bearer ${counterstore.getCookie('atk')}`
-      }
-    })
-      .then(alert('스크랩을 취소하였습니다.'))
-      .catch(function (err) {
-        if (err.response.status == 400) {
-          alert(err.response.data.message)
+    try {
+      const res = axios({
+        method: 'post',
+        url: `${REST_CLUB_API}/scrap-record/${recordSeq}/cancel`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
       })
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('스크랩 취소 중 오류 발생:', error)
+      }
+    }
   }
 
   ///// 댓글 작성/////
@@ -238,6 +242,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           }
         }
       )
+      alert('댓글 작성 성공!')
     } catch (error) {
       if (error.response) {
         alert(error.response.data.message)
@@ -259,6 +264,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           }
         }
       )
+      alert('댓글 수정 성공!')
     } catch (error) {
       if (error.response) {
         alert(error.response.data.message)
