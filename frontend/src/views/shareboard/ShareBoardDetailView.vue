@@ -127,9 +127,13 @@ const loadScrap = async (seq) => {
 
 const pushLike = (liked, shareBoardSeq) => {
   if (liked) {
+    like.value.liked = false
+    like.value.likeCount -= 1
     shareBoardStore.dislike(shareBoardSeq)
     loadLike(shareBoardSeq)
   } else {
+    like.value.liked = true
+    like.value.likeCountlikeCount += 1
     shareBoardStore.like(shareBoardSeq)
     loadLike(shareBoardSeq)
   }
