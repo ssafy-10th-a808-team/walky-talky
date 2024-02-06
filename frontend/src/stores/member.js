@@ -264,10 +264,10 @@ export const useMemberStore = defineStore('member', () => {
     return profileImage.value
   }
 
-  return {
-    memberList,
-    // member,
-    // getMember,
+    return {
+      memberList,
+      // member,
+      // getMember,
 
     createMember,
     // 로그인
