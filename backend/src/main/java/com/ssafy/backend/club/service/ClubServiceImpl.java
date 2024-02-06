@@ -147,8 +147,13 @@ public class ClubServiceImpl implements ClubService {
         Club club = requestClubCreateDto.toEntity();
         Club savedClub = clubRepository.save(club);
 
+        if (requestClubCreateDto.getMultipartFile() == null) {
+            savedClub.setUrl("https://walkytalky.s3.ap-northeast-2.amazonaws.com/member/37/profile/22b10b5f-2604-4188-8a1d-4408c4bd3791.png");
+            clubRepository.save(savedClub);
+        }
+
         // if file data exist
-        if (requestClubCreateDto.getMultipartFile() != null && !requestClubCreateDto.getMultipartFile().
+        else if (requestClubCreateDto.getMultipartFile() != null && !requestClubCreateDto.getMultipartFile().
                 isEmpty()) {
             String tmpUrl = s3UploadService.uploadClubProfileImg(requestClubCreateDto.getMultipartFile(), savedClub.getSeq());
             savedClub.setUrl(tmpUrl);
