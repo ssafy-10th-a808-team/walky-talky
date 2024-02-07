@@ -6,13 +6,12 @@
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
-      <nav id="navbar" class="navbar">
+      <nav id="navbar" class="navbar" @click="closeNav">
         <ul>
           <li>
-            <RouterLink :to="{ name: 'club' }" class="nav-link scrollto active"
-              >소모임</RouterLink
-            >
+            <RouterLink :to="{ name: 'club' }" class="nav-link scrollto">소모임</RouterLink>
           </li>
+
           <li>
             <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
           </li>
@@ -30,7 +29,7 @@
           </li>
           <li class="dropdown" v-if="memberstore.isLogin">
             <a href="#"
-              ><span>{{ memberstore.nickname }}</span> <i class="bi bi-chevron-down"></i
+              ><span>hi, {{ nickname }}</span> <i class="bi bi-chevron-down"></i
             ></a>
             <ul>
               <li>
@@ -57,7 +56,7 @@
             <RouterLink :to="{ name: 'Login' }" class="getstarted scrollto">로그인</RouterLink>
           </li>
         </ul>
-        <i class="bi bi-list mobile-nav-toggle"></i>
+        <i class="bi bi-list mobile-nav-toggle" id="ham"></i>
       </nav>
       <!-- .navbar -->
     </div>
@@ -66,8 +65,17 @@
 </template>
 
 <script setup>
+import { handleError, ref } from 'vue'
 import { useMemberStore } from '@/stores/member'
 const memberstore = useMemberStore()
+const nickname = ref(memberstore.nickname)
+
+const closeNav = () => {
+  const navbar = document.querySelector('#navbar')
+  navbar.classList.toggle('navbar-mobile')
+  navbar.classList.toggle('bi-list')
+  navbar.classList.toggle('bi-x')
+}
 </script>
 
 <style scoped></style>
