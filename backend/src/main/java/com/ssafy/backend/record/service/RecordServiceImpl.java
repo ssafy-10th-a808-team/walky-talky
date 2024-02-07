@@ -262,18 +262,23 @@ public class RecordServiceImpl implements RecordService {
 
             List<ResponseListDto> list = new ArrayList<>();
 
-            for(Record record:recordList){
-                ResponseListDto responseListDto = new ResponseListDto();
+            for (Record record : recordList) {
+                try {
+                    ResponseListDto responseListDto = new ResponseListDto();
 
-                responseListDto.setRecordSeq(record.getSeq());
-                responseListDto.setTitle(record.getTitle());
-                responseListDto.setPoints(view(record.getSeq()).getPoints());
-                responseListDto.setStarRating(record.getStarRating());
-                responseListDto.setComment(record.getComment());
-                responseListDto.setDistance(record.getDistance());
-                responseListDto.setDuration(record.getDuration());
+                    responseListDto.setRecordSeq(record.getSeq());
+                    responseListDto.setTitle(record.getTitle());
+                    responseListDto.setPoints(view(record.getSeq()).getPoints());
+                    responseListDto.setStarRating(record.getStarRating());
+                    responseListDto.setComment(record.getComment());
+                    responseListDto.setDistance(record.getDistance());
+                    responseListDto.setDuration(record.getDuration());
 
-                list.add(responseListDto);
+                    list.add(responseListDto);
+                } catch (Exception e) {
+                    continue;
+                }
+
             }
             return list;
         } catch (Exception e) {
