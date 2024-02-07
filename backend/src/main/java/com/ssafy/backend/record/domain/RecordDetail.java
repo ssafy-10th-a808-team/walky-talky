@@ -1,6 +1,5 @@
 package com.ssafy.backend.record.domain;
 
-import com.ssafy.backend.global.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Builder
-public class RecordDetail extends BaseEntity {
+public class RecordDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
