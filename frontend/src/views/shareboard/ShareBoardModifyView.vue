@@ -24,6 +24,7 @@
       :distance="record.distance"
       :points="record.points"
       :address="record.address"
+      :movable="false"
     />
 
     <div class="mb-3">

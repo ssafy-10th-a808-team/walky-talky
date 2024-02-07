@@ -6,7 +6,7 @@
       <div class="created-at">{{ created_at }}</div>
       <div class="comment-btn-container" v-if="isAvaliable">
         <button class="comment-btn" @click="updateIsView(false)">수정</button>
-        <button class="comment-btn" @click="commentDel">삭제</button>
+        <button class="comment-btn" @click="confirmDeleteComment">삭제</button>
       </div>
     </div>
   </div>
@@ -59,6 +59,14 @@ const updateIsView = (newValue) => {
 const commentDel = async () => {
   await shareBoardStore.commentDel(shareBoardSeq, commentSeq)
   await loadComment(shareBoardSeq)
+}
+
+const confirmDeleteComment = async () => {
+  const isConfirmed = window.confirm('댓글을 삭제하시겠습니까?')
+
+  if (isConfirmed) {
+    await commentDel()
+  }
 }
 </script>
 
