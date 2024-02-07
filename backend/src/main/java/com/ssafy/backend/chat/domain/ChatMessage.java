@@ -24,6 +24,7 @@ public class ChatMessage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_chat_seq")
     private Chat chat;
+    private Long clubSeq;
     private String sender;
     private String content;
     private String createdAt;

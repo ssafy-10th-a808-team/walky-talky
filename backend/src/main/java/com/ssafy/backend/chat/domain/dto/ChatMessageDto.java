@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessageDto {
-    private Long chatSeq;
+    private Long clubSeq;
     private String sender;
     private String content;
     private String createdAt;
