@@ -194,12 +194,13 @@ public class MemberServiceImpl implements MemberService {
             System.out.println("requestLocalSignupDto.getMultipartFile().isEmpty()");
         }
 
-        if(requestLocalSignupDto.getMultipartFile()==null){
-            savedMember.setUrl("https://walkytalky.s3.ap-northeast-2.amazonaws.com/member/38/profile/6305875e-9599-427a-acf5-19a231bce852.png");
+        if (requestLocalSignupDto.getMultipartFile() == null ) {
+            // 로컬 회원가입 사진 등록 안 함
+            if(member.getUrl() == null){
+                savedMember.setUrl("https://walkytalky.s3.ap-northeast-2.amazonaws.com/member/38/profile/6305875e-9599-427a-acf5-19a231bce852.png");
+            }
         }
-
-        // if file data exist
-        else if (requestLocalSignupDto.getMultipartFile() != null && !requestLocalSignupDto.getMultipartFile().isEmpty()) {
+        else{
             String tmpUrl = s3UploadService.uploadMemberProfileImg(requestLocalSignupDto.getMultipartFile(), savedMember.getSeq());
             savedMember.setUrl(tmpUrl);
         }
