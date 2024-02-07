@@ -21,7 +21,9 @@
     <div v-else-if="clubDetail.role === 'applicant'">
       <!-- applicant일 때 보여줄 내용 -->
       <div class="action-button-container">
-        <button class="action-button" @click="clubstore.applyCancel(seq)">가입 신청 취소 하기</button>
+        <button class="action-button" @click="clubstore.applyCancel(seq)">
+          가입 신청 취소 하기
+        </button>
       </div>
     </div>
 
@@ -52,58 +54,55 @@
           {{ clubDetail.responseClubDetailDtoClub.introduce }}
         </p>
         <p class="club-age-range">
-          {{ clubDetail.responseClubDetailDtoClub.oldBirth }}년생 ~ {{
-            clubDetail.responseClubDetailDtoClub.youngBirth }}년생
+          {{ clubDetail.responseClubDetailDtoClub.oldBirth }}년생 ~
+          {{ clubDetail.responseClubDetailDtoClub.youngBirth }}년생
         </p>
         <p class="club-address">
           {{ clubDetail.responseClubDetailDtoClub.address }}
         </p>
         <div class="club-gender">
-          <p v-if="clubDetail.responseClubDetailDtoClub.genderType === 'A'">
-            남녀무관
-          </p>
-          <p v-else-if="clubDetail.responseClubDetailDtoClub.genderType === 'M'">
-            남자만
-          </p>
-          <p v-else>
-            여자만
-          </p>
+          <p v-if="clubDetail.responseClubDetailDtoClub.genderType === 'A'">남녀무관</p>
+          <p v-else-if="clubDetail.responseClubDetailDtoClub.genderType === 'M'">남자만</p>
+          <p v-else>여자만</p>
         </div>
       </div>
     </div>
     <div class="club-status">
       <p class="club-capacity">
-        {{ clubDetail.responseClubDetailDtoClub.nowCapacity }} / {{
-          clubDetail.responseClubDetailDtoClub.maxCapacity }} 명
+        {{ clubDetail.responseClubDetailDtoClub.nowCapacity }} /
+        {{ clubDetail.responseClubDetailDtoClub.maxCapacity }} 명
       </p>
       <p class="club-join">
-        <span v-if="clubDetail.responseClubDetailDtoClub.autoRecruit">
-          즉시 가입
-        </span>
-        <span v-else>
-          승인 후 가입
-        </span>
+        <span v-if="clubDetail.responseClubDetailDtoClub.autoRecruit"> 즉시 가입 </span>
+        <span v-else> 승인 후 가입 </span>
       </p>
       <p class="club-recruitment">
-        <span v-if="clubDetail.responseClubDetailDtoClub.openRecruit">
-          모집 열려 있음
-        </span>
-        <span v-else>
-          모집 닫혀 있음
-        </span>
+        <span v-if="clubDetail.responseClubDetailDtoClub.openRecruit"> 모집 열려 있음 </span>
+        <span v-else> 모집 닫혀 있음 </span>
       </p>
     </div>
     <h2 class="members-title">소모임원</h2>
     <div class="members-list">
-      <div v-for="clubmember in clubDetail.responseClubDetailDtoMembers" :key="clubmember.nickname" class="member-item">
+      <div
+        v-for="clubmember in clubDetail.responseClubDetailDtoMembers"
+        :key="clubmember.nickname"
+        class="member-item"
+      >
         <!-- <MemberList :member="clubmember" /> -->
         <div class="member-container">
           <div class="circular-small">
-            <img :src="clubmember.url" alt="">
-            <p class="owner-badge" v-if="clubmember.role === 'owner'">OWNER</p>
+            <img :src="clubmember.url" alt="" />
+            <!-- <p class="owner-badge" v-if="clubmember.role === 'owner'">OWNER</p> -->
           </div>
           <div class="member-info">
-            <div>{{ clubmember.nickname }}</div>
+            <div>
+              {{ clubmember.nickname }}
+              <img
+                style="width: 50px; height: auto"
+                v-if="clubmember.role === 'owner'"
+                src="@/assets/img/king.png"
+              />
+            </div>
             <div>{{ clubmember.address }}</div>
           </div>
         </div>
@@ -117,7 +116,7 @@ import ClubDetailHeaderNav from '@/components/common/ClubDetailHeaderNav.vue'
 import { onMounted, ref } from 'vue'
 import { useClubStore } from '@/stores/club'
 import MemberList from '@/components/member/MemberListView.vue'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 const clubstore = useClubStore()
 const router = useRouter()
@@ -129,9 +128,8 @@ const { seq } = defineProps({
 })
 
 onMounted(async function () {
-  clubDetail.value = await clubstore.findClub(seq); // 컴포넌트가 마운트될 때 소모임 데이터를 가져옵니다.
+  clubDetail.value = await clubstore.findClub(seq) // 컴포넌트가 마운트될 때 소모임 데이터를 가져옵니다.
 })
-
 </script>
 
 <style scoped>
@@ -149,7 +147,6 @@ onMounted(async function () {
   align-items: center;
   gap: 20px;
 }
-
 
 .circular {
   width: 200px;
@@ -241,7 +238,7 @@ onMounted(async function () {
 }
 
 .action-button:hover {
-  background-color: #45A049;
+  background-color: #45a049;
   /* Slightly darker green on hover */
 }
 
@@ -287,7 +284,6 @@ onMounted(async function () {
   /* 둥근 모서리 */
   font-size: 12px;
   /* 글자 크기 */
-
 }
 
 /* 추방하기 버튼 스타일 */
