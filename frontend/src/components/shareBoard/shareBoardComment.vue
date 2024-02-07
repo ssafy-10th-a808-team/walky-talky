@@ -1,21 +1,36 @@
 <template>
-  <div class="comment-container">
+  <div class="comment-container" v-if="isView">
     <shareBoardMember :nickname="nickname" :profilePic="profilePic" />
     <div class="content">{{ content }}</div>
     <div class="comment-info-container">
       <div class="created-at">{{ created_at }}</div>
-      <div class="comment-btn-container">
-        <button class="comment-btn" @click="commentEdit">수정</button>
-        <button class="comment-btn" @click="commentDel">삭제</button>
+      <div class="comment-btn-container" v-if="isAvaliable">
+        <button class="comment-btn" @click="updateIsView(false)">수정</button>
+        <button class="comment-btn" @click="confirmDeleteComment">삭제</button>
       </div>
     </div>
+  </div>
+  <div v-else>
+    <shareBoardCommentFormVue
+      :shareBoardSeq="shareBoardSeq"
+      :commentSeq="commentSeq"
+      :content="contentEdit"
+      :loadComment="loadComment"
+      @updateIsView="updateIsView"
+      @editComment="editComment"
+    />
   </div>
 </template>
 
 <script setup>
 import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
+import shareBoardCommentFormVue from '@/components/shareBoard/shareBoardCommentForm.vue'
 import { useShareBoardStore } from '@/stores/shareBoard'
+import { useCounterStore } from '@/stores/counter'
+import { ref } from 'vue'
+
 const shareBoardStore = useShareBoardStore()
+const counterStore = useCounterStore()
 
 const { nickname, profilePic, created_at, content, shareBoardSeq, commentSeq, loadComment } =
   defineProps([
@@ -28,13 +43,30 @@ const { nickname, profilePic, created_at, content, shareBoardSeq, commentSeq, lo
     'loadComment'
   ])
 
-const commentEdit = () => {
-  // 여기서 이제 수정 창을 띄워줘야함
+const isAvaliable = ref(counterStore.getCookie('nickname') === nickname ? true : false)
+
+const isView = ref(true)
+const contentEdit = ref(content)
+
+const editComment = (newValue) => {
+  contentEdit.value = newValue
+}
+
+const updateIsView = (newValue) => {
+  isView.value = newValue
 }
 
 const commentDel = async () => {
-  shareBoardStore.commentDel(shareBoardSeq, commentSeq)
+  await shareBoardStore.commentDel(shareBoardSeq, commentSeq)
   await loadComment(shareBoardSeq)
+}
+
+const confirmDeleteComment = async () => {
+  const isConfirmed = window.confirm('댓글을 삭제하시겠습니까?')
+
+  if (isConfirmed) {
+    await commentDel()
+  }
 }
 </script>
 

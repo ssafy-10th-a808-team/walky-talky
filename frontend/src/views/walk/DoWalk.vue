@@ -3,7 +3,7 @@
     <WalkHeaderNav />
     <h1>산책하기</h1>
     <div class="map_wrap" style="position: relative">
-      <div id="map" style="width: 100%; height: 500px">
+      <div id="map" style="width: 100%; height: 600px">
         <!-- 산책하기 버튼을 눌렀을 때 스탑워치 실행되게 하기 -->
         <!-- <StopWatch style="position: absolute; z-index: 2; top: 70%; left: 40%" /> -->
 
@@ -13,12 +13,13 @@
             text-align: center;
             position: absolute;
             z-index: 2;
-            top: 60%;
+            top: 73%;
             left: 50%;
-            background-color: yellow;
+            background-color: rgb(205, 238, 225);
             display: flex;
             width: 200px;
             margin-left: -100px;
+            border-radius: 5%;
           "
         >
           <div class="myRecord">
@@ -39,9 +40,8 @@
             text-align: center;
             position: absolute;
             z-index: 2;
-            top: 70%;
+            top: 80%;
             left: 50%;
-            background-color: yellow;
             width: 200px;
             margin-left: -100px;
           "
@@ -136,6 +136,7 @@ const startTime = ref('')
 const endTime = ref('')
 
 const tempRecords = ref([])
+const recordsForPost = ref([])
 
 // 스톱워치
 const clock = ref('00:00:00')
@@ -152,23 +153,23 @@ const state = ref({
 })
 
 onMounted(() => {
-  if (window.kakao && window.kakao.maps) {
-    initMap()
-  } else {
-    const script = document.createElement('script')
-    // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
-    /* global kakao */
-    script.onload = () => {
-      // console.log('카카오맵 api script loaded')
-      kakao.maps.load(initMap)
-      // kakao.maps.load(() => {
-      //   getCurLocation()
-      // })
-    }
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
-    //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
-    document.head.appendChild(script)
+  // if (window.kakao && window.kakao.maps) {
+  //   initMap()
+  // } else {
+  const script = document.createElement('script')
+  // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
+  /* global kakao */
+  script.onload = () => {
+    // console.log('카카오맵 api script loaded')
+    kakao.maps.load(initMap)
+    // kakao.maps.load(() => {
+    //   getCurLocation()
+    // })
   }
+  script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
+  //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
+  document.head.appendChild(script)
+  // }
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       function (position) {
@@ -347,23 +348,35 @@ const watchLocationUpdates = function () {
           makeLine(linePath.value)
         }
 
-        if (checkOneKm.value >= 1) {
-          savePosition()
-          checkOneKm.value -= 1
-          checkSecond.value = 0
-        }
+        // if (checkOneKm.value >= 1) {
+        //   savePosition()
+        //   checkOneKm.value -= 1
+        //   checkSecond.value = 0
+        // }
       }
       // 5초마다 찍힌 위치를 표시
-      if (checkSecond.value >= 5) {
-        tempRecords.value.push({
+      // if (checkSecond.value >= 5) {
+      //   tempRecords.value.push({
+      //     lat: current.value.lat,
+      //     lon: current.value.lon,
+      //     time: new Date()
+      //   })
+      //   checkSecond.value = 0
+      // } else {
+      //   checkSecond.value++
+      // }
+
+      const locationUpdateInterval = 60000 // 1분 (단위: 밀리초)
+      watchPositionId.value = setInterval(() => {
+        // 이전 코드 내용을 그대로 가져옴
+
+        // 1분마다 위치 정보 저장
+        recordsForPost.value.push({
           lat: current.value.lat,
           lon: current.value.lon,
           time: new Date()
         })
-        checkSecond.value = 0
-      } else {
-        checkSecond.value++
-      }
+      }, locationUpdateInterval)
     },
     () => {
       router.push('/walk/do-walk')
@@ -382,7 +395,7 @@ const startWalk = function () {
   resetLocations()
   startTime.value = new Date()
   startTime.value = moment(startTime.value).format('YYYY-MM-DDTHH:mm:ss')
-  // region_cd에 주소 코드 할당
+  // region_cd에 주소 코드 할당(산책기록에 저장될 동네코드)
   region_cd.value = address_code.value
   console.log(startTime)
   watchLocationUpdates()
@@ -428,7 +441,8 @@ const savePosition = async function () {
   console.log(walkStore.data.data.seq)
   console.log(accumulated_time.value)
   console.log(accumulated_distance.value)
-  console.log(tempRecords.value)
+  // console.log('recordsForPost : ', recordsForPost.value)
+  // console.log('tempRecords : ', tempRecords.value)
   try {
     // 아래의 URL은 실제 서버의 엔드포인트로 수정해야 합니다.
     const url = 'https://i10a808.p.ssafy.io/api/walk/regist-record'
@@ -469,6 +483,14 @@ const endLocationUpdates = function () {
   alert('산책 기록이 저장되었습니다 📬')
 
   // speed.value = (accumulated_distance.value * 1000) / accumulated_time.value
+  // 정지 시점의 위치 정보를 추가
+  if (accumulated_time.value % 60 !== 0) {
+    recordsForPost.value.push({
+      lat: current.value.lat,
+      lon: current.value.lon,
+      time: new Date()
+    })
+  }
 
   savePosition()
   isPause.value = false
@@ -481,7 +503,7 @@ const endLocationUpdates = function () {
   checkOneKm.value = 0
   endTime.value = new Date()
   endTime.value = moment(endTime).format('YYYY-MM-DDTHH:mm:ss')
-  router.push('/walk/do-walk') // 어디로 가지? -> 내 코스 기록 페이지로 가자
+  router.push('/walk/list') // 어디로 가지? -> 내 코스 기록 페이지로 가자
 }
 
 // 일시정지
@@ -495,12 +517,13 @@ const pauseLocationUpdates = function () {
   // drawLines()
   makeLine()
 }
-
+// 거리 비교 및 계산 함수
 const computeDistance = function (startCoords, destCoords) {
-  var startLatRads = degreesToRadians(startCoords.lat)
-  var startLongRads = degreesToRadians(startCoords.lon)
-  var destLatRads = degreesToRadians(destCoords.lat)
-  var destLongRads = degreesToRadians(destCoords.lon)
+  // console.log(startCoords.value.lat, ' , ', startCoords.value.lon)
+  var startLatRads = degreesToRadians(startCoords.value.lat)
+  var startLongRads = degreesToRadians(startCoords.value.lon)
+  var destLatRads = degreesToRadians(destCoords.value.lat)
+  var destLongRads = degreesToRadians(destCoords.value.lon)
 
   var Radius = 6371 //지구의 반경(km)
   var distance =

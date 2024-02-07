@@ -16,16 +16,22 @@ import WalkList from '@/views/walk/WalkList.vue'
 
 // club router 소모임
 import ClubView from '@/views/club/ClubView.vue'
-import ClubMemory from '@/views/club/ClubMemoryView.vue'
+// import ClubMemory from '@/views/club/ClubMemoryView.vue'
 import ClubCreate from '@/views/club/ClubCreateView.vue'
 import ClubDetail from '@/views/club/ClubDetailView.vue'
-import ClubModify from '@/views/club/ClubModifyView.vue'
+// import ClubModify from '@/views/club/ClubModifyView.vue'
+import ClubPlan from '@/views/club/ClubPlanView.vue'
+import ClubChat from '@/views/club/ClubChatView.vue'
+import ClubSettingMember from '@/views/club/ClubSettingMemberView.vue'
+import ClubSettingApplicant from '@/views/club/ClubSettingApplicantView.vue'
+import ClubSettingClub from '@/views/club/ClubSettingClubView.vue'
+import ClubChatView from '@/views/club/ClubChatView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
 import ShareBoardDetailView from '@/views/shareboard/ShareBoardDetailView.vue'
-
-import ChatView from '@/views/chat/ChatView.vue'
+import ShareBoardWriteView from '@/views/shareboard/ShareBoardWriteView.vue'
+import ShareBoardModifyView from '@/views/shareboard/ShareBoardModifyView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -95,29 +101,66 @@ const router = createRouter({
       name: 'club',
       component: ClubView
     },
-    {
-      path: '/club/detail/:seq',
-      name: 'club-detail',
-      component: ClubDetail,
-      props: true
-    },
-    {
-      path: '/club/modify',
-      name: 'ClubModify',
-      component: ClubModify,
-      props: true
-    },
-
-    {
-      path: '/club/memory',
-      name: 'club-memory',
-      component: ClubMemory
-    },
+    // {
+    //   path: '/club/detail/:seq',
+    //   name: 'club-detail',
+    //   component: ClubDetail,
+    //   props: true
+    // },
     {
       path: '/club/create',
       name: 'club-create',
       component: ClubCreate
     },
+    {
+      path: '/club/:seq/detail',
+      name: 'club-detail',
+      component: ClubDetail,
+      props: true
+    },
+
+    {
+      path: '/club/:seq/plan',
+      name: 'club-plan',
+      component: ClubPlan,
+      props: true
+    },
+    {
+      path: '/club/:seq/chat',
+      name: 'club-chat2',
+      component: ClubChat,
+      props: true
+    },
+    {
+      path: '/club/:seq/setting/member',
+      name: 'club-setting-member',
+      component: ClubSettingMember,
+      props: true
+    },
+    {
+      path: '/club/:seq/setting/applicant',
+      name: 'club-setting-applicant',
+      component: ClubSettingApplicant,
+      props: true
+    },
+    {
+      path: '/club/:seq/setting/club',
+      name: 'club-setting-club',
+      component: ClubSettingClub,
+      props: true
+    },
+    // {
+    //   path: '/club/modify',
+    //   name: 'ClubModify',
+    //   component: ClubModify,
+    //   props: true
+    // },
+
+    // {
+    //   path: '/club/memory',
+    //   name: 'club-memory',
+    //   component: ClubMemory
+    // },
 
     // shareboard router 산책공유게시판
     {
@@ -130,12 +173,22 @@ const router = createRouter({
       name: 'share-board-view',
       component: ShareBoardDetailView
     },
+    {
+      path: '/shareBoard/write',
+      name: 'share-board-write',
+      component: ShareBoardWriteView
+    },
+    {
+      path: '/shareBoard/modify/:seq',
+      name: 'share-board-modify',
+      component: ShareBoardModifyView
+    },
 
     // chatting
     {
       path: '/club/chat/:seq',
       name: 'club-chat',
-      component: ChatView,
+      component: ClubChatView,
       props: true
     }
   ]
@@ -152,7 +205,7 @@ router.beforeEach((to, from) => {
     !memberstore.isLogin
   ) {
     window.alert('로그인이 필요합니다')
-    return { name: 'home' }
+    return { name: 'Login' }
   }
   if ((to.name === 'Signup' || to.name === 'Login') && memberstore.isLogin) {
     window.alert('이미 로그인하셨습니다')

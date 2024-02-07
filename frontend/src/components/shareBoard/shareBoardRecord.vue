@@ -1,12 +1,21 @@
 <template>
   <div class="map-container">
-    <div id="map" style="width: 80%; height: 400px; justify-content: center" />
+    <div
+      :id="'map-' + uniqueId + seq"
+      class="map"
+      :style="{ width: containerWidth, height: containerHeight, justifyContent: 'center' }"
+      @click="changeMovable"
+    />
     <div class="record-container">
-      <div>
-        <p>소요 시간</p>
-        <p>{{ duration }}</p>
+      <div v-if="title != undefined" class="text-center">
+        <p>산책 제목</p>
+        <p>{{ title }}</p>
       </div>
-      <div>
+      <div class="text-center">
+        <p>소요 시간</p>
+        <p>{{ convertTime(parseInt(duration)) }}</p>
+      </div>
+      <div class="text-center">
         <p>총 거리</p>
         <p>{{ distance }} km</p>
       </div>
@@ -15,49 +24,121 @@
 </template>
 
 <script setup>
-const { distance, duration, points, address } = defineProps([
+const { distance, duration, points, title, seq, movable } = defineProps([
   'distance',
   'duration',
   'points',
-  'address'
+  'title',
+  'seq',
+  'movable'
 ])
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+
+function convertTime(seconds) {
+  if (typeof seconds !== 'number' || seconds < 0) {
+    return 'Invalid input'
+  }
+
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+
+  const minutesString = minutes > 0 ? `${minutes}분` : ''
+  const secondsString = remainingSeconds > 0 ? `${remainingSeconds}초` : ''
+
+  return `${minutesString} ${secondsString}`.trim() || '0초'
+}
+
+const isMovable = ref(movable)
+
+const changeMovable = () => {
+  if (isMovable.value === false) {
+    isMovable.value = true
+  }
+}
 
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
 let map = null // map is not defined Reference Error 방지
+const uniqueId = ref(Date.now()) // 각 컴포넌트에 고유한 ID를 부여하기 위한 ref
+
+const containerWidth = ref('95%')
+const containerHeight = ref('300px')
 
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
     initMap()
   } else {
     const script = document.createElement('script')
-    // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
-    /* global kakao */
     script.onload = () => {
       kakao.maps.load(initMap)
     }
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
-    //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
     document.head.appendChild(script)
   }
 })
 
 const initMap = () => {
-  const container = document.getElementById('map')
-  const options = {
-    center: new kakao.maps.LatLng(points[0].latitude, points[0].longitude),
-    level: 6
-  }
-  map = new kakao.maps.Map(container, options)
+  const container = document.getElementById(`map-${uniqueId.value}` + seq)
 
-  // 경로 폴리라인
-  var polyline = new kakao.maps.Polyline({
-    map: map,
-    path: points.map((point) => new kakao.maps.LatLng(point.latitude, point.longitude)),
-    strokeWeight: 5,
-    strokeColor: '#FF0000'
-  })
-  polyline.setMap(map)
+  if (container.offsetWidth < container.offsetHeight * 0.6) {
+    containerWidth.value = `${container.offsetHeight}px`
+  } else {
+    containerWidth.value = `${container.offsetWidth}px`
+  }
+  containerHeight.value = `${container.offsetHeight}px`
+
+  const mid = parseInt(points.length / 2)
+  if (points && points.length > 0 && mid >= 0 && mid < points.length) {
+    const options = {
+      center: new kakao.maps.LatLng(points[mid].latitude, points[mid].longitude),
+      level: 5
+    }
+
+    map = new kakao.maps.Map(container, options)
+
+    var positions = [
+      {
+        title: '산책 시작',
+        img: 'start.png',
+        latlng: new kakao.maps.LatLng(points[0].latitude, points[0].longitude)
+      },
+      {
+        title: '산책 끝',
+        img: 'end.png',
+        latlng: new kakao.maps.LatLng(
+          points[points.length - 1].latitude,
+          points[points.length - 1].longitude
+        )
+      }
+    ]
+
+    for (var i = 0; i < positions.length; i++) {
+      var imageSize = new kakao.maps.Size(20, 30)
+
+      var markerImage = new kakao.maps.MarkerImage('/src/assets/img/' + positions[i].img, imageSize)
+
+      var marker = new kakao.maps.Marker({
+        map: map,
+        position: positions[i].latlng,
+        title: positions[i].title,
+        image: markerImage
+      })
+    }
+
+    map.setDraggable(movable)
+    map.setZoomable(movable)
+
+    // 경로 폴리라인
+    var polyline = new kakao.maps.Polyline({
+      map: map,
+      path: points.map((point) => new kakao.maps.LatLng(point.latitude, point.longitude)),
+      strokeWeight: 5,
+      strokeColor: '#FF0000'
+    })
+
+    polyline.setMap(map)
+  } else {
+    console.error('Invalid mid value:', mid, 'for points array:', points)
+  }
 }
 </script>
 
@@ -72,5 +153,10 @@ const initMap = () => {
   display: flex;
   justify-content: space-around;
   width: 100%;
+  margin-top: 10px;
+}
+
+.text-center {
+  text-align: center;
 }
 </style>

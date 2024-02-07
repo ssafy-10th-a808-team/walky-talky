@@ -10,7 +10,7 @@
 # General
 --------------------------------------------------------------*/
 body {
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   color: #444444;
 }
 
@@ -30,7 +30,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Raleway", sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 
 button {
@@ -56,10 +56,11 @@ button:hover {
   justify-content: center;
 }
 .circular img {
-  width: 100%; 
-  height: 100%; 
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  justify-content: center;
 }
 
 .circular-small {
@@ -72,8 +73,8 @@ button:hover {
   justify-content: center;
 }
 .circular-small img {
-  width: 100%; 
-  height: 100%; 
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 50%;
 }
@@ -233,7 +234,7 @@ button:hover {
 .navbar a:hover,
 .navbar .active,
 .navbar .active:focus,
-.navbar li:hover>a {
+.navbar li:hover > a {
   color: #5cb874;
 }
 
@@ -284,11 +285,11 @@ button:hover {
 
 .navbar .dropdown ul a:hover,
 .navbar .dropdown ul .active:hover,
-.navbar .dropdown ul li:hover>a {
+.navbar .dropdown ul li:hover > a {
   color: #5cb874;
 }
 
-.navbar .dropdown:hover>ul {
+.navbar .dropdown:hover > ul {
   opacity: 1;
   top: 100%;
   visibility: visible;
@@ -300,7 +301,7 @@ button:hover {
   visibility: hidden;
 }
 
-.navbar .dropdown .dropdown:hover>ul {
+.navbar .dropdown .dropdown:hover > ul {
   opacity: 1;
   top: 0;
   left: 100%;
@@ -312,7 +313,7 @@ button:hover {
     left: -90%;
   }
 
-  .navbar .dropdown .dropdown:hover>ul {
+  .navbar .dropdown .dropdown:hover > ul {
     left: -100%;
   }
 }
@@ -383,7 +384,7 @@ button:hover {
 
 .navbar-mobile a:hover,
 .navbar-mobile .active,
-.navbar-mobile li:hover>a {
+.navbar-mobile li:hover > a {
   color: #5cb874;
 }
 
@@ -418,12 +419,13 @@ button:hover {
 
 .navbar-mobile .dropdown ul a:hover,
 .navbar-mobile .dropdown ul .active:hover,
-.navbar-mobile .dropdown ul li:hover>a {
+.navbar-mobile .dropdown ul li:hover > a {
   color: #5cb874;
 }
 
-.navbar-mobile .dropdown>.dropdown-active {
+.navbar-mobile .dropdown > .dropdown-active {
   display: block;
+  /* display: none; */
 }
 
 /*--------------------------------------------------------------
@@ -452,7 +454,7 @@ button:hover {
 }
 
 #hero .carousel-item::before {
-  content: "";
+  content: '';
   background-color: rgba(45, 103, 60, 0.8);
 }
 
@@ -545,7 +547,7 @@ button:hover {
 }
 
 #hero .btn-get-started {
-  font-family: "Raleway", sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-weight: 500;
   font-size: 14px;
   letter-spacing: 1px;
@@ -580,7 +582,6 @@ button:hover {
 }
 
 @media (min-width: 1024px) {
-
   #hero .carousel-control-prev,
   #hero .carousel-control-next {
     width: 5%;
@@ -619,7 +620,7 @@ section {
 }
 
 .section-title h2::before {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   width: 120px;
@@ -630,7 +631,7 @@ section {
 }
 
 .section-title h2::after {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   width: 40px;
@@ -943,7 +944,7 @@ section {
 }
 
 .cta .cta-btn {
-  font-family: "Raleway", sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-weight: 600;
   font-size: 14px;
   letter-spacing: 1px;
@@ -1023,7 +1024,7 @@ section {
 }
 
 .portfolio .portfolio-wrap::before {
-  content: "";
+  content: '';
   background: rgba(34, 34, 34, 0.6);
   position: absolute;
   left: 0;
@@ -1146,7 +1147,7 @@ section {
   font-size: 15px;
 }
 
-.portfolio-details .portfolio-info ul li+li {
+.portfolio-details .portfolio-info ul li + li {
   margin-top: 10px;
 }
 
@@ -1175,11 +1176,11 @@ section {
   background: #fff;
 }
 
-.team .member img {
+/* .team .member img {
   max-width: 60%;
   border-radius: 50%;
   margin: 0 0 30px 0;
-}
+} */
 
 .team .member h4 {
   font-weight: 700;
@@ -1312,7 +1313,7 @@ section {
   font-weight: 600;
 }
 
-.contact .php-email-form .error-message br+br {
+.contact .php-email-form .error-message br + br {
   margin-top: 25px;
 }
 
@@ -1333,7 +1334,7 @@ section {
 }
 
 .contact .php-email-form .loading:before {
-  content: "";
+  content: '';
   display: inline-block;
   border-radius: 50%;
   width: 24px;
@@ -1365,7 +1366,7 @@ section {
   padding: 10px 12px;
 }
 
-.contact .php-email-form button[type=submit] {
+.contact .php-email-form button[type='submit'] {
   background: #5cb874;
   border: 0;
   padding: 10px 24px;
@@ -1374,7 +1375,7 @@ section {
   border-radius: 4px;
 }
 
-.contact .php-email-form button[type=submit]:hover {
+.contact .php-email-form button[type='submit']:hover {
   background: #6ec083;
 }
 
@@ -1417,15 +1418,15 @@ section {
   font-size: 14px;
 }
 
-.breadcrumbs ol li+li {
+.breadcrumbs ol li + li {
   padding-left: 10px;
 }
 
-.breadcrumbs ol li+li::before {
+.breadcrumbs ol li + li::before {
   display: inline-block;
   padding-right: 10px;
   color: #3c3c3c;
-  content: "/";
+  content: '/';
 }
 
 @media (max-width: 768px) {
@@ -1458,7 +1459,7 @@ section {
   font-weight: 700;
   color: #fff;
   position: relative;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   padding: 0;
   margin: 0 0 15px 0;
 }

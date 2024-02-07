@@ -13,6 +13,9 @@
       :distance="record.distance"
       :points="record.points"
       :address="record.address"
+      :title="record.title"
+      :seq="record.recordSeq"
+      :movable="false"
     />
     <div class="like-scrap-container">
       <shareBoardLike :likeCount="like.likeCount" :liked="like.liked" />

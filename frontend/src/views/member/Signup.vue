@@ -5,54 +5,47 @@
         <div class="section-title">
           <h1>회원가입</h1>
         </div>
-        <div class="col-lg-15 d-flex justify-content-center">
+
+        <div class="col-lg-15 d-flex align-items-stretch justify-content-center">
           <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
             <form method="post" role="form" class="php-email-form">
-              <div class="row">
-                <!-- 주소 -->
-                <div class="form-group col-md-6">
-                  <label>* 주소</label>
-                  <input type="text" name="name" class="form-control" v-model.trim="region_name" />
+              <!-- 주소 -->
+              <div class="form-group">
+                <div>
+                  <label for="club-address">내 동네 인증하기 *필수</label>
                 </div>
-                <div class="col-auto">
-                  <ButtonWithIcon :selectedIcon="locationIcon" />
-                </div>
-                <!-- 닉네임 -->
-                <div class="row g-3 align-items-center">
-                  <div class="col-auto">
-                    <label class="col-form-label" prop="nickname">* 닉네임</label>
-                  </div>
-                  <div class="col-auto">
-                    <input v-model="nickname" type="text" class="form-control" />
-                  </div>
-                  <!-- 닉네임 중복확인 버튼 -->
-                  <div class="col-md-4 cta-btn-container text-center col-auto">
-                    <button type="submit" class="cta-btn align-middle" @click="checkNickname()">
-                      중복확인
-                    </button>
-                  </div>
-                </div>
-                <!-- 아이디 -->
-                <div v-if="!isOauth" class="form-group col-md-8">
-                  <label>* 아이디</label>
-                  <input
-                    type="text"
-                    name="name"
-                    class="form-control"
-                    v-model.trim="memberId"
-                    required
-                  />
-                </div>
-                <div v-if="!isOauth" class="col-md-4 cta-btn-container text-center col-auto">
-                  <button type="submit" class="cta-btn align-middle" @click="checkId()">
-                    중복확인
-                  </button>
-                  <!-- <input type="hidden" name="idDuplication" value="idUncheck"/> -->
+                <!-- <ButtonWithIcon :selectedIcon="locationIcon" /> -->
+                <RouterLink :to="{ name: 'mylocation' }">
+                  <img src="@/assets/img/LocationIcon.png" style="width: 100px; height: auto" />
+                </RouterLink>
+                <div>
+                  {{ region_name }}
                 </div>
               </div>
+              <hr />
+
+              <!-- 아이디 -->
+              <div v-if="!isOauth" class="form-group">
+                <label>아이디 *필수</label>
+                <input
+                  type="text"
+                  name="name"
+                  class="form-control"
+                  v-model.trim="memberId"
+                  required
+                />
+              </div>
+              <div v-if="!isOauth" class="col-md-4 cta-btn-container text-center col-auto">
+                <button type="button" class="cta-btn align-middle" @click="checkId()">
+                  중복확인
+                </button>
+                <!-- <input type="hidden" name="idDuplication" value="idUncheck"/> -->
+              </div>
+              <hr />
+
               <!-- 비밀번호 -->
-              <div v-if="!isOauth" class="mb-3 row">
-                <label for="inputPassword" class="col-sm-10 col-form-label">* 비밀번호</label>
+              <div v-if="!isOauth" class="form-group">
+                <label for="inputPassword" class="col-sm-10 col-form-label">비밀번호 *필수</label>
                 <input
                   type="password"
                   class="form-control"
@@ -66,8 +59,10 @@
                 </p>
               </div>
               <!-- 비밀번호확인 -->
-              <div v-if="!isOauth" class="mb-3 row">
-                <label for="inputPassword" class="col-sm-10 col-form-label">* 비밀번호 확인</label>
+              <div v-if="!isOauth" class="form-group">
+                <label for="inputPassword" class="col-sm-10 col-form-label"
+                  >비밀번호 확인 *필수</label
+                >
                 <input
                   type="password"
                   class="form-control"
@@ -80,18 +75,39 @@
                   <p style="color: red">비밀번호가 동일하지 않습니다.</p>
                 </div>
               </div>
+              <hr />
+
               <!-- 이미지 -->
-              <div class="form-group col-md-8">
+              <div class="form-group">
                 <label>이미지</label>
                 <input type="file" name="name" class="form-control" @change="readInputFile" />
-                <div id="imageFrame">
-                  <img width="200" alt="이미지미리보기" />
+                <div id="imageFrame" class="circular">
+                  <img alt="" />
                 </div>
               </div>
-              <!-- 생년월일 -->
-              <div class="row g-3 align-items-center">
+              <hr />
+
+              <!-- 닉네임 -->
+              <div class="form-group">
                 <div class="col-auto">
-                  <label class="col-form-label">* 생년월일</label>
+                  <label class="col-form-label" prop="nickname">닉네임 *필수</label>
+                </div>
+                <div class="col-auto">
+                  <input v-model="nickname" type="text" class="form-control" />
+                </div>
+              </div>
+              <!-- 닉네임 중복확인 버튼 -->
+              <div class="col-md-4 cta-btn-container text-center col-auto">
+                <button type="button" class="cta-btn align-middle" @click="checkNickname()">
+                  중복확인
+                </button>
+              </div>
+              <hr />
+
+              <!-- 생년월일 -->
+              <div class="form-group">
+                <div class="col-auto">
+                  <label class="col-form-label">생년월일 *필수</label>
                 </div>
                 <div class="col-auto">
                   <input type="text" class="form-control" v-model="birth" @input="validateBirth" />
@@ -100,9 +116,11 @@
                   <span class="form-text"> ex: 19910101 </span>
                 </div>
               </div>
+              <hr />
+
               <!-- 성별 -->
               <div class="form-group col-md-6 mt-3">
-                <label>* 성별</label>
+                <label>성별 *필수</label>
                 <div class="row">
                   <div class="portfolio col-md-6 d-flex justify-content-center">
                     <ul id="portfolio-flters">
@@ -116,6 +134,7 @@
                   </div>
                 </div>
               </div>
+              <hr />
 
               <!-- 자기소개 -->
               <div class="form-group mt-3">
@@ -127,12 +146,14 @@
                   v-model="introduce"
                 ></textarea>
               </div>
+              <hr />
               <!-- 취소, 회원가입 버튼 -->
-              <div class="col-auto text-center">
-                <button type="submit" @click="cancelRegistration">취소</button>
-              </div>
+
               <div class="text-center">
                 <button type="submit" @click="createMember">회원가입</button>
+              </div>
+              <div class="col-auto text-center">
+                <button type="submit" @click="cancelRegistration">취소</button>
               </div>
             </form>
           </div>
@@ -162,9 +183,10 @@ const repassword = ref('')
 const birth = ref('')
 const gender = ref('M')
 const nickname = ref('')
-const introduce = ref('안녕하세요! ')
+const introduce = ref('')
 const region_cd = ref('')
 const region_name = ref('')
+const imgUrl = ref('')
 const isOauth = ref(false)
 
 region_name.value = memberStore.getLocationInfo()[0]
@@ -183,6 +205,7 @@ const isMember = async (code) => {
   nickname.value = memberStore.getNickname()
   profileImg.value = memberStore.getProfileImage()
   isOauth.value = memberStore.getIsOauth()
+  imgUrl.value = memberStore.getImgUrl()
   loadImage()
 }
 
@@ -260,7 +283,8 @@ const createMember = function (e) {
     gender: gender.value,
     nickname: nickname.value,
     introduce: introduce.value,
-    region_cd: region_cd.value
+    region_cd: region_cd.value,
+    imgUrl: imgUrl.value
   }
   // console.log(`아이디 : ${form.value.id}`)
   memberStore.createMember(payload)
@@ -306,16 +330,115 @@ const readInputFile = (e) => {
 </script>
 
 <style scoped>
-#imageFrame {
-  max-width: 100%; /* 원하는 가로 크기로 조절 */
-  max-height: 300px; /* 원하는 세로 크기로 조절 */
-  overflow: auto; /* 크기를 벗어난 이미지를 감출 경우 사용 */
+.contact {
+  background: #f8f9fa;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
 }
 
-#img {
-  max-width: 100%; /* 이미지의 최대 가로 크기를 부모 요소의 너비에 맞춤 */
-  max-height: 100%; /* 이미지의 최대 세로 크기를 부모 요소의 높이에 맞춤 */
-  display: block; /* 인라인 요소 간격 제거 */
-  margin: auto; /* 가운데 정렬을 위해 사용 */
+.section-title h1 {
+  color: #055052;
+  font-size: 22px;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.php-email-form {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.3);
+}
+
+.php-email-form h1 {
+  color: #055052;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.php-email-form hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+}
+
+.form-group .cta-btn {
+  background-color: #34c759;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.form-group .cta-btn:hover {
+  background-color: #28a745;
+}
+
+.portfolio ul {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.portfolio li {
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: #e9ecef;
+  color: #055052;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.portfolio li.filter-active,
+.portfolio li:hover {
+  background: #055052;
+  color: #ffffff;
+}
+
+#imageFrame {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 20px auto;
+  display: block;
+}
+
+#imageFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 추가적인 스타일링이 필요하다면 여기에 추가합니다. */
+
+/* 버튼을 감싸는 div에 대한 스타일 */
+.text-center {
+  margin-bottom: 20px; /* 하단 버튼과의 간격 */
+}
+
+/* 마지막 버튼에 대한 스타일 (취소 버튼) */
+.col-auto.text-center {
+  margin-top: 20px; /* 상단 버튼과의 간격 */
 }
 </style>
