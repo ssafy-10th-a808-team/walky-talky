@@ -10,10 +10,12 @@
       <div class="row">
         <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
           <div class="member">
-            <img :src="mypage.profileImage" alt="프사" />
+            <div class="circular">
+              <img :src="mypage.profileImage" alt="프사" />
+            </div>
             <div>
               <h4>닉네임</h4>
-              <h4>{{ mypage.nickname }}</h4>
+              <h3>{{ mypage.nickname }}</h3>
             </div>
 
             <div class="address">
