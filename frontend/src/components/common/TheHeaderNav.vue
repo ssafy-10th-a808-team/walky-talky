@@ -21,15 +21,24 @@
             <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
           </li>
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto">산책공유</RouterLink>
+            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto"
+              >산책공유</RouterLink
+            >
           </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto">채팅테스트</RouterLink>
+            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto"
+              >채팅테스트</RouterLink
+            >
           </li>
           <li class="dropdown" v-if="memberstore.isLogin">
-            <a href="#"><span>hi, {{ nickname }}</span> <i class="bi bi-chevron-down"></i></a>
+            <a href="#"
+              ><span class="circular-small">
+                <img :src="profileImage" alt="" />
+              </span>
+              <i class="bi bi-chevron-down"></i
+            ></a>
             <ul>
               <li @click="closeNav">
                 <RouterLink :to="{ name: 'Mypage' }"><a href="#">마이페이지</a></RouterLink>
@@ -68,7 +77,7 @@ import { handleError, ref } from 'vue'
 import { useMemberStore } from '@/stores/member'
 const memberstore = useMemberStore()
 const nickname = ref(memberstore.nickname)
-
+const profileImage = ref(memberstore.profileImage)
 // const closeNav = () => {
 //   const navbar = document.querySelector('#navbar')
 //   if (navbar.classList.contains('navbar-mobile')) {
