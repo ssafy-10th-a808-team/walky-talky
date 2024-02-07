@@ -5,7 +5,7 @@
       :key="index"
       :sender="message.sender"
       :content="message.content"
-      :timestamp="message.timestamp"
+      :createdAt="message.createdAt"
     />
   </div>
 </template>
@@ -31,6 +31,6 @@ const props = defineProps({
   display: flex;
   flex-direction: column-reverse;
   overflow-y: auto; /* 스크롤 가능하게 만듭니다 */
-  height: 100%; /* 컨테이너의 높이를 정합니다, 실제 값으로 조정 필요 */
+  height: 500px; /* 컨테이너의 높이를 정합니다, 실제 값으로 조정 필요 */
 }
 </style>
