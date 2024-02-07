@@ -5,16 +5,16 @@ import { Client } from '@stomp/stompjs'
 import { useCounterStore } from './counter'
 
 export const useChatStore = defineStore('chat', () => {
-  const STOMP = 'ws://localhost:8082/ws'
-  const REST_CHAT_API = 'http://localhost:8082/api/chat'
+  const STOMP = 'ws://i10a808.p.ssafy.io:8082/ws'
+  const REST_CHAT_API = 'https://i10a808.p.ssafy.io/api/chat'
   const client = ref(null)
   const messages = ref([])
   const counterstore = useCounterStore()
 
-  const loadMessage = async function (chatSeq, offset) {
+  const loadMessage = async function (clubSeq, offset) {
     const response = await axios({
       method: 'get',
-      url: `${REST_CHAT_API}/${chatSeq}/${offset}`, // REST_CLUB_API는 해당 API 엔드포인트를 가리킵니다.
+      url: `${REST_CHAT_API}/${clubSeq}/${offset}`, // REST_CLUB_API는 해당 API 엔드포인트를 가리킵니다.
       headers: {
         Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
@@ -23,7 +23,7 @@ export const useChatStore = defineStore('chat', () => {
     messages.value = response.data.data.list
   }
 
-  const getConnection = function (chatSeq) {
+  const getConnection = function (clubSeq) {
     client.value = new Client({
       brokerURL: STOMP,
       connectHeaders: {
@@ -31,7 +31,7 @@ export const useChatStore = defineStore('chat', () => {
       },
       onConnect: () => {
         client.value.subscribe(
-          `/sub/chat/${chatSeq}`,
+          `/sub/chat/${clubSeq}`,
           (message) => {
             console.log(`Received: ${message.body}`)
             const receivedMessage = JSON.parse(message.body)
@@ -61,6 +61,7 @@ export const useChatStore = defineStore('chat', () => {
   }
 
   return {
+    client,
     messages, // 메시지 상태를 반환하여 다른 컴포넌트에서 접근 가능하게 함
     loadMessage,
     getConnection,
