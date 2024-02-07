@@ -172,6 +172,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       }).catch(function (err) {
         if (err.response.status == 400) {
           alert(err.response.data.message)
+          window.location.reload()
         }
       })
     } catch (error) {
@@ -179,6 +180,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         alert(error.response.data.message)
       } else {
         console.error('좋아요 중 오류 발생:', error)
+        window.location.reload()
       }
     }
   }
@@ -194,11 +196,13 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       }).catch(function (err) {
         if (err.response.status == 400) {
           alert(err.response.data.message)
+          window.location.reload()
         }
       })
     } catch (error) {
       if (error.response) {
         alert(error.response.data.message)
+        window.location.reload()
       } else {
         console.error('좋아요 취소 중 오류 발생:', error)
       }
@@ -217,11 +221,13 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       }).catch(function (err) {
         if (err.response.status == 400) {
           alert(err.response.data.message)
+          window.location.reload()
         }
       })
     } catch (error) {
       if (error.response) {
         alert(error.response.data.message)
+        window.location.reload()
       } else {
         console.error('기록 스크랩 중 오류 발생:', error)
       }
@@ -239,11 +245,13 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
       }).catch(function (err) {
         if (err.response.status == 400) {
           alert(err.response.data.message)
+          window.location.reload()
         }
       })
     } catch (error) {
       if (error.response) {
         alert(error.response.data.message)
+        window.location.reload()
       } else {
         console.error('스크랩 취소 중 오류 발생:', error)
       }

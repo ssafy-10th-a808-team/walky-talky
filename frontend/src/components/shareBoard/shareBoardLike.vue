@@ -1,8 +1,5 @@
 <template>
-  <div v-if="loading">
-    <p>로딩중</p>
-  </div>
-  <div v-else class="containerLike">
+  <div class="containerLike">
     <img v-if="liked" src="@/assets/img/liked.png" alt="Liked" width="20px" height="20px" />
     <img v-else src="@/assets/img/not_liked.png" alt="Not Liked" width="20px" height="20px" />
     <p>{{ likeCount }}</p>
@@ -10,7 +7,7 @@
 </template>
 
 <script setup>
-const { likeCount, liked, loading } = defineProps(['likeCount', 'liked', 'loading'])
+const { likeCount, liked } = defineProps(['likeCount', 'liked'])
 </script>
 
 <style>
