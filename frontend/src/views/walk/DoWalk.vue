@@ -110,7 +110,7 @@ const counterstore = useCounterStore()
 
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
 // const map = ref(null) // map is not defined Reference Error 방지
-let map = null
+// let map = null
 let lat = 0
 let lon = 0
 const address_name = ref('')
@@ -154,16 +154,13 @@ const state = ref({
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
     initMap()
-    if (!state.value.map) {
-      getCurLocation()
-    }
   } else {
     const script = document.createElement('script')
     // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
     /* global kakao */
     script.onload = () => {
       // console.log('카카오맵 api script loaded')
-      kakao.maps.load(initMap, getCurLocation)
+      kakao.maps.load(initMap)
       // kakao.maps.load(() => {
       //   getCurLocation()
       // })
@@ -192,22 +189,26 @@ onMounted(() => {
     }, 5000)
 
     onBeforeUnmount(() => {
+      if (state.value.map) {
+        state.value.map = null
+      }
       clearInterval(interval)
     })
   }
 })
-const getCurLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      lat = position.coords.latitude // 위도
-      lon = position.coords.longitude // 경도
-    })
-  } else {
-    alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
-  }
-}
+// const getCurLocation = () => {
+//   if (navigator.geolocation) {
+//     navigator.geolocation.getCurrentPosition(function (position) {
+//       lat = position.coords.latitude // 위도
+//       lon = position.coords.longitude // 경도
+//     })
+//   } else {
+//     alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
+//   }
+// }
 const initMap = () => {
   console.log('initMap 적용')
+  if (state.value.map) return
 
   // 마커 생성 및 초기 위치 설정
   const marker = new kakao.maps.Marker({
@@ -220,16 +221,18 @@ const initMap = () => {
     center: new kakao.maps.LatLng(lat, lon),
     level: 5
   }
-
-  // Kakao Maps API를 사용하여 지도 생성
-  map = new kakao.maps.Map(container, options)
+  // 좌표 배열 초기화
+  state.value.positionArr = []
+  // Kakao Maps API를 사용하여 지도 생성(둘 다 실행시키면 지도가 중첩됨)
+  // map = new kakao.maps.Map(container, options)
   state.value.map = new kakao.maps.Map(container, options)
   // 마커를 지도에 표시
-  marker.setMap(map)
+  marker.setMap(state.value.map)
   // makeLine(linePath.value)
   // 좌표를 주소로 변환하는 Geocoder 객체 생성 및 호출
   const geocoder = new kakao.maps.services.Geocoder()
   geocoder.coord2RegionCode(lon, lat, addrCallback)
+  // state.value.map = map
 }
 
 const addrCallback = (result, status) => {
@@ -288,7 +291,7 @@ const watchLocationUpdates = function () {
     position: new kakao.maps.LatLng(lat, lon)
   })
   cur_marker.value = marker
-  marker.setMap(map)
+  marker.setMap(state.value.map)
 
   watchPositionId.value = navigator.geolocation.watchPosition(
     (position) => {
@@ -312,7 +315,7 @@ const watchLocationUpdates = function () {
           address.value = response.data.documents[0].address_name
         })
 
-      map.setCenter(now)
+      state.value.map.setCenter(now)
       marker.setPosition(now)
 
       if (previous.value.lat === 0) {
@@ -324,6 +327,7 @@ const watchLocationUpdates = function () {
         linePath.value.push(currentLatLng)
         // setLinePathArr 호출 추가
         setLinePathArr(position)
+
         tempRecords.value.push({ lat: current.value.lat, lon: current.value.lon, time: new Date() })
         // makeLine 호출 추가
         makeLine(linePath.value)
@@ -404,7 +408,7 @@ const clockRunning = function () {
 
   clock.value = zeroPrefix(hour, 2) + ':' + zeroPrefix(min, 2) + ':' + zeroPrefix(sec, 2)
 
-  //realtime -> 순수 걸은 시간
+  //walkrealtime -> 순수 걸은 시간
   const realTime = ((currentTime - timeBegan.value - stoppedDuration.value) / 1000).toFixed(0)
   accumulated_time.value = realTime
   checkSecond.value = realTime
@@ -468,7 +472,7 @@ const endLocationUpdates = function () {
   checkOneKm.value = 0
   endTime.value = new Date()
   endTime.value = moment(endTime).format('YYYY-MM-DDTHH:mm:ss')
-  router.push('/') // 어디로 가지? -> 내 코스 기록 페이지로 가자
+  router.push('/walk/do-walk') // 어디로 가지? -> 내 코스 기록 페이지로 가자
 }
 
 // 일시정지
@@ -502,74 +506,55 @@ const degreesToRadians = function (degrees) {
   var radians = (degrees * Math.PI) / 180
   return radians
 }
-// const encode_polyline = function (poly) {
-//   var path = poly.getPath()
-//   encoded_polyline.value = kakao.maps.geometry.encoding.encodePath(path)
-// }
-
-// const drawLines = function () {
-//   if (poly.value) {
-//     poly.value.setMap(null) // Remove existing polyline
-//   }
-//   poly.value = new kakao.maps.Polyline({
-//     path: linePath.value,
-//     geodesic: true,
-//     strokeColor: '#ff0000',
-//     strokeOpacity: 1.0,
-//     strokeWeight: 2,
-//     map: map
-//   })
-
-//   if (map) {
-//     poly.value.setMap(map)
-//   }
-// }
 
 const makeLine = () => {
-  if (state.value.positionArr.length < 2) {
-    return // 선을 그리기 위해서는 최소 2개의 좌표가 필요합니다.
+  if (running.value && state.value.positionArr.length >= 2) {
+    const linePath = state.value.positionArr
+    // console.log(linePath)
+
+    const polyline = new kakao.maps.Polyline({
+      path: linePath,
+      strokeWeight: 5,
+      strokeColor: '#FFAE00',
+      strokeOpacity: 0.7,
+      strokeStyle: 'solid'
+    })
+
+    // 기존의 선 제거
+    if (poly.value) {
+      poly.value.setMap(null)
+    }
+
+    // 맵에 선 표시
+    polyline.setMap(state.value.map)
+    poly.value = polyline
   }
-
-  const linePath = state.value.positionArr.map((pos) => ({
-    lat: pos.coords.latitude,
-    lng: pos.coords.longitude
-  }))
-
-  const polyline = new kakao.maps.Polyline({
-    path: linePath,
-    strokeWeight: 5,
-    strokeColor: '#FFAE00',
-    strokeOpacity: 0.7,
-    strokeStyle: 'solid'
-  })
-
-  // 기존의 선 제거
-  if (poly.value) {
-    poly.value.setMap(null)
-  }
-
-  // 맵에 선 표시
-  polyline.setMap(state.value.map)
-  poly.value = polyline
 }
 
 const setLinePathArr = (position) => {
-  const moveLatLon = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
+  if (position && position.coords) {
+    const moveLatLon = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
 
-  // 초기값이 없다면 빈 배열로 설정
-  if (!state.value.positionArr) {
-    state.value.positionArr = []
+    // 초기값이 없다면 빈 배열로 설정
+    if (!state.value.positionArr) {
+      state.value.positionArr = []
+    }
+    state.value.positionArr.push(moveLatLon)
+    // console.log(state.value.positionArr)
+
+    // 선 그리기
+    // makeLine(state.value.positionArr)
+    // running이 true일 때만 선을 그리도록 수정
+    if (running.value) {
+      makeLine()
+    }
   }
-
-  state.value.positionArr.push(moveLatLon)
-
-  // 선 그리기
-  makeLine(state.value.positionArr)
 }
 
+// watchEffect에서의 setLinePathArr 호출 부분 제거
 watchEffect(() => {
   // watchEffect를 사용하여 map이 변경될 때의 로직을 작성
-  if (map) {
+  if (state.value.map && running.value) {
     let interval = setInterval(() => {
       navigator.geolocation.getCurrentPosition((position) => setLinePathArr(position))
     }, 5000)
@@ -578,12 +563,6 @@ watchEffect(() => {
       clearInterval(interval)
     }
   }
-  // if (tempRecords.value.length > 0 && checkOneKm.value >= 60) {
-  //   savePosition()
-  //   checkOneKm.value = 0
-  // } else {
-  //   checkOneKm.value++
-  // }
 })
 </script>
 
