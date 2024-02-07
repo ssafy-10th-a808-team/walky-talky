@@ -17,6 +17,7 @@ export const useMemberStore = defineStore(
     const memberId = ref('')
     const nickname = ref('')
     const profileImage = ref('')
+    const imgUrl = ref('')
     const isOauth = ref(false)
 
     //회원가입
@@ -32,6 +33,7 @@ export const useMemberStore = defineStore(
       formData.append('nickname', payload.nickname)
       formData.append('introduce', payload.introduce)
       formData.append('regionCd', payload.region_cd)
+      formData.append('imgUrl', payload.imgUrl)
 
       axios({
         method: 'POST',
@@ -156,13 +158,14 @@ export const useMemberStore = defineStore(
           memberId.value = res.data.id
           nickname.value = res.data.nickname
           profileImage.value = res.data.profileImage
+          imgUrl.value = res.data.profileImage
           isOauth.value = true
           router.push({ name: 'Signup' })
         } else if (res.status === 200) {
           token.value = res.headers.get('atk')
           counterstore.setCookie('atk', token.value)
           nickname.value = res.data.data.nickname
-          profileImage.value = res.data.data.profileImage
+          profileImage.value = res.data.profileImage
           router.push({ name: 'home' })
         }
       })
@@ -265,7 +268,6 @@ export const useMemberStore = defineStore(
         .then((res) => {
           console.log(res)
           alert('정보 변경 성공')
-          getMypage()
           router.push({ name: 'Mypage' })
         })
         .catch((err) => {
@@ -302,6 +304,10 @@ export const useMemberStore = defineStore(
       return profileImage.value
     }
 
+    const getImgUrl = () => {
+      return imgUrl.value
+    }
+
     return {
       memberList,
       // member,
@@ -317,6 +323,7 @@ export const useMemberStore = defineStore(
       token,
       nickname,
       profileImage,
+      imgUrl,
       // loginMember,
       isLogin,
       // 로그아웃
@@ -335,7 +342,8 @@ export const useMemberStore = defineStore(
       getMemberId,
       getNickname,
       getProfileImage,
-      getIsOauth
+      getIsOauth,
+      getImgUrl
     }
   },
   { persist: true }

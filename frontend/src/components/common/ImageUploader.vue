@@ -9,16 +9,27 @@
 <script setup>
 import { ref } from 'vue'
 
-const emit = defineEmits(['imageSelected', 'image', 'close'])
+const emit = defineEmits(['imageSelected', 'close'])
 const image = ref(null)
 
 const selectImage = (event) => {
-  const file = event.target.files[0]
-  const reader = new FileReader()
-  reader.onload = () => {
-    image.value = reader.result
-  }
-  reader.readAsDataURL(file)
+  const files = event.target.files
+  const fileArr = Array.from(files)
+  image.value = fileArr[0]
+  fileArr.forEach(function (f) {
+    if (!f.type.match('image/.*')) {
+      alert('이미지 확장자만 업로드 가능합니다.')
+      return
+    }
+    const reader = new FileReader()
+
+    reader.onload = (event) => {
+      image.value = event.target.result
+    }
+    reader.readAsDataURL(fileArr[0])
+  })
+
+
 }
 
 const saveImage = () => {
