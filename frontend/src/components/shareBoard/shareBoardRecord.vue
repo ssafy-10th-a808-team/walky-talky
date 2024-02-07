@@ -67,9 +67,10 @@ const initMap = () => {
   const container = document.getElementById(`map-${uniqueId.value}` + seq)
   const options = {
     center: new kakao.maps.LatLng(points[0].latitude, points[0].longitude),
-    level: 6
+    level: 5
   }
   map = new kakao.maps.Map(container, options)
+  map.setDraggable(false)
 
   // 경로 폴리라인
   var polyline = new kakao.maps.Polyline({
