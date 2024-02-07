@@ -12,6 +12,7 @@ import java.util.List;
 public class ResponseClubDetailDto {
 
     private String message;
+    private String role;
     private ResponseClubDetailDtoClub responseClubDetailDtoClub;
     private List<ResponseClubDetailDtoMember> responseClubDetailDtoMembers;
 }

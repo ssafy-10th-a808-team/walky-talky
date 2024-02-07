@@ -79,7 +79,8 @@ public class ClubController {
     }
 
     @GetMapping("/detail")
-    public ResponseEntity<ResponseClubDetailDto> clubDetail(@RequestParam("clubSeq") Long clubSeq) {
+    public ResponseEntity<ResponseClubDetailDto> clubDetail(@RequestParam("clubSeq") Long clubSeq
+    ,HttpServletRequest httpServletRequest) {
 
         ResponseClubDetailDto responseClubDetailDto;
 
@@ -92,7 +93,7 @@ public class ClubController {
         }
 
 
-        return clubService.clubDetail(clubSeq);
+        return clubService.clubDetail(clubSeq,httpServletRequest);
     }
 
     @PostMapping("/modify")
