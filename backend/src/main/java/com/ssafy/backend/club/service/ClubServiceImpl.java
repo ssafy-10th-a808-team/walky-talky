@@ -279,7 +279,7 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public ResponseEntity<ResponseClubDetailDto> clubDetail(Long clubSeq) {
+    public ResponseEntity<ResponseClubDetailDto> clubDetail(Long clubSeq,HttpServletRequest httpServletRequest) {
 
         ResponseClubDetailDto responseClubDetailDto = new ResponseClubDetailDto();
 
@@ -367,6 +367,15 @@ public class ClubServiceImpl implements ClubService {
 //                        .build();
 //                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubDetailDto);
 //            }
+        }
+
+        Long myMemberSeq = (Long) httpServletRequest.getAttribute("seq");
+
+        ClubMember findedClubMember = clubMemberRepository.findByClubSeqAndMemberSeq(clubSeq,myMemberSeq);
+        if(findedClubMember == null){
+            responseClubDetailDto.setRole("no");
+        }else{
+            responseClubDetailDto.setRole(findedClubMember.getRole());
         }
 
         responseClubDetailDto.setMessage("OK");
