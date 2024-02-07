@@ -5,7 +5,7 @@ import { Client } from '@stomp/stompjs'
 import { useCounterStore } from './counter'
 
 export const useChatStore = defineStore('chat', () => {
-  const STOMP = 'wss://i10a808.p.ssafy.io:8082/ws'
+  const STOMP = 'wss://i10a808.p.ssafy.io/ws'
   const REST_CHAT_API = 'https://i10a808.p.ssafy.io/api/chat'
   const client = ref(null)
   const messages = ref([])
