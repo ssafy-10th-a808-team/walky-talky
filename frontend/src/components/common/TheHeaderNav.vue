@@ -29,7 +29,10 @@
           </li>
           <li class="dropdown" v-if="memberstore.isLogin">
             <a href="#"
-              ><span>hi, {{ nickname }}</span> <i class="bi bi-chevron-down"></i
+              ><span class="circular-small">
+                <img :src="profileImage" alt="" />
+              </span>
+              <i class="bi bi-chevron-down"></i
             ></a>
             <ul>
               <li @click="closeNav">
@@ -69,7 +72,7 @@ import { handleError, ref } from 'vue'
 import { useMemberStore } from '@/stores/member'
 const memberstore = useMemberStore()
 const nickname = ref(memberstore.nickname)
-
+const profileImage = ref(memberstore.profileImage)
 // const closeNav = () => {
 //   const navbar = document.querySelector('#navbar')
 //   if (navbar.classList.contains('navbar-mobile')) {
