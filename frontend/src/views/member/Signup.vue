@@ -183,6 +183,7 @@ const nickname = ref('')
 const introduce = ref('')
 const region_cd = ref('')
 const region_name = ref('')
+const imgUrl = ref('')
 const isOauth = ref(false)
 
 region_name.value = memberStore.getLocationInfo()[0]
@@ -201,6 +202,7 @@ const isMember = async (code) => {
   nickname.value = memberStore.getNickname()
   profileImg.value = memberStore.getProfileImage()
   isOauth.value = memberStore.getIsOauth()
+  imgUrl.value = memberStore.getImgUrl()
   loadImage()
 }
 
@@ -278,7 +280,8 @@ const createMember = function (e) {
     gender: gender.value,
     nickname: nickname.value,
     introduce: introduce.value,
-    region_cd: region_cd.value
+    region_cd: region_cd.value,
+    imgUrl: imgUrl.value
   }
   // console.log(`아이디 : ${form.value.id}`)
   memberStore.createMember(payload)
