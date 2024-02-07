@@ -27,6 +27,8 @@ import ClubSetting from '@/views/club/ClubSettingView.vue'
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
 import ShareBoardDetailView from '@/views/shareboard/ShareBoardDetailView.vue'
+import ShareBoardWriteView from '@/views/shareboard/ShareBoardWriteView.vue'
+import ShareBoardModifyView from '@/views/shareboard/ShareBoardModifyView.vue'
 
 import ChatView from '@/views/chat/ChatView.vue'
 
@@ -157,6 +159,16 @@ const router = createRouter({
       path: '/shareBoard/view/:seq',
       name: 'share-board-view',
       component: ShareBoardDetailView
+    },
+    {
+      path: '/shareBoard/write',
+      name: 'share-board-write',
+      component: ShareBoardWriteView
+    },
+    {
+      path: '/shareBoard/modify/:seq',
+      name: 'share-board-modify',
+      component: ShareBoardModifyView
     },
 
     // chatting
