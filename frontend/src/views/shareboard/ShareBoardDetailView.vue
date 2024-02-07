@@ -15,7 +15,10 @@
         <button class="content-edit-del-btn" @click="moveModify(content.shareBoardSeq)">
           수정
         </button>
-        <button class="content-edit-del-btnr" @click="deleteShareBoard(content.shareBoardSeq)">
+        <button
+          class="content-edit-del-btnr"
+          @click="confirmDeleteShareBoard(content.shareBoardSeq)"
+        >
           삭제
         </button>
       </div>
@@ -158,6 +161,16 @@ const moveModify = (seq) => {
 const deleteShareBoard = async (seq) => {
   await shareBoardStore.deleteShareBoard(seq)
   router.push({ name: 'share-board' })
+}
+
+const confirmDeleteShareBoard = async (seq) => {
+  // '정말로 삭제하시겠습니까?' 모달을 표시하고 사용자의 선택을 기다립니다.
+  const isConfirmed = window.confirm('정말로 삭제하시겠습니까?')
+
+  if (isConfirmed) {
+    // 사용자가 '예'를 선택한 경우에만 삭제 로직을 진행합니다.
+    await deleteShareBoard(seq)
+  }
 }
 
 const moveList = () => {
