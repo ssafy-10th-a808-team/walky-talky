@@ -219,7 +219,7 @@ const initMap = () => {
   // 지도 옵션 설정
   const options = {
     center: new kakao.maps.LatLng(lat, lon),
-    level: 5
+    level: 4
   }
   // 좌표 배열 초기화
   state.value.positionArr = []
@@ -413,6 +413,16 @@ const clockRunning = function () {
   accumulated_time.value = realTime
   checkSecond.value = realTime
 }
+const recordsForPost = ref([])
+const chunkSize = 10
+const totalRecords = tempRecords.value.length
+
+// 데이터를 60배수 번째만 선택하여 recordsForPost에 추가
+for (let i = 0; i < totalRecords; i += chunkSize) {
+  if (i < totalRecords) {
+    recordsForPost.value.push(tempRecords.value[i])
+  }
+}
 
 const savePosition = async function () {
   console.log(walkStore.data.data.seq)
@@ -422,23 +432,22 @@ const savePosition = async function () {
   try {
     // 아래의 URL은 실제 서버의 엔드포인트로 수정해야 합니다.
     const url = 'https://i10a808.p.ssafy.io/api/walk/regist-record'
+    // 서버로 보낼 때 헤더에 Bearer 토큰을 추가합니다.
+    const accessToken = counterstore.getCookie('atk') // 실제 토큰 값으로 대체해야 합니다.
+    const headers = {
+      Authorization: `Bearer ${accessToken}`
+    }
 
     // 서버로 보낼 데이터를 구성합니다.
     const data = {
       seq: walkStore.data.data.seq,
       duration: accumulated_time.value,
       distance: accumulated_distance.value,
-      points: tempRecords.value.map((record) => [record.lat, record.lon, record.time]),
+      points: recordsForPost.value.map((record) => [record.lat, record.lon, record.time]),
       starRating: 1,
       comment: '한줄평',
       title: '제목',
       regionCd: region_cd.value
-    }
-
-    // 서버로 보낼 때 헤더에 Bearer 토큰을 추가합니다.
-    const accessToken = counterstore.getCookie('atk') // 실제 토큰 값으로 대체해야 합니다.
-    const headers = {
-      Authorization: `Bearer ${accessToken}`
     }
 
     // axios를 사용하여 서버로 POST 요청을 보냅니다.
