@@ -212,6 +212,7 @@ const readInputFile = (e) => {
   const fileArr = Array.from(files)
   console.log(fileArr[0])
   profileImg.value = fileArr[0]
+
   console.log(`현재 저장된 프로필 이미지 : ${profileImg.value}`)
   fileArr.forEach(function (f) {
     if (!f.type.match('image/.*')) {
