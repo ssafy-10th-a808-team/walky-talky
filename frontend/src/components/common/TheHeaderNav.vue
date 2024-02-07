@@ -21,18 +21,22 @@
             <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
           </li>
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto">산책공유</RouterLink>
+            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto"
+              >산책공유</RouterLink
+            >
           </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto">채팅테스트</RouterLink>
+            <RouterLink :to="{ name: 'club-chat', params: { seq: 1 } }" class="nav-link scrollto"
+              >채팅테스트</RouterLink
+            >
           </li>
           <li class="dropdown" v-if="memberstore.isLogin">
             <a href="#" class="profile-link">
               <!-- 프로필 이미지와 닉네임을 감싸는 flex 컨테이너 -->
               <div class="profile-container">
-                <img :src="url" class="profile-image" alt="Profile">
+                <img :src="url" class="profile-image" alt="Profile" />
                 <span>{{ nickname }}</span>
               </div>
               <i class="bi bi-chevron-down"></i>
@@ -73,7 +77,7 @@
 <script setup>
 import { handleError, ref } from 'vue'
 import { useMemberStore } from '@/stores/member'
-import { useCounterStore } from '@/stores/counter';
+import { useCounterStore } from '@/stores/counter'
 
 const memberstore = useMemberStore()
 const counterstore = useCounterStore()
