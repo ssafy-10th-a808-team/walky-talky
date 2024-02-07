@@ -15,20 +15,25 @@
         <button class="content-edit-del-btn" @click="moveModify(content.shareBoardSeq)">
           수정
         </button>
-        <button class="content-edit-del-btnr" @click="deleteShareBoard(content.shareBoardSeq)">
+        <button
+          class="content-edit-del-btnr"
+          @click="confirmDeleteShareBoard(content.shareBoardSeq)"
+        >
           삭제
         </button>
       </div>
     </div>
 
     <shareBoardRecord
+      class="detail-record-container"
       v-if="record"
       :duration="record.duration"
       :distance="record.distance"
       :points="record.points"
       :address="record.address"
+      :movable="true"
     />
-    <div v-if="content">{{ content.content }}</div>
+    <div class="detail-content-container" v-if="content">{{ content.content }}</div>
     <div v-if="like && scrap" class="like-scrap-container">
       <shareBoardLike
         :likeCount="like.likeCount"
@@ -160,6 +165,14 @@ const deleteShareBoard = async (seq) => {
   router.push({ name: 'share-board' })
 }
 
+const confirmDeleteShareBoard = async (seq) => {
+  const isConfirmed = window.confirm('정말로 삭제하시겠습니까?')
+
+  if (isConfirmed) {
+    await deleteShareBoard(seq)
+  }
+}
+
 const moveList = () => {
   router.push({ name: 'share-board' })
 }
@@ -187,5 +200,9 @@ const moveList = () => {
   display: flex;
   align-items: center;
   justify-content: space-around;
+}
+
+.detail-content-container {
+  padding: 2%;
 }
 </style>
