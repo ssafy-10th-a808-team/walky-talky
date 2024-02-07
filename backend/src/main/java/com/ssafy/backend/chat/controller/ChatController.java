@@ -22,12 +22,12 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     @PostMapping("/{clubSeq}")
-    public void createChatRoom(HttpServletRequest request, @PathVariable Long clubSeq) {
+    public void createChatRoom(@PathVariable Long clubSeq) {
         chatService.createChatRoom(clubSeq);
     }
 
-    @GetMapping("/{chatSeq}/{offset}")
-    public ResponseEntity<?> loadMessage(HttpServletRequest request, @PathVariable(name = "chatSeq") Long chatSeq, @PathVariable(name = "offset") int offset) {
+    @GetMapping("/{clubSeq}/{offset}")
+    public ResponseEntity<?> loadMessage(HttpServletRequest request, @PathVariable(name = "clubSeq") Long clubSeq, @PathVariable(name = "offset") int offset) {
         Map<String, Object> resultMap = new HashMap<>();
 
         String msg = (String) request.getAttribute("message");
@@ -38,7 +38,7 @@ public class ChatController {
         }
 
         Map<String, List<ChatMessageDto>> returnMap = new HashMap<>();
-        returnMap.put("list", chatMessageService.loadMessage(memberSeq, chatSeq, offset));
+        returnMap.put("list", chatMessageService.loadMessage(memberSeq, clubSeq, offset));
 
         resultMap.put("message", "OK");
         resultMap.put("data", returnMap);
