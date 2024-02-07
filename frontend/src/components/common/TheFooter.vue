@@ -34,6 +34,8 @@
   position: sticky;
   bottom: 0;
   width: 100%;
+  bottom: 0;
+  width: 100%;
   max-width: none;
   /* 컨테이너의 최대 너비 설정을 해제 (필요한 경우) */
 }
