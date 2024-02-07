@@ -120,11 +120,16 @@ export const useMemberStore = defineStore('member', () => {
       .then((res) => {
         alert('로그인 성공')
         token.value = res.headers.get('atk')
+
         counterstore.setCookie('atk', token.value)
+        counterstore.setCookie('nickname', res.data.data.nickname)
+        counterstore.setCookie('profileImage', res.data.data.profileImage)
         nickname.value = res.data.data.nickname
         profileImage.value = res.data.data.profileImage
-        router.push({ name: 'home' })
+
+        //router.push({ name: 'home' })
         console.log(nickname.value)
+        window.location.href = '/'
       })
       .catch((err) => {
         alert('로그인 실패')
@@ -181,6 +186,10 @@ export const useMemberStore = defineStore('member', () => {
         profileImage.value = null
         token.value = null
         counterstore.deleteCookie('atk')
+        counterstore.deleteCookie('nickname')
+        counterstore.deleteCookie('profileImage')
+
+        window.location.href = '/'
         router.push({ name: 'home' })
       })
       .catch((err) => {
@@ -264,10 +273,10 @@ export const useMemberStore = defineStore('member', () => {
     return profileImage.value
   }
 
-    return {
-      memberList,
-      // member,
-      // getMember,
+  return {
+    memberList,
+    // member,
+    // getMember,
 
     createMember,
     // 로그인
