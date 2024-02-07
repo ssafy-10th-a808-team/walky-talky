@@ -1,10 +1,18 @@
 <template>
   <div class="map-container">
-    <div id="map" style="width: 80%; height: 400px; justify-content: center" />
+    <div
+      :id="'map-' + uniqueId + seq"
+      class="map"
+      style="width: 400px; height: 400px; justify-content: center"
+    />
     <div class="record-container">
+      <div v-if="title != undefined">
+        <p>산책 제목</p>
+        <p>{{ title }}</p>
+      </div>
       <div>
         <p>소요 시간</p>
-        <p>{{ duration }}</p>
+        <p>{{ convertTime(parseInt(duration)) }}</p>
       </div>
       <div>
         <p>총 거리</p>
@@ -15,35 +23,48 @@
 </template>
 
 <script setup>
-const { distance, duration, points, address } = defineProps([
+const { distance, duration, points, title, seq } = defineProps([
   'distance',
   'duration',
   'points',
-  'address'
+  'title',
+  'seq'
 ])
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
+
+function convertTime(seconds) {
+  if (typeof seconds !== 'number' || seconds < 0) {
+    return 'Invalid input'
+  }
+
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+
+  const minutesString = minutes > 0 ? `${minutes}분` : ''
+  const secondsString = remainingSeconds > 0 ? `${remainingSeconds}초` : ''
+
+  return `${minutesString} ${secondsString}`.trim() || '0초'
+}
 
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
 let map = null // map is not defined Reference Error 방지
+const uniqueId = ref(Date.now()) // 각 컴포넌트에 고유한 ID를 부여하기 위한 ref
 
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
     initMap()
   } else {
     const script = document.createElement('script')
-    // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
-    /* global kakao */
     script.onload = () => {
       kakao.maps.load(initMap)
     }
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
-    //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
     document.head.appendChild(script)
   }
 })
 
 const initMap = () => {
-  const container = document.getElementById('map')
+  const container = document.getElementById(`map-${uniqueId.value}` + seq)
   const options = {
     center: new kakao.maps.LatLng(points[0].latitude, points[0].longitude),
     level: 6
