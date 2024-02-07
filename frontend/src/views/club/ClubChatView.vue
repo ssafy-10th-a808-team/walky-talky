@@ -1,5 +1,8 @@
 <template>
     <ClubDetailHeaderNav />
+    {{ seq }}
+    {{ clubstore.clubDetail }}
+    {{ clubstore.clubSeq }}
 </template>
   
 <script setup>
@@ -10,6 +13,11 @@ import MemberList from '@/components/member/MemberListView.vue'
 import axios from 'axios';
 import { useCounterStore } from '@/stores/counter'
 
+const clubstore = useClubStore()
+
+const { seq } = defineProps({
+    seq: String
+})
 </script>
   
 <style scoped>
