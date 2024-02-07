@@ -362,6 +362,28 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     }
   }
 
+  ///// 글 수정/////
+  const modify = async (seq, title, content) => {
+    try {
+      const response = await axios.post(
+        `${REST_CLUB_API}/share-board/modify/${seq}`,
+        { title, content },
+        {
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        }
+      )
+      alert('기록 수정 성공!')
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('글 쓰기 중 오류 발생:', error)
+      }
+    }
+  }
+
   return {
     // 목록 조회
     getContentList,
@@ -397,6 +419,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     myRecords,
     getMyRecord,
     // 글쓰기
-    write
+    write,
+    //글 수정
+    modify
   }
 })

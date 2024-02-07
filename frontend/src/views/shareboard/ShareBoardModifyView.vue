@@ -16,24 +16,15 @@
     </div>
 
     <div>
-      <h5>공유하고 싶은 기록을 선택해주세요.</h5>
+      <h5>내가 공유한 기록</h5>
     </div>
-    <div class="record-list-container">
-      <div
-        v-for="record in records"
-        :key="record.recordSeq"
-        :class="{ 'record-list': true, selected: selectedRecord === record.recordSeq }"
-        @click="selectRecord(record.recordSeq)"
-      >
-        <shareBoardRecord
-          :duration="record.duration"
-          :distance="record.distance"
-          :points="record.points"
-          :title="record.title"
-          :seq="record.recordSeq"
-        />
-      </div>
-    </div>
+    <shareBoardRecord
+      v-if="record"
+      :duration="record.duration"
+      :distance="record.distance"
+      :points="record.points"
+      :address="record.address"
+    />
 
     <div class="mb-3">
       <textarea
@@ -45,53 +36,53 @@
       ></textarea>
     </div>
 
-    <button @click="write">공유하기</button>
+    <button @click="modify">수정하기</button>
     <button @click="moveList">목록으로</button>
   </div>
 </template>
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
 import { useCounterStore } from '@/stores/counter'
 import shareBoardRecord from '@/components/shareBoard/shareBoardRecord.vue'
 import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
 
+const route = useRoute()
 const router = useRouter()
 const shareBoardStore = useShareBoardStore()
 const counterStore = useCounterStore()
 
-const records = ref([])
+const record = ref(null)
+const defaultContent = ref(null)
+
+const title = ref('')
+const content = ref('')
+
 const myNickname = ref('')
 const myProfileImage = ref('')
+
+const selectedRecord = ref(null)
+
 onMounted(async () => {
-  await shareBoardStore.getMyRecord()
-  records.value = shareBoardStore.myRecords
+  await shareBoardStore.getContent(route.params.seq)
+  defaultContent.value = shareBoardStore.shareContent
+  title.value = defaultContent.value.title
+  content.value = defaultContent.value.content
+  selectedRecord.value = defaultContent.value.recordSeq
+
+  await shareBoardStore.getRecord(defaultContent.value.recordSeq)
+  record.value = shareBoardStore.shareRecord
 
   myNickname.value = counterStore.getCookie('nickname')
   myProfileImage.value = counterStore.getCookie('profileImage')
 })
 
-const selectedRecord = ref(null)
-
-const selectRecord = (seq) => {
-  if (selectedRecord.value === seq) {
-    selectedRecord.value = null
-  } else {
-    selectedRecord.value = seq
-  }
-}
-
-const title = ref('')
-const content = ref('')
-
-const write = () => {
+const modify = () => {
   if (title.value == '' || content.value == '') {
     alert('제목과 내용을 입력해주세요.')
-  } else if (selectedRecord.value == null) {
-    alert('공유하고 싶은 기록을 선택해주세요.')
   } else {
-    shareBoardStore.write(selectedRecord.value, title.value, content.value)
+    shareBoardStore.modify(route.params.seq, title.value, content.value)
     router.push({ name: 'share-board' })
     selectedRecord.value = null
     title.value = ''
