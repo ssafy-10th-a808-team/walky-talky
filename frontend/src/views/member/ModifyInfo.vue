@@ -10,7 +10,13 @@
       <div class="row">
         <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
           <div class="member">
-            <img :src="mypage.profileImage" alt="프사" />
+            <div class="circular">
+              <img :src="profileImage" alt="프사" @click="openImageUploader" />
+            </div>
+            <div v-if="showImageUploader">
+              <ImageUploader @imageSelected="updateProfileImage" @close="closeImageUploader" />
+            </div>
+
             <div>
               <div v-if="modals.nickname" class="modal">
                 <div class="modal-content">
@@ -69,6 +75,7 @@ import { ref, onMounted } from 'vue'
 import { useMemberStore } from '@/stores/member'
 import { useCounterStore } from '@/stores/counter'
 import MyLocationView from './MyLocationView.vue'
+import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const memberstore = useMemberStore()
 const counterstore = useCounterStore()
@@ -79,6 +86,21 @@ const address = ref('')
 const nickname = ref('')
 const introduce = ref('')
 const regionCd = ref('')
+
+const showImageUploader = ref(false)
+
+const openImageUploader = () => {
+  showImageUploader.value = true
+}
+
+const closeImageUploader = () => {
+  showImageUploader.value = false
+  memberstore.profileImage = profileImage.value
+}
+
+const updateProfileImage = (image) => {
+  profileImage.value = image
+}
 
 onMounted(async () => {
   await memberstore.getMypage()

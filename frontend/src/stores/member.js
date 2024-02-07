@@ -224,7 +224,7 @@ export const useMemberStore = defineStore(
 
     const modifyInfo = (payload) => {
       const formData = new FormData()
-      if (payload.profileImg) {
+      if (payload.profileImage) {
         formData.append('multipartFile', payload.profileImage)
       }
       formData.append('id', payload.memberId)
