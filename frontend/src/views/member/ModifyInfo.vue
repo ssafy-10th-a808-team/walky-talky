@@ -8,13 +8,24 @@
       </div>
 
       <div class="row">
-        <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+        <div class="col-lg-10 col-md-10 align-items-stretch">
           <div class="member">
-            <div class="circular">
+            <!-- <div class="circular">
               <img :src="profileImage" alt="프사" @click="openImageUploader" />
             </div>
             <div v-if="showImageUploader">
               <ImageUploader @imageSelected="updateProfileImage" @close="closeImageUploader" />
+            </div> -->
+            <!-- 이미지 업로드 -->
+            <div class="form-group">
+              <label for="image-upload">이미지</label>
+              <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
+              <div class="d-flex justify-content-center align-items-center">
+
+                <div id="imageFrame" class="circular">
+                  <img :src="profileImage" />
+                </div>
+              </div>
             </div>
 
             <div>
@@ -87,6 +98,29 @@ const nickname = ref('')
 const introduce = ref('')
 const regionCd = ref('')
 
+const readInputFile = (e) => {
+  document.getElementById('imageFrame').innerHTML = ''
+  const files = e.target.files
+  const fileArr = Array.from(files)
+  console.log(fileArr[0])
+  profileImage.value = fileArr[0]
+  memberstore.profileImage = profileImage.value
+  console.log(`현재 저장된 프로필 이미지 : ${profileImage.value}`)
+  fileArr.forEach(function (f) {
+    if (!f.type.match('image/.*')) {
+      alert('이미지 확장자만 업로드 가능합니다.')
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = function (e) {
+      const img = document.createElement('img')
+      img.src = e.target.result
+      document.getElementById('imageFrame').appendChild(img)
+    }
+    reader.readAsDataURL(f)
+  })
+}
+
 const showImageUploader = ref(false)
 
 const openImageUploader = () => {
@@ -103,7 +137,6 @@ const updateProfileImage = (image) => {
 }
 
 onMounted(async () => {
-  await memberstore.getMypage()
   mypage.value = memberstore.mypage
   profileImage.value = memberstore.profileImage
   nickname.value = memberstore.nickname
