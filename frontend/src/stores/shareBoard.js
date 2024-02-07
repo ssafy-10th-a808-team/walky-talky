@@ -335,6 +335,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         }
       })
       myRecords.value = res.data.data
+      console.log(myRecords.value)
     } catch (err) {
       console.log(err)
     }
@@ -384,6 +385,28 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     }
   }
 
+  ///// 글 삭제/////
+  const deleteShareBoard = async (seq) => {
+    try {
+      const response = await axios.post(
+        `${REST_CLUB_API}/share-board/delete/${seq}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        }
+      )
+      alert('기록 삭제 성공!')
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message)
+      } else {
+        console.error('글 쓰기 중 오류 발생:', error)
+      }
+    }
+  }
+
   return {
     // 목록 조회
     getContentList,
@@ -420,7 +443,9 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     getMyRecord,
     // 글쓰기
     write,
-    //글 수정
-    modify
+    // 글 수정
+    modify,
+    // 글 삭제
+    deleteShareBoard
   }
 })

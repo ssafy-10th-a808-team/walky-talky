@@ -17,6 +17,7 @@
       :content="contentEdit"
       :loadComment="loadComment"
       @updateIsView="updateIsView"
+      @editComment="editComment"
     />
   </div>
 </template>
@@ -47,12 +48,16 @@ const isAvaliable = ref(counterStore.getCookie('nickname') === nickname ? true :
 const isView = ref(true)
 const contentEdit = ref(content)
 
+const editComment = (newValue) => {
+  contentEdit.value = newValue
+}
+
 const updateIsView = (newValue) => {
   isView.value = newValue
 }
 
 const commentDel = async () => {
-  shareBoardStore.commentDel(shareBoardSeq, commentSeq)
+  await shareBoardStore.commentDel(shareBoardSeq, commentSeq)
   await loadComment(shareBoardSeq)
 }
 </script>

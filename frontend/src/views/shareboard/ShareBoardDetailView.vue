@@ -11,7 +11,7 @@
     />
     <div v-if="isAvaliable">
       <button @click="moveModify(content.shareBoardSeq)">수정</button>
-      <button>삭제</button>
+      <button @click="deleteShareBoard(content.shareBoardSeq)">삭제</button>
     </div>
 
     <shareBoardRecord
@@ -36,7 +36,11 @@
     </div>
 
     <div v-if="content">
-      <shareBoardCommentFormVue :shareBoardSeq="content.shareBoardSeq" :loadComment="loadComment" />
+      <shareBoardCommentFormVue
+        @loadComment="loadComment"
+        :shareBoardSeq="content.shareBoardSeq"
+        :loadComment="loadComment"
+      />
     </div>
 
     <div v-if="comments">
@@ -144,7 +148,11 @@ const pushScrap = (scraped, recordSeq) => {
 
 const moveModify = (seq) => {
   router.push({ name: 'share-board-modify', seq })
-  //content.shareBoardSeq
+}
+
+const deleteShareBoard = async (seq) => {
+  await shareBoardStore.deleteShareBoard(seq)
+  router.push({ name: 'share-board' })
 }
 </script>
 

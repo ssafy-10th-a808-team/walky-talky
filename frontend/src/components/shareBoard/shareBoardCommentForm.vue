@@ -2,10 +2,11 @@
   <div class="comment-form-container">
     <shareBoardMember :nickname="myNickname" :profilePic="myProfileImage" />
 
-    <div class="comment-input-container" v-if="!commentInput">
+    <div class="comment-input-container" v-if="isAvaliable">
       <textarea v-model="commentInput" placeholder="댓글을 입력하세요..." />
       <button @click="submitComment">댓글 등록</button>
     </div>
+
     <div class="comment-input-container" v-else>
       <textarea v-model="commentInput" />
       <div class="edit-btn-container">
@@ -39,10 +40,15 @@ myNickname.value = counterStore.getCookie('nickname')
 const myProfileImage = ref('')
 myProfileImage.value = counterStore.getCookie('profileImage')
 
-const commentInput = ref(typeof content === 'string' ? content : null)
+const commentInput = ref(typeof content === 'string' ? content : '')
+
+const isAvaliable = ref(true)
+if (typeof content === 'string') {
+  isAvaliable.value = false
+}
 
 const submitComment = async () => {
-  shareBoardStore.commentWrite(shareBoardSeq, commentInput.value)
+  await shareBoardStore.commentWrite(shareBoardSeq, commentInput.value)
   await loadComment(shareBoardSeq)
   commentInput.value = null
 }
@@ -50,10 +56,11 @@ const submitComment = async () => {
 const emit = defineEmits() // emit 수정
 
 const editComment = async () => {
-  shareBoardStore.commentEdit(shareBoardSeq, commentSeq, commentInput.value)
+  await shareBoardStore.commentEdit(shareBoardSeq, commentSeq, commentInput.value)
   await loadComment(shareBoardSeq)
+
   emit('updateIsView', true)
-  commentInput.value = null
+  emit('editComment', commentInput.value)
 }
 
 const cancelEdit = () => {

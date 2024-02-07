@@ -12,7 +12,7 @@
       </div>
       <div>
         <p>소요 시간</p>
-        <p>{{ duration }}</p>
+        <p>{{ convertTime(parseInt(duration)) }}</p>
       </div>
       <div>
         <p>총 거리</p>
@@ -31,6 +31,20 @@ const { distance, duration, points, title, seq } = defineProps([
   'seq'
 ])
 import { onMounted, ref } from 'vue'
+
+function convertTime(seconds) {
+  if (typeof seconds !== 'number' || seconds < 0) {
+    return 'Invalid input'
+  }
+
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+
+  const minutesString = minutes > 0 ? `${minutes}분` : ''
+  const secondsString = remainingSeconds > 0 ? `${remainingSeconds}초` : ''
+
+  return `${minutesString} ${secondsString}`.trim() || '0초'
+}
 
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
 let map = null // map is not defined Reference Error 방지
