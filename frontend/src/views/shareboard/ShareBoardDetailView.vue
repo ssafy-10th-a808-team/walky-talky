@@ -9,6 +9,11 @@
       :address="record.address"
       :hit="content.hit"
     />
+    <div v-if="isAvaliable">
+      <button @click="moveModify(content.shareBoardSeq)">수정</button>
+      <button @click="deleteShareBoard(content.shareBoardSeq)">삭제</button>
+    </div>
+
     <shareBoardRecord
       v-if="record"
       :duration="record.duration"
@@ -32,9 +37,8 @@
 
     <div v-if="content">
       <shareBoardCommentFormVue
+        @loadComment="loadComment"
         :shareBoardSeq="content.shareBoardSeq"
-        :nickname="myNickname"
-        :profilePic="myProfileImage"
         :loadComment="loadComment"
       />
     </div>
@@ -57,9 +61,10 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
 import { useMemberStore } from '@/stores/member'
+import { useCounterStore } from '@/stores/counter'
 
 import shareBoardListUpper from '@/components/shareBoard/shareBoardListUpper.vue'
 import shareBoardTitle from '@/components/shareBoard/shareBoardTitle.vue'
@@ -71,14 +76,24 @@ import shareBoardCommentFormVue from '@/components/shareBoard/shareBoardCommentF
 
 const shareBoardStore = useShareBoardStore()
 const memberStore = useMemberStore()
+const counterStore = useCounterStore()
 
 const route = useRoute()
+const router = useRouter()
 
 const content = ref(null)
 const record = ref(null)
 const like = ref(null)
 const scrap = ref(null)
 const comments = ref(null)
+
+const myNickname = ref('')
+myNickname.value = counterStore.getCookie('nickname')
+
+const myProfileImage = ref('')
+myProfileImage.value = counterStore.getCookie('profileImage')
+
+let isAvaliable
 
 const loadData = async (seq) => {
   await shareBoardStore.getContent(seq)
@@ -92,37 +107,19 @@ const loadData = async (seq) => {
   like.value = shareBoardStore.shareLike
   scrap.value = shareBoardStore.shareScrap
   comments.value = shareBoardStore.shareComment
+
+  isAvaliable = ref(
+    counterStore.getCookie('nickname') === content.value.member.nickname ? true : false
+  )
 }
 
 onMounted(() => {
   loadData(route.params.seq)
 })
 
-///////////////////////
-const myNickname = ref('')
-myNickname.value = memberStore.getNickname()
-
-const myProfileImage = ref('')
-myProfileImage.value = memberStore.getProfileImage()
-
-console.log(myNickname.value)
-console.log(myProfileImage.value)
-///////////////////////
-
 const loadComment = async (seq) => {
   await shareBoardStore.getComment(seq)
-
   comments.value = shareBoardStore.shareComment
-}
-
-const loadLike = async (seq) => {
-  await shareBoardStore.getLike(seq)
-  like.value = shareBoardStore.shareLike
-}
-
-const loadScrap = async (seq) => {
-  await shareBoardStore.getScrap(seq)
-  scrap.value = shareBoardStore.shareScrap
 }
 
 const pushLike = (liked, shareBoardSeq) => {
@@ -130,23 +127,32 @@ const pushLike = (liked, shareBoardSeq) => {
     like.value.liked = false
     like.value.likeCount -= 1
     shareBoardStore.dislike(shareBoardSeq)
-    loadLike(shareBoardSeq)
   } else {
     like.value.liked = true
-    like.value.likeCount += 1 // Todo : 깜빡이는거 고치기
+    like.value.likeCount += 1
     shareBoardStore.like(shareBoardSeq)
-    loadLike(shareBoardSeq)
   }
 }
 
-const pushScrap = (scraped, recordSeq, shareBoardSeq) => {
+const pushScrap = (scraped, recordSeq) => {
   if (scraped) {
+    scrap.value.scraped = false
+    scrap.value.scrapCount -= 1
     shareBoardStore.unscrap(recordSeq)
-    loadScrap(shareBoardSeq)
   } else {
+    scrap.value.scraped = true
+    scrap.value.scrapCount += 1
     shareBoardStore.scrap(recordSeq)
-    loadScrap(shareBoardSeq)
   }
+}
+
+const moveModify = (seq) => {
+  router.push({ name: 'share-board-modify', seq })
+}
+
+const deleteShareBoard = async (seq) => {
+  await shareBoardStore.deleteShareBoard(seq)
+  router.push({ name: 'share-board' })
 }
 </script>
 
@@ -155,5 +161,10 @@ const pushScrap = (scraped, recordSeq, shareBoardSeq) => {
   display: flex;
   align-items: center;
   justify-content: space-around;
+}
+
+.content-edit-del-container {
+  display: flex;
+  margin-left: auto;
 }
 </style>

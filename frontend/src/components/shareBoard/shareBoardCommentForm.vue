@@ -1,10 +1,18 @@
 <template>
   <div class="comment-form-container">
-    <shareBoardMember :nickname="nickname" :profilePic="profilePic" />
+    <shareBoardMember :nickname="myNickname" :profilePic="myProfileImage" />
 
-    <div class="comment-input-container">
+    <div class="comment-input-container" v-if="isAvaliable">
       <textarea v-model="commentInput" placeholder="댓글을 입력하세요..." />
       <button @click="submitComment">댓글 등록</button>
+    </div>
+
+    <div class="comment-input-container" v-else>
+      <textarea v-model="commentInput" />
+      <div class="edit-btn-container">
+        <button @click="editComment">수정</button>
+        <button @click="cancelEdit">취소</button>
+      </div>
     </div>
   </div>
 </template>
@@ -12,22 +20,51 @@
 <script setup>
 import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
 import { useShareBoardStore } from '@/stores/shareBoard'
-const shareBoardStore = useShareBoardStore()
-import { ref } from 'vue'
+import { useCounterStore } from '@/stores/counter'
 
-const { nickname, profilePic, shareBoardSeq, loadComment } = defineProps([
-  'nickname',
-  'profilePic',
+const shareBoardStore = useShareBoardStore()
+const counterStore = useCounterStore()
+
+import { ref, defineEmits } from 'vue'
+
+const { shareBoardSeq, loadComment, content, commentSeq } = defineProps([
   'shareBoardSeq',
-  'loadComment'
+  'loadComment',
+  'content',
+  'commentSeq'
 ])
 
-const commentInput = ref('')
+const myNickname = ref('')
+myNickname.value = counterStore.getCookie('nickname')
+
+const myProfileImage = ref('')
+myProfileImage.value = counterStore.getCookie('profileImage')
+
+const commentInput = ref(typeof content === 'string' ? content : '')
+
+const isAvaliable = ref(true)
+if (typeof content === 'string') {
+  isAvaliable.value = false
+}
 
 const submitComment = async () => {
-  shareBoardStore.commentWrite(shareBoardSeq, commentInput.value)
-  commentInput.value = ''
+  await shareBoardStore.commentWrite(shareBoardSeq, commentInput.value)
   await loadComment(shareBoardSeq)
+  commentInput.value = null
+}
+
+const emit = defineEmits() // emit 수정
+
+const editComment = async () => {
+  await shareBoardStore.commentEdit(shareBoardSeq, commentSeq, commentInput.value)
+  await loadComment(shareBoardSeq)
+
+  emit('updateIsView', true)
+  emit('editComment', commentInput.value)
+}
+
+const cancelEdit = () => {
+  emit('updateIsView', true)
 }
 </script>
 
@@ -41,6 +78,11 @@ const submitComment = async () => {
   display: flex;
   align-items: center;
   margin-bottom: 16px;
+}
+
+.edit-btn-container {
+  margin-left: auto;
+  display: flex;
 }
 
 .comment-input-container {
