@@ -48,8 +48,8 @@ public class Record extends BaseEntity {
     private String regionCd;
 
     @Column(name = "is_deleted")
-    @ColumnDefault("0")
-    private Boolean isDeleted;
+    @ColumnDefault("false")
+    private boolean isDeleted;
 
     public Record update(String comment, int starRating){
         this.comment = comment;
@@ -63,7 +63,7 @@ public class Record extends BaseEntity {
     }
 
     @Builder
-    public Record(Long seq, Long memberSeq, Long groupSeq, String title, int starRating, String comment, int usedCount, int scrapedCount, Double distance, String duration, String regionCd, Boolean isDeleted) {
+    public Record(Long seq, Long memberSeq, Long groupSeq, String title, int starRating, String comment, int usedCount, int scrapedCount, Double distance, String duration, String regionCd, boolean isDeleted) {
         this.seq = seq;
         this.memberSeq = memberSeq;
         this.groupSeq = groupSeq;

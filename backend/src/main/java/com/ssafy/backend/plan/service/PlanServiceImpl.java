@@ -16,7 +16,6 @@ import com.ssafy.backend.record.domain.RecordDetail;
 import com.ssafy.backend.record.dto.mapping.PointsMapping;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
-import com.ssafy.backend.region.repository.RegionRepository;
 import com.ssafy.backend.region.service.RegionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -259,7 +258,7 @@ public class PlanServiceImpl implements PlanService {
                 .distance(findedRecord.getDistance())
                 .duration(findedRecord.getDuration())
                 .regionCd(findedRecord.getRegionCd())
-                .isDeleted(findedRecord.getIsDeleted())
+                .isDeleted(findedRecord.isDeleted())
                 .build();
 
         Record savedRecord = recordRepository.save(copyRecord);
