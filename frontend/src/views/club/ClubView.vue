@@ -69,6 +69,7 @@ onMounted(() => {
 })
 
 const godetail = (seq) => {
+  clubstore.clubSeq = seq;
   router.push({ name: 'club-detail', params: { seq: seq } })
 }
 </script>
