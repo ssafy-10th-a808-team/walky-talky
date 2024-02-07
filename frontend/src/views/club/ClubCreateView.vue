@@ -13,7 +13,9 @@
               <hr />
               <!-- 내 동네 입력 필드 -->
               <div class="form-group">
-                <div><label for="club-address">내 동네 인증하기 *필수</label></div>
+                <div>
+                  <label for="club-address">내 동네 인증하기 *필수</label>
+                </div>
                 <ButtonWithIcon :selectedIcon="locationIcon"> </ButtonWithIcon>
                 <div>
                   {{ region_name }}
@@ -26,7 +28,7 @@
                 <label for="image-upload">이미지</label>
                 <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
                 <div id="imageFrame" class="circular">
-                  <img :src="profileImg">
+                  <img :src="profileImg" />
                 </div>
               </div>
               <hr />
@@ -34,10 +36,19 @@
               <!-- 모임명 입력 필드 -->
               <div class="form-group">
                 <label for="club-name">모임명 *필수</label>
-                <input type="text" class="form-control" id="club-name" v-model.trim="clubname" required />
+                <input
+                  type="text"
+                  class="form-control"
+                  id="club-name"
+                  v-model.trim="clubname"
+                  required
+                />
                 <div class="cta-btn-container text-center">
-                  <button type="button" class="cta-btn align-middle btn-check-duplicate"
-                    @click="checkDuplicate(clubname)">
+                  <button
+                    type="button"
+                    class="cta-btn align-middle btn-check-duplicate"
+                    @click="checkDuplicate(clubname)"
+                  >
                     중복 확인
                   </button>
                 </div>
@@ -47,7 +58,13 @@
               <!-- 소개글 -->
               <div class="form-group">
                 <label for="introduction">소개글</label>
-                <textarea class="form-control" id="introduction" rows="10" v-model.trim="introduce" required></textarea>
+                <textarea
+                  class="form-control"
+                  id="introduction"
+                  rows="10"
+                  v-model.trim="introduce"
+                  required
+                ></textarea>
               </div>
               <hr />
 
@@ -76,13 +93,22 @@
                 <label>성별 *필수</label>
                 <div class="portfolio d-flex justify-content-center">
                   <ul id="portfolio-flters">
-                    <li :class="{ 'filter-active': gender_type === 'M' }" @click="setGenderType('M')">
+                    <li
+                      :class="{ 'filter-active': gender_type === 'M' }"
+                      @click="setGenderType('M')"
+                    >
                       남
                     </li>
-                    <li :class="{ 'filter-active': gender_type === 'F' }" @click="setGenderType('F')">
+                    <li
+                      :class="{ 'filter-active': gender_type === 'F' }"
+                      @click="setGenderType('F')"
+                    >
                       여
                     </li>
-                    <li :class="{ 'filter-active': gender_type === 'A' }" @click="setGenderType('A')">
+                    <li
+                      :class="{ 'filter-active': gender_type === 'A' }"
+                      @click="setGenderType('A')"
+                    >
                       무관
                     </li>
                   </ul>
@@ -106,10 +132,16 @@
                 <div class="row">
                   <div class="portfolio col-md-8 d-flex justify-content-center">
                     <ul id="portfolio-flters">
-                      <li :class="{ 'filter-active': is_auto_recruit === true }" @click="setrecruitType(true)">
+                      <li
+                        :class="{ 'filter-active': is_auto_recruit === true }"
+                        @click="setrecruitType(true)"
+                      >
                         즉시 가입 허용
                       </li>
-                      <li :class="{ 'filter-active': is_auto_recruit === false }" @click="setrecruitType(false)">
+                      <li
+                        :class="{ 'filter-active': is_auto_recruit === false }"
+                        @click="setrecruitType(false)"
+                      >
                         승인 후 가입
                       </li>
                     </ul>
@@ -120,8 +152,12 @@
 
               <!-- 제출 -->
               <div class="text-center">
-                <button type="button" class="cta-btn align-middle btn-check-duplicate" @click="createClub"
-                  :disabled="!isNameAvailable || !region_name">
+                <button
+                  type="button"
+                  class="cta-btn align-middle btn-check-duplicate"
+                  @click="createClub"
+                  :disabled="!isNameAvailable || !region_name"
+                >
                   모임 생성
                 </button>
               </div>
@@ -141,7 +177,7 @@ import { useMemberStore } from '@/stores/member'
 import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
 import { useRouter } from 'vue-router'
 // 기본 이미지를 import 합니다.
-import defaultLogoPath from '@/assets/img/Logo.png';
+import defaultLogoPath from '@/assets/img/Logo.png'
 
 const router = useRouter()
 const counterstore = useCounterStore()
@@ -156,7 +192,7 @@ const region_cd = ref('')
 region_name.value = memberstore.getLocationInfo()[0]
 region_cd.value = memberstore.getLocationInfo()[1]
 
-const profileImg = ref(defaultLogoPath);
+const profileImg = ref(defaultLogoPath)
 const clubname = ref('')
 const introduce = ref('')
 const old_birth = ref('')
@@ -168,7 +204,6 @@ const is_auto_recruit = ref(false)
 ///////////////////////////////////////////////////////////////////////////
 
 const readInputFile = (e) => {
-
   document.getElementById('imageFrame').innerHTML = ''
   const files = e.target.files
   const fileArr = Array.from(files)
@@ -234,7 +269,7 @@ const createClub = () => {
   // FormData 인스턴스 생성
   const formData = new FormData()
 
-  console.log('profileImg.value  = ' + profileImg.value);
+  console.log('profileImg.value  = ' + profileImg.value)
   if (profileImg.value !== '/src/assets/img/Logo.png') {
     formData.append('multipartFile', profileImg.value)
   }
@@ -311,7 +346,7 @@ form hr {
 .form-control {
   border-radius: 5px;
   border: 1px solid #ced4da;
-  padding: .375rem .75rem;
+  padding: 0.375rem 0.75rem;
   font-size: 1rem;
 }
 
