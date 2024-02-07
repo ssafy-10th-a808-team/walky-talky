@@ -19,8 +19,10 @@
 import { useRoute } from 'vue-router'
 import { ref, onMounted, nextTick } from 'vue'
 import { useChatStore } from '@/stores/chat'
+import { useCounterStore } from '@/stores/counter'
 import MessageList from '@/components/chat/MessageList.vue'
 
+const counterstore = useCounterStore()
 const newMessage = ref('')
 const chatSeq = ref(useRoute().params.seq) // 실제 채팅방 시퀀스 번호로 설정
 const chatStore = useChatStore()
@@ -41,10 +43,10 @@ const sendMessage = () => {
   if (newMessage.value.trim() !== '') {
     chatStore.sendMessage({
       chatSeq: chatSeq.value,
-      sender: 'You',
+      sender: counterstore.getCookie('nickname'),
       content: newMessage.value,
       timestamp: new Date().toISOString(),
-      isMine: true
+      type: 'TALK'
     })
     // 입력 필드를 비웁니다
     newMessage.value = ''
@@ -57,7 +59,7 @@ const sendMessage = () => {
   display: flex;
   flex-direction: column;
   max-width: 100%;
-  height: 500px;
+  height: 600px;
 }
 
 .input-area {

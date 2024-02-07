@@ -6,7 +6,6 @@
       :sender="message.sender"
       :content="message.content"
       :timestamp="message.timestamp"
-      :isMine="message.isMine"
     />
   </div>
 </template>
@@ -33,15 +32,5 @@ const props = defineProps({
   flex-direction: column-reverse;
   overflow-y: auto; /* 스크롤 가능하게 만듭니다 */
   height: 100%; /* 컨테이너의 높이를 정합니다, 실제 값으로 조정 필요 */
-}
-
-/* 상대방이 보낸 메시지 */
-.message:not(.mine) {
-  margin-right: auto; /* 왼쪽 정렬 */
-}
-
-/* 내가 보낸 메시지 */
-.mine {
-  margin-left: auto; /* 오른쪽 정렬 */
 }
 </style>

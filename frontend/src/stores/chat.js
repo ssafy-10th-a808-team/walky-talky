@@ -51,15 +51,13 @@ export const useChatStore = defineStore('chat', () => {
   }
 
   const sendMessage = function (message) {
-    client.value.publish(
-      {
-        destination: '/pub/message',
-        body: JSON.stringify(message)
-      },
-      {
+    client.value.publish({
+      destination: '/pub/message',
+      body: JSON.stringify(message),
+      headers: {
         atk: `Bearer ${counterstore.getCookie('atk')}`
       }
-    )
+    })
   }
 
   return {
