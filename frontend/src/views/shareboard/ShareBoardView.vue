@@ -26,12 +26,17 @@ onMounted(async () => {
 const shareBoardDetail = (seq) => {
   router.push({ name: 'share-board-view', params: { seq } })
 }
+
+const shareBoardWrite = () => {
+  router.push({ name: 'share-board-write' })
+}
 </script>
 
 <template>
   <div class="section-title">
     <h2>산책 공유 게시판</h2>
   </div>
+  <button class="share-button" @click="shareBoardWrite">내 산책 공유하기</button>
   <div v-for="(content, key) in contents" :key="content.shareBoardSeq">
     <shareBoardListItem
       :content="content"
@@ -43,4 +48,9 @@ const shareBoardDetail = (seq) => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.share-button {
+  margin-left: auto;
+  display: flex;
+}
+</style>
