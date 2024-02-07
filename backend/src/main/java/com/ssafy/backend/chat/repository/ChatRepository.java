@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     Boolean existsChatByClubSeq(Long clubSeq);
+
+    Chat findByClubSeq(Long clubSeq);
 }

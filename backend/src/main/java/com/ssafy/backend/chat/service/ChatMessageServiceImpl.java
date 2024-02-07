@@ -33,7 +33,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 //        캐싱 적용
 //        redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessageDto.class));
 //        redisTemplateMessage.opsForList().rightPush(CHAT_ROOM + "-" + chatMessage.getChatSeq() + ":", chatMessage);
-        Chat findChat = chatRepository.findById(chatMessageDto.getChatSeq()).orElse(null);
+        Chat findChat = chatRepository.findByClubSeq(chatMessageDto.getClubSeq());
         if (findChat == null) {
             throw new WTException("존재하지 않는 채팅방입니다.");
         }
@@ -42,6 +42,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .sender(chatMessageDto.getSender())
                 .content(chatMessageDto.getContent())
                 .createdAt(chatMessageDto.getCreatedAt())
+                .clubSeq(chatMessageDto.getClubSeq())
                 .type(chatMessageDto.getType())
                 .build();
 
@@ -49,7 +50,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
-    public List<ChatMessageDto> loadMessage(Long memberSeq, Long chatSeq, int offset) {
+    public List<ChatMessageDto> loadMessage(Long memberSeq, Long clubSeq, int offset) {
         List<ChatMessageDto> messageList = new ArrayList<>();
 //        캐싱 적용
 //        List<ChatMessageDto> redisMessageList = redisTemplateMessage.opsForList().range(CHAT_ROOM + "-" + chatSeq + ":", offset * 10, (offset * 10) + 9);
@@ -68,13 +69,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 //            messageList.addAll(redisMessageList);
 //        }
         Pageable pageable = PageRequest.of(offset, 10);
-        List<ChatMessage> dbMessageList = chatMessageRepository.findByChatSeqOrderByCreatedAt(chatSeq, pageable);
+        List<ChatMessage> dbMessageList = chatMessageRepository.findByClubSeqOrderByCreatedAt(clubSeq, pageable);
         Member findMember = memberRepository.findById(memberSeq).orElse(null);
         for (ChatMessage chatMessage : dbMessageList) {
             if (chatMessage.getSender().equals(findMember.getNickname()) && MessageType.JOIN.equals(chatMessage.getType())) {
                 break;
             }
-            ChatMessageDto requestChatMessageDto = new ChatMessageDto(chatSeq, chatMessage.getSender(), chatMessage.getContent(), chatMessage.getCreatedAt(), chatMessage.getType());
+            ChatMessageDto requestChatMessageDto = new ChatMessageDto(clubSeq, chatMessage.getSender(), chatMessage.getContent(), chatMessage.getCreatedAt(), chatMessage.getType());
             messageList.add(requestChatMessageDto);
         }
         return messageList;
