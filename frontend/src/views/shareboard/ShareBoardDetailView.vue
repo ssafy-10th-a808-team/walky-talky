@@ -31,12 +31,7 @@
     </div>
 
     <div v-if="content">
-      <shareBoardCommentFormVue
-        :shareBoardSeq="content.shareBoardSeq"
-        :nickname="myNickname"
-        :profilePic="myProfileImage"
-        :loadComment="loadComment"
-      />
+      <shareBoardCommentFormVue :shareBoardSeq="content.shareBoardSeq" :loadComment="loadComment" />
     </div>
 
     <div v-if="comments">
@@ -60,6 +55,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
 import { useMemberStore } from '@/stores/member'
+import { useCounterStore } from '@/stores/counter'
 
 import shareBoardListUpper from '@/components/shareBoard/shareBoardListUpper.vue'
 import shareBoardTitle from '@/components/shareBoard/shareBoardTitle.vue'
@@ -71,6 +67,7 @@ import shareBoardCommentFormVue from '@/components/shareBoard/shareBoardCommentF
 
 const shareBoardStore = useShareBoardStore()
 const memberStore = useMemberStore()
+const counterStore = useCounterStore()
 
 const route = useRoute()
 
@@ -98,16 +95,11 @@ onMounted(() => {
   loadData(route.params.seq)
 })
 
-///////////////////////
 const myNickname = ref('')
-myNickname.value = memberStore.getNickname()
+myNickname.value = counterStore.getCookie('nickname')
 
 const myProfileImage = ref('')
-myProfileImage.value = memberStore.getProfileImage()
-
-console.log(myNickname.value)
-console.log(myProfileImage.value)
-///////////////////////
+myProfileImage.value = counterStore.getCookie('profileImage')
 
 const loadComment = async (seq) => {
   await shareBoardStore.getComment(seq)

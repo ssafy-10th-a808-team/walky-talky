@@ -1,6 +1,6 @@
 <template>
   <div class="comment-form-container">
-    <shareBoardMember :nickname="nickname" :profilePic="profilePic" />
+    <shareBoardMember :nickname="myNickname" :profilePic="myProfileImage" />
 
     <div class="comment-input-container" v-if="!commentInput">
       <textarea v-model="commentInput" placeholder="댓글을 입력하세요..." />
@@ -8,7 +8,10 @@
     </div>
     <div class="comment-input-container" v-else>
       <textarea v-model="commentInput" />
-      <button @click="editComment">댓글 수정</button>
+      <div class="edit-btn-container">
+        <button @click="editComment">수정</button>
+        <button @click="cancelEdit">취소</button>
+      </div>
     </div>
   </div>
 </template>
@@ -16,17 +19,25 @@
 <script setup>
 import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
 import { useShareBoardStore } from '@/stores/shareBoard'
+import { useCounterStore } from '@/stores/counter'
+
 const shareBoardStore = useShareBoardStore()
+const counterStore = useCounterStore()
+
 import { ref, defineEmits } from 'vue'
 
-const { nickname, profilePic, shareBoardSeq, loadComment, content, commentSeq } = defineProps([
-  'nickname',
-  'profilePic',
+const { shareBoardSeq, loadComment, content, commentSeq } = defineProps([
   'shareBoardSeq',
   'loadComment',
   'content',
   'commentSeq'
 ])
+
+const myNickname = ref('')
+myNickname.value = counterStore.getCookie('nickname')
+
+const myProfileImage = ref('')
+myProfileImage.value = counterStore.getCookie('profileImage')
 
 const commentInput = ref(typeof content === 'string' ? content : null)
 
@@ -44,6 +55,10 @@ const editComment = async () => {
   emit('updateIsView', true)
   commentInput.value = null
 }
+
+const cancelEdit = () => {
+  emit('updateIsView', true)
+}
 </script>
 
 <style scoped>
@@ -56,6 +71,11 @@ const editComment = async () => {
   display: flex;
   align-items: center;
   margin-bottom: 16px;
+}
+
+.edit-btn-container {
+  margin-left: auto;
+  display: flex;
 }
 
 .comment-input-container {
