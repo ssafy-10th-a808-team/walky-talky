@@ -17,6 +17,7 @@ export const useMemberStore = defineStore(
     const memberId = ref('')
     const nickname = ref('')
     const profileImage = ref('')
+    const isOauth = ref(false)
 
     //회원가입
     const createMember = function (payload) {
@@ -155,6 +156,7 @@ export const useMemberStore = defineStore(
           memberId.value = res.data.id
           nickname.value = res.data.nickname
           profileImage.value = res.data.profileImage
+          isOauth.value = true
           router.push({ name: 'Signup' })
         } else if (res.status === 200) {
           token.value = res.headers.get('atk')
@@ -173,6 +175,10 @@ export const useMemberStore = defineStore(
     //   }
     // })
     const isLogin = computed(() => counterstore.getCookie('atk') !== undefined)
+
+    const getIsOauth = () => {
+      return profileImage.value
+    }
 
     const logout = () => {
       axios({
@@ -311,7 +317,8 @@ export const useMemberStore = defineStore(
       getLocationInfo,
       getMemberId,
       getNickname,
-      getProfileImage
+      getProfileImage,
+      getIsOauth
     }
   },
   { persist: true }
