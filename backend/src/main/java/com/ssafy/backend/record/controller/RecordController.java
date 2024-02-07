@@ -5,6 +5,7 @@ import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
+import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -179,7 +180,7 @@ public class RecordController {
 
         Long memberSeq = (Long) request.getAttribute("seq");
 
-        List<ListMapping> list;
+        List<ResponseListDto> list;
         try {
             list = recordService.list(memberSeq);
         } catch (Exception e) {
