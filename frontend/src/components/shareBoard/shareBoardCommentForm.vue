@@ -2,9 +2,13 @@
   <div class="comment-form-container">
     <shareBoardMember :nickname="nickname" :profilePic="profilePic" />
 
-    <div class="comment-input-container">
+    <div class="comment-input-container" v-if="!commentInput">
       <textarea v-model="commentInput" placeholder="댓글을 입력하세요..." />
       <button @click="submitComment">댓글 등록</button>
+    </div>
+    <div class="comment-input-container" v-else>
+      <textarea v-model="commentInput" />
+      <button @click="editComment">댓글 수정</button>
     </div>
   </div>
 </template>
@@ -13,21 +17,32 @@
 import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
 import { useShareBoardStore } from '@/stores/shareBoard'
 const shareBoardStore = useShareBoardStore()
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue'
 
-const { nickname, profilePic, shareBoardSeq, loadComment } = defineProps([
+const { nickname, profilePic, shareBoardSeq, loadComment, content, commentSeq } = defineProps([
   'nickname',
   'profilePic',
   'shareBoardSeq',
-  'loadComment'
+  'loadComment',
+  'content',
+  'commentSeq'
 ])
 
-const commentInput = ref('')
+const commentInput = ref(typeof content === 'string' ? content : null)
 
 const submitComment = async () => {
   shareBoardStore.commentWrite(shareBoardSeq, commentInput.value)
   await loadComment(shareBoardSeq)
-  commentInput.value = ''
+  commentInput.value = null
+}
+
+const emit = defineEmits() // emit 수정
+
+const editComment = async () => {
+  shareBoardStore.commentEdit(shareBoardSeq, commentSeq, commentInput.value)
+  await loadComment(shareBoardSeq)
+  emit('updateIsView', true)
+  commentInput.value = null
 }
 </script>
 
