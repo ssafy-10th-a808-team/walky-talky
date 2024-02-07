@@ -152,7 +152,7 @@ router.beforeEach((to, from) => {
     !memberstore.isLogin
   ) {
     window.alert('로그인이 필요합니다')
-    return { name: 'home' }
+    return { name: 'Login' }
   }
   if ((to.name === 'Signup' || to.name === 'Login') && memberstore.isLogin) {
     window.alert('이미 로그인하셨습니다')
