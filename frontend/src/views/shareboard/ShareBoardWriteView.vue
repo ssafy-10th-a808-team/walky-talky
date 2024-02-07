@@ -85,13 +85,13 @@ const selectRecord = (seq) => {
 const title = ref('')
 const content = ref('')
 
-const write = () => {
+const write = async () => {
   if (title.value == '' || content.value == '') {
     alert('제목과 내용을 입력해주세요.')
   } else if (selectedRecord.value == null) {
     alert('공유 할 기록을 선택해주세요.')
   } else {
-    shareBoardStore.write(selectedRecord.value, title.value, content.value)
+    await shareBoardStore.write(selectedRecord.value, title.value, content.value)
     router.push({ name: 'share-board' })
     selectedRecord.value = null
     title.value = ''
