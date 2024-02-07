@@ -3,18 +3,23 @@
     <nav id="navbar" class="navbar">
       <ul>
         <li>
-          <RouterLink :to="{ name: 'club-detail', params: { seq: clubstore.seq } }" class="nav-link scrollto">
+          <RouterLink :to="{ name: 'club-detail', params: { seq: clubstore.clubSeq } }" class="nav-link scrollto">
             홈
           </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'club-plan', params: { seq: clubstore.seq } }" class="nav-link scrollto">
+          <RouterLink :to="{ name: 'club-plan', params: { seq: clubstore.clubSeq } }" class="nav-link scrollto">
             일정
           </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'club-chat2', params: { seq: clubstore.seq } }" class="nav-link scrollto">
+          <RouterLink :to="{ name: 'club-chat2', params: { seq: clubstore.clubSeq } }" class="nav-link scrollto">
             채팅
+          </RouterLink>
+        </li>
+        <li v-if="clubstore.clubDetail.role === 'owner'">
+          <RouterLink :to="{ name: 'club-setting-member', params: { seq: clubstore.clubSeq } }" class="nav-link scrollto">
+            설정
           </RouterLink>
         </li>
       </ul>
@@ -23,7 +28,7 @@
 </template>
 
 <script setup>
-import { useClubStore } from "@/stores/club";
+import { useClubStore } from '@/stores/club'
 const clubstore = useClubStore()
 </script>
 
