@@ -87,55 +87,58 @@ const initMap = () => {
   containerHeight.value = `${container.offsetHeight}px`
 
   const mid = parseInt(points.length / 2)
-
-  const options = {
-    center: new kakao.maps.LatLng(points[mid].latitude, points[mid].longitude),
-    level: 5
-  }
-
-  map = new kakao.maps.Map(container, options)
-
-  var positions = [
-    {
-      title: '산책 시작',
-      img: 'start.png',
-      latlng: new kakao.maps.LatLng(points[0].latitude, points[0].longitude)
-    },
-    {
-      title: '산책 끝',
-      img: 'end.png',
-      latlng: new kakao.maps.LatLng(
-        points[points.length - 1].latitude,
-        points[points.length - 1].longitude
-      )
+  if (points && points.length > 0 && mid >= 0 && mid < points.length) {
+    const options = {
+      center: new kakao.maps.LatLng(points[mid].latitude, points[mid].longitude),
+      level: 5
     }
-  ]
 
-  for (var i = 0; i < positions.length; i++) {
-    var imageSize = new kakao.maps.Size(20, 30)
+    map = new kakao.maps.Map(container, options)
 
-    var markerImage = new kakao.maps.MarkerImage('/src/assets/img/' + positions[i].img, imageSize)
+    var positions = [
+      {
+        title: '산책 시작',
+        img: 'start.png',
+        latlng: new kakao.maps.LatLng(points[0].latitude, points[0].longitude)
+      },
+      {
+        title: '산책 끝',
+        img: 'end.png',
+        latlng: new kakao.maps.LatLng(
+          points[points.length - 1].latitude,
+          points[points.length - 1].longitude
+        )
+      }
+    ]
 
-    var marker = new kakao.maps.Marker({
+    for (var i = 0; i < positions.length; i++) {
+      var imageSize = new kakao.maps.Size(20, 30)
+
+      var markerImage = new kakao.maps.MarkerImage('/src/assets/img/' + positions[i].img, imageSize)
+
+      var marker = new kakao.maps.Marker({
+        map: map,
+        position: positions[i].latlng,
+        title: positions[i].title,
+        image: markerImage
+      })
+    }
+
+    map.setDraggable(movable)
+    map.setZoomable(movable)
+
+    // 경로 폴리라인
+    var polyline = new kakao.maps.Polyline({
       map: map,
-      position: positions[i].latlng,
-      title: positions[i].title,
-      image: markerImage
+      path: points.map((point) => new kakao.maps.LatLng(point.latitude, point.longitude)),
+      strokeWeight: 5,
+      strokeColor: '#FF0000'
     })
+
+    polyline.setMap(map)
+  } else {
+    console.error('Invalid mid value:', mid, 'for points array:', points)
   }
-
-  map.setDraggable(movable)
-  map.setZoomable(movable)
-
-  // 경로 폴리라인
-  var polyline = new kakao.maps.Polyline({
-    map: map,
-    path: points.map((point) => new kakao.maps.LatLng(point.latitude, point.longitude)),
-    strokeWeight: 5,
-    strokeColor: '#FF0000'
-  })
-
-  polyline.setMap(map)
 }
 </script>
 
