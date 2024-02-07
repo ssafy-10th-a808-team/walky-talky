@@ -14,12 +14,12 @@ import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
+import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.DislikeRepository;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
 import com.ssafy.backend.record.repository.RecordRepository;
 import com.ssafy.backend.region.service.RegionService;
-import com.ssafy.backend.scrapRecord.dto.mapping.RecordSeqMapping;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -256,9 +255,27 @@ public class RecordServiceImpl implements RecordService {
 
     }
 
-    public List<ListMapping> list(Long memberSeq) throws WTException {
+    @Transactional
+    public List<ResponseListDto> list(Long memberSeq) throws WTException {
         try {
-            return recordRepository.findResponseListDtoByMemberSeqAndIsDeletedFalse(memberSeq);
+            List<Record> recordList = recordRepository.findByMemberSeqAndIsDeletedFalse(memberSeq);
+
+            List<ResponseListDto> list = new ArrayList<>();
+
+            for(Record record:recordList){
+                ResponseListDto responseListDto = new ResponseListDto();
+
+                responseListDto.setRecordSeq(record.getSeq());
+                responseListDto.setTitle(record.getTitle());
+                responseListDto.setPoints(view(record.getSeq()).getPoints());
+                responseListDto.setStarRating(record.getStarRating());
+                responseListDto.setComment(record.getComment());
+                responseListDto.setDistance(record.getDistance());
+                responseListDto.setDuration(record.getDuration());
+
+                list.add(responseListDto);
+            }
+            return list;
         } catch (Exception e) {
             throw new WTException("목록 불러오기에 실패하였습니다.");
         }

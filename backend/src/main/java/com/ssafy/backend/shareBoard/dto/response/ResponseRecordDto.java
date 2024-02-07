@@ -15,6 +15,7 @@ import java.util.List;
 public class ResponseRecordDto {
     private Long shareBoardSeq;
     private Long recordSeq;
+    private String title;
     private String address;
     private String duration;
     private Double distance;
