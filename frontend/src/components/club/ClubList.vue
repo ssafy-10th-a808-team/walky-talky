@@ -53,9 +53,9 @@
                         : club.genderType === 'M' ? '남자만'
                             : club.genderType === 'F' ? '여자만'
                                 : club.genderType }}</li>
-                    <li v-if="club.introduce">
+                    <!-- <li v-if="club.introduce">
                         {{ club.introduce }}
-                    </li>
+                    </li> -->
                     <li>{{ club.oldBirth }}년생 ~ {{ club.youngBirth }}년생</li>
                     <li>{{ club.nowCapacity }} / {{ club.maxCapacity }}명</li>
                 </ul>
