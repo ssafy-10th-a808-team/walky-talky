@@ -350,6 +350,7 @@ public class ClubServiceImpl implements ClubService {
 
                 ResponseClubDetailDtoMember responseClubDetailDtoMember = ResponseClubDetailDtoMember
                         .builder()
+                        .seq(tmpMember.getSeq())
                         .nickname(tmpMember.getNickname())
                         .url(tmpMember.getUrl())
                         .address(regionService.findAddress(tmpMember.getRegionCd()))
