@@ -25,14 +25,13 @@ import ClubChat from '@/views/club/ClubChatView.vue'
 import ClubSettingMember from '@/views/club/ClubSettingMemberView.vue'
 import ClubSettingApplicant from '@/views/club/ClubSettingApplicantView.vue'
 import ClubSettingClub from '@/views/club/ClubSettingClubView.vue'
+import ClubChatView from '@/views/club/ClubChatView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
 import ShareBoardDetailView from '@/views/shareboard/ShareBoardDetailView.vue'
 import ShareBoardWriteView from '@/views/shareboard/ShareBoardWriteView.vue'
 import ShareBoardModifyView from '@/views/shareboard/ShareBoardModifyView.vue'
-
-import ChatView from '@/views/chat/ChatView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -189,7 +188,7 @@ const router = createRouter({
     {
       path: '/club/chat/:seq',
       name: 'club-chat',
-      component: ChatView,
+      component: ClubChatView,
       props: true
     }
   ]
