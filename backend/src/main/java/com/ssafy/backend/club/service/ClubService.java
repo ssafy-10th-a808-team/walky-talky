@@ -17,7 +17,7 @@ public interface ClubService {
 
     ResponseEntity<ResponseClubListDto> clubList(HttpServletRequest httpServletRequest);
 
-    ResponseEntity<ResponseClubDetailDto> clubDetail(Long clubSeq);
+    ResponseEntity<ResponseClubDetailDto> clubDetail(Long clubSeq, HttpServletRequest httpServletRequest);
 
     ResponseEntity<ResponseClubCheckNameDto> clubCheckName(RequestClubCheckNameDto requestClubCheckNameDto);
 
