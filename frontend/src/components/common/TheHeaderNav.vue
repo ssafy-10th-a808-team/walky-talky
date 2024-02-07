@@ -9,9 +9,7 @@
       <nav id="navbar" class="navbar">
         <ul>
           <li>
-            <RouterLink :to="{ name: 'club' }" class="nav-link scrollto active"
-              >소모임</RouterLink
-            >
+            <RouterLink :to="{ name: 'club' }" class="nav-link scrollto active">소모임</RouterLink>
           </li>
           <li>
             <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
@@ -24,7 +22,7 @@
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
           <li>
-            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto"
+            <RouterLink :to="{ name: 'club-chat', params: { seq: 1 } }" class="nav-link scrollto"
               >채팅테스트</RouterLink
             >
           </li>
