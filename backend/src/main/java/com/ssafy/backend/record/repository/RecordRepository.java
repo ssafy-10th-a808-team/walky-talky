@@ -18,6 +18,8 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     List<ListMapping> findResponseListDtoByMemberSeqAndIsDeletedFalse(Long memberSeq);
 
+    List<Record> findByMemberSeqAndIsDeletedFalse(Long memberSeq);
+
     List<ListMapping> findBySeqIn(List<Long> recordSeq);
 
     List<ListMapping> findByRegionCdAndSeqNotIn(String regionCd, List<Long> recordSeq);

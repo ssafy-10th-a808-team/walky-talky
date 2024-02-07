@@ -197,6 +197,7 @@ public class ShareBoardServiceImpl implements ShareBoardService {
             responseRecordDto.setRecordSeq(recordSeq);
 
             ResponseViewDto responseViewDto = recordService.view(recordSeq);
+            responseRecordDto.setTitle(responseViewDto.getTitle());
             responseRecordDto.setAddress(responseViewDto.getAddress());
             responseRecordDto.setPoints(responseViewDto.getPoints());
             responseRecordDto.setDuration(responseViewDto.getDuration());
