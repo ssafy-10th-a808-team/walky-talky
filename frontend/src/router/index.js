@@ -22,11 +22,15 @@ import ClubDetail from '@/views/club/ClubDetailView.vue'
 // import ClubModify from '@/views/club/ClubModifyView.vue'
 import ClubPlan from '@/views/club/ClubPlanView.vue'
 import ClubChat from '@/views/club/ClubChatView.vue'
-import ClubSetting from '@/views/club/ClubSettingView.vue'
+import ClubSettingMember from '@/views/club/ClubSettingMemberView.vue'
+import ClubSettingApplicant from '@/views/club/ClubSettingApplicantView.vue'
+import ClubSettingClub from '@/views/club/ClubSettingClubView.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
 import ShareBoardDetailView from '@/views/shareboard/ShareBoardDetailView.vue'
+import ShareBoardWriteView from '@/views/shareboard/ShareBoardWriteView.vue'
+import ShareBoardModifyView from '@/views/shareboard/ShareBoardModifyView.vue'
 
 import ChatView from '@/views/chat/ChatView.vue'
 
@@ -129,9 +133,21 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/club/:seq/setting',
-      name: 'club-setting',
-      component: ClubSetting,
+      path: '/club/:seq/setting/member',
+      name: 'club-setting-member',
+      component: ClubSettingMember,
+      props: true
+    },
+    {
+      path: '/club/:seq/setting/applicant',
+      name: 'club-setting-applicant',
+      component: ClubSettingApplicant,
+      props: true
+    },
+    {
+      path: '/club/:seq/setting/club',
+      name: 'club-setting-club',
+      component: ClubSettingClub,
       props: true
     },
     // {
@@ -157,6 +173,16 @@ const router = createRouter({
       path: '/shareBoard/view/:seq',
       name: 'share-board-view',
       component: ShareBoardDetailView
+    },
+    {
+      path: '/shareBoard/write',
+      name: 'share-board-write',
+      component: ShareBoardWriteView
+    },
+    {
+      path: '/shareBoard/modify/:seq',
+      name: 'share-board-modify',
+      component: ShareBoardModifyView
     },
 
     // chatting
