@@ -8,10 +8,12 @@
       </div>
 
       <div class="row">
-        <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+        <div class="col-lg-10 col-md-10 align-items-stretch justify-content-center">
           <div class="member">
-            <div class="circular">
-              <img :src="mypage.profileImage" alt="프사" />
+            <div class="d-flex justify-content-center align-items-center">
+              <div class="circular">
+                <img :src="mypage.profileImage" alt="프사" />
+              </div>
             </div>
             <div>
               <h4>닉네임</h4>
