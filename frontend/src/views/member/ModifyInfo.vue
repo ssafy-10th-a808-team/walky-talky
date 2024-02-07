@@ -18,36 +18,25 @@
 
                   <form @submit.prevent="submitForm">
                     <input type="text" v-model="nickname" />
-                    <p>{{ nickname }}</p>
                   </form>
                   <button @click="closeModal('nickname')">확인</button>
                 </div>
               </div>
               <div>
                 <h4>닉네임</h4>
-                <p v-if="nickname" @click="openModal('nickname')">{{ nickname }}</p>
+                <p>{{ nickname }}</p>
+                <button @click="openModal('nickname')">수정</button>
               </div>
             </div>
 
-            <div class="address">
-              <h4>생일</h4>
-              <p>{{ mypage.birth }}</p>
-            </div>
             <h4>내 동네</h4>
             <div class="address">
-              <div v-if="modals.address">
-                <MyLocationView>
-                  <div class="text-center"><button @click="closeModal">확인</button></div>
-                </MyLocationView>
-              </div>
-              <p @click="openModal('address')">
+              <p v-if="address">
                 {{ address }}
               </p>
-            </div>
-
-            <div class="email">
-              <h4>성별</h4>
-              <p>{{ mypage.gender }}</p>
+              <RouterLink :to="{ name: 'mylocation' }">
+                <button>수정</button>
+              </RouterLink>
             </div>
 
             <div>
@@ -57,12 +46,12 @@
                   <form @submit.prevent="submitForm">
                     <input type="textarea" v-model="introduce" />
                   </form>
-                  <p>{{ introduce }}</p>
                   <button @click="closeModal('introduce')">확인</button>
                 </div>
               </div>
               <h4>소개</h4>
-              <p @click="openModal('introduce')">{{ introduce }}</p>
+              <p>{{ introduce }}</p>
+              <button @click="openModal('introduce')">수정</button>
             </div>
             <div>
               <button @click="modifyInfo">완료</button>
@@ -94,28 +83,26 @@ const regionCd = ref('')
 onMounted(async () => {
   await memberstore.getMypage()
   mypage.value = memberstore.mypage
-  console.log(mypage.value)
-  profileImage.value = mypage.value.profileImage
-  nickname.value = mypage.value.nickname
-  introduce.value = mypage.value.introduce
-  regionCd.value = mypage.value.regionCd
-  console.log(profileImage.value)
-  console.log(nickname.value)
-  console.log(introduce.value)
-  console.log(regionCd.value)
+  profileImage.value = memberstore.profileImage
+  nickname.value = memberstore.nickname
+  introduce.value = memberstore.introduce
+  regionCd.value = memberstore.address_code
+  address.value = memberstore.address_name
 })
 
 // modal창 띄우기 위한 스위치들
 const modals = ref({
   nickname: false,
-  introduce: false,
-  address: false
+  introduce: false
+  // address: false
 })
 const openModal = (modalName) => {
   modals.value[modalName] = true
 }
 const closeModal = (modalName) => {
   modals.value[modalName] = false
+  memberstore.nickname = nickname.value
+  memberstore.introduce = introduce.value
 }
 
 // 수정
