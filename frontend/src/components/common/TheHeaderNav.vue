@@ -27,11 +27,11 @@
           </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
-          <li @click="closeNav">
+          <!-- <li @click="closeNav">
             <RouterLink :to="{ name: 'club-chat', params: { seq: 1 } }" class="nav-link scrollto"
               >채팅테스트</RouterLink
             >
-          </li>
+          </li> -->
           <li class="dropdown" v-if="memberstore.isLogin">
             <a href="#" class="profile-link">
               <!-- 프로필 이미지와 닉네임을 감싸는 flex 컨테이너 -->
