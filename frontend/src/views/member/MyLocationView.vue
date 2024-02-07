@@ -4,7 +4,7 @@
     <div id="map" style="width: 500px; height: 400px"></div>
   </div>
   <div>
-    님 현재 위치가 {{ address_name }} 맞나요?
+    현재 위치가 {{ address_name }} 맞나요?
     <div class="col-lg-3 cta-btn-container text-center">
       <div class="text-center"><button type="submit" @click="goBack">확인</button></div>
     </div>
@@ -26,21 +26,21 @@ const address_name = ref('')
 const address_code = ref('')
 
 onMounted(() => {
-  if (window.kakao && window.kakao.maps) {
-    initMap()
-    // searchDetailAddrFromCoords(lat, lon, addrCallback)
-  } else {
-    const script = document.createElement('script')
-    // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
-    /* global kakao */
-    script.onload = () => {
-      console.log('카카오맵 api script loaded')
-      kakao.maps.load(initMap)
-    }
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
-    //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
-    document.head.appendChild(script)
+  // if (window.kakao && window.kakao.maps) {
+  //   initMap()
+  //   // searchDetailAddrFromCoords(lat, lon, addrCallback)
+  // } else {
+  const script = document.createElement('script')
+  // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
+  /* global kakao */
+  script.onload = () => {
+    console.log('카카오맵 api script loaded')
+    kakao.maps.load(initMap)
   }
+  script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
+  //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
+  document.head.appendChild(script)
+  // }
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
