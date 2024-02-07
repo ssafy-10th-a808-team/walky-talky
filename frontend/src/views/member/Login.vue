@@ -10,7 +10,7 @@
             <form method="post" role="form" class="php-email-form">
               <div class="row">
                 <!-- 아이디 -->
-                <div class="form-group col-md-8">
+                <div class="form-group col-md-8" style="margin: 0 auto">
                   <label>아이디</label>
                   <input
                     type="text"
@@ -23,7 +23,7 @@
               </div>
               <!-- 비밀번호 -->
               <div class="row">
-                <div class="form-group col-md-8">
+                <div class="form-group col-md-8" style="margin: 0 auto">
                   <label>비밀번호</label>
                   <input
                     type="password"
@@ -34,14 +34,36 @@
                   />
                 </div>
               </div>
-              <RouterLink :to="{ name: 'Signup' }">회원가입</RouterLink>
+              <div
+                style="
+                  border-radius: 5px;
+                  border: 2px solid #5cb874;
+                  width: 300px;
+                  height: 44px;
+                  margin: 0 auto;
+                  text-align: center;
+                "
+              >
+                <RouterLink :to="{ name: 'Signup' }" style="display: inline-block; margin-top: 7px"
+                  >회원가입</RouterLink
+                >
+              </div>
               <div class="text-center">
-                <button type="submit" @click="login">로그인</button>
+                <button type="submit" @click="login" style="width: 300px; margin-top: 10px">
+                  로그인
+                </button>
+              </div>
+              <div>
+                <!-- <button @click="kakaoLogin">-->
+                <img
+                  src="/src/assets/img/KakaoLoginIcon.png"
+                  alt="Kakao Login"
+                  onclick="javascript:kakaoLogin();"
+                  style="margin: auto; display: block; margin-top: 10px"
+                />
+                <!--</button>-->
               </div>
             </form>
-            <button type="submit" @click="kakaoLogin">
-              <img src="/src/assets/img/KakaoLoginIcon.png" alt="Kakao Login" />
-            </button>
           </div>
         </div>
       </div>
