@@ -11,7 +11,7 @@
               <div class="row">
                 <!-- 아이디 -->
                 <div class="form-group col-md-8">
-                  <label>ID</label>
+                  <label>아이디</label>
                   <input
                     type="text"
                     name="name"
@@ -22,15 +22,17 @@
                 </div>
               </div>
               <!-- 비밀번호 -->
-              <div class="mb-3 row">
-                <label for="inputPassword" class="col-sm-2 col-form-label">비밀번호</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="inputPassword"
-                  v-model="password"
-                  required
-                />
+              <div class="row">
+                <div class="form-group col-md-8">
+                  <label>비밀번호</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="inputPassword"
+                    v-model="password"
+                    required
+                  />
+                </div>
               </div>
               <RouterLink :to="{ name: 'Signup' }">회원가입</RouterLink>
               <div class="text-center">
