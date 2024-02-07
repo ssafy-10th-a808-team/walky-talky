@@ -27,7 +27,7 @@ public class ChatController {
     }
 
     @GetMapping("/{chatSeq}/{offset}")
-    public ResponseEntity<?> loadMessage(HttpServletRequest request, @PathVariable Long chatSeq, @PathVariable int offset) {
+    public ResponseEntity<?> loadMessage(HttpServletRequest request, @PathVariable(name = "chatSeq") Long chatSeq, @PathVariable(name = "offset") int offset) {
         Map<String, Object> resultMap = new HashMap<>();
 
         String msg = (String) request.getAttribute("message");
