@@ -16,7 +16,10 @@
                 <div>
                   <label for="club-address">내 동네 인증하기 *필수</label>
                 </div>
-                <ButtonWithIcon :selectedIcon="locationIcon"> </ButtonWithIcon>
+                <!-- <ButtonWithIcon :selectedIcon="locationIcon"> </ButtonWithIcon> -->
+                <RouterLink :to="{ name: 'mylocation' }">
+                  <img src="@/assets/img/LocationIcon.png" style="width: 100px; height: auto" />
+                </RouterLink>
                 <div>
                   {{ region_name }}
                 </div>
