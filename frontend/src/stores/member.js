@@ -180,6 +180,19 @@ export const useMemberStore = defineStore(
       return profileImage.value
     }
 
+    // 스토어의 상태를 초기화하는 함수
+    const resetStore = () => {
+      memberList.value = []
+      address_name.value = ''
+      address_code.value = ''
+      token.value = null
+      memberId.value = ''
+      nickname.value = ''
+      profileImage.value = ''
+      isOauth.value = false
+      // 여기에 더 많은 상태를 초기화하십시오.
+    }
+
     const logout = () => {
       axios({
         method: 'post',
@@ -190,12 +203,16 @@ export const useMemberStore = defineStore(
       })
         .then((res) => {
           alert('로그아웃 성공')
+
+          // 스토어 상태 초기화
+          // resetStore()
           nickname.value = null
           profileImage.value = null
           token.value = null
           counterstore.deleteCookie('atk')
           counterstore.deleteCookie('nickname')
           counterstore.deleteCookie('profileImage')
+          localStorage.clear()
 
           window.location.href = '/'
           router.push({ name: 'home' })
