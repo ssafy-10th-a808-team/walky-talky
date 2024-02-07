@@ -13,8 +13,8 @@
               <hr />
               <!-- 내 동네 입력 필드 -->
               <div class="form-group">
+                <div><label for="club-address">내 동네 인증하기 *필수</label></div>
                 <ButtonWithIcon :selectedIcon="locationIcon"> </ButtonWithIcon>
-                ← 내 동네 인증하기
                 <div>
                   {{ region_name }}
                 </div>
@@ -33,7 +33,7 @@
 
               <!-- 모임명 입력 필드 -->
               <div class="form-group">
-                <label for="club-name">모임명</label>
+                <label for="club-name">모임명 *필수</label>
                 <input type="text" class="form-control" id="club-name" v-model.trim="clubname" required />
                 <div class="cta-btn-container text-center">
                   <button type="button" class="cta-btn align-middle btn-check-duplicate"
@@ -56,14 +56,14 @@
 
               <!-- 나이 -->
               <div class="form-group">
-                <label for="old-age">최대 나이</label>
+                <label for="old-age">최대 나이 *필수</label>
                 <select class="form-control" id="old-age" v-model="old_birth" required>
                   <option disabled value="">연도 선택</option>
                   <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
                 </select>
               </div>
               <div class="form-group">
-                <label for="young-age">최소 나이</label>
+                <label for="young-age">최소 나이 *필수</label>
                 <select class="form-control" id="young-age" v-model="young_birth" required>
                   <option disabled value="">연도 선택</option>
                   <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
@@ -73,7 +73,7 @@
 
               <!-- 성별 선택 -->
               <div class="form-group">
-                <label>성별</label>
+                <label>성별 *필수</label>
                 <div class="portfolio d-flex justify-content-center">
                   <ul id="portfolio-flters">
                     <li :class="{ 'filter-active': gender_type === 'M' }" @click="setGenderType('M')">
@@ -92,7 +92,7 @@
 
               <!-- 최대인원 입력 필드 -->
               <div class="form-group">
-                <label for="max-capacity">최대 인원</label>
+                <label for="max-capacity">최대 인원 *필수</label>
                 <select class="form-control" id="max-capacity" v-model.trim="max_capacity" required>
                   <option value="" disabled selected>선택하세요</option>
                   <option v-for="num in 100" :key="num" :value="num">{{ num }}</option>
@@ -102,7 +102,7 @@
 
               <!-- 설정 -->
               <div class="form-group col-md-6 mt-3">
-                <label for="name">가입 설정</label>
+                <label for="name">가입 설정 *필수</label>
                 <div class="row">
                   <div class="portfolio col-md-8 d-flex justify-content-center">
                     <ul id="portfolio-flters">
@@ -272,42 +272,106 @@ const createClub = () => {
 </script>
 
 <style scoped>
-.circular {
-  width: 200px;
-  /* 원하는 크기로 조정 */
-  height: 200px;
-  border-radius: 50%;
-  /* 50%로 설정하여 원 모양으로 만듭니다 */
-  overflow: hidden;
+.contact {
+  background: #f8f9fa;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
+}
+
+.section-title h2 {
+  color: #055052;
+  font-size: 22px;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+form h1 {
+  color: #055052;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+form hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ced4da;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+}
+
+.portfolio ul {
+  padding: 0;
+  list-style: none;
   display: flex;
-  align-items: center;
   justify-content: center;
+  gap: 10px;
 }
 
-.circular img {
-  width: 100%;
-  /* 부모 요소(.circular-image)에 대한 상대적인 크기로 설정 */
-  height: 100%;
-  /* 가로 세로 비율을 유지하도록 설정 */
-  object-fit: cover;
-  /* 이미지 간격 제거를 위해 인라인 요소 대신 블록 요소로 설정 */
-  border-radius: 50%;
+.portfolio li {
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: #e9ecef;
+  color: #055052;
+  font-size: 14px;
+  font-weight: 500;
 }
 
-.cta-btn-container .btn-check-duplicate {
-  background-color: #4caf50;
-  /* 예시 색상 */
+.portfolio li.filter-active,
+.portfolio li:hover {
+  background: #055052;
+  color: #ffffff;
+}
+
+.cta-btn-container button {
+  background-color: #34c759;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 25px;
   margin-top: 10px;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.cta-btn-container .btn-check-duplicate:hover {
-  background-color: #45a049;
-  /* 마우스 오버 시 색상 */
+.cta-btn-container button:hover {
+  background-color: #28a745;
+}
+
+.circular {
+  width: 100px;
+  /* Adjust as needed */
+  height: 100px;
+  /* Adjust as needed */
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 20px auto;
+  display: block;
+}
+
+.circular img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fixed-button-container {
+  /* 이 섹션은 이미지에서 보이지 않으므로 스타일을 유지하거나 적절히 조정합니다. */
 }
 </style>

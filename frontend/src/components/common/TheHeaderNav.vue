@@ -84,8 +84,6 @@ const closeNav = () => {
   if (navtoggle) {
     navtoggle.click()
   }
-
-  // navbar.classList.toggle('navbar-mobile')
 }
 </script>
 
