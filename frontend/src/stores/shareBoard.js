@@ -324,6 +324,23 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     }
   }
 
+  ///// 내 산책 목록 불러오기/////
+  const myRecords = ref([])
+  const getMyRecord = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_CLUB_API}/walk/list`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      myRecords.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return {
     // 목록 조회
     getContentList,
@@ -354,6 +371,9 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     // 댓글
     commentWrite,
     commentEdit,
-    commentDel
+    commentDel,
+    // 내 기록
+    myRecords,
+    getMyRecord
   }
 })
