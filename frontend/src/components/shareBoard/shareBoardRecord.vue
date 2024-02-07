@@ -6,7 +6,8 @@
       style="width: 400px; height: 400px; justify-content: center"
     />
     <div class="record-container">
-      <div>
+      <div v-if="title != undefined">
+        <p>산책 제목</p>
         <p>{{ title }}</p>
       </div>
       <div>

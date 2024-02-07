@@ -9,6 +9,11 @@
       :address="record.address"
       :hit="content.hit"
     />
+    <div v-if="isAvaliable">
+      <button @click="moveModify(content.shareBoardSeq)">수정</button>
+      <button>삭제</button>
+    </div>
+
     <shareBoardRecord
       v-if="record"
       :duration="record.duration"
@@ -52,7 +57,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
 import { useMemberStore } from '@/stores/member'
 import { useCounterStore } from '@/stores/counter'
@@ -70,12 +75,21 @@ const memberStore = useMemberStore()
 const counterStore = useCounterStore()
 
 const route = useRoute()
+const router = useRouter()
 
 const content = ref(null)
 const record = ref(null)
 const like = ref(null)
 const scrap = ref(null)
 const comments = ref(null)
+
+const myNickname = ref('')
+myNickname.value = counterStore.getCookie('nickname')
+
+const myProfileImage = ref('')
+myProfileImage.value = counterStore.getCookie('profileImage')
+
+let isAvaliable
 
 const loadData = async (seq) => {
   await shareBoardStore.getContent(seq)
@@ -89,17 +103,15 @@ const loadData = async (seq) => {
   like.value = shareBoardStore.shareLike
   scrap.value = shareBoardStore.shareScrap
   comments.value = shareBoardStore.shareComment
+
+  isAvaliable = ref(
+    counterStore.getCookie('nickname') === content.value.member.nickname ? true : false
+  )
 }
 
 onMounted(() => {
   loadData(route.params.seq)
 })
-
-const myNickname = ref('')
-myNickname.value = counterStore.getCookie('nickname')
-
-const myProfileImage = ref('')
-myProfileImage.value = counterStore.getCookie('profileImage')
 
 const loadComment = async (seq) => {
   await shareBoardStore.getComment(seq)
@@ -129,6 +141,11 @@ const pushScrap = (scraped, recordSeq) => {
     shareBoardStore.scrap(recordSeq)
   }
 }
+
+const moveModify = (seq) => {
+  router.push({ name: 'share-board-modify', seq })
+  //content.shareBoardSeq
+}
 </script>
 
 <style scoped>
@@ -136,5 +153,10 @@ const pushScrap = (scraped, recordSeq) => {
   display: flex;
   align-items: center;
   justify-content: space-around;
+}
+
+.content-edit-del-container {
+  display: flex;
+  margin-left: auto;
 }
 </style>
