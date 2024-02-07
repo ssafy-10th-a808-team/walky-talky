@@ -1,3 +1,20 @@
+<template>
+  <div class="section-title">
+    <h2>산책 공유 게시판</h2>
+  </div>
+  <button class="share-button" @click="shareBoardWrite">내 산책 공유하기</button>
+  <div v-for="(content, key) in contents" :key="content.shareBoardSeq">
+    <shareBoardListItem
+      class="share-board-item"
+      :content="content"
+      :record="records[key]"
+      :like="likes[key]"
+      :scrap="scraps[key]"
+      @click="shareBoardDetail(content.shareBoardSeq)"
+    />
+  </div>
+</template>
+
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useShareBoardStore } from '@/stores/shareBoard'
@@ -12,8 +29,8 @@ const likes = ref([])
 const scraps = ref([])
 
 onMounted(async () => {
-  await shareBoardStore.getContentList()
   await shareBoardStore.getRecordList()
+  await shareBoardStore.getContentList()
   await shareBoardStore.getLikeList()
   await shareBoardStore.getScrapList()
 
@@ -31,23 +48,6 @@ const shareBoardWrite = () => {
   router.push({ name: 'share-board-write' })
 }
 </script>
-
-<template>
-  <div class="section-title">
-    <h2>산책 공유 게시판</h2>
-  </div>
-  <button class="share-button" @click="shareBoardWrite">내 산책 공유하기</button>
-  <div v-for="(content, key) in contents" :key="content.shareBoardSeq">
-    <shareBoardListItem
-      class="share-board-item"
-      :content="content"
-      :record="records[key]"
-      :like="likes[key]"
-      :scrap="scraps[key]"
-      @click="shareBoardDetail(content.shareBoardSeq)"
-    />
-  </div>
-</template>
 
 <style lang="scss" scoped>
 .share-button {
