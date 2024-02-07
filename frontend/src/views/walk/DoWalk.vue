@@ -83,7 +83,7 @@
                 justify-content: center;
               "
             >
-              <button @click="stopLocationUpdates">PAUSE</button>
+              <button @click="pauseLocationUpdates">PAUSE</button>
               <button @click="endLocationUpdates">STOP</button>
             </section>
           </div>
@@ -94,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, onMounted, watchEffect, onBeforeUnmount } from 'vue'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
 import router from '../../router'
 import axios from 'axios'
@@ -116,31 +116,26 @@ let lon = 0
 const address_name = ref('')
 const address_code = ref('')
 const region_cd = ref('')
-// const address = ref('')
 
 const current = ref({ lat: 0, lon: 0 })
 const previous = ref({ lat: 0, lon: 0 })
 const address = ref('')
 const watchPositionId = ref(null)
-// const map = ref(null)
+
 const accumulated_distance = ref(0)
 const accumulated_time = ref(0)
-// const speed = ref(0)
+
 const checkOneKm = ref(0)
 const checkSecond = ref(0)
-// const avgSpeed = ref(0)
+
 const linePath = ref([])
 const poly = ref(null)
-// const encoded_polyline = ref('')
+
 const cur_marker = ref(null)
 const startTime = ref('')
 const endTime = ref('')
-// const gugun = ref([])
-// const currentCity = ref('')
-// const thumbnail = ref('')
+
 const tempRecords = ref([])
-const stringTempRecords = ref([])
-const seq = ref(null)
 
 // 스톱워치
 const clock = ref('00:00:00')
@@ -151,70 +146,88 @@ const started = ref(null)
 const running = ref(false)
 const isPause = ref(false)
 
-const course = ref(router.currentRoute.value.params.id)
 const state = ref({
+  map: null,
   positionArr: []
 })
-// const region_cd = ref('')
-// region_cd.value = memberStore.getLocationInfo()[1]
 
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
     initMap()
-    // searchDetailAddrFromCoords(lat, lon, addrCallback)
+    if (!state.value.map) {
+      getCurLocation()
+    }
   } else {
     const script = document.createElement('script')
     // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
     /* global kakao */
     script.onload = () => {
       // console.log('카카오맵 api script loaded')
-      kakao.maps.load(initMap)
+      kakao.maps.load(initMap, getCurLocation)
+      // kakao.maps.load(() => {
+      //   getCurLocation()
+      // })
     }
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
     //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
     document.head.appendChild(script)
-    resetLocations()
-    accumulated_distance.value = 0
-    accumulated_time.value = 0
-    checkSecond.value = 0
-    checkOneKm.value = 0
+  }
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        lat = position.coords.latitude
+        lon = position.coords.longitude
+      },
+      function (error) {
+        console.error('지오로케이션을 가져오는 중 오류 발생:', error)
+      }
+    )
+  } else {
+    alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
   }
 
+  if (state.value.map) {
+    const interval = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(setLinePathArr)
+    }, 5000)
+
+    onBeforeUnmount(() => {
+      clearInterval(interval)
+    })
+  }
+})
+const getCurLocation = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
       lat = position.coords.latitude // 위도
       lon = position.coords.longitude // 경도
-      // geolocation 가능한 경우 내 위치
-      // 크롬 브라우저는 https 환경에서만 geolocation이 지원된다고 하네요 local도 되긴 했음
-      //   lat = 37.2522
-      //   lon = 128.9267
-      // console.log('내 좌표를 가져왔습니다')
     })
   } else {
     alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
-    // lat = 37.5014
-    // lon = 127.0395
-    // geolocation 불가능하면 위치를 멀티캠퍼스로
-    // console.log('멀티캠퍼스 좌표를 가져왔습니다')
   }
-})
-
+}
 const initMap = () => {
   console.log('initMap 적용')
 
+  // 마커 생성 및 초기 위치 설정
   const marker = new kakao.maps.Marker({
     position: new kakao.maps.LatLng(lat, lon)
   })
+  // 지도를 표시할 컨테이너 요소 가져오기
   const container = document.getElementById('map')
+  // 지도 옵션 설정
   const options = {
     center: new kakao.maps.LatLng(lat, lon),
     level: 5
   }
-  // 라인을 그리기 위해 map 객체를 ref에 저장
+
+  // Kakao Maps API를 사용하여 지도 생성
   map = new kakao.maps.Map(container, options)
-
+  state.value.map = new kakao.maps.Map(container, options)
+  // 마커를 지도에 표시
   marker.setMap(map)
-
+  // makeLine(linePath.value)
+  // 좌표를 주소로 변환하는 Geocoder 객체 생성 및 호출
   const geocoder = new kakao.maps.services.Geocoder()
   geocoder.coord2RegionCode(lon, lat, addrCallback)
 }
@@ -302,11 +315,11 @@ const watchLocationUpdates = function () {
       map.setCenter(now)
       marker.setPosition(now)
 
-      if (previous.value.lat == 0) {
+      if (previous.value.lat === 0) {
         previous.value.lat = current.value.lat
         previous.value.lon = current.value.lon
 
-        //런닝 시작
+        //걷기 시작
         const currentLatLng = new kakao.maps.LatLng(current.value.lat, current.value.lon)
         linePath.value.push(currentLatLng)
         // setLinePathArr 호출 추가
@@ -349,7 +362,8 @@ const watchLocationUpdates = function () {
       }
     },
     () => {
-      router.push('/')
+      router.push('/walk/do-walk')
+      console.log('위치 정보를 가져오는 도중 오류가 발생했습니다')
     },
     {
       timeout: 5000,
@@ -438,7 +452,7 @@ const savePosition = async function () {
 const endLocationUpdates = function () {
   // alert(walkStore.data)
   // console.log(walkStore.data)
-  stopLocationUpdates()
+  pauseLocationUpdates()
   alert('산책 기록이 저장되었습니다 📬')
 
   // speed.value = (accumulated_distance.value * 1000) / accumulated_time.value
@@ -458,7 +472,7 @@ const endLocationUpdates = function () {
 }
 
 // 일시정지
-const stopLocationUpdates = function () {
+const pauseLocationUpdates = function () {
   isPause.value = true
   running.value = false
   timeStopped.value = new Date()
@@ -511,14 +525,17 @@ const degreesToRadians = function (degrees) {
 //   }
 // }
 
-const makeLine = (position) => {
-  let linePath = position
-
-  if (poly.value) {
-    poly.value.setMap(null) // Remove existing polyline
+const makeLine = () => {
+  if (state.value.positionArr.length < 2) {
+    return // 선을 그리기 위해서는 최소 2개의 좌표가 필요합니다.
   }
 
-  poly.value = new kakao.maps.Polyline({
+  const linePath = state.value.positionArr.map((pos) => ({
+    lat: pos.coords.latitude,
+    lng: pos.coords.longitude
+  }))
+
+  const polyline = new kakao.maps.Polyline({
     path: linePath,
     strokeWeight: 5,
     strokeColor: '#FFAE00',
@@ -526,9 +543,14 @@ const makeLine = (position) => {
     strokeStyle: 'solid'
   })
 
-  if (map) {
-    poly.value.setMap(map.value)
+  // 기존의 선 제거
+  if (poly.value) {
+    poly.value.setMap(null)
   }
+
+  // 맵에 선 표시
+  polyline.setMap(state.value.map)
+  poly.value = polyline
 }
 
 const setLinePathArr = (position) => {
@@ -539,18 +561,17 @@ const setLinePathArr = (position) => {
     state.value.positionArr = []
   }
 
-  const newPosition = state.value.positionArr.concat(moveLatLon)
-  state.value.positionArr = newPosition.value
+  state.value.positionArr.push(moveLatLon)
 
-  // 라인을 그리는 함수
-  makeLine(newPosition.value)
+  // 선 그리기
+  makeLine(state.value.positionArr)
 }
 
 watchEffect(() => {
   // watchEffect를 사용하여 map이 변경될 때의 로직을 작성
   if (map) {
     let interval = setInterval(() => {
-      navigator.geolocation.getCurrentPosition(setLinePathArr)
+      navigator.geolocation.getCurrentPosition((position) => setLinePathArr(position))
     }, 5000)
 
     return () => {
