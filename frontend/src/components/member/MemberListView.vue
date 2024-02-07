@@ -8,18 +8,29 @@
             <div>{{ member.nickname }}</div>
             <div>{{ member.address }}</div>
         </div>
+        <!-- 추방하기 버튼 추가 -->
+        <!-- <button v-if="member.role === 'member'" @click="clubstore.exclude(member)">추방하기</button> -->
     </div>
 </template>
 
 
 <script setup>
+import { useClubStore } from '@/stores/club'
+
+const clubstore = useClubStore()
+
 defineProps(['member'])
+
+
+
 </script>
 
 <style scoped>
 .member-container {
     display: flex;
     align-items: center;
+    /* justify-content: space-between; */
+    /* 컨테이너 내 아이템들 사이의 공간을 균등하게 설정 */
 }
 
 .circular-small {
@@ -49,7 +60,7 @@ defineProps(['member'])
     /* X축 기준 중앙 정렬 */
     background-color: rgba(0, 0, 0, 0.5);
     /* 배경색 추가 */
-    color: white;
+    color: greenyellow;
     /* 글자색 */
     padding: 2px 10px;
     /* 패딩 */
@@ -57,5 +68,22 @@ defineProps(['member'])
     /* 둥근 모서리 */
     font-size: 12px;
     /* 글자 크기 */
+
+}
+
+/* 추방하기 버튼 스타일 */
+button {
+    padding: 5px 15px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: auto;
+    /* 왼쪽에 자동 마진을 추가하여 오른쪽 정렬 */
+}
+
+button:hover {
+    background-color: #c0392b;
 }
 </style>

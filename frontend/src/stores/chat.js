@@ -1,55 +1,70 @@
 import { defineStore } from 'pinia'
-import webstomp from 'webstomp-client'
 import axios from 'axios'
 import { ref } from 'vue'
+import { Client } from '@stomp/stompjs'
+import { useCounterStore } from './counter'
 
 export const useChatStore = defineStore('chat', () => {
   const STOMP = 'wss://i10a808.p.ssafy.io:8082/ws'
   const REST_CHAT_API = 'https://i10a808.p.ssafy.io/api/chat'
   const client = ref(null)
+  const messages = ref([])
+  const counterstore = useCounterStore()
 
-  const loadMessage = function (chatSeq, offset) {
-    axios({
+  const loadMessage = async function (clubSeq, offset) {
+    const response = await axios({
       method: 'get',
-      url: `${REST_CHAT_API}/${chatSeq}/${offset}`, // REST_CLUB_API는 해당 API 엔드포인트를 가리킵니다.
+      url: `${REST_CHAT_API}/${clubSeq}/${offset}`, // REST_CLUB_API는 해당 API 엔드포인트를 가리킵니다.
       headers: {
         Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
     })
-      .then((res) => {
-        console.log(res)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+
+    messages.value = response.data.data.list
   }
 
-  const getConnection = function (chatSeq) {
-    client.value = webstomp.over(new WebSocket(STOMP))
-
-    // 웹소켓 연결 및 STOMP 세션 시작
-    client.value.connect(
-      {},
-      function (frame) {
-        // 연결 성공
-        console.log('Connected: ' + frame)
-
-        // 특정 목적지를 구독
-        client.value.subscribe(`/sub/message/${chatSeq}`, function (message) {
-          // 받은 메시지를 처리
-          console.log(JSON.parse(message.body).content)
-        })
+  const getConnection = function (clubSeq) {
+    client.value = new Client({
+      brokerURL: STOMP,
+      connectHeaders: {
+        atk: `Bearer ${counterstore.getCookie('atk')}`
       },
-      function (error) {
-        // 연결 실패 또는 에러 처리
-        console.error('STOMP error:', error)
+      onConnect: () => {
+        client.value.subscribe(
+          `/sub/chat/${clubSeq}`,
+          (message) => {
+            console.log(`Received: ${message.body}`)
+            const receivedMessage = JSON.parse(message.body)
+            // 메시지 수신 시 messages 상태 업데이트
+            messages.value = [...messages.value, receivedMessage]
+          },
+          {
+            atk: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        )
+      },
+      onStompError: () => {
+        console.log('STOMP connection error')
       }
-    )
+    })
+    client.value.activate()
+  }
+
+  const sendMessage = function (message) {
+    client.value.publish({
+      destination: '/pub/message',
+      body: JSON.stringify(message),
+      headers: {
+        atk: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
   }
 
   return {
+    client,
+    messages, // 메시지 상태를 반환하여 다른 컴포넌트에서 접근 가능하게 함
     loadMessage,
     getConnection,
-    client
+    sendMessage
   }
 })

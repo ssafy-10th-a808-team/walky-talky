@@ -1,8 +1,8 @@
 <template>
-  <div class="message" :class="{ mine: isMine }">
+  <div class="message">
     <div class="sender">{{ sender }}</div>
     <div class="content">{{ content }}</div>
-    <div class="timestamp">{{ timestamp }}</div>
+    <div class="createdAt">{{ createdAt }}</div>
   </div>
 </template>
 
@@ -10,8 +10,7 @@
 defineProps({
   sender: String,
   content: String,
-  timestamp: String,
-  isMine: Boolean
+  createdAt: String
 })
 </script>
 
@@ -32,29 +31,18 @@ defineProps({
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* 폰트 */
 }
 
-/* 메시지 보낸 사람 */
-.sender {
-  font-weight: bold;
-  margin-bottom: 4px; /* 보낸 사람과 메시지 사이의 여백 */
-}
-
 /* 메시지 내용 */
 .content {
   white-space: pre-wrap; /* 줄바꿈과 공백을 유지 */
   word-wrap: break-word; /* 긴 단어가 있는 경우 줄바꿈 */
+  color: black;
 }
 
 /* 메시지 보낸 시간 */
-.timestamp {
+.createdAt {
+  color: purple;
   align-self: flex-end; /* 시간을 메시지의 오른쪽 끝으로 정렬 */
   font-size: 12px; /* 시간 텍스트 크기 */
   margin-top: 8px; /* 메시지와 시간 사이의 여백 */
-}
-
-/* 다른 사람이 보낸 메시지 */
-.message.not-mine {
-  align-self: flex-start; /* 다른 사람의 메시지를 왼쪽으로 정렬 */
-  background-color: #f0f0f0; /* 다른 사람의 메시지 배경색 */
-  color: black; /* 다른 사람의 메시지 텍스트 색상 */
 }
 </style>
