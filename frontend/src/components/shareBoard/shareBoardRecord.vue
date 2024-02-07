@@ -48,9 +48,11 @@ function convertTime(seconds) {
   return `${minutesString} ${secondsString}`.trim() || '0초'
 }
 
+const isMovable = ref(movable)
+
 const changeMovable = () => {
-  if (movable === false) {
-    movable = true
+  if (isMovable.value === false) {
+    isMovable.value = true
   }
 }
 
@@ -92,6 +94,36 @@ const initMap = () => {
   }
 
   map = new kakao.maps.Map(container, options)
+
+  var positions = [
+    {
+      title: '산책 시작',
+      img: 'start.png',
+      latlng: new kakao.maps.LatLng(points[0].latitude, points[0].longitude)
+    },
+    {
+      title: '산책 끝',
+      img: 'end.png',
+      latlng: new kakao.maps.LatLng(
+        points[points.length - 1].latitude,
+        points[points.length - 1].longitude
+      )
+    }
+  ]
+
+  for (var i = 0; i < positions.length; i++) {
+    var imageSize = new kakao.maps.Size(20, 30)
+
+    var markerImage = new kakao.maps.MarkerImage('/src/assets/img/' + positions[i].img, imageSize)
+
+    var marker = new kakao.maps.Marker({
+      map: map,
+      position: positions[i].latlng,
+      title: positions[i].title,
+      image: markerImage
+    })
+  }
+
   map.setDraggable(movable)
   map.setZoomable(movable)
 
