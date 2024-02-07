@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ResponseClubDetailDtoMember {
+    private Long seq;
     private String nickname;
     private String url;
     private String address;
