@@ -265,7 +265,6 @@ export const useMemberStore = defineStore(
         .then((res) => {
           console.log(res)
           alert('정보 변경 성공')
-          getMypage()
           router.push({ name: 'Mypage' })
         })
         .catch((err) => {
