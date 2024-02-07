@@ -2,7 +2,9 @@
   <!-- ======= Header ======= -->
   <header id="header" class="d-flex align-items-center">
     <div class="container d-flex align-items-center">
-      <h1 class="logo me-auto"><RouterLink :to="{ name: 'home' }">Walky Talky</RouterLink></h1>
+      <h1 class="logo me-auto">
+        <RouterLink :to="{ name: 'home' }">Walky Talky</RouterLink>
+      </h1>
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
@@ -16,21 +18,15 @@
             <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
           </li>
           <li>
-            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto"
-              >산책공유</RouterLink
-            >
+            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto">산책공유</RouterLink>
           </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
           <li>
-            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto"
-              >채팅테스트</RouterLink
-            >
+            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto">채팅테스트</RouterLink>
           </li>
           <li class="dropdown" v-if="memberstore.isLogin">
-            <a href="#"
-              ><span>hi, {{ nickname }}</span> <i class="bi bi-chevron-down"></i
-            ></a>
+            <a href="#"><span>{{ memberstore.nickname }}</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
               <li>
                 <RouterLink :to="{ name: 'Mypage' }"><a href="#">마이페이지</a></RouterLink>

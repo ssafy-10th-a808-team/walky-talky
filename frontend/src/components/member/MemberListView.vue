@@ -49,7 +49,7 @@ defineProps(['member'])
     /* X축 기준 중앙 정렬 */
     background-color: rgba(0, 0, 0, 0.5);
     /* 배경색 추가 */
-    color: white;
+    color: greenyellow;
     /* 글자색 */
     padding: 2px 10px;
     /* 패딩 */
@@ -57,5 +57,6 @@ defineProps(['member'])
     /* 둥근 모서리 */
     font-size: 12px;
     /* 글자 크기 */
+
 }
 </style>
