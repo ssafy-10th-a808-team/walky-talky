@@ -7,7 +7,6 @@
     />
     <div class="record-container">
       <div>
-        <p>산책 제목</p>
         <p>{{ title }}</p>
       </div>
       <div>
@@ -31,7 +30,6 @@ const { distance, duration, points, title, seq } = defineProps([
   'seq'
 ])
 import { onMounted, ref } from 'vue'
-console.log(seq, distance, duration, points)
 
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
 let map = null // map is not defined Reference Error 방지
