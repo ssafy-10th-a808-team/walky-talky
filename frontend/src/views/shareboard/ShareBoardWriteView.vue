@@ -31,6 +31,7 @@
           :points="record.points"
           :title="record.title"
           :seq="record.recordSeq"
+          :movable="false"
         />
       </div>
     </div>

@@ -25,13 +25,15 @@
     </div>
 
     <shareBoardRecord
+      class="detail-record-container"
       v-if="record"
       :duration="record.duration"
       :distance="record.distance"
       :points="record.points"
       :address="record.address"
+      :movable="true"
     />
-    <div v-if="content">{{ content.content }}</div>
+    <div class="detail-content-container" v-if="content">{{ content.content }}</div>
     <div v-if="like && scrap" class="like-scrap-container">
       <shareBoardLike
         :likeCount="like.likeCount"
@@ -164,11 +166,9 @@ const deleteShareBoard = async (seq) => {
 }
 
 const confirmDeleteShareBoard = async (seq) => {
-  // '정말로 삭제하시겠습니까?' 모달을 표시하고 사용자의 선택을 기다립니다.
   const isConfirmed = window.confirm('정말로 삭제하시겠습니까?')
 
   if (isConfirmed) {
-    // 사용자가 '예'를 선택한 경우에만 삭제 로직을 진행합니다.
     await deleteShareBoard(seq)
   }
 }
@@ -200,5 +200,9 @@ const moveList = () => {
   display: flex;
   align-items: center;
   justify-content: space-around;
+}
+
+.detail-content-container {
+  padding: 2%;
 }
 </style>
