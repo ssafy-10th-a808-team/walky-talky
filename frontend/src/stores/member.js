@@ -122,6 +122,8 @@ export const useMemberStore = defineStore('member', () => {
         token.value = res.headers.get('atk')
 
         counterstore.setCookie('atk', token.value)
+        counterstore.setCookie('nickname', res.data.data.nickname)
+        counterstore.setCookie('profileImage', res.data.data.profileImage)
         nickname.value = res.data.data.nickname
         profileImage.value = res.data.data.profileImage
 
@@ -184,6 +186,9 @@ export const useMemberStore = defineStore('member', () => {
         profileImage.value = null
         token.value = null
         counterstore.deleteCookie('atk')
+        counterstore.deleteCookie('nickname')
+        counterstore.deleteCookie('profileImage')
+
         window.location.href = '/'
         router.push({ name: 'home' })
       })
