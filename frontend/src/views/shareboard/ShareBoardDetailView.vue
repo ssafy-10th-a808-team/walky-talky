@@ -114,16 +114,6 @@ const loadComment = async (seq) => {
   comments.value = shareBoardStore.shareComment
 }
 
-const loadLike = async (seq) => {
-  await shareBoardStore.getLike(seq)
-  like.value = shareBoardStore.shareLike
-}
-
-const loadScrap = async (seq) => {
-  await shareBoardStore.getScrap(seq)
-  scrap.value = shareBoardStore.shareScrap
-}
-
 const pushLike = (liked, shareBoardSeq) => {
   if (liked) {
     like.value.liked = false

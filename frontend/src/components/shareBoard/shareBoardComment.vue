@@ -1,20 +1,34 @@
 <template>
-  <div class="comment-container">
+  <div class="comment-container" v-if="isView">
     <shareBoardMember :nickname="nickname" :profilePic="profilePic" />
     <div class="content">{{ content }}</div>
     <div class="comment-info-container">
       <div class="created-at">{{ created_at }}</div>
       <div class="comment-btn-container">
-        <button class="comment-btn" @click="commentEdit">수정</button>
+        <button class="comment-btn" @click="updateIsView(false)">수정</button>
         <button class="comment-btn" @click="commentDel">삭제</button>
       </div>
     </div>
+  </div>
+  <div v-else>
+    <shareBoardCommentFormVue
+      :shareBoardSeq="shareBoardSeq"
+      :nickname="myNickname"
+      :commentSeq="commentSeq"
+      :profilePic="myProfileImage"
+      :content="contentEdit"
+      :loadComment="loadComment"
+      @updateIsView="updateIsView"
+    />
   </div>
 </template>
 
 <script setup>
 import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
+import shareBoardCommentFormVue from '@/components/shareBoard/shareBoardCommentForm.vue'
 import { useShareBoardStore } from '@/stores/shareBoard'
+import { useMemberStore } from '@/stores/member'
+import { ref } from 'vue'
 const shareBoardStore = useShareBoardStore()
 
 const { nickname, profilePic, created_at, content, shareBoardSeq, commentSeq, loadComment } =
@@ -28,8 +42,18 @@ const { nickname, profilePic, created_at, content, shareBoardSeq, commentSeq, lo
     'loadComment'
   ])
 
-const commentEdit = () => {
-  // 여기서 이제 수정 창을 띄워줘야함
+const isView = ref(true)
+const contentEdit = ref(content)
+const memberStore = useMemberStore()
+
+const myNickname = ref('')
+myNickname.value = memberStore.getNickname()
+
+const myProfileImage = ref('')
+myProfileImage.value = memberStore.getProfileImage()
+
+const updateIsView = (newValue) => {
+  isView.value = newValue
 }
 
 const commentDel = async () => {
