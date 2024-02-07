@@ -13,7 +13,7 @@
           </RouterLink>
         </li>
         <li>
-          <RouterLink :to="{ name: 'club-chat2', params: { seq: clubstore.clubSeq } }" class="nav-link scrollto">
+          <RouterLink :to="{ name: 'club-chat', params: { seq: clubstore.clubSeq } }" class="nav-link scrollto">
             채팅
           </RouterLink>
         </li>
