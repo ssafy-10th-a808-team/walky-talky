@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 write-content-container">
       <textarea
         id="content"
         v-model="content"
@@ -89,7 +89,7 @@ const write = () => {
   if (title.value == '' || content.value == '') {
     alert('제목과 내용을 입력해주세요.')
   } else if (selectedRecord.value == null) {
-    alert('공유하고 싶은 기록을 선택해주세요.')
+    alert('공유 할 기록을 선택해주세요.')
   } else {
     shareBoardStore.write(selectedRecord.value, title.value, content.value)
     router.push({ name: 'share-board' })
@@ -111,10 +111,14 @@ const moveList = () => {
   white-space: nowrap; /* 줄 바꿈 방지 */
 }
 
+.write-content-container {
+  margin-top: 5%;
+}
+
 .record-list {
-  box-sizing: border-box; /* 요소의 padding과 border를 너비에 포함시킴 */
-  margin: 20px; /* 각 요소 사이의 간격 설정 */
-  padding: 10px;
+  box-sizing: border-box;
+  /* margin: 3%; */
+  padding: 3%;
 }
 
 .selected {

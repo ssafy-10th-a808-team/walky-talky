@@ -1,17 +1,24 @@
 <template>
   <div>
-    <shareBoardTitle v-if="content" :title="content.title" :commentCount="content.commentCount" />
-    <shareBoardListUpper
-      v-if="content && record"
-      :nickname="content.member.nickname"
-      :profilePic="content.member.profilePic"
-      :create_at="content.create_at"
-      :address="record.address"
-      :hit="content.hit"
-    />
-    <div v-if="isAvaliable">
-      <button @click="moveModify(content.shareBoardSeq)">수정</button>
-      <button @click="deleteShareBoard(content.shareBoardSeq)">삭제</button>
+    <div class="detail-upper-container">
+      <button class="upper-list-btn" @click="moveList">목록으로</button>
+      <shareBoardTitle v-if="content" :title="content.title" :commentCount="content.commentCount" />
+      <shareBoardListUpper
+        v-if="content && record"
+        :nickname="content.member.nickname"
+        :profilePic="content.member.profilePic"
+        :create_at="content.create_at"
+        :address="record.address"
+        :hit="content.hit"
+      />
+      <div class="content-edit-del-container" v-if="isAvaliable">
+        <button class="content-edit-del-btn" @click="moveModify(content.shareBoardSeq)">
+          수정
+        </button>
+        <button class="content-edit-del-btnr" @click="deleteShareBoard(content.shareBoardSeq)">
+          삭제
+        </button>
+      </div>
     </div>
 
     <shareBoardRecord
@@ -63,7 +70,6 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
-import { useMemberStore } from '@/stores/member'
 import { useCounterStore } from '@/stores/counter'
 
 import shareBoardListUpper from '@/components/shareBoard/shareBoardListUpper.vue'
@@ -75,7 +81,6 @@ import shareBoardComment from '@/components/shareBoard/shareBoardComment.vue'
 import shareBoardCommentFormVue from '@/components/shareBoard/shareBoardCommentForm.vue'
 
 const shareBoardStore = useShareBoardStore()
-const memberStore = useMemberStore()
 const counterStore = useCounterStore()
 
 const route = useRoute()
@@ -154,17 +159,33 @@ const deleteShareBoard = async (seq) => {
   await shareBoardStore.deleteShareBoard(seq)
   router.push({ name: 'share-board' })
 }
+
+const moveList = () => {
+  router.push({ name: 'share-board' })
+}
 </script>
 
 <style scoped>
-.like-scrap-container {
+.detail-upper-container {
+  padding: 2%;
+}
+.upper-list-btn {
   display: flex;
-  align-items: center;
-  justify-content: space-around;
+  margin-left: auto;
 }
 
 .content-edit-del-container {
   display: flex;
+}
+
+.content-edit-del-btn {
+  display: flex;
   margin-left: auto;
+}
+
+.like-scrap-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 </style>
