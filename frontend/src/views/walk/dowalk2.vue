@@ -1,48 +1,20 @@
 <template>
   <div>
-    <h1>산책하기</h1>
-    <div class="map_wrap" style="position: relative">
-      <div id="map" style="width: 100%; height: 500px"></div>
-      <div class="controls">
-        <button @click="startWalk">START</button>
-        <button @click="pauseWalk">PAUSE</button>
-        <button @click="stopWalk">STOP</button>
-      </div>
-      <div class="info">
-        <div class="myRecord">
-          <div id="run_desc time">시간</div>
-          <span id="time" style="font-weight: 700; width: 100px; float: left">{{ clock }}</span>
-        </div>
-        <div class="myRecord">
-          <div id="run_desc distance">거리</div>
-          <span id="acc_dis" style="font-weight: 700; width: 100px; float: right"
-            >{{ walkData.accumulated_distance.toFixed(2) }}km</span
-          >
-        </div>
-      </div>
-    </div>
+    <div id="map"></div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, reactive, watchEffect } from 'vue'
-import axios from 'axios'
-import moment from 'moment'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const state = reactive({
+const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
+const state = ref({
   map: null,
-  positionArr: [],
-  kakaoLoaded: false
-})
-
-const walkData = reactive({
-  startTime: null,
-  endTime: null,
-  accumulated_distance: 0,
-  accumulated_time: 0
+  positionArr: []
 })
 
 const successHandler = (position) => {
+  // 초기 맵 설정
   const mapContainer = document.getElementById('map')
   const mapOption = {
     center: new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude),
@@ -51,181 +23,84 @@ const successHandler = (position) => {
 
   state.map = new kakao.maps.Map(mapContainer, mapOption)
 
-  const marker = new kakao.maps.Marker({
-    position: new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
-  })
-  marker.setMap(state.map)
+  // 맵에 선 그리기
+  makeLine([position])
 }
 
-const loadKakaoMap = () => {
-  return new Promise((resolve) => {
-    if (window.kakao && window.kakao.maps) {
-      resolve()
-    } else {
-      const script = document.createElement('script')
-      script.onload = resolve
-      script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_APP_KEY&autoload=false'
-      document.head.appendChild(script)
-    }
-  })
-}
-
-const errorHandler = (error) => {
+const errorHandler = () => {
   alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
 }
 
-onMounted(async () => {
-  await loadKakaoMap()
-  state.kakaoLoaded = true
-  const getCurLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(successHandler, errorHandler)
-    } else {
-      alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
-    }
-  }
-  getCurLocation()
-})
-
-const initMap = () => {
-  const marker = new kakao.maps.Marker({
-    position: new kakao.maps.LatLng(0, 0)
-  })
-  const container = document.getElementById('map')
-  const options = {
-    center: new kakao.maps.LatLng(0, 0),
-    level: 3
-  }
-
-  state.map = new kakao.maps.Map(container, options)
-  marker.setMap(state.map)
-}
-
-const resetWalkData = () => {
-  walkData.startTime = null
-  walkData.endTime = null
-  walkData.accumulated_distance = 0
-  walkData.accumulated_time = 0
-}
-
-const startWalk = () => {
-  resetWalkData()
-  walkData.startTime = new Date()
-  walkData.startTime = moment(walkData.startTime).format('YYYY-MM-DDTHH:mm:ss')
-  successHandler({
-    coords: {
-      latitude: 0, // replace with actual latitude
-      longitude: 0 // replace with actual longitude
-    }
-  })
-  watchPosition()
-}
-
-const pauseWalk = () => {
-  stopWatch()
-  stopPositionUpdates()
-}
-
-const stopWalk = () => {
-  stopWatch()
-  stopPositionUpdates()
-  saveWalkData()
-}
-
-const watchPosition = () => {
-  let watchPositionId = navigator.geolocation.watchPosition(
-    (position) => {
-      const currentLatLon = new kakao.maps.LatLng(
-        position.coords.latitude,
-        position.coords.longitude
-      )
-
-      if (state.positionArr.length === 0) {
-        state.positionArr.push(currentLatLon)
-      } else {
-        const lastPosition = state.positionArr[state.positionArr.length - 1]
-        const distance = kakao.maps.geometry.distance(lastPosition, currentLatLon)
-        walkData.accumulated_distance += distance
-        state.positionArr.push(currentLatLon)
-      }
-
-      makeLine()
-    },
-    (error) => {
-      console.error('Error getting location:', error)
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
-    }
-  )
-
-  onBeforeUnmount(() => {
-    navigator.geolocation.clearWatch(watchPositionId)
-  })
-}
-
-const makeLine = () => {
-  if (state.map && state.positionArr.length > 1) {
-    const polyline = new kakao.maps.Polyline({
-      path: state.positionArr,
-      strokeWeight: 5,
-      strokeColor: '#FFAE00',
-      strokeOpacity: 0.7,
-      strokeStyle: 'solid'
-    })
-
-    polyline.setMap(state.map)
+const getCurLocation = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(successHandler, errorHandler)
+  } else {
+    alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
   }
 }
 
-const stopPositionUpdates = () => {
+const makeLine = (positions) => {
+  if (positions.length < 2) {
+    return // 선을 그리기 위해서는 최소 2개의 좌표가 필요합니다.
+  }
+  const linePath = positions.map((pos) => ({
+    lat: pos.coords.latitude,
+    lng: pos.coords.longitude
+  }))
+
+  const polyline = new kakao.maps.Polyline({
+    path: linePath,
+    strokeWeight: 5,
+    strokeColor: '#FFAE00',
+    strokeOpacity: 0.7,
+    strokeStyle: 'solid'
+  })
+
+  polyline.setMap(null)
+  // 맵에 선 표시
+  polyline.setMap(state.map)
+}
+
+const setLinePathArr = (position) => {
+  const moveLatLon = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
+  state.positionArr.push(moveLatLon)
+
+  // 선 그리기
+  makeLine(state.positionArr)
+}
+
+onMounted(() => {
+  if (window.kakao && window.kakao.maps) {
+    // 맵이 이미 생성되었으면 현재 위치 가져오기
+    if (!state.map) {
+      getCurLocation()
+    }
+  } else {
+    const script = document.createElement('script')
+    script.onload = () => {
+      kakao.maps.load(() => {
+        getCurLocation()
+      })
+    }
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
+    document.head.appendChild(script)
+  }
+
   if (state.map) {
-    state.map = null // remove the map reference
-    state.positionArr = [] // clear the position array
-    initMap() // reinitialize the map
+    const interval = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(setLinePathArr)
+    }, 5000)
+
+    onBeforeUnmount(() => {
+      clearInterval(interval)
+    })
   }
-}
-
-const stopWatch = () => {
-  // Implement logic to pause the timer
-  // You can use the walkData.startTime and current time to calculate the paused duration
-}
-
-const saveWalkData = async () => {
-  try {
-    const url = 'https://your-api-endpoint' // Replace with your actual API endpoint
-    const data = {
-      startTime: walkData.startTime,
-      endTime: moment().format('YYYY-MM-DDTHH:mm:ss'),
-      duration: walkData.accumulated_time,
-      distance: walkData.accumulated_distance.toFixed(2)
-      // Add other relevant data
-    }
-
-    const response = await axios.post(url, data)
-    console.log(response.data)
-  } catch (error) {
-    console.error('Error while saving walk data:', error)
-  }
-}
-
-watchEffect(() => {
-  // Additional logic if needed
 })
 </script>
 
-<style scoped>
-.map_wrap {
-  position: relative;
-}
-
-.controls {
-  margin-top: 10px;
-}
-
-.controls button {
-  margin-right: 5px;
+<style>
+#map {
+  width: 100%;
+  height: 400px; /* 필요에 따라 높이 조절 */
 }
 </style>
