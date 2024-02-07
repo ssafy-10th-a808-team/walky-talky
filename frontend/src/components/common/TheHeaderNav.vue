@@ -21,24 +21,22 @@
             <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
           </li>
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto"
-              >산책공유</RouterLink
-            >
+            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto">산책공유</RouterLink>
           </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto"
-              >채팅테스트</RouterLink
-            >
+            <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto">채팅테스트</RouterLink>
           </li>
           <li class="dropdown" v-if="memberstore.isLogin">
-            <a href="#"
-              ><span class="circular-small">
-                <img :src="profileImage" alt="" />
-              </span>
-              <i class="bi bi-chevron-down"></i
-            ></a>
+            <a href="#" class="profile-link">
+              <!-- 프로필 이미지와 닉네임을 감싸는 flex 컨테이너 -->
+              <div class="profile-container">
+                <img :src="url" class="profile-image" alt="Profile">
+                <span>{{ nickname }}</span>
+              </div>
+              <i class="bi bi-chevron-down"></i>
+            </a>
             <ul>
               <li @click="closeNav">
                 <RouterLink :to="{ name: 'Mypage' }"><a href="#">마이페이지</a></RouterLink>
@@ -75,9 +73,14 @@
 <script setup>
 import { handleError, ref } from 'vue'
 import { useMemberStore } from '@/stores/member'
+import { useCounterStore } from '@/stores/counter';
+
 const memberstore = useMemberStore()
-const nickname = ref(memberstore.nickname)
-const profileImage = ref(memberstore.profileImage)
+const counterstore = useCounterStore()
+
+const nickname = counterstore.getCookie('nickname')
+const url = counterstore.getCookie('profileImage')
+
 // const closeNav = () => {
 //   const navbar = document.querySelector('#navbar')
 //   if (navbar.classList.contains('navbar-mobile')) {
@@ -95,4 +98,17 @@ const closeNav = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.profile-image {
+  width: 40px;
+  /* 이미지 크기 설정 */
+  height: 40px;
+  /* 이미지 크기 설정 */
+  border-radius: 50%;
+  /* 원형으로 만들기 */
+  object-fit: cover;
+  /* 이미지 비율을 유지하면서 요소에 맞추기 */
+  margin-right: 10px;
+  /* 이미지와 닉네임 사이의 여백 설정 */
+}
+</style>
