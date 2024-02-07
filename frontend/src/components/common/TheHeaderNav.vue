@@ -11,27 +11,27 @@
       <!-- Uncomment below if you prefer to use an image logo -->
       <!-- <a href="index.html" class="logo me-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
-      <nav id="navbar" class="navbar" @click="closeNav">
+      <nav id="navbar" class="navbar">
         <ul>
-          <li>
+          <li @click="closeNav">
             <RouterLink :to="{ name: 'club' }" class="nav-link scrollto">소모임</RouterLink>
           </li>
 
-          <li>
+          <li @click="closeNav">
             <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
           </li>
-          <li>
+          <li @click="closeNav">
             <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto">산책공유</RouterLink>
           </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
-          <li>
+          <li @click="closeNav">
             <RouterLink :to="{ name: 'club-chat', params: { seq: 8 } }" class="nav-link scrollto">채팅테스트</RouterLink>
           </li>
           <li class="dropdown" v-if="memberstore.isLogin">
-            <a href="#"><span>{{ memberstore.nickname }}</span> <i class="bi bi-chevron-down"></i></a>
+            <a href="#"><span>hi, {{ nickname }}</span> <i class="bi bi-chevron-down"></i></a>
             <ul>
-              <li>
+              <li @click="closeNav">
                 <RouterLink :to="{ name: 'Mypage' }"><a href="#">마이페이지</a></RouterLink>
               </li>
               <!-- <li class="dropdown"><a href="#"><span>Deep Drop Down</span> <i class="bi bi-chevron-right"></i></a>
@@ -43,7 +43,7 @@
                   <li><a href="#">Deep Drop Down 5</a></li>
                 </ul>
               </li> -->
-              <li>
+              <li @click="closeNav">
                 <RouterLink :to="{ name: 'Logout' }"><a href="#">로그아웃</a></RouterLink>
               </li>
               <!-- <li><a href="#">Drop Down 3</a></li>
@@ -51,7 +51,7 @@
             </ul>
           </li>
           <!-- <li><a class="nav-link scrollto" href="#contact">Contact</a></li> -->
-          <li v-if="!memberstore.isLogin">
+          <li v-if="!memberstore.isLogin" @click="closeNav">
             <RouterLink :to="{ name: 'Login' }" class="getstarted scrollto">로그인</RouterLink>
           </li>
         </ul>
@@ -69,11 +69,20 @@ import { useMemberStore } from '@/stores/member'
 const memberstore = useMemberStore()
 const nickname = ref(memberstore.nickname)
 
+// const closeNav = () => {
+//   const navbar = document.querySelector('#navbar')
+//   if (navbar.classList.contains('navbar-mobile')) {
+//     const mobileNavToggle = document.querySelector('.mobile-nav-toggle')
+//     mobileNavToggle.classList.toggle('bi-x')
+//     mobileNavToggle.classList.toggle('bi-list')
+//     // navbar.classList.remove('navbar-mobile')
+//   }
+// }
 const closeNav = () => {
-  const navbar = document.querySelector('#navbar')
-  navbar.classList.toggle('navbar-mobile')
-  navbar.classList.toggle('bi-list')
-  navbar.classList.toggle('bi-x')
+  const navtoggle = document.querySelector('.bi-x')
+  if (navtoggle) {
+    navtoggle.click()
+  }
 }
 </script>
 
