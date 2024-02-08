@@ -2,13 +2,11 @@ package com.ssafy.backend.record.service;
 
 import com.ssafy.backend.common.service.S3UploadService;
 import com.ssafy.backend.global.error.WTException;
-import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.service.MemberService;
 import com.ssafy.backend.record.domain.Dislike;
 import com.ssafy.backend.record.domain.Record;
 import com.ssafy.backend.record.domain.RecordDetail;
 import com.ssafy.backend.record.dto.mapping.DislikeRecordMapping;
-import com.ssafy.backend.record.dto.mapping.ListMapping;
 import com.ssafy.backend.record.dto.mapping.PointsMapping;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
@@ -47,9 +45,7 @@ public class RecordServiceImpl implements RecordService {
     private final S3UploadService s3UploadService;
 
     public Long startRecord(Long memberSeq) {
-        Record record = Record.builder()
-                .memberSeq(memberSeq)
-                .build();
+        Record record = Record.builder().memberSeq(memberSeq).build();
         Record returnRecord = recordRepository.save(record);
 
         return returnRecord.getSeq();
@@ -67,16 +63,7 @@ public class RecordServiceImpl implements RecordService {
 
         try {
             // record table
-            Record record = Record.builder()
-                    .seq(recordSeq)
-                    .memberSeq(memberSeq)
-                    .title(requestRegistRecordDto.getTitle())
-                    .duration(requestRegistRecordDto.getDuration())
-                    .distance(requestRegistRecordDto.getDistance())
-                    .starRating(requestRegistRecordDto.getStarRating())
-                    .comment(requestRegistRecordDto.getComment())
-                    .regionCd(requestRegistRecordDto.getRegionCd())
-                    .build();
+            Record record = Record.builder().seq(recordSeq).memberSeq(memberSeq).title(requestRegistRecordDto.getTitle()).duration(requestRegistRecordDto.getDuration()).distance(requestRegistRecordDto.getDistance()).starRating(requestRegistRecordDto.getStarRating()).comment(requestRegistRecordDto.getComment()).regionCd(requestRegistRecordDto.getRegionCd()).build();
 
             recordRepository.save(record);
         } catch (Exception e) {
@@ -89,12 +76,7 @@ public class RecordServiceImpl implements RecordService {
             List<RecordDetail> list = new ArrayList<>();
 
             for (String[] p : tmpPoint) {
-                RecordDetail recordDetail = RecordDetail.builder()
-                        .recordSeq(recordSeq)
-                        .latitude(p[0])
-                        .longitude(p[1])
-                        .time(p[2])
-                        .build();
+                RecordDetail recordDetail = RecordDetail.builder().recordSeq(recordSeq).latitude(p[0]).longitude(p[1]).time(p[2]).build();
                 list.add(recordDetail);
             }
 
@@ -115,12 +97,7 @@ public class RecordServiceImpl implements RecordService {
         validateRecord(recordSeq, memberSeq);
 
         try {
-            RecordDetail recordDetail = RecordDetail.builder()
-                    .recordSeq(recordSeq)
-                    .pointComment(requestRegistCommentDto.getComment())
-                    .latitude(requestRegistCommentDto.getLatitude())
-                    .longitude(requestRegistCommentDto.getLongitude())
-                    .build();
+            RecordDetail recordDetail = RecordDetail.builder().recordSeq(recordSeq).pointComment(requestRegistCommentDto.getComment()).latitude(requestRegistCommentDto.getLatitude()).longitude(requestRegistCommentDto.getLongitude()).build();
 
             return recordDetailRepository.save(recordDetail).getSeq();
         } catch (Exception e) {
@@ -186,12 +163,7 @@ public class RecordServiceImpl implements RecordService {
         }
 
         try {
-            RecordDetail recordDetail = RecordDetail.builder()
-                    .recordSeq(recordSeq)
-                    .url(url)
-                    .latitude(requestRegistImageDto.getLatitude())
-                    .longitude(requestRegistImageDto.getLongitude())
-                    .build();
+            RecordDetail recordDetail = RecordDetail.builder().recordSeq(recordSeq).url(url).latitude(requestRegistImageDto.getLatitude()).longitude(requestRegistImageDto.getLongitude()).build();
 
             return recordDetailRepository.save(recordDetail).getSeq();
         } catch (Exception e) {
@@ -260,37 +232,20 @@ public class RecordServiceImpl implements RecordService {
         try {
             List<Record> recordList = recordRepository.findByMemberSeqAndIsDeletedFalse(memberSeq);
 
-            List<ResponseListDto> list = new ArrayList<>();
-
-            for (Record record : recordList) {
-                try {
-                    ResponseListDto responseListDto = new ResponseListDto();
-
-                    responseListDto.setRecordSeq(record.getSeq());
-                    responseListDto.setTitle(record.getTitle());
-                    responseListDto.setPoints(view(record.getSeq()).getPoints());
-                    responseListDto.setStarRating(record.getStarRating());
-                    responseListDto.setComment(record.getComment());
-                    responseListDto.setDistance(record.getDistance());
-                    responseListDto.setDuration(record.getDuration());
-
-                    list.add(responseListDto);
-                } catch (Exception e) {
-                    continue;
-                }
-
-            }
-            return list;
+            return listMapping(recordList);
         } catch (Exception e) {
             throw new WTException("목록 불러오기에 실패하였습니다.");
         }
     }
 
-    public List<ListMapping> list(List<Long> recordSeq) throws WTException {
+    @Transactional
+    public List<ResponseListDto> list(List<Long> recordSeq) throws WTException {
         try {
-            return recordRepository.findBySeqIn(recordSeq);
+            List<Record> recordList = recordRepository.findBySeqIn(recordSeq);
+
+            return listMapping(recordList);
         } catch (Exception e) {
-            throw new WTException("목록 불러오기에 실패하였습니다.");
+            throw new WTException("스크랩 목록 불러오기에 실패하였습니다.");
         }
     }
 
@@ -392,16 +347,17 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<ListMapping> recommendTown(Long memberSeq) throws WTException {
+    public List<ResponseListDto> recommendTown(Long memberSeq) throws WTException {
         String regionCd = memberService.getRegionCd(memberSeq);
 
         try {
-            List<Long> dislikeList = dislikeRepository.findRecordSeqByMemberSeq(memberSeq)
-                    .stream()
-                    .map(DislikeRecordMapping::getRecordSeq)
-                    .toList();
+            List<Long> dislikeList = new ArrayList<>(dislikeRepository.findRecordSeqByMemberSeq(memberSeq).stream().map(DislikeRecordMapping::getRecordSeq).toList());
 
-            return recordRepository.findByRegionCdAndSeqNotIn(regionCd, dislikeList);
+            dislikeList.add(0L);
+
+            List<Record> recordList = recordRepository.findByRegionCdAndSeqNotInAndMemberSeqNot(regionCd, dislikeList, memberSeq);
+
+            return listMapping(recordList);
         } catch (Exception e) {
             throw new WTException("동네 기반 코스 추천에 실패하였습니다.");
         }
@@ -409,24 +365,24 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<ListMapping> recommendInfo(Long memberSeq) throws WTException {
+    public List<ResponseListDto> recommendInfo(Long memberSeq) throws WTException {
         List<Long> memberList;
         try {
-            memberList = memberService.getSimilarMemberList(memberSeq)
-                    .stream()
-                    .map(MemberSeqMapping::getSeq)
-                    .toList();
+            memberList = memberService.getSimilarMemberList(memberSeq);
+
+            memberList.add(0L);
         } catch (Exception e) {
-            throw new WTException(e.getMessage());
+            throw new WTException("사용자 정보 가져오기에 실패했습니다.");
         }
 
         try {
-            List<Long> dislikeList = dislikeRepository.findRecordSeqByMemberSeq(memberSeq)
-                    .stream()
-                    .map(DislikeRecordMapping::getRecordSeq)
-                    .toList();
+            List<Long> dislikeList = new ArrayList<>(dislikeRepository.findRecordSeqByMemberSeq(memberSeq).stream().map(DislikeRecordMapping::getRecordSeq).toList());
 
-            return recordRepository.findByMemberSeqInAndSeqNotIn(memberList, dislikeList);
+            dislikeList.add(0L);
+
+            List<Record> recordList = recordRepository.findByMemberSeqInAndSeqNotIn(memberList, dislikeList);
+
+            return listMapping(recordList);
         } catch (Exception e) {
             throw new WTException("사용자기반 코스 추천에 실패하였습니다.");
         }
@@ -443,10 +399,7 @@ public class RecordServiceImpl implements RecordService {
         }
 
         try {
-            Dislike dislike = Dislike.builder()
-                    .recordSeq(recordSeq)
-                    .memberSeq(memberSeq)
-                    .build();
+            Dislike dislike = Dislike.builder().recordSeq(recordSeq).memberSeq(memberSeq).build();
             dislikeRepository.save(dislike);
         } catch (Exception e) {
             throw new WTException("싫어요에 실패하였습니다.");
@@ -465,6 +418,30 @@ public class RecordServiceImpl implements RecordService {
             // 지금 가져온 사용자 아이디에 해당하는 사람이 다르면 비정상 요청임
             throw new WTException("비정상적인 요청입니다.");
         }
+    }
+
+    private List<ResponseListDto> listMapping(List<Record> recordList) {
+        List<ResponseListDto> list = new ArrayList<>();
+
+        for (Record record : recordList) {
+            try {
+                ResponseListDto responseListDto = new ResponseListDto();
+
+                responseListDto.setRecordSeq(record.getSeq());
+                responseListDto.setTitle(record.getTitle());
+                responseListDto.setPoints(view(record.getSeq()).getPoints());
+                responseListDto.setStarRating(record.getStarRating());
+                responseListDto.setComment(record.getComment());
+                responseListDto.setDistance(record.getDistance());
+                responseListDto.setDuration(record.getDuration());
+
+                list.add(responseListDto);
+            } catch (Exception e) {
+                continue;
+            }
+
+        }
+        return list;
     }
 
 }

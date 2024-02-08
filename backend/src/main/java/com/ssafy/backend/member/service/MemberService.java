@@ -1,7 +1,6 @@
 package com.ssafy.backend.member.service;
 
 import com.ssafy.backend.global.error.WTException;
-import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.dto.mapping.StreakMapping;
 import com.ssafy.backend.member.dto.request.*;
 import com.ssafy.backend.member.dto.response.*;
@@ -30,7 +29,7 @@ public interface MemberService {
 
     String getRegionCd(Long memberSeq) throws WTException;
 
-    List<MemberSeqMapping> getSimilarMemberList(Long memberSeq) throws WTException;
+    List<Long> getSimilarMemberList(Long memberSeq) throws WTException;
 
     ResponseMypageDto mypage(Long memberSeq) throws WTException;
 
