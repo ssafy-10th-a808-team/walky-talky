@@ -58,7 +58,7 @@
                 <img
                   src="/src/assets/img/KakaoLoginIcon.png"
                   alt="Kakao Login"
-                  onclick="javascript:kakaoLogin();"
+                  @click="kakaoLogin"
                   style="margin: auto; display: block; margin-top: 10px"
                 />
                 <!--</button>-->
