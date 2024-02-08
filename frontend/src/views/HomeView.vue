@@ -21,15 +21,15 @@
                 Welcome to <span>WalkyTalky</span>
               </h2>
               <p class="animate__animated animate__fadeInUp">산책해듀오</p>
-              <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto"
+              <!-- <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto"
                 >Read More</a
-              >
+              > -->
             </div>
           </div>
         </div>
 
         <!-- Slide 2 -->
-        <div class="carousel-item" style="background-image: url(assets/img/slide/slide-2.jpg)">
+        <!-- <div class="carousel-item" style="background-image: url(assets/img/slide/slide-2.jpg)">
           <div class="carousel-container">
             <div class="container">
               <h2 class="animate__animated animate__fadeInDown">Lorem Ipsum Dolor</h2>
@@ -43,10 +43,10 @@
               >
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Slide 3 -->
-        <div class="carousel-item" style="background-image: url(assets/img/slide/slide-3.jpg)">
+        <!-- <div class="carousel-item" style="background-image: url(assets/img/slide/slide-3.jpg)">
           <div class="carousel-container">
             <div class="container">
               <h2 class="animate__animated animate__fadeInDown">Sequi ea ut et est quaerat</h2>
@@ -60,37 +60,21 @@
               >
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
-      <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
+      <!-- <a class="carousel-control-prev" href="#heroCarousel" role="button" data-bs-slide="prev">
         <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
       </a>
 
       <a class="carousel-control-next" href="#heroCarousel" role="button" data-bs-slide="next">
         <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
-      </a>
+      </a> -->
     </div>
   </section>
   <!-- End Hero -->
 </template>
 
-<script setup>
-import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
-import { useCounterStore } from '@/stores/counter'
-import axios from 'axios'
-const test = () => {
-  axios({
-    method: 'post',
-    url: 'https://i10a808.p.ssafy.io/api/member/check-id',
-    data: {
-      memberId: 'minhou'
-    }
-  })
-}
-const store = useCounterStore()
-const locationIcon = store.selectButton('LocationIcon')
-const logoIcon = store.selectButton('LogoIcon')
-</script>
+<script setup></script>
 
 <style lang="scss" scoped></style>
