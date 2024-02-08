@@ -368,8 +368,6 @@ const watchLocationUpdates = function () {
 
       const locationUpdateInterval = 60000 // 1분 (단위: 밀리초)
       watchPositionId.value = setInterval(() => {
-        // 이전 코드 내용을 그대로 가져옴
-
         // 1분마다 위치 정보 저장
         recordsForPost.value.push({
           lat: current.value.lat,
@@ -426,16 +424,16 @@ const clockRunning = function () {
   accumulated_time.value = realTime
   checkSecond.value = realTime
 }
-const recordsForPost = ref([])
-const chunkSize = 10
-const totalRecords = tempRecords.value.length
+// const recordsForPost = ref([])
+// const chunkSize = 10
+// const totalRecords = tempRecords.value.length
 
-// 데이터를 60배수 번째만 선택하여 recordsForPost에 추가
-for (let i = 0; i < totalRecords; i += chunkSize) {
-  if (i < totalRecords) {
-    recordsForPost.value.push(tempRecords.value[i])
-  }
-}
+// // 데이터를 60배수 번째만 선택하여 recordsForPost에 추가
+// for (let i = 0; i < totalRecords; i += chunkSize) {
+//   if (i < totalRecords) {
+//     recordsForPost.value.push(tempRecords.value[i])
+//   }
+// }
 
 const savePosition = async function () {
   console.log(walkStore.data.data.seq)
@@ -484,13 +482,9 @@ const endLocationUpdates = function () {
 
   // speed.value = (accumulated_distance.value * 1000) / accumulated_time.value
   // 정지 시점의 위치 정보를 추가
-  if (accumulated_time.value % 60 !== 0) {
-    recordsForPost.value.push({
-      lat: current.value.lat,
-      lon: current.value.lon,
-      time: new Date()
-    })
-  }
+  // if (accumulated_time.value % 60 !== 0) {
+  //   savePosition()
+  // }
 
   savePosition()
   isPause.value = false
