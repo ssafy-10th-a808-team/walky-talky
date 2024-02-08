@@ -322,7 +322,11 @@ const cancelRegistration = function () {
 const loadImage = () => {
   document.getElementById('imageFrame').innerHTML = ''
   const img = document.createElement('img')
-  img.src = profileImg.value
+  if (profileImg.value != null) {
+    img.src = profileImg.value
+  } else if (imgUrl.value != null) {
+    img.src = imgUrl.value
+  }
 
   document.getElementById('imageFrame').appendChild(img)
 }
