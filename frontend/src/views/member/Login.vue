@@ -54,14 +54,12 @@
                 </button>
               </div>
               <div>
-                <!-- <button @click="kakaoLogin">-->
                 <img
                   src="/src/assets/img/KakaoLoginIcon.png"
                   alt="Kakao Login"
                   @click="kakaoLogin"
                   style="margin: auto; display: block; margin-top: 10px"
                 />
-                <!--</button>-->
               </div>
             </form>
           </div>

@@ -17,7 +17,7 @@
       </div>
       <div class="text-center">
         <p>총 거리</p>
-        <p>{{ distance }} km</p>
+        <p>{{ distance.toFixed(2) }} km</p>
       </div>
     </div>
   </div>
