@@ -196,6 +196,14 @@ onMounted(() => {
   const code = new URL(window.location.href).searchParams.get('code')
   if (code != null) {
     isMember(code)
+    memberId.value = memberStore.getMemberId()
+    nickname.value = memberStore.getNickname()
+    profileImg.value = memberStore.getProfileImage()
+    isOauth.value = memberStore.getIsOauth()
+    imgUrl.value = memberStore.getImgUrl()
+    if (imgUrl.value != null) {
+      loadImage()
+    }
   }
 })
 
