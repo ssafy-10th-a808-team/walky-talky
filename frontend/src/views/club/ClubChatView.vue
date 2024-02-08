@@ -1,5 +1,5 @@
 <template>
-    <ClubDetailHeaderNav />
+  <ClubDetailHeaderNav />
   <div class="chat-window">
     <div class="message-list" ref="messageListElement">
       <MessageList :messages="chatStore.messages" />
@@ -15,14 +15,14 @@
     </div>
   </div>
 </template>
-  
+
 <script setup>
 import ClubDetailHeaderNav from '@/components/common/ClubDetailHeaderNav.vue'
 import { onUnmounted, onMounted, ref, nextTick } from 'vue'
 import { useClubStore } from '@/stores/club'
 import { useRoute } from 'vue-router'
 import MemberList from '@/components/member/MemberListView.vue'
-import axios from 'axios';
+import axios from 'axios'
 import { useCounterStore } from '@/stores/counter'
 import { useChatStore } from '@/stores/chat'
 import MessageList from '@/components/chat/MessageList.vue'
@@ -36,29 +36,28 @@ const messageListElement = ref(null) // ref를 사용하여 DOM 요소 참조 �
 const client = ref(chatStore.client)
 
 const { seq } = defineProps({
-    seq: String
+  seq: String
 })
 
 onMounted(async () => {
   await chatStore.loadMessage(seq, 0)
   chatStore.getConnection(seq)
 
-//   nextTick(() => {
-//     if (messageListElement) {
-//       messageListElement.value.scrollTop = messageListElement.value.scrollHeight
-//     }
-//   })
+  //   nextTick(() => {
+  //     if (messageListElement) {
+  //       messageListElement.value.scrollTop = messageListElement.value.scrollHeight
+  //     }
+  //   })
 })
 
 onUnmounted(() => {
   if (client.value && client.value.connected) {
-    client.value.deactivate();
-    console.log('WebSocket connection deactivated.');
+    client.value.deactivate()
+    console.log('WebSocket connection deactivated.')
   }
 })
 
 const sendMessage = () => {
-  console.log("sendMessage 호출됨", newMessage.value); // 함수 호출 로
   if (newMessage.value.trim() !== '') {
     chatStore.sendMessage({
       clubSeq: clubSeq,
@@ -67,34 +66,33 @@ const sendMessage = () => {
       timestamp: new Date().toISOString(),
       type: 'TALK'
     })
-    console.log("메시지 목록에 추가됨", newMessage.value); // 메시지 추가 로그
     // 입력 필드를 비웁니다
     newMessage.value = ''
   }
 }
 </script>
-  
+
 <style scoped>
 .circular {
-    width: 200px;
-    /* 고정 가로 크기 */
-    height: 200px;
-    /* 고정 세로 크기 */
-    border-radius: 50%;
-    /* 원 모양으로 만듦 */
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    /* 이미지를 중앙에 정렬 */
-    justify-content: center;
+  width: 200px;
+  /* 고정 가로 크기 */
+  height: 200px;
+  /* 고정 세로 크기 */
+  border-radius: 50%;
+  /* 원 모양으로 만듦 */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  /* 이미지를 중앙에 정렬 */
+  justify-content: center;
 }
 
 .circular img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* 이미지 비율 유지하며 컨테이너 채움 */
-    border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 이미지 비율 유지하며 컨테이너 채움 */
+  border-radius: 50%;
 }
 .chat-window {
   display: flex;
