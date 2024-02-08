@@ -114,7 +114,10 @@ const initMap = () => {
     for (var i = 0; i < positions.length; i++) {
       var imageSize = new kakao.maps.Size(20, 30)
 
-      var markerImage = new kakao.maps.MarkerImage('/src/assets/img/' + positions[i].img, imageSize)
+      var markerImage = new kakao.maps.MarkerImage(
+        import.meta.env.VITE_MARKER_IMAGE_ROUTE + positions[i].img,
+        imageSize
+      )
 
       var marker = new kakao.maps.Marker({
         map: map,
