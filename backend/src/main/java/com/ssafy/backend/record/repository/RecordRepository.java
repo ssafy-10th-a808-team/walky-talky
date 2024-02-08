@@ -1,7 +1,6 @@
 package com.ssafy.backend.record.repository;
 
 import com.ssafy.backend.record.domain.Record;
-import com.ssafy.backend.record.dto.mapping.ListMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,14 +15,12 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     boolean existsBySeqAndIsDeletedTrue(Long seq);
 
-    List<ListMapping> findResponseListDtoByMemberSeqAndIsDeletedFalse(Long memberSeq);
-
     List<Record> findByMemberSeqAndIsDeletedFalse(Long memberSeq);
 
-    List<ListMapping> findBySeqIn(List<Long> recordSeq);
+    List<Record> findBySeqIn(List<Long> recordSeq);
 
-    List<ListMapping> findByRegionCdAndSeqNotIn(String regionCd, List<Long> recordSeq);
+    List<Record> findByRegionCdAndSeqNotInAndMemberSeqNot(String regionCd, List<Long> recordSeq, Long memberSeq);
 
-    List<ListMapping> findByMemberSeqInAndSeqNotIn(List<Long> memberSeq, List<Long> recordSeq);
+    List<Record> findByMemberSeqInAndSeqNotIn(List<Long> memberSeqList, List<Long> recordSeq);
 
 }
