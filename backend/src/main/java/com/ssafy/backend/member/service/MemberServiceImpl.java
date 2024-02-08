@@ -194,9 +194,9 @@ public class MemberServiceImpl implements MemberService {
             System.out.println("requestLocalSignupDto.getMultipartFile().isEmpty()");
         }
 
-        if (requestLocalSignupDto.getMultipartFile() == null ) {
+        if (requestLocalSignupDto.getMultipartFile() == null || requestLocalSignupDto.getMultipartFile().isEmpty()) {
             // 로컬 회원가입 사진 등록 안 함
-            if(member.getUrl() == null){
+            if(member.getUrl() == null || member.getUrl().isEmpty()){
                 savedMember.setUrl("https://walkytalky.s3.ap-northeast-2.amazonaws.com/member/38/profile/6305875e-9599-427a-acf5-19a231bce852.png");
             }
         }
@@ -333,7 +333,7 @@ public class MemberServiceImpl implements MemberService {
             responseMypageDto.setAddress(regionService.findAddress(member.getRegionCd()));
 
             responseMypageDto.setRegionCd(member.getRegionCd());
-            
+
             responseMypageDto.setBirth(member.getBirth());
             responseMypageDto.setGender(member.getGender());
             responseMypageDto.setProfileImage(member.getUrl());
