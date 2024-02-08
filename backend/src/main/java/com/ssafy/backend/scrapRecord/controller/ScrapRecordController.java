@@ -1,6 +1,6 @@
 package com.ssafy.backend.scrapRecord.controller;
 
-import com.ssafy.backend.record.dto.mapping.ListMapping;
+import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.scrapRecord.service.ScrapRecordService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,7 +60,7 @@ public class ScrapRecordController {
 
         Long memberSeq = (Long) request.getAttribute("seq");
 
-        List<ListMapping> scrapList;
+        List<ResponseListDto> scrapList;
         try {
             scrapList = scrapRecordService.list(memberSeq);
         } catch (Exception e) {
