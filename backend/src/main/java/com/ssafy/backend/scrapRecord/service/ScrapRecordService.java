@@ -1,7 +1,7 @@
 package com.ssafy.backend.scrapRecord.service;
 
 import com.ssafy.backend.global.error.WTException;
-import com.ssafy.backend.record.dto.mapping.ListMapping;
+import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public interface ScrapRecordService {
 
     ResponseViewDto view(Long recordSeq, Long memberSeq) throws WTException;
 
-    List<ListMapping> list(Long memberSeq) throws WTException;
+    List<ResponseListDto> list(Long memberSeq) throws WTException;
 
     int getScrapcount(Long recordSeq) throws WTException;
 

@@ -1,7 +1,6 @@
 package com.ssafy.backend.record.service;
 
 import com.ssafy.backend.global.error.WTException;
-import com.ssafy.backend.record.dto.mapping.ListMapping;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
@@ -32,7 +31,7 @@ public interface RecordService {
 
     List<ResponseListDto> list(Long memberSeq) throws WTException;
 
-    List<ListMapping> list(List<Long> recordSeq) throws WTException;
+    List<ResponseListDto> list(List<Long> recordSeq) throws WTException;
 
     ResponseViewDto view(Long memberSeq, Long recordSeq) throws WTException;
 
@@ -48,9 +47,9 @@ public interface RecordService {
 
     boolean isRecordExist(Long recordSeq) throws WTException;
 
-    List<ListMapping> recommendTown(Long memberSeq) throws WTException;
+    List<ResponseListDto> recommendTown(Long memberSeq) throws WTException;
 
-    List<ListMapping> recommendInfo(Long memberSeq) throws WTException;
+    List<ResponseListDto> recommendInfo(Long memberSeq) throws WTException;
 
     void dislike(Long recordSeq, Long memberSeq) throws WTException;
 }

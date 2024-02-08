@@ -5,7 +5,6 @@ import com.ssafy.backend.global.error.WTException;
 import com.ssafy.backend.global.util.JwtProvider;
 import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.domain.Member;
-import com.ssafy.backend.member.dto.mapping.MemberSeqMapping;
 import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.dto.mapping.RegionCdMapping;
 import com.ssafy.backend.member.dto.mapping.StreakMapping;
@@ -297,7 +296,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<MemberSeqMapping> getSimilarMemberList(Long memberSeq) throws WTException {
+    public List<Long> getSimilarMemberList(Long memberSeq) throws WTException {
         Optional<Member> memberOptional = memberRepository.findById(memberSeq);
         if (memberOptional.isEmpty()) {
             throw new WTException("사용자 정보가 없습니다.");
@@ -309,7 +308,7 @@ public class MemberServiceImpl implements MemberService {
             int birthYear = Integer.parseInt(member.getBirth().substring(0, 4));
             int age = currentYear - birthYear + 1;
 
-            return memberRepository.findSeqInAgeAndGender((age / 10) * 10, (age / 10) * 10 + 9, member.getGender());
+            return memberRepository.findSeqInAgeAndGender(memberSeq, (age / 10) * 10, (age / 10) * 10 + 9, member.getGender());
         } catch (Exception e) {
             throw new WTException("사용자 불러오기에 실패했습니다.");
         }

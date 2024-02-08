@@ -1,6 +1,5 @@
 package com.ssafy.backend.record.controller;
 
-import com.ssafy.backend.record.dto.mapping.ListMapping;
 import com.ssafy.backend.record.dto.request.RequestRecordModify;
 import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
@@ -252,7 +251,7 @@ public class RecordController {
 
         Long memberSeq = (Long) request.getAttribute("seq");
 
-        List<ListMapping> list;
+        List<ResponseListDto> list;
         try {
             list = recordService.recommendTown(memberSeq);
         } catch (Exception e) {
@@ -271,7 +270,7 @@ public class RecordController {
 
         Long memberSeq = (Long) request.getAttribute("seq");
 
-        List<ListMapping> list;
+        List<ResponseListDto> list;
         try {
             list = recordService.recommendInfo(memberSeq);
         } catch (Exception e) {

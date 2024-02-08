@@ -1,7 +1,7 @@
 package com.ssafy.backend.scrapRecord.service;
 
 import com.ssafy.backend.global.error.WTException;
-import com.ssafy.backend.record.dto.mapping.ListMapping;
+import com.ssafy.backend.record.dto.response.ResponseListDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
 import com.ssafy.backend.scrapRecord.domain.Scrap;
@@ -70,7 +70,7 @@ public class ScrapRecordServiceImpl implements ScrapRecordService {
         }
     }
 
-    public List<ListMapping> list(Long memberSeq) throws WTException {
+    public List<ResponseListDto> list(Long memberSeq) throws WTException {
         try {
             List<RecordSeqMapping> recordSeqMappingList = scrapRepository.findRecordSeqByMemberSeq(memberSeq);
 
