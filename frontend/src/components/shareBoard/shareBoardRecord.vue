@@ -17,7 +17,7 @@
       </div>
       <div class="text-center">
         <p>총 거리</p>
-        <p>{{ distance.toFixed(2) }} km</p>
+        <p>{{ distance }} km</p>
       </div>
     </div>
   </div>
@@ -87,6 +87,7 @@ const initMap = () => {
   containerHeight.value = `${container.offsetHeight}px`
 
   const mid = parseInt(points.length / 2)
+
   if (points && points.length > 0 && mid >= 0 && mid < points.length) {
     const options = {
       center: new kakao.maps.LatLng(points[mid].latitude, points[mid].longitude),
@@ -140,7 +141,12 @@ const initMap = () => {
 
     polyline.setMap(map)
   } else {
-    console.error('Invalid mid value:', mid, 'for points array:', points)
+    const options = {
+      center: new kakao.maps.LatLng(37.501289692413124, 127.03961880220784),
+      level: 5
+    }
+
+    map = new kakao.maps.Map(container, options)
   }
 }
 </script>
