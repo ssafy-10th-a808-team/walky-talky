@@ -1,4 +1,5 @@
 <template>
+  <WalkHeaderNav />
   <div>
     <h5>내가 산책했던 코스 보기</h5>
   </div>
@@ -24,11 +25,13 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
 import shareBoardRecord from '@/components/shareBoard/shareBoardRecord.vue'
 
 const shareBoardStore = useShareBoardStore()
+const router = useRouter()
 
 const records = ref([])
 onMounted(async () => {
