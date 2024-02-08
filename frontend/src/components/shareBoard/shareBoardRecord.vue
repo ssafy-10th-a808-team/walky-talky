@@ -147,6 +147,9 @@ const initMap = () => {
     }
 
     map = new kakao.maps.Map(container, options)
+
+    map.setDraggable(movable)
+    map.setZoomable(movable)
   }
 }
 </script>
