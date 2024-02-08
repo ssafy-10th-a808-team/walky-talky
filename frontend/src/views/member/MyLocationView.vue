@@ -6,7 +6,7 @@
   <div>
     현재 위치가 {{ address_name }} 맞나요?
     <div class="col-lg-3 cta-btn-container text-center">
-      <div class="text-center"><button type="submit" @click="goBack">확인</button></div>
+      <div class="text-center"><button type="submit" @click="getAddressInfo">확인</button></div>
     </div>
   </div>
   <div style="display: none">지역 코드 : {{ address_code }}</div>
@@ -25,6 +25,11 @@ let lon = 0
 const address_name = ref('')
 const address_code = ref('')
 
+const emit = defineEmits(['returnAddressName', 'returnAddressCode'])
+const getAddressInfo = () => {
+  emit('returnAddressName', address_name.value)
+  emit('returnAddressCode', address_code.value)
+}
 onMounted(() => {
   // if (window.kakao && window.kakao.maps) {
   //   initMap()

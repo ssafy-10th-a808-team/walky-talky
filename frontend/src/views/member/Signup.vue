@@ -14,10 +14,16 @@
                 <div>
                   <label for="club-address">내 동네 인증하기 *필수</label>
                 </div>
+                <div>
+                  <MyLocationView
+                    @returnAddressName="updateAddressName"
+                    @returnAddressCode="updateAddressCode"
+                  />
+                </div>
                 <!-- <ButtonWithIcon :selectedIcon="locationIcon" /> -->
-                <RouterLink :to="{ name: 'mylocation' }">
+                <!-- <RouterLink :to="{ name: 'mylocation' }">
                   <img src="@/assets/img/LocationIcon.png" style="width: 100px; height: auto" />
-                </RouterLink>
+                </RouterLink> -->
                 <div>
                   {{ region_name }}
                 </div>
@@ -171,6 +177,7 @@ import { useMemberStore } from '@/stores/member'
 import router from '../../router'
 // import VueCookies from 'vue-cookies'
 import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
+import MyLocationView from './MyLocationView.vue'
 
 const counterstore = useCounterStore()
 const memberStore = useMemberStore()
@@ -191,6 +198,13 @@ const isOauth = ref(false)
 
 region_name.value = memberStore.getLocationInfo()[0]
 region_cd.value = memberStore.getLocationInfo()[1]
+
+const updateAddressName = (name) => {
+  region_name.value = name
+}
+const updateAddressCode = (code) => {
+  region_cd.value = code
+}
 
 onMounted(async () => {
   const code = new URL(window.location.href).searchParams.get('code')

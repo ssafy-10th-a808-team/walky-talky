@@ -343,8 +343,9 @@ export const useMemberStore = defineStore(
       getNickname,
       getProfileImage,
       getIsOauth,
-      getImgUrl
+      getImgUrl,
+      resetStore
     }
-  },
-  { persist: true }
+  }
+  // { persist: true }
 )
