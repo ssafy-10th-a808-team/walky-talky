@@ -7,6 +7,7 @@
     현재 위치가 {{ address_name }} 맞나요?
     <div class="col-lg-3 cta-btn-container text-center">
       <div class="text-center"><button type="submit" @click="getAddressInfo">확인</button></div>
+      <button @click="reload">다시불러오기</button>
     </div>
   </div>
   <div style="display: none">지역 코드 : {{ address_code }}</div>
@@ -24,6 +25,25 @@ let lat = 0
 let lon = 0
 const address_name = ref('')
 const address_code = ref('')
+
+const reload = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      lat = position.coords.latitude // 위도
+      lon = position.coords.longitude // 경도
+
+      // geolocation 가능한 경우 내 위치
+      // 크롬 브라우저는 https 환경에서만 geolocation이 지원된다고 하네요 local도 되긴 했음
+      console.log('내 좌표를 가져왔습니다')
+    })
+  } else {
+    lat = 37.5014
+    lon = 127.0395
+    // geolocation 불가능하면 위치를 멀티캠퍼스로
+    console.log('멀티캠퍼스 좌표를 가져왔습니다')
+  }
+  initMap()
+}
 
 const emit = defineEmits(['returnAddressName', 'returnAddressCode'])
 const getAddressInfo = () => {
