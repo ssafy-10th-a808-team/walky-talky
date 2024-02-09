@@ -116,7 +116,7 @@ public class MemberServiceImpl implements MemberService {
 
         String loginType = requestLocalSignupDto.getLoginType();
         Member member = requestLocalSignupDto.toEntity();
-        if (loginType != null) {
+        if (!(loginType == null || loginType.isEmpty())) {
             member.setLoginType(loginType);
         }
 
