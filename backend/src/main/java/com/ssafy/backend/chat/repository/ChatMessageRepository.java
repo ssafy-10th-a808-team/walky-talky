@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
-    List<ChatMessage> findByClubSeqOrderByCreatedAt(Long clubSeq, Pageable pageable);
+    List<ChatMessage> findByClubSeqOrderByCreatedAtDesc(Long clubSeq, Pageable pageable);
 
     ChatMessage findByChatSeq(Long chatSeq);
 
