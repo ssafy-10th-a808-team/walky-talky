@@ -55,7 +55,8 @@ public class PlanServiceImpl implements PlanService {
 
         ClubMember findedClubMember = clubMemberRepository.findByMemberSeqAndClubSeq(myMemberSeq, requestPlanRegistDto.getClubSeq());
 
-        Plan plan = Plan.builder().seq(null).club(findedClub).record(findedRecord).clubMember(findedClubMember).title(requestPlanRegistDto.getTitle()).content(requestPlanRegistDto.getContent()).startTime(requestPlanRegistDto.getStartTime()).duration(requestPlanRegistDto.getDuration()).longitude(requestPlanRegistDto.getLongitude()).latitude(requestPlanRegistDto.getLatitude()).nowCapacity(1).maxCapacity(requestPlanRegistDto.getMaxCapacity()).build();
+        Plan plan = Plan.builder().seq(null).location(requestPlanRegistDto.getLocation())
+                .club(findedClub).record(findedRecord).clubMember(findedClubMember).title(requestPlanRegistDto.getTitle()).content(requestPlanRegistDto.getContent()).startTime(requestPlanRegistDto.getStartTime()).duration(requestPlanRegistDto.getDuration()).longitude(requestPlanRegistDto.getLongitude()).latitude(requestPlanRegistDto.getLatitude()).nowCapacity(1).maxCapacity(requestPlanRegistDto.getMaxCapacity()).build();
 
         planRepository.save(plan);
 
@@ -87,7 +88,7 @@ public class PlanServiceImpl implements PlanService {
 
         for (Plan findedPlan : findedPlans) {
 
-            ResponsePlanListDtoPlan responsePlanListDtoPlan = ResponsePlanListDtoPlan.builder().seq(findedPlan.getSeq()).clubSeq(findedPlan.getClub().getSeq())
+            ResponsePlanListDtoPlan responsePlanListDtoPlan = ResponsePlanListDtoPlan.builder().seq(findedPlan.getSeq()).clubSeq(findedPlan.getClub().getSeq()).location(findedPlan.getLocation())
 //                            .recordSeq(findedPlan.getRecord().getSeq())
                     .clubMemberSeq(findedPlan.getClubMember().getSeq()).title(findedPlan.getTitle()).content(findedPlan.getContent()).startTime(findedPlan.getStartTime()).duration(findedPlan.getDuration()).latitude(findedPlan.getLatitude()).longitude(findedPlan.getLongitude()).nowCapacity(findedPlan.getNowCapacity()).maxCapacity(findedPlan.getMaxCapacity()).build();
 
@@ -114,7 +115,7 @@ public class PlanServiceImpl implements PlanService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responsePlanDetailDto);
         }
 
-        ResponsePlanDetailDtoPlan responsePlanDetailDtoPlan = ResponsePlanDetailDtoPlan.builder().seq(findedPlan.getSeq()).clubSeq(findedPlan.getClub().getSeq())
+        ResponsePlanDetailDtoPlan responsePlanDetailDtoPlan = ResponsePlanDetailDtoPlan.builder().seq(findedPlan.getSeq()).clubSeq(findedPlan.getClub().getSeq()).location(findedPlan.getLocation())
 //                        .recordSeq(findedPlan.getRecord().getSeq())
                 .clubMemberSeq(findedPlan.getClubMember().getSeq()).title(findedPlan.getTitle()).content(findedPlan.getContent()).startTime(findedPlan.getStartTime()).duration(findedPlan.getDuration()).latitude(findedPlan.getLatitude()).longitude(findedPlan.getLongitude()).nowCapacity(findedPlan.getNowCapacity()).maxCapacity(findedPlan.getMaxCapacity()).build();
 
