@@ -12,7 +12,6 @@ import com.ssafy.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 //            messageList.addAll(redisMessageList);
 //        }
         Pageable pageable = PageRequest.of(offset, 10);
-        List<ChatMessage> dbMessageList = chatMessageRepository.findByClubSeqOrderByCreatedAt(clubSeq, pageable);
+        List<ChatMessage> dbMessageList = chatMessageRepository.findByClubSeqOrderByCreatedAtDesc(clubSeq, pageable);
         Member findMember = memberRepository.findById(memberSeq).orElse(null);
         for (ChatMessage chatMessage : dbMessageList) {
             if (chatMessage.getSender().equals(findMember.getNickname()) && MessageType.JOIN.equals(chatMessage.getType())) {
