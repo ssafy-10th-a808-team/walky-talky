@@ -6,16 +6,70 @@
       :sender="message.sender"
       :content="message.content"
       :createdAt="message.createdAt"
+      :isMine="message.sender === counterstore.getCookie('nickname')"
     />
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { useChatStore } from '@/stores/chat'
+import { useCounterStore } from '@/stores/counter'
 import Message from './Message.vue'
 
+const messageListElement = ref(null)
+const chatStore = useChatStore()
+const counterstore = useCounterStore()
+const offset = ref(0) // offset 상태 추가
+// 현재 스크롤 높이를 추적하기 위한 ref를 추가
+const oldScrollHeight = ref(0)
+
 const props = defineProps({
-  messages: Array
+  messages: Array,
+  clubSeq: Number
+})
+
+// 메시지 목록의 변경을 감지하여 필요한 UI 업데이트를 수행
+watch(
+  () => props.messages,
+  async (newMessages, oldMessages) => {
+    await nextTick()
+    // 이전 메시지 로딩 시 (상단에 새 메시지 추가)
+    if (newMessages.length > oldMessages.length && offset.value > 0) {
+      const newScrollHeight = messageListElement.value.scrollHeight
+      const scrollDiff = newScrollHeight - oldScrollHeight.value
+      messageListElement.value.scrollTop += scrollDiff
+    }
+    // 일반적인 메시지 추가 시 (하단에 새 메시지 추가, 예: 사용자가 메시지를 보낼 때)
+    else if (newMessages.length > oldMessages.length && offset.value === 0) {
+      messageListElement.value.scrollTop = messageListElement.value.scrollHeight
+    }
+
+    // 현재 스크롤 높이를 업데이트
+    oldScrollHeight.value = messageListElement.value.scrollHeight
+  },
+  { deep: true }
+)
+
+// 스크롤 이벤트 핸들러
+const handleScroll = async () => {
+  if (messageListElement.value.scrollTop === 0) {
+    // 메시지를 추가로 불러오기 전에 offset 업데이트
+    offset.value += 1
+    await chatStore.loadMessage(props.clubSeq, offset.value)
+  }
+}
+
+onMounted(() => {
+  messageListElement.value.addEventListener('scroll', handleScroll)
+  // 초기 메시지 불러오기
+  chatStore.loadMessage(props.clubSeq, offset.value)
+})
+
+onUnmounted(() => {
+  if (messageListElement.value) {
+    messageListElement.value.removeEventListener('scroll', handleScroll)
+  }
 })
 </script>
 
@@ -31,6 +85,6 @@ const props = defineProps({
   display: flex;
   flex-direction: column;
   overflow-y: auto; /* 스크롤 가능하게 만듭니다 */
-  height: 500px; /* 컨테이너의 높이를 정합니다, 실제 값으로 조정 필요 */
+  height: 500px; /* 컨테이너의 높이를 정합니다 */
 }
 </style>
