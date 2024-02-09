@@ -36,8 +36,104 @@ export const useWalkStore = defineStore('walk', () => {
       })
   } // 산책시작
 
+  ///// 내 산책 목록 불러오기/////
+  const myRecords = ref([])
+  const getMyRecord = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_WALK_API}/api/walk/list`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      myRecords.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 내 스크랩 목록 불러오기/////
+  const myScraps = ref([])
+  const getMyScrap = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_WALK_API}/api/scrap-record/list`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      myScraps.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 추천 목록 불러오기 - 동네/////
+  const myRecomTown = ref([])
+  const getMyRecomTown = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_WALK_API}/api/walk/recommend-town`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      myRecomTown.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 추천 목록 불러오기 - 사용자 정보/////
+  const myRecomInfo = ref([])
+  const getMyRecomInfo = async () => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_WALK_API}/api/walk/recommend-info`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      myRecomInfo.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 싫어요/////
+  const dislike = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: `${REST_WALK_API}/api/walk/dislike/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return {
     data,
-    startWalk
+    startWalk,
+    // 내 산책 불러오기
+    myRecords,
+    getMyRecord,
+    // 내 스크랩 불러오기
+    myScraps,
+    getMyScrap,
+    // 추천 목록 불러오기
+    myRecomTown,
+    getMyRecomTown,
+    myRecomInfo,
+    getMyRecomInfo,
+    // 추천 싫어요
+    dislike
   }
 })
