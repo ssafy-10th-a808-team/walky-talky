@@ -20,7 +20,9 @@ export const useChatStore = defineStore('chat', () => {
       }
     })
 
-    messages.value = response.data.data.list
+    if (response.data.data.list.length > 0) {
+      messages.value = [...response.data.data.list.reverse(), ...messages.value]
+    }
   }
 
   const getConnection = function (clubSeq) {
