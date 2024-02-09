@@ -24,7 +24,7 @@ public class OauthController {
 
         if (data.containsKey("isDeleted")) {
             resultMap.put("message", "탈퇴한 회원입니다.");
-            return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
         }
 
         // 로그인의 경우
