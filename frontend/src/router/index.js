@@ -26,6 +26,7 @@ import ClubSettingMember from '@/views/club/ClubSettingMemberView.vue'
 import ClubSettingApplicant from '@/views/club/ClubSettingApplicantView.vue'
 import ClubSettingClub from '@/views/club/ClubSettingClubView.vue'
 import ClubChatView from '@/views/club/ClubChatView.vue'
+import ClubPlanRegist from '@/views/club/ClubPlanRegist.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
@@ -149,18 +150,12 @@ const router = createRouter({
       component: ClubSettingClub,
       props: true
     },
-    // {
-    //   path: '/club/modify',
-    //   name: 'ClubModify',
-    //   component: ClubModify,
-    //   props: true
-    // },
-
-    // {
-    //   path: '/club/memory',
-    //   name: 'club-memory',
-    //   component: ClubMemory
-    // },
+    {
+      path: '/club/:seq/plan/regist',
+      name: 'club-plan-regist',
+      component: ClubPlanRegist,
+      props: true
+    },
 
     // shareboard router 산책공유게시판
     {
