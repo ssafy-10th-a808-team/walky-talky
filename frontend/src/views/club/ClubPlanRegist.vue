@@ -46,6 +46,10 @@ import { useClubStore } from '@/stores/club'
 
 const clubstore = useClubStore()
 const router = useRouter()
+
+const { seq } = defineProps({
+  seq: String
+})
 const eventDetails = ref({
   title: '',
   date: '',
@@ -55,13 +59,16 @@ const eventDetails = ref({
   note: ''
 })
 
-const submitEvent = () => {
+const submitEvent = async function () {
   // 여기에 이벤트 등록 로직을 추가하세요.
   // 예: clubstore.addEvent(eventDetails.value)
   console.log('Submitted:', eventDetails.value)
+
+  console.log('eventDetails.value.note ', eventDetails.value.note)
   // 폼 제출 후에는 다른 페이지로 이동하거나 알림을 표시할 수 있습니다.
   // 예: router.push('/some-path')
-  clubstore.postPlanRegist(eventDetails.value)
+  await clubstore.postPlanRegist(eventDetails.value)
+  router.push({ name: 'club-plan', params: { seq: seq } })
 }
 </script>
 
