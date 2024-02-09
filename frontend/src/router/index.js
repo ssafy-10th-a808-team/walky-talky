@@ -13,6 +13,8 @@ import ModifyInfo from '@/views/member/ModifyInfo.vue'
 import DoWalk from '@/views/walk/DoWalk.vue'
 import dowalk2 from '@/views/walk/dowalk2.vue' //임시
 import WalkList from '@/views/walk/WalkList.vue'
+import ScrapListView from '@/views/walk/ScrapListView.vue'
+import RecommendView from '@/views/walk/RecommendView.vue'
 
 // club router 소모임
 import ClubView from '@/views/club/ClubView.vue'
@@ -94,6 +96,16 @@ const router = createRouter({
       path: '/walk/list',
       name: 'WalkList',
       component: WalkList
+    },
+    {
+      path: '/walk/scrap-list',
+      name: 'ScrapList',
+      component: ScrapListView
+    },
+    {
+      path: '/walk/recommend-list',
+      name: 'RecommendList',
+      component: RecommendView
     },
 
     // club router 소모임
