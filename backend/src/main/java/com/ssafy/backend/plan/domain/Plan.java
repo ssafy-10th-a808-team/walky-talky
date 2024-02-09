@@ -53,4 +53,7 @@ public class Plan extends BaseEntity {
 
     @Column(name = "max_capacity")
     private Integer maxCapacity;
+
+    @Column(name ="location")
+    private String location;
 }

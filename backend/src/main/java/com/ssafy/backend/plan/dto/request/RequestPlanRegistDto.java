@@ -20,4 +20,5 @@ public class RequestPlanRegistDto {
     private String latitude;
     private String longitude;
     private Integer maxCapacity;
+    private String location;
 }
