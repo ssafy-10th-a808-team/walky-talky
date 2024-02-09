@@ -24,4 +24,5 @@ public class ResponsePlanDetailDtoPlan {
     private String longitude;
     private Integer nowCapacity;
     private Integer maxCapacity;
+    private String location;
 }
