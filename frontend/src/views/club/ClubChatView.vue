@@ -21,6 +21,7 @@ import ClubDetailHeaderNav from '@/components/common/ClubDetailHeaderNav.vue'
 import { onUnmounted, onMounted, ref } from 'vue'
 import { useClubStore } from '@/stores/club'
 import { useChatStore } from '@/stores/chat'
+import { useCounterStore } from '@/stores/counter'
 import MessageList from '@/components/chat/MessageList.vue'
 
 const clubstore = useClubStore()
@@ -28,6 +29,7 @@ const newMessage = ref('')
 const clubSeq = clubstore.clubSeq
 const chatStore = useChatStore()
 const client = ref(chatStore.client)
+const counterstore = useCounterStore()
 
 const props = defineProps({
   seq: Number
