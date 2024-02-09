@@ -54,6 +54,8 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useShareBoardStore } from '@/stores/shareBoard'
+import { useWalkStore } from '@/stores/walk'
+
 import { useCounterStore } from '@/stores/counter'
 import shareBoardRecord from '@/components/shareBoard/shareBoardRecord.vue'
 import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
@@ -61,13 +63,15 @@ import shareBoardMember from '@/components/shareBoard/shareBoardMember.vue'
 const router = useRouter()
 const shareBoardStore = useShareBoardStore()
 const counterStore = useCounterStore()
+const walkStore = useWalkStore()
 
 const records = ref([])
 const myNickname = ref('')
 const myProfileImage = ref('')
+
 onMounted(async () => {
-  await shareBoardStore.getMyRecord()
-  records.value = shareBoardStore.myRecords
+  await walkStore.getMyRecord()
+  records.value = walkStore.myRecords
 
   myNickname.value = counterStore.getCookie('nickname')
   myProfileImage.value = counterStore.getCookie('profileImage')
