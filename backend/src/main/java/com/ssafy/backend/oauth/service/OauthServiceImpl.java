@@ -53,6 +53,7 @@ public class OauthServiceImpl implements OauthService {
 
             if (findMember.getIsDeleted()) {
                 returnMap.put("isDeleted", true);
+                return returnMap;
             }
             // jwt
             Long seq = findMember.getSeq();
@@ -62,6 +63,9 @@ public class OauthServiceImpl implements OauthService {
             // redis에 jwt저장
             redisDao.saveToRedis("atk:" + seq, atk, Duration.ofMillis(atkExp));
             redisDao.saveToRedis("rtk:" + seq, rtk, Duration.ofMillis(rtkExp));
+
+            returnMap.put("nickname", findMember.getNickname());
+            returnMap.put("profileImage", findMember.getUrl());
 
             returnMap.put("atk", atk);
             returnMap.put("rtk", rtk);
