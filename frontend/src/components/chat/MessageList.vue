@@ -34,25 +34,14 @@ watch(
   () => props.messages,
   async (newMessages, oldMessages) => {
     await nextTick()
-    // 이전 메시지 로딩 시 (상단에 새 메시지 추가)
-    if (newMessages.length > oldMessages.length && offset.value > 0) {
+    // 새로운 메시지 발생
+    if (newMessages[newMessages.length - 1] !== oldMessages[oldMessages.length - 1]) {
+      messageListElement.value.scrollTop = messageListElement.value.scrollHeight
+    } else {
       const newScrollHeight = messageListElement.value.scrollHeight
       const scrollDiff = newScrollHeight - oldScrollHeight.value
       messageListElement.value.scrollTop += scrollDiff
     }
-    // 일반적인 메시지 추가 시 (하단에 새 메시지 추가, 예: 사용자가 메시지를 보낼 때)
-    else if (newMessages.length > oldMessages.length && offset.value === 0) {
-      messageListElement.value.scrollTop = messageListElement.value.scrollHeight
-      oldScrollHeight.value = messageListElement.value.scrollHeight
-    }
-
-    // 새로운 메시지를 받았고, 해당 메시지가 자신이 보낸 메시지가 아닌 경우에는 스크롤을 맨 아래로
-    const lastMessage = newMessages[newMessages.length - 1]
-    if (lastMessage && lastMessage.sender !== message.sender) {
-      messageListElement.value.scrollTop = messageListElement.value.scrollHeight
-      oldScrollHeight.value = messageListElement.value.scrollHeight
-    }
-
     // 현재 스크롤 높이를 업데이트
     oldScrollHeight.value = messageListElement.value.scrollHeight
   },
