@@ -116,7 +116,7 @@
                   <label class="col-form-label">생년월일 *필수</label>
                 </div>
                 <div class="col-auto">
-                  <input type="text" class="form-control" v-model="birth" @input="validateBirth" />
+                  <input type="date" class="form-control" v-model="birth" />
                 </div>
                 <div class="col-auto">
                   <span class="form-text"> ex: 19910101 </span>
@@ -244,6 +244,18 @@ const isPasswordMatch = ref(true)
 const passwordCheckValid = function () {
   isPasswordMatch.value = password.value === repassword.value
 }
+// input type="date" 로 받은 값의 형식 yyyy-mm-dd 를 yyyymmdd로 바꾸기
+const convertBirth = () => {
+  if (birth.value) {
+    const dateParts = birth.value.split('-')
+    const year = dateParts[0]
+    const month = dateParts[1]
+    const day = dateParts[2]
+    const formattedDate = `${year}${month}${day}`
+    birth.value = formattedDate
+    console.log(birth.value)
+  }
+}
 
 // 생년월일 유효성 검사
 const isBirthValid = ref(true)
@@ -283,16 +295,18 @@ const setGenderType = (value) => {
 // 회원가입
 const createMember = function (e) {
   e.preventDefault()
+  convertBirth()
 
   if (!isPasswordMatch.value) {
     // 비밀번호가 일치하지 않으면 여기에서 처리 (예: 알림 메시지 등)
     alert('비밀번호가 일치하지 않습니다.')
     return
-  } else if (!isBirthValid.value) {
-    // 생년월일이 올바르지 않으면 여기에서 처리 (예: 알림 메시지 등)
-    alert('생년월일을 올바르게 입력해주세요.')
-    return
   }
+  // else if (!isBirthValid.value) {
+  //   // 생년월일이 올바르지 않으면 여기에서 처리 (예: 알림 메시지 등)
+  //   alert('생년월일을 올바르게 입력해주세요.')
+  //   return
+  // }
   const payload = {
     profileImg: profileImg.value,
     memberId: memberId.value,
