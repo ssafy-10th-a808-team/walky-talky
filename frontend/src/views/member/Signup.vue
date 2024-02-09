@@ -85,7 +85,7 @@
 
               <!-- 이미지 -->
               <div class="form-group">
-                <label>이미지</label>
+                <label>프로필 사진</label>
                 <input type="file" name="name" class="form-control" @change="readInputFile" />
                 <div id="imageFrame" class="circular">
                   <img alt="" />
@@ -220,6 +220,7 @@ onMounted(async () => {
       loadImage()
     }
   }
+  updateAddressCode()
 })
 
 const isMember = async (code) => {
