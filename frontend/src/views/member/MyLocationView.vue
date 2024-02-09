@@ -1,12 +1,12 @@
 <template>
   <div>
     <h1>내 위치 확인하는 페이지</h1>
-    <div id="map" style="width: 500px; height: 400px"></div>
+    <div id="map" style="width: 500px; height: 400px" @load="getAddressInfo"></div>
   </div>
   <div>
-    현재 위치가 {{ address_name }} 맞나요?
+    내 동네: {{ address_name }}
     <div class="col-lg-3 cta-btn-container text-center">
-      <div class="text-center"><button type="submit" @click="getAddressInfo">확인</button></div>
+      <!-- <div class="text-center"><button type="submit" @click="getAddressInfo">확인</button></div> -->
       <button @click="reload">다시불러오기</button>
     </div>
   </div>
@@ -43,6 +43,7 @@ const reload = () => {
     console.log('멀티캠퍼스 좌표를 가져왔습니다')
   }
   initMap()
+  getAddressInfo()
 }
 
 const emit = defineEmits(['returnAddressName', 'returnAddressCode'])
@@ -114,6 +115,7 @@ const addrCallback = (result, status) => {
       address_code.value = result[0].code
       memberstore.address_name = address_name.value
       memberstore.address_code = address_code.value
+      getAddressInfo()
     }
   } else {
     console.error('Failed to get address info')
