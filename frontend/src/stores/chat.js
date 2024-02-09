@@ -35,7 +35,6 @@ export const useChatStore = defineStore('chat', () => {
         client.value.subscribe(
           `/sub/chat/${clubSeq}`,
           (message) => {
-            console.log(`Received: ${message.body}`)
             const receivedMessage = JSON.parse(message.body)
             // 메시지 수신 시 messages 상태 업데이트
             messages.value = [...messages.value, receivedMessage]
