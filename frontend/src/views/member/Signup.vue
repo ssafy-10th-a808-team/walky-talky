@@ -195,6 +195,7 @@ const region_cd = ref('')
 const region_name = ref('')
 const imgUrl = ref('')
 const isOauth = ref(false)
+const loginType = ref('')
 
 region_name.value = memberStore.getLocationInfo()[0]
 region_cd.value = memberStore.getLocationInfo()[1]
@@ -214,6 +215,7 @@ onMounted(async () => {
     nickname.value = memberStore.nickname
     isOauth.value = memberStore.isOauth
     imgUrl.value = memberStore.imgUrl
+    loginType.value = memberStore.loginType
     if (imgUrl.value != null) {
       loadImage()
     }
@@ -222,11 +224,6 @@ onMounted(async () => {
 
 const isMember = async (code) => {
   await memberStore.isMember(code)
-  memberId.value = memberStore.memberId
-  nickname.value = memberStore.nickname
-  isOauth.value = memberStore.isOauth
-  imgUrl.value = memberStore.imgUrl
-  loadImage()
 }
 
 // 아이디 중복 체크
@@ -304,7 +301,8 @@ const createMember = function (e) {
     nickname: nickname.value,
     introduce: introduce.value,
     region_cd: region_cd.value,
-    imgUrl: imgUrl.value
+    imgUrl: imgUrl.value,
+    loginType: loginType.value
   }
   // console.log(`아이디 : ${form.value.id}`)
   memberStore.createMember(payload)

@@ -19,6 +19,7 @@ export const useMemberStore = defineStore(
     const profileImage = ref('')
     const imgUrl = ref('')
     const isOauth = ref(false)
+    const loginType = ref('')
 
     //회원가입
     const createMember = function (payload) {
@@ -34,6 +35,7 @@ export const useMemberStore = defineStore(
       formData.append('introduce', payload.introduce)
       formData.append('regionCd', payload.region_cd)
       formData.append('imgUrl', payload.imgUrl)
+      formData.append('loginType', payload.loginType)
 
       axios({
         method: 'POST',
@@ -158,6 +160,7 @@ export const useMemberStore = defineStore(
           memberId.value = res.data.id
           nickname.value = res.data.nickname
           imgUrl.value = res.data.profileImage
+          loginType.value = 'kakao'
           isOauth.value = true
           router.push({ name: 'Signup' })
         } else if (res.status === 200) {
@@ -325,6 +328,7 @@ export const useMemberStore = defineStore(
       nickname,
       profileImage,
       imgUrl,
+      loginType,
       // loginMember,
       isLogin,
       // 로그아웃
