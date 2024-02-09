@@ -210,11 +210,10 @@ onMounted(async () => {
   const code = new URL(window.location.href).searchParams.get('code')
   if (code != null) {
     await isMember(code)
-    memberId.value = memberStore.getMemberId()
-    nickname.value = memberStore.getNickname()
-    profileImg.value = memberStore.getProfileImage()
-    isOauth.value = memberStore.getIsOauth()
-    imgUrl.value = memberStore.getImgUrl()
+    memberId.value = memberStore.memberId
+    nickname.value = memberStore.nickname
+    isOauth.value = memberStore.isOauth
+    imgUrl.value = memberStore.imgUrl
     if (imgUrl.value != null) {
       loadImage()
     }
@@ -223,11 +222,10 @@ onMounted(async () => {
 
 const isMember = async (code) => {
   await memberStore.isMember(code)
-  memberId.value = memberStore.getMemberId()
-  nickname.value = memberStore.getNickname()
-  profileImg.value = memberStore.getProfileImage()
-  isOauth.value = memberStore.getIsOauth()
-  imgUrl.value = memberStore.getImgUrl()
+  memberId.value = memberStore.memberId
+  nickname.value = memberStore.nickname
+  isOauth.value = memberStore.isOauth
+  imgUrl.value = memberStore.imgUrl
   loadImage()
 }
 
