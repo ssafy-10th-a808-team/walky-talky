@@ -12,12 +12,14 @@
         </RouterLink>
       </li>
       <li class="nav-item">
-        <RouterLink :to="{ name: 'RecordScrapList' }" style="text-decoration-line: none">
+        <RouterLink :to="{ name: 'ScrapList' }" style="text-decoration-line: none">
           <a class="nav-link" href="#">스크랩한 코스</a>
         </RouterLink>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">산책 경로추천</a>
+        <RouterLink :to="{ name: 'RecommendList' }" style="text-decoration-line: none">
+          <a class="nav-link" href="#">산책 경로추천</a>
+        </RouterLink>
       </li>
     </ul>
   </div>

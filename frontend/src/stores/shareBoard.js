@@ -1,17 +1,11 @@
-// import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { ref, toRef } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { ref } from 'vue'
 import axios from 'axios'
-import { useMemberStore } from './member'
 import { useCounterStore } from './counter'
 const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api'
 
 export const useShareBoardStore = defineStore('shareBoard', () => {
-  const router = useRouter()
   const counterstore = useCounterStore()
-  const memberstore = useMemberStore()
-  const token = memberstore.token
 
   // 기록 공유 게시판 목록 보기
   const shareContentList = ref([])
@@ -323,24 +317,6 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     }
   }
 
-  ///// 내 산책 목록 불러오기/////
-  const myRecords = ref([])
-  const getMyRecord = async (seq) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_CLUB_API}/walk/list`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
-      })
-      myRecords.value = res.data.data
-      console.log(myRecords.value)
-    } catch (err) {
-      console.log(err)
-    }
-  }
-
   ///// 글쓰기/////
   const write = async (recordSeq, title, content) => {
     try {
@@ -438,9 +414,6 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     commentWrite,
     commentEdit,
     commentDel,
-    // 내 기록
-    myRecords,
-    getMyRecord,
     // 글쓰기
     write,
     // 글 수정
