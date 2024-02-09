@@ -80,7 +80,7 @@ public class RequestLocalSignupDto {
 
     // DTO 전체의 Empty 체크
     public boolean isAnyFieldEmpty() {
-        return isEmpty(id) || (isNull(loginType) && isEmpty(password)) || isEmpty(birth) || isEmpty(gender) ||
+        return isEmpty(id) || (isEmpty(loginType) && isEmpty(password)) || isEmpty(birth) || isEmpty(gender) ||
                 isEmpty(nickname) || isEmpty(regionCd);
     }
 }
