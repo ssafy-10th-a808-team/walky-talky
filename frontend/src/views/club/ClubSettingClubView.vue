@@ -23,7 +23,7 @@ const { seq } = defineProps({
 
 async function deleteClub() {
   await clubstore.delete()
-  //   router.push({ name: 'club' })
+  router.push({ name: 'club', params: { seq: seq } })
 }
 </script>
 
