@@ -1,16 +1,14 @@
 <template>
   <WalkHeaderNav />
   <div>
-    <h5>내가 산책했던 코스 보기</h5>
+    <h5>내가 스크랩한 코스 보기</h5>
   </div>
-  <button class="share-button" @click="shareBoardWrite">내 산책 공유하기</button>
   <div class="record-list-container">
-    <div
-      v-for="record in records"
-      :key="record.recordSeq"
-      :class="{ 'record-list': true, selected: selectedRecord === record.recordSeq }"
-      @click="selectRecord(record.recordSeq)"
-    >
+    <div v-if="records.length === 0">
+      <p>스크랩 한 코스가 없습니다</p>
+    </div>
+
+    <div v-for="record in records" :key="record.recordSeq" :class="{ 'record-list': true }">
       <shareBoardRecord
         class="recommend-list-item"
         :duration="record.duration"
@@ -38,32 +36,13 @@ const router = useRouter()
 const records = ref([])
 
 onMounted(async () => {
-  await walkStore.getMyRecord()
+  await walkStore.getMyScrap()
 
-  records.value = walkStore.myRecords
-  console.log(walkStore.myRecords)
+  records.value = walkStore.myScraps
 })
-
-const selectedRecord = ref(null)
-
-const selectRecord = (seq) => {
-  if (selectedRecord.value === seq) {
-    selectedRecord.value = null
-  } else {
-    selectedRecord.value = seq
-  }
-}
-const shareBoardWrite = () => {
-  router.push({ name: 'share-board-write' })
-}
 </script>
 
 <style scoped>
-.share-button {
-  margin-left: auto;
-  display: flex;
-}
-
 .recommend-list-item {
   box-sizing: border-box; /* 요소의 padding과 border를 너비에 포함시킴 */
   margin: 20px; /* 각 요소 사이의 간격 설정 */
