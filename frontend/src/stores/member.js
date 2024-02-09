@@ -157,7 +157,6 @@ export const useMemberStore = defineStore(
         if (res.status === 201) {
           memberId.value = res.data.id
           nickname.value = res.data.nickname
-          profileImage.value = res.data.profileImage
           imgUrl.value = res.data.profileImage
           isOauth.value = true
           router.push({ name: 'Signup' })
@@ -320,6 +319,8 @@ export const useMemberStore = defineStore(
       login,
       kakaoLogin,
       isMember,
+      memberId,
+      isOauth,
       token,
       nickname,
       profileImage,
@@ -339,11 +340,6 @@ export const useMemberStore = defineStore(
       address_name,
       address_code,
       getLocationInfo,
-      getMemberId,
-      getNickname,
-      getProfileImage,
-      getIsOauth,
-      getImgUrl,
       resetStore
     }
   }
