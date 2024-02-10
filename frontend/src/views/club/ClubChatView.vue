@@ -37,13 +37,16 @@ const props = defineProps({
 
 const sendMessage = () => {
   if (newMessage.value.trim() !== '') {
-    chatStore.sendMessage({
-      clubSeq: clubSeq,
-      sender: counterstore.getCookie('nickname'),
-      content: newMessage.value,
-      timestamp: new Date().toISOString(),
-      type: 'TALK'
-    })
+    chatStore.sendMessage(
+      {
+        clubSeq: clubSeq,
+        sender: counterstore.getCookie('nickname'),
+        content: newMessage.value,
+        timestamp: new Date().toISOString(),
+        type: 'TALK'
+      },
+      clubSeq
+    )
     // 입력 필드를 비우기
     newMessage.value = ''
   }
