@@ -3,6 +3,7 @@ package com.ssafy.backend.chat.controller;
 import com.ssafy.backend.chat.domain.dto.ChatMessageDto;
 import com.ssafy.backend.chat.service.ChatMessageService;
 import com.ssafy.backend.chat.service.ChatService;
+import com.ssafy.backend.clubMember.repository.ClubMemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ public class ChatController {
 
     private final ChatService chatService;
     private final ChatMessageService chatMessageService;
+    private final ClubMemberRepository clubMemberRepository;
+    private static final List<String> ROLE = List.of("owner", "member");
 
     @PostMapping("/{clubSeq}")
     public void createChatRoom(@PathVariable Long clubSeq) {
@@ -34,6 +37,11 @@ public class ChatController {
         Long memberSeq = (Long) request.getAttribute("seq");
         if (memberSeq == null) {
             resultMap.put("message", msg);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+        }
+
+        if (!clubMemberRepository.existsByClubSeqAndMemberSeqAndRoleIn(clubSeq, memberSeq, ROLE)) {
+            resultMap.put("message", "소모임에 가입해주세요.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
         }
 
