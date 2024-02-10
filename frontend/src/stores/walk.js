@@ -119,6 +119,23 @@ export const useWalkStore = defineStore('walk', () => {
     }
   }
 
+  ///// 기록 상세보기/////
+  const recordDetail = ref([])
+  const getRecordDetail = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_WALK_API}/api/walk/view/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      recordDetail.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return {
     data,
     startWalk,
@@ -134,6 +151,9 @@ export const useWalkStore = defineStore('walk', () => {
     myRecomInfo,
     getMyRecomInfo,
     // 추천 싫어요
-    dislike
+    dislike,
+    // 상세 보기
+    recordDetail,
+    getRecordDetail
   }
 })

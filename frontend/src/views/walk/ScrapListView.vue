@@ -17,6 +17,7 @@
         :title="record.title"
         :seq="record.recordSeq"
         :movable="false"
+        @click="moveDetail(record.recordSeq)"
       />
     </div>
   </div>
@@ -40,6 +41,10 @@ onMounted(async () => {
 
   records.value = walkStore.myScraps
 })
+
+const moveDetail = (seq) => {
+  router.push({ name: 'WalkDetailView', params: { seq } })
+}
 </script>
 
 <style scoped>
