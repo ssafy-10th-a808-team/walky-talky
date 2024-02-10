@@ -115,11 +115,8 @@
 import ClubDetailHeaderNav from '@/components/common/ClubDetailHeaderNav.vue'
 import { onMounted, ref } from 'vue'
 import { useClubStore } from '@/stores/club'
-import MemberList from '@/components/member/MemberListView.vue'
-import { useRouter } from 'vue-router'
 
 const clubstore = useClubStore()
-const router = useRouter()
 
 const clubDetail = ref({})
 

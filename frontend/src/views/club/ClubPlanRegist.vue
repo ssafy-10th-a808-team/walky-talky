@@ -64,7 +64,6 @@ const submitEvent = async function () {
   // 예: clubstore.addEvent(eventDetails.value)
   console.log('Submitted:', eventDetails.value)
 
-  console.log('eventDetails.value.note ', eventDetails.value.note)
   // 폼 제출 후에는 다른 페이지로 이동하거나 알림을 표시할 수 있습니다.
   // 예: router.push('/some-path')
   await clubstore.postPlanRegist(eventDetails.value)
