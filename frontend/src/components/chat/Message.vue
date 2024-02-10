@@ -1,8 +1,8 @@
 <template>
-  <div class="message">
+  <div :class="['message', { mine: isMine }]">
     <div class="sender">{{ sender }}</div>
     <div class="content">{{ content }}</div>
-    <div class="createdAt">{{ createdAt }}</div>
+    <div class="createdAt">{{ formatDate(createdAt) }}</div>
   </div>
 </template>
 
@@ -10,8 +10,26 @@
 defineProps({
   sender: String,
   content: String,
-  createdAt: String
+  createdAt: String,
+  isMine: Boolean // 현재 메시지가 사용자 자신에 의해 보내졌는지 여부
 })
+
+function formatDate(dateString) {
+  const date = new Date(dateString)
+  const year = date.getFullYear()
+  const month = `0${date.getMonth() + 1}`.slice(-2) // 월은 0부터 시작하므로 1을 더해줍니다.
+  const day = `0${date.getDate()}`.slice(-2)
+  let hours = date.getHours()
+  const minutes = `0${date.getMinutes()}`.slice(-2)
+
+  // AM 또는 PM 설정
+  const ampm = hours >= 12 ? '오후' : '오전'
+
+  // 24시간 형식 적용
+  hours = `0${hours}`.slice(-2)
+
+  return `${year}-${month}-${day} ${hours}:${minutes} ${ampm}`
+}
 </script>
 
 <style scoped>
@@ -44,5 +62,17 @@ defineProps({
   align-self: flex-end; /* 시간을 메시지의 오른쪽 끝으로 정렬 */
   font-size: 12px; /* 시간 텍스트 크기 */
   margin-top: 8px; /* 메시지와 시간 사이의 여백 */
+  text-align: right;
+}
+
+.mine {
+  align-self: flex-end;
+  background-color: #5cb874; /* 예: 연두색 */
+}
+
+/* 다른 사람이 보낸 메시지의 스타일 */
+:not(.mine) {
+  align-self: flex-start;
+  background-color: #5cb874; /* 예: 연회색 */
 }
 </style>
