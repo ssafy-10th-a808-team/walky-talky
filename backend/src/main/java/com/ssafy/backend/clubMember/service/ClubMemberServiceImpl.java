@@ -1,5 +1,8 @@
 package com.ssafy.backend.clubMember.service;
 
+import com.ssafy.backend.chat.domain.dto.ChatMessageDto;
+import com.ssafy.backend.chat.domain.dto.MessageType;
+import com.ssafy.backend.chat.service.ChatMessageService;
 import com.ssafy.backend.club.domain.Club;
 import com.ssafy.backend.club.repository.ClubRepository;
 import com.ssafy.backend.clubMember.domain.ClubMember;
@@ -16,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +31,7 @@ public class ClubMemberServiceImpl implements ClubMemberService {
     private final ClubRepository clubRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final RegionService regionService;
+    private final ChatMessageService chatMessageService;
 
     @Override
     public ResponseClubMemberApplyDto clubMemberApply(RequestClubMemberApplyDto requestClubMemberApplyDto, HttpServletRequest httpServletRequest) {
@@ -99,6 +104,15 @@ public class ClubMemberServiceImpl implements ClubMemberService {
                     .role("member")
                     .build();
             clubMemberRepository.save(clubMember);
+
+            // 입장 메시지 전송
+            ChatMessageDto message = ChatMessageDto.builder()
+                    .clubSeq(clubSeq)
+                    .sender(clubMember.getMember().getNickname())
+                    .createdAt(LocalDateTime.now().toString())
+                    .type(MessageType.JOIN)
+                    .build();
+            chatMessageService.saveMessage(message);
 
             // 인원 수 늘리기
             findedClub.setNowCapacity(findedClub.getNowCapacity() + 1);
@@ -211,6 +225,15 @@ public class ClubMemberServiceImpl implements ClubMemberService {
         clubMember.setRole("member");
         clubMemberRepository.save(clubMember);
 
+        // 입장 메시지 전송
+        ChatMessageDto message = ChatMessageDto.builder()
+                .clubSeq(requestClubMemberApplyAcceptDto.getClubSeq())
+                .sender(clubMember.getMember().getNickname())
+                .createdAt(LocalDateTime.now().toString())
+                .type(MessageType.JOIN)
+                .build();
+        chatMessageService.saveMessage(message);
+
         // 인원 수 늘리기
         Club club = clubRepository.findById(applicantClubSeq).orElse(null);
         club.setNowCapacity(club.getNowCapacity() + 1);
@@ -315,7 +338,18 @@ public class ClubMemberServiceImpl implements ClubMemberService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseClubMemberWithdrawDto);
         }
 
+        String findNickname = clubMemberRepository.findByMemberSeqAndClubSeq(myMemberSeq, clubSeq).getMember().getNickname();
+
         clubMemberRepository.deleteByClubSeqAndMemberSeq(clubSeq, myMemberSeq);
+
+        // 퇴장 메시지 전송
+        ChatMessageDto message = ChatMessageDto.builder()
+                .clubSeq(requestClubMemberWithdrawDto.getClubSeq())
+                .sender(findNickname)
+                .createdAt(LocalDateTime.now().toString())
+                .type(MessageType.LEAVE)
+                .build();
+        chatMessageService.saveMessage(message);
 
         Club findedClub = clubRepository.findById(clubSeq).orElse(null);
         findedClub.setNowCapacity(findedClub.getNowCapacity() - 1);
