@@ -59,8 +59,6 @@ const handleScroll = async () => {
 
 onMounted(() => {
   messageListElement.value.addEventListener('scroll', handleScroll)
-  // 초기 메시지 불러오기
-  chatStore.loadMessage(props.clubSeq, offset.value)
 })
 
 onUnmounted(() => {
