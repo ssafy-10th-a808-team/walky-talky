@@ -30,12 +30,15 @@ const props = defineProps({
 })
 
 // 메시지 목록의 변경을 감지하여 필요한 UI 업데이트를 수행
-watch(
+const stopWatch = watch(
   () => props.messages,
   async (newMessages, oldMessages) => {
     await nextTick()
     // 새로운 메시지 발생
-    if (newMessages[newMessages.length - 1] !== oldMessages[oldMessages.length - 1]) {
+    if (
+      newMessages.length - oldMessages.length === 1 &&
+      newMessages[newMessages.length - 1] !== oldMessages[oldMessages.length - 1]
+    ) {
       messageListElement.value.scrollTop = messageListElement.value.scrollHeight
     } else {
       const newScrollHeight = messageListElement.value.scrollHeight
@@ -65,6 +68,7 @@ onUnmounted(() => {
   if (messageListElement.value) {
     messageListElement.value.removeEventListener('scroll', handleScroll)
   }
+  stopWatch()
 })
 </script>
 
