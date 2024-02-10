@@ -9,7 +9,9 @@ export const useClubStore = defineStore('club', {
     clubSeq: null, // 초기 상태값 설정
     clubDetail: {}, // 초기 상태값 설정
     clubApplicants: {},
-    planList: {}
+    planList: {},
+    planSeq: null,
+    planDetail: {}
   }),
   // 행동(액션) 정의
   actions: {
@@ -218,8 +220,10 @@ export const useClubStore = defineStore('club', {
     },
     async postPlanRegist(eventDetails) {
       const counterstore = useCounterStore()
+
       const startTime = `${eventDetails.date}T${eventDetails.time}:00Z`
-      console.log(startTime)
+      console.log('startTime = ' + startTime)
+
       try {
         const response = await axios({
           method: 'post',
@@ -244,6 +248,23 @@ export const useClubStore = defineStore('club', {
       } catch (error) {
         console.log(error)
         alert('일정 등록 실패')
+      }
+    },
+    async getPlanDetail() {
+      const counterstore = useCounterStore()
+      try {
+        const response = await axios({
+          method: 'get',
+          url: `https://i10a808.p.ssafy.io/api/plan/${this.planSeq}/detail`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        })
+        console.log(response)
+        this.planDetail = response.data
+      } catch (error) {
+        console.log(error)
+        alert('소모임 일정Detail 가져오기 실패')
       }
     }
   },
