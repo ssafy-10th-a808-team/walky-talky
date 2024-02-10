@@ -29,9 +29,11 @@ export const useChatStore = defineStore('chat', () => {
     client.value = new Client({
       brokerURL: STOMP,
       connectHeaders: {
-        atk: `Bearer ${counterstore.getCookie('atk')}`
+        atk: `Bearer ${counterstore.getCookie('atk')}`,
+        clubSeq
       },
       onConnect: () => {
+        loadMessage(clubSeq, 0)
         client.value.subscribe(
           `/sub/chat/${clubSeq}`,
           (message) => {
@@ -51,12 +53,13 @@ export const useChatStore = defineStore('chat', () => {
     client.value.activate()
   }
 
-  const sendMessage = function (message) {
+  const sendMessage = function (message, clubSeq) {
     client.value.publish({
       destination: '/pub/message',
       body: JSON.stringify(message),
       headers: {
-        atk: `Bearer ${counterstore.getCookie('atk')}`
+        atk: `Bearer ${counterstore.getCookie('atk')}`,
+        clubSeq
       }
     })
   }
