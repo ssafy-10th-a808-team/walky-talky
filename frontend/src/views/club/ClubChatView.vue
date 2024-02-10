@@ -28,7 +28,6 @@ const clubstore = useClubStore()
 const newMessage = ref('')
 const clubSeq = clubstore.clubSeq
 const chatStore = useChatStore()
-const client = ref(chatStore.client)
 const counterstore = useCounterStore()
 
 const props = defineProps({
@@ -53,13 +52,9 @@ const sendMessage = () => {
 }
 
 onMounted(async () => {
-  chatStore.getConnection(clubSeq)
-})
-
-onUnmounted(() => {
-  if (client.value && client.value.connected) {
-    client.value.deactivate()
-  }
+  chatStore.resetMessages() // 채팅 목록 초기화
+  await chatStore.getConnection(clubSeq)
+  await chatStore.loadMessage(clubSeq, 0)
 })
 </script>
 
