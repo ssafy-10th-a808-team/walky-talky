@@ -11,6 +11,11 @@ export const useChatStore = defineStore('chat', () => {
   const messages = ref([])
   const counterstore = useCounterStore()
 
+  // 채팅 목록 초기화 함수
+  function resetMessages() {
+    messages.value = []
+  }
+
   const loadMessage = async function (clubSeq, offset) {
     const response = await axios({
       method: 'get',
@@ -25,7 +30,10 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  const getConnection = function (clubSeq) {
+  const getConnection = async function (clubSeq) {
+    if (client.value && client.value.connected) {
+      client.value.deactivate() // 기존 STOMP 클라이언트 연결 해제
+    }
     client.value = new Client({
       brokerURL: STOMP,
       connectHeaders: {
@@ -33,7 +41,6 @@ export const useChatStore = defineStore('chat', () => {
         clubSeq
       },
       onConnect: () => {
-        loadMessage(clubSeq, 0)
         client.value.subscribe(
           `/sub/chat/${clubSeq}`,
           (message) => {
@@ -53,7 +60,7 @@ export const useChatStore = defineStore('chat', () => {
     client.value.activate()
   }
 
-  const sendMessage = function (message, clubSeq) {
+  const sendMessage = async function (message, clubSeq) {
     client.value.publish({
       destination: '/pub/message',
       body: JSON.stringify(message),
@@ -69,6 +76,7 @@ export const useChatStore = defineStore('chat', () => {
     messages, // 메시지 상태를 반환하여 다른 컴포넌트에서 접근 가능하게 함
     loadMessage,
     getConnection,
-    sendMessage
+    sendMessage,
+    resetMessages
   }
 })
