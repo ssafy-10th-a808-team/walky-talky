@@ -277,6 +277,8 @@ const closeEditModal = () => {
 const saveModal = async (modifiedStar, modifiedComment) => {
   await walkStore.modifyRecord(route.params.seq, modifiedStar, modifiedComment)
   await loadDetail(route.params.seq)
+
+  alert('수정 성공!')
   closeEditModal()
 }
 
