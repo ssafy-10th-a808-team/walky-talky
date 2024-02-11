@@ -119,6 +119,74 @@ export const useWalkStore = defineStore('walk', () => {
     }
   }
 
+  ///// 기록 상세보기/////
+  const recordDetail = ref([])
+  const getRecordDetail = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_WALK_API}/api/walk/view/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      recordDetail.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 스크랩한 기록 상세보기/////
+  const scrapDetail = ref([])
+  const getScrapDetail = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_WALK_API}/api/scrap-record/view/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      scrapDetail.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 기록 삭제/////
+  const deleteRecord = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: `${REST_WALK_API}/api/walk/delete/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 기록 별점, 한줄평 수정/////
+  const modifyRecord = async (seq, starRating, comment) => {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: `${REST_WALK_API}/api/walk/modify/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        },
+        data: {
+          starRating: starRating,
+          comment: comment
+        }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return {
     data,
     startWalk,
@@ -134,6 +202,16 @@ export const useWalkStore = defineStore('walk', () => {
     myRecomInfo,
     getMyRecomInfo,
     // 추천 싫어요
-    dislike
+    dislike,
+    // 상세 보기
+    recordDetail,
+    getRecordDetail,
+    // 스크랩 상세 보기
+    scrapDetail,
+    getScrapDetail,
+    // 기록 삭제
+    deleteRecord,
+    // 기록 수정
+    modifyRecord
   }
 })

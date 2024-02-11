@@ -18,10 +18,9 @@
             </div> -->
             <!-- 이미지 업로드 -->
             <div class="form-group">
-              <label for="image-upload">이미지</label>
+              <label for="image-upload">프로필 사진</label>
               <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
               <div class="d-flex justify-content-center align-items-center">
-
                 <div id="imageFrame" class="circular">
                   <img :src="profileImage" />
                 </div>
@@ -29,46 +28,114 @@
             </div>
 
             <div>
-              <div v-if="modals.nickname" class="modal">
-                <div class="modal-content">
-                  <h2>닉네임 수정</h2>
-
-                  <form @submit.prevent="submitForm">
-                    <input type="text" v-model="nickname" />
-                  </form>
-                  <button @click="closeModal('nickname')">확인</button>
-                </div>
-              </div>
               <div>
                 <h4>닉네임</h4>
-                <p>{{ nickname }}</p>
-                <button @click="openModal('nickname')">수정</button>
+                <div class="d-flex justify-content-center align-items-center">
+                  <p v-if="!modals.nickname">
+                    {{ nickname }}
+                    <button @click="openModal('nickname')">수정</button>
+                  </p>
+                  <div v-if="modals.nickname">
+                    <div>
+                      <form @submit.prevent="submitForm">
+                        <input type="text" v-model="nickname" />
+                      </form>
+                      <button @click="closeModal('nickname')">확인</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
             <h4>내 동네</h4>
             <div class="address">
-              <p v-if="address">
-                {{ address }}
-              </p>
-              <RouterLink :to="{ name: 'mylocation' }">
-                <button>수정</button>
-              </RouterLink>
+              <div class="justify-content-center d-flex">
+                <p v-if="!modals.address">
+                  {{ address }}
+                  <button @click="openModal('address')">수정</button>
+                </p>
+              </div>
+
+              <div v-if="modals.address">
+                <MyLocationView
+                  @returnAddressName="updateAddressName"
+                  @returnAddressCode="updateAddressCode"
+                />
+                <button @click="closeModal('address')">확인</button>
+              </div>
             </div>
 
             <div>
-              <div v-if="modals.introduce" class="modal">
-                <div class="modal-content">
-                  <h2>소개글 수정</h2>
-                  <form @submit.prevent="submitForm">
-                    <input type="textarea" v-model="introduce" />
-                  </form>
-                  <button @click="closeModal('introduce')">확인</button>
+              <h4>소개</h4>
+              <div class="justify-content-center">
+                <p v-if="!modals.introduce">
+                  {{ introduce }}
+                </p>
+                <button @click="openModal('introduce')">수정</button>
+                <div v-if="modals.introduce">
+                  <div>
+                    <form @submit.prevent="submitForm">
+                      <input type="textarea" v-model="introduce" />
+                    </form>
+                    <button @click="closeModal('introduce')">확인</button>
+                  </div>
                 </div>
               </div>
-              <h4>소개</h4>
-              <p>{{ introduce }}</p>
-              <button @click="openModal('introduce')">수정</button>
+              <div>
+                <div class="d-flex justify-content-center align-items-center">
+                  <p v-if="!modals.password">
+                    <button @click="openModal('password')">비밀번호 수정</button>
+                  </p>
+                  <div v-if="modals.password">
+                    <div>
+                      <form @submit.prevent="submitForm">
+                        <!-- 현재 비밀번호 -->
+                        <div class="form-group">
+                          <label for="inputPassword" class="col-sm-10 col-form-label"
+                            >현재 비밀번호</label
+                          >
+                          <input
+                            type="password"
+                            class="form-control"
+                            id="inputPassword"
+                            maxlength="16"
+                            v-model="password"
+                            required
+                          />
+                        </div>
+                        <!-- 변경할 비밀번호 확인 -->
+                        <div class="form-group">
+                          <label for="inputNewPassword" class="col-sm-10 col-form-label"
+                            >변경할 비밀번호</label
+                          >
+                          <input
+                            type="password"
+                            class="form-control"
+                            id="inputPassword"
+                            maxlength="16"
+                            v-model="newPassword"
+                            required
+                          />
+                        </div>
+                        <div class="form-group">
+                          <label for="inputCheckNewPassword" class="col-sm-10 col-form-label"
+                            >비밀번호 확인</label
+                          >
+                          <input
+                            type="password"
+                            class="form-control"
+                            id="inputPassword"
+                            maxlength="16"
+                            v-model="checkNewPassword"
+                            required
+                          />
+                        </div>
+                      </form>
+                      <button @click="changePassword()">비밀번호 변경</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div>
               <button @click="modifyInfo">완료</button>
@@ -97,6 +164,9 @@ const address = ref('')
 const nickname = ref('')
 const introduce = ref('')
 const regionCd = ref('')
+const password = ref('')
+const newPassword = ref('')
+const checkNewPassword = ref('')
 
 const readInputFile = (e) => {
   document.getElementById('imageFrame').innerHTML = ''
@@ -137,19 +207,20 @@ const updateProfileImage = (image) => {
 }
 
 onMounted(async () => {
+  await memberstore.getMypage()
   mypage.value = memberstore.mypage
-  profileImage.value = memberstore.profileImage
-  nickname.value = memberstore.nickname
-  introduce.value = memberstore.introduce
-  regionCd.value = memberstore.address_code
-  address.value = memberstore.address_name
+  profileImage.value = mypage.value.profileImage
+  nickname.value = mypage.value.nickname
+  introduce.value = mypage.value.introduce
+  address.value = mypage.value.address
 })
 
 // modal창 띄우기 위한 스위치들
 const modals = ref({
   nickname: false,
-  introduce: false
-  // address: false
+  introduce: false,
+  address: false,
+  password: false
 })
 const openModal = (modalName) => {
   modals.value[modalName] = true
@@ -159,7 +230,23 @@ const closeModal = (modalName) => {
   memberstore.nickname = nickname.value
   memberstore.introduce = introduce.value
 }
+const updateAddressName = (name) => {
+  address.value = name
+}
+const updateAddressCode = (code) => {
+  regionCd.value = code
+}
+// 비밀번호 변경
 
+const changePassword = () => {
+  modals.value[password] = false
+  const payload = {
+    password: password.value,
+    newPassword: newPassword.value,
+    checkNewPassword: checkNewPassword.value
+  }
+  memberstore.modifyPassword(payload)
+}
 // 수정
 const modifyInfo = function (event) {
   event.preventDefault()
