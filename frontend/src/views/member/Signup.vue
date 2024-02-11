@@ -99,7 +99,7 @@
                   <label class="col-form-label" prop="nickname">닉네임 *필수</label>
                 </div>
                 <div class="col-auto">
-                  <input v-model="nickname" type="text" class="form-control" />
+                  <input v-model="nickname" type="text" maxlength="16" class="form-control" />
                 </div>
               </div>
               <!-- 닉네임 중복확인 버튼 -->

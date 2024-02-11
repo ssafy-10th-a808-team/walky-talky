@@ -279,6 +279,50 @@ export const useMemberStore = defineStore(
           alert('정보 변경 실패')
         })
     }
+    // 비밀번호 수정
+    const modifyPassword = (payload) => {
+      axios({
+        method: 'post',
+        url: `${REST_MEMBER_API}/api/member/modify-password`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        },
+        data: {
+          password: payload.password,
+          newPassword: payload.newPassword,
+          checkNewPassword: payload.checkNewPassword
+        }
+      })
+        .then((res) => {
+          console.log(res)
+          alert('비밀번호 변경 성공')
+        })
+        .catch((err) => {
+          console.log(err)
+          alert(err.value)
+        })
+    }
+
+    // 회원 탈퇴
+    const deleteMember = (password) => {
+      axios({
+        method: 'post',
+        url: `${REST_MEMBER_API}/api/member/delete`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        },
+        data: {
+          password: password
+        }
+      }).then((res) => {
+        console.log(res)
+        alert('회원 탈퇴 성공...')
+        counterstore.deleteCookie('atk')
+        counterstore.deleteCookie('profileImage')
+        counterstore.deleteCookie('nickname')
+        router.push({ name: 'home' })
+      })
+    }
     // const selectedMember = ref(null)
     // const clickMember = function (member) {
     //   selectedMember.value = member
@@ -339,6 +383,8 @@ export const useMemberStore = defineStore(
       mypage,
       getMypage,
       modifyInfo,
+      modifyPassword,
+      deleteMember,
       // selectedMember,
       // clickMember,
       // updateMember,
@@ -348,6 +394,6 @@ export const useMemberStore = defineStore(
       getLocationInfo,
       resetStore
     }
-  }
-  // { persist: true }
+  },
+  { persist: true }
 )
