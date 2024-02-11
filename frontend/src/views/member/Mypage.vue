@@ -43,6 +43,21 @@
                 <button>수정하기</button>
               </RouterLink>
             </div>
+            <a @click="openModal" style="color: red" href="">회원탈퇴</a>
+            <div v-if="deleteMemberModal">
+              <label for="deleteMember"> 탈퇴하려면 비밀번호 입력 </label>
+              <input
+                type="password"
+                class="form-control"
+                id="inputPassword"
+                maxlength="16"
+                v-model="password"
+                required
+              />
+              <form action=""></form>
+
+              <button type="submit" @click="deleteMember">탈퇴</button>
+            </div>
           </div>
         </div>
       </div>
@@ -59,6 +74,16 @@ const mypage = ref(null)
 const year = ref('')
 const month = ref('')
 const day = ref('')
+const deleteMemberModal = ref(false)
+const password = ref('')
+const openModal = (e) => {
+  e.preventDefault()
+  deleteMemberModal.value = true
+}
+
+const deleteMember = () => {
+  memberstore.deleteMember(password.value)
+}
 onMounted(async () => {
   await memberstore.getMypage()
   mypage.value = memberstore.mypage
