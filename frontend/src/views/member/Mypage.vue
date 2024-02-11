@@ -86,13 +86,14 @@ const deleteMember = () => {
 }
 onMounted(async () => {
   await memberstore.getMypage()
+  mypage.value = memberstore.mypage
+  year.value = mypage.value.birth.substring(0, 4)
+  month.value = mypage.value.birth.substring(4, 6) - 1 // 월은 0부터 시작하므로 1을 빼줍니다.
+  day.value = mypage.value.birth.substring(6, 8)
 })
 const showGender = computed(() => {
   return mypage.value.gender === 'F' ? '여성' : '남성'
 })
-// const year = mypage.value.birth.value.substring(0, 4)
-// const month = mypage.value.birth.value.substring(4, 6) - 1 // 월은 0부터 시작하므로 1을 빼줍니다.
-// const day = mypage.value.birth.value.substring(6, 8)
 </script>
 
 <style scoped></style>
