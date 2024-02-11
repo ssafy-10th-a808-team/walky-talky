@@ -74,7 +74,7 @@ public class ScrapRecordController {
     }
 
     @GetMapping("/view/{recordSeq}")
-    public ResponseEntity<?> view(HttpServletRequest request, @PathVariable Long recordSeq) {
+    public ResponseEntity<?> view(HttpServletRequest request, @PathVariable(name="recordSeq") Long recordSeq) {
         Map<String, Object> resultMap = new HashMap<>();
 
         Long memberSeq = (Long) request.getAttribute("seq");
