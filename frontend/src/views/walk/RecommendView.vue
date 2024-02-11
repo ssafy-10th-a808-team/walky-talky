@@ -3,18 +3,19 @@
   <div class="record-list-container">
     <div>
       <h4>같은 동네 사람들은 이 경로로 산책했어요!</h4>
-      <div v-for="town in recordsTown" :key="town.recordSeq" :class="{ 'record-list': true }">
-        <div v-if="!town.notRecommended" class="recommend-list-item">
+      <div v-for="record in recordsTown" :key="record.recordSeq" :class="{ 'record-list': true }">
+        <div v-if="!record.notRecommended" class="recommend-list-item">
           <shareBoardRecord
-            :duration="town.duration"
-            :distance="town.distance"
-            :points="town.points"
-            :title="town.title"
-            :seq="town.recordSeq"
+            :duration="record.duration"
+            :distance="record.distance"
+            :points="record.points"
+            :title="record.title"
+            :seq="record.recordSeq"
             :movable="false"
+            @click="moveDetail(record.recordSeq)"
           />
           <div class="action-buttons">
-            <p @click="notRecommend(info.recordSeq)">더 이상 이 코스 추천받지 않기</p>
+            <p @click="notRecommend(record.recordSeq)">더 이상 이 코스 추천받지 않기</p>
           </div>
         </div>
       </div>
@@ -22,18 +23,19 @@
 
     <div>
       <h4>나와 비슷한 사람들은 이 경로로 산책했어요!</h4>
-      <div v-for="info in recordsInfo" :key="info.recordSeq" :class="{ 'record-list': true }">
-        <div v-if="!info.notRecommended" class="recommend-list-item">
+      <div v-for="record in recordsInfo" :key="record.recordSeq" :class="{ 'record-list': true }">
+        <div v-if="!record.notRecommended" class="recommend-list-item">
           <shareBoardRecord
-            :duration="info.duration"
-            :distance="info.distance"
-            :points="info.points"
-            :title="info.title"
-            :seq="info.recordSeq"
+            :duration="record.duration"
+            :distance="record.distance"
+            :points="record.points"
+            :title="record.title"
+            :seq="record.recordSeq"
             :movable="false"
+            @click="moveDetail(record.recordSeq)"
           />
           <div class="action-buttons">
-            <p @click="notRecommend(info.recordSeq)">더 이상 이 코스 추천받지 않기</p>
+            <p @click="notRecommend(record.recordSeq)">더 이상 이 코스 추천받지 않기</p>
           </div>
         </div>
       </div>
@@ -67,6 +69,10 @@ const notRecommend = async (seq) => {
 
   recordsTown.value.find((item) => item.recordSeq === seq).notRecommended = true
   recordsInfo.value.find((item) => item.recordSeq === seq).notRecommended = true
+}
+
+const moveDetail = (seq) => {
+  router.push({ name: 'WalkDetailView', params: { seq } })
 }
 </script>
 
