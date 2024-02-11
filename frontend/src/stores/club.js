@@ -1,101 +1,17 @@
-// import { defineStore } from 'pinia'
-// import axios from 'axios'
-// import { useCounterStore } from './counter'
-
-// export const useClubStore = defineStore('club', () => {
-//   const counterstore = useCounterStore()
-
-//   const clubSeq = ref()
-//   const clubDetail = ref({})
-
-//   async function findClub(seq) {
-//     try {
-//       const response = await axios({
-//         method: 'get',
-//         url: `https://i10a808.p.ssafy.io/api/club/detail?clubSeq=${seq}`,
-//         headers: {
-//           Authorization: `Bearer ${counterstore.getCookie('atk')}`
-//         }
-//       })
-//       console.log(response)
-//       return response.data // 응답 데이터로 상태 업데이트
-//     } catch (err) {
-//       console.error(err)
-//       alert('소모임 정보를 가져오는데 실패했습니다.')
-//     }
-//   }
-
-//   async function apply(seq) {
-//     console.log('seq = ' + seq)
-//     try {
-//       const response = await axios({
-//         method: 'post',
-//         url: `https://i10a808.p.ssafy.io/api/club-member/apply`,
-//         headers: {
-//           Authorization: `Bearer ${counterstore.getCookie('atk')}`
-//         },
-//         data: {
-//           clubSeq: seq
-//         }
-//       })
-//       console.log(response)
-//       window.location.reload()
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
-
-//   async function applyCancel(seq) {
-//     console.log('seq = ' + seq)
-//     try {
-//       const response = await axios({
-//         method: 'post',
-//         url: `https://i10a808.p.ssafy.io/api/club-member/apply-cancel`,
-//         headers: {
-//           Authorization: `Bearer ${counterstore.getCookie('atk')}`
-//         },
-//         data: {
-//           clubSeq: seq
-//         }
-//       })
-//       console.log(response)
-//       window.location.reload()
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
-
-//   async function withdraw(seq) {
-//     console.log('seq = ' + seq)
-//     try {
-//       const response = await axios({
-//         method: 'post',
-//         url: `https://i10a808.p.ssafy.io/api/club-member/withdraw`,
-//         headers: {
-//           Authorization: `Bearer ${counterstore.getCookie('atk')}`
-//         },
-//         data: {
-//           clubSeq: seq
-//         }
-//       })
-//       console.log(response)
-//       window.location.reload()
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
-// })
-
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useCounterStore } from './counter'
+import { useRouter } from 'vue-router'
 
 export const useClubStore = defineStore('club', {
   // 상태 정의
   state: () => ({
     clubSeq: null, // 초기 상태값 설정
     clubDetail: {}, // 초기 상태값 설정
-    clubApplicants: {}
+    clubApplicants: {},
+    planList: {},
+    planSeq: null,
+    planDetail: {}
   }),
   // 행동(액션) 정의
   actions: {
@@ -131,9 +47,11 @@ export const useClubStore = defineStore('club', {
           }
         })
         console.log(response)
+        alert('가입 신청 되었습니다.')
         window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
       } catch (error) {
         console.log(error)
+        alert('소모임 조건이 맞지 않습니다.')
       }
     },
     async applyCancel(seq) {
@@ -150,8 +68,10 @@ export const useClubStore = defineStore('club', {
           }
         })
         console.log(response)
+        alert('가입 신청 취소하였습니다.')
         window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
       } catch (error) {
+        alert('가입 신청 취소 실패했습니다.')
         console.log(error)
       }
     },
@@ -169,9 +89,11 @@ export const useClubStore = defineStore('club', {
           }
         })
         console.log(response)
+        alert('탈퇴하였습니다.')
         window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
       } catch (error) {
         console.log(error)
+        alert('탈퇴 실패하였습니다.')
       }
     },
     async applyList() {
@@ -188,6 +110,7 @@ export const useClubStore = defineStore('club', {
         this.clubApplicants = response.data
       } catch (error) {
         console.log(error)
+        alert('가입 신청 리스트 조회 실패하였습니다.')
       }
     },
     async exclude(clubmember) {
@@ -205,8 +128,10 @@ export const useClubStore = defineStore('club', {
           }
         })
         console.log(response)
+        alert('추방하였습니다.')
         window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
       } catch (error) {
+        alert('추방 실패하였습니다.')
         console.log(error)
       }
     },
@@ -225,8 +150,10 @@ export const useClubStore = defineStore('club', {
           }
         })
         console.log(response)
+        alert('가입 승인하였습니다.')
         window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
       } catch (error) {
+        alert('가입 승인 실패하였습니다.')
         console.log(error)
       }
     },
@@ -245,14 +172,16 @@ export const useClubStore = defineStore('club', {
           }
         })
         console.log(response)
+        alert('가입 거절하였습니다.')
         window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
       } catch (error) {
         console.log(error)
+        alert('가입 거절 실패하였습니다.')
       }
     },
     async delete() {
       const counterstore = useCounterStore()
-
+      const router = useRouter()
       try {
         const response = await axios({
           method: 'post',
@@ -264,9 +193,78 @@ export const useClubStore = defineStore('club', {
             clubSeq: this.clubSeq
           }
         })
+        alert('소모임 삭제하였습니다.')
+        router.push({ name: 'club' })
         console.log(response)
       } catch (error) {
         console.log(error)
+        alert('혼자일때만 삭제 가능합니다.')
+      }
+    },
+    async getPlanList() {
+      const counterstore = useCounterStore()
+      try {
+        const response = await axios({
+          method: 'get',
+          url: `https://i10a808.p.ssafy.io/api/plan/${this.clubSeq}/list`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        })
+        console.log(response)
+        this.planList = response.data
+      } catch (error) {
+        console.log(error)
+        alert('소모임 일정List 가져오기 실패')
+      }
+    },
+    async postPlanRegist(eventDetails) {
+      const counterstore = useCounterStore()
+
+      const startTime = `${eventDetails.date}T${eventDetails.time}:00Z`
+      console.log('startTime = ' + startTime)
+
+      try {
+        const response = await axios({
+          method: 'post',
+          url: `https://i10a808.p.ssafy.io/api/plan/regist`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          },
+          data: {
+            clubSeq: this.clubSeq,
+            recordSeq: null,
+            title: eventDetails.title,
+            content: eventDetails.note,
+            startTime: startTime,
+            duration: null,
+            latitude: null,
+            longitude: null,
+            maxCapacity: eventDetails.participants,
+            location: eventDetails.location
+          }
+        })
+        console.log(response)
+      } catch (error) {
+        console.log(error)
+        alert('일정 등록 실패')
+      }
+    },
+    async getPlanDetail() {
+      const counterstore = useCounterStore()
+      try {
+        const response = await axios({
+          method: 'get',
+          url: `https://i10a808.p.ssafy.io/api/plan/${this.planSeq}/detail`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
+        })
+        console.log(response)
+        this.planDetail = response.data
+      } catch (error) {
+        console.log(error)
+        alert('소모임 일정Detail 가져오기 실패')
       }
     }
   },

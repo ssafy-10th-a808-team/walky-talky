@@ -2,39 +2,60 @@
   <div class="section-title">
     <h2>내 소모임들</h2>
     <div class="scroll-container">
-      <ClubList v-for="(club, index) in clubs.myClubs" :key="club.seq" :index="index" :club="club" :templateType=1
-        @click="godetail(club.seq)" class="club-item" />
+      <ClubList
+        v-for="(club, index) in clubs.myClubs"
+        :key="club.seq"
+        :index="index"
+        :club="club"
+        :templateType="1"
+        @click="godetail(club.seq)"
+        class="club-item"
+      />
     </div>
   </div>
   <div class="section-title">
     <h2>소모임 추천</h2>
     <div class="scroll-container">
-      <ClubList v-for="(club, index) in clubs.recommendClubs" :key="club.seq" :index="index" :club="club" :templateType=2
-        @click="godetail(club.seq)" class="club-item" />
+      <ClubList
+        v-for="(club, index) in clubs.recommendClubs"
+        :key="club.seq"
+        :index="index"
+        :club="club"
+        :templateType="2"
+        @click="godetail(club.seq)"
+        class="club-item"
+      />
     </div>
   </div>
   <div class="section-title">
     <h2>다른 소모임들</h2>
     <div class="scroll-container">
-      <ClubList v-for="(club, index) in clubs.otherClubs" :key="club.seq" :index="index" :club="club" :templateType=3
-        @click="godetail(club.seq)" class="club-item" />
+      <ClubList
+        v-for="(club, index) in clubs.otherClubs"
+        :key="club.seq"
+        :index="index"
+        :club="club"
+        :templateType="3"
+        @click="godetail(club.seq)"
+        class="club-item"
+      />
     </div>
   </div>
 
   <!-- 소모임 만들기 버튼 -->
   <div class="fixed-button-container">
     <RouterLink :to="{ name: 'club-create' }">
-      <button> + 소모임 생성 </button>
+      <button>+ 소모임 생성</button>
     </RouterLink>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useClubStore } from "@/stores/club";
-import ClubList from "@/components/club/ClubList.vue"
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { useClubStore } from '@/stores/club'
+import ClubList from '@/components/club/ClubList.vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 import { useCounterStore } from '@/stores/counter'
 
 const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api/club'
@@ -54,22 +75,22 @@ const getClubs = () => {
       Authorization: `Bearer ${counterstore.getCookie('atk')}`
     }
   })
-    .then(res => {
-      clubs.value = res.data; // 응답 데이터를 clubs에 할당
-      console.log(res);
+    .then((res) => {
+      clubs.value = res.data // 응답 데이터를 clubs에 할당
+      console.log(res)
     })
-    .catch(err => {
-      console.error(err);
-      alert('소모임 정보를 가져오는데 실패했습니다.');
-    });
+    .catch((err) => {
+      console.error(err)
+      alert('소모임들 정보를 가져오는데 실패했습니다.')
+    })
 }
 
 onMounted(() => {
-  getClubs(); // 컴포넌트가 마운트될 때 소모임 데이터를 가져옵니다.
+  getClubs() // 컴포넌트가 마운트될 때 소모임 데이터를 가져옵니다.
 })
 
 const godetail = (seq) => {
-  clubstore.clubSeq = seq;
+  clubstore.clubSeq = seq
   router.push({ name: 'club-detail', params: { seq: seq } })
 }
 </script>
@@ -90,7 +111,9 @@ const godetail = (seq) => {
   /* 제목 배경 색상을 추가합니다 */
   border-radius: 10px;
   /* 배경의 모서리를 둥글게 합니다 */
-  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 4px 6px rgba(50, 50, 93, 0.11),
+    0 1px 3px rgba(0, 0, 0, 0.08);
   /* 그림자를 추가합니다 */
 }
 
@@ -122,12 +145,13 @@ const godetail = (seq) => {
   /* 오른쪽에서 20px 떨어진 위치 */
   z-index: 1000;
   /* 다른 요소들 위에 표시되도록 z-index 설정 */
-  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 4px 6px rgba(50, 50, 93, 0.11),
+    0 1px 3px rgba(0, 0, 0, 0.08);
   /* 버튼에 그림자를 추가합니다 */
 }
 
 .fixed-button-container button {
-
   /* 반응형 디자인을 위해 패딩을 vw 단위로 설정할 수 있습니다 */
   padding: 1.25vw;
   /* 뷰포트 너비의 1% */
@@ -160,7 +184,9 @@ const godetail = (seq) => {
   background-color: #34c759;
   transform: translateY(-3px);
   /* 버튼이 약간 위로 올라가도록 합니다 */
-  box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 7px 14px rgba(50, 50, 93, 0.1),
+    0 3px 6px rgba(0, 0, 0, 0.08);
   /* 그림자를 강조합니다 */
 }
 
