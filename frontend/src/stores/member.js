@@ -255,9 +255,8 @@ export const useMemberStore = defineStore(
     const modifyInfo = (payload) => {
       const formData = new FormData()
       if (payload.profileImage) {
-        formData.append('multipartFile', payload.profileImage)
+        formData.append('profileImage', payload.profileImage)
       }
-      formData.append('id', payload.memberId)
       formData.append('nickname', payload.nickname)
       formData.append('introduce', payload.introduce)
       formData.append('regionCd', payload.regionCd)
@@ -317,6 +316,8 @@ export const useMemberStore = defineStore(
       }).then((res) => {
         console.log(res)
         alert('회원 탈퇴 성공...')
+        // 로컬 쿠키 스토리지 초기화
+        localStorage.clear()
         counterstore.deleteCookie('atk')
         counterstore.deleteCookie('profileImage')
         counterstore.deleteCookie('nickname')
