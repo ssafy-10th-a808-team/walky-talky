@@ -4,19 +4,21 @@ import com.ssafy.backend.shareBoard.domain.ShareBoard;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardMemberMapping;
 import com.ssafy.backend.shareBoard.dto.mapping.ShareBoardScrapMapping;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ShareBoardRepository extends JpaRepository<ShareBoard, Long> {
-    List<ShareBoard> findAllByIsDeletedFalseOrderBySeqAsc();
+    Page<ShareBoard> findAllByIsDeletedFalse(Pageable pageable);
 
-    List<ShareBoardMemberMapping> findSeqAndMemberSeqByIsDeletedFalseOrderBySeqAsc();
+    Page<ShareBoardMemberMapping> findSeqAndMemberSeqByIsDeletedFalse(Pageable pageable);
 
-    List<ShareBoardScrapMapping> findSeqAndRecordSeqByIsDeletedFalseOrderBySeqAsc();
+    Page<ShareBoardScrapMapping> findSeqAndRecordSeqByIsDeletedFalse(Pageable pageable);
 
     ShareBoard findBySeqAndIsDeletedFalse(Long seq);
 
@@ -25,6 +27,8 @@ public interface ShareBoardRepository extends JpaRepository<ShareBoard, Long> {
     ShareBoardMemberMapping findMemberSeqBySeqAndIsDeletedFalse(Long seq);
 
     boolean existsBySeqAndIsDeletedFalse(Long seq);
+
+    int countAllByIsDeletedFalse();
 
     @Modifying
     @Transactional
