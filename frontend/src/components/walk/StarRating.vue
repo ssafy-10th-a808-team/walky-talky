@@ -1,13 +1,30 @@
 <template>
   <div class="star-container">
-    <span v-for="i in 5" :key="i" :class="{ selected: i <= starRating }">&#9733;</span>
+    <div v-if="editable">
+      <span v-for="i in 5" :key="i" @click="selectStar(i)" :class="{ selected: i <= selectedStar }"
+        >&#9733;</span
+      >
+    </div>
+    <div v-else>
+      <span v-for="i in 5" :key="i" :class="{ selected: i <= starRating }">&#9733;</span>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { ref, defineProps, defineEmits } from 'vue'
 
-const { starRating } = defineProps(['starRating'])
+const { starRating, editable } = defineProps(['starRating', 'editable'])
+const emits = defineEmits()
+
+const selectedStar = ref(starRating)
+
+const selectStar = (rating) => {
+  if (editable) {
+    selectedStar.value = rating
+    emits('modifyStarRating', rating)
+  }
+}
 </script>
 
 <style scoped>

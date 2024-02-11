@@ -153,6 +153,40 @@ export const useWalkStore = defineStore('walk', () => {
     }
   }
 
+  ///// 기록 삭제/////
+  const deleteRecord = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: `${REST_WALK_API}/api/walk/delete/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  ///// 기록 별점, 한줄평 수정/////
+  const modifyRecord = async (seq, starRating, comment) => {
+    try {
+      const res = await axios({
+        method: 'post',
+        url: `${REST_WALK_API}/api/walk/modify/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        },
+        data: {
+          starRating: starRating,
+          comment: comment
+        }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return {
     data,
     startWalk,
@@ -174,6 +208,10 @@ export const useWalkStore = defineStore('walk', () => {
     getRecordDetail,
     // 스크랩 상세 보기
     scrapDetail,
-    getScrapDetail
+    getScrapDetail,
+    // 기록 삭제
+    deleteRecord,
+    // 기록 수정
+    modifyRecord
   }
 })
