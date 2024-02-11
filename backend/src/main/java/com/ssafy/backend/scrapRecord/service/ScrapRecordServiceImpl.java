@@ -104,7 +104,7 @@ public class ScrapRecordServiceImpl implements ScrapRecordService {
             throw new WTException("삭제된 기록입니다.");
         }
 
-        if (scrapRepository.existsByRecordSeqAndMemberSeq(recordSeq, memberSeq)) {
+        if (!scrapRepository.existsByRecordSeqAndMemberSeq(recordSeq, memberSeq)) {
             throw new WTException("자신이 스크랩한 기록만 볼 수 있습니다.");
         }
 
