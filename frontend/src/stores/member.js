@@ -232,32 +232,32 @@ export const useMemberStore = defineStore(
 
     // 내 정보
     const mypage = ref([])
-    const getMypage = async () => {
-      try {
-        const res = await axios({
-          method: 'get',
-          url: `${REST_MEMBER_API}/api/member/mypage`,
-          headers: {
-            Authorization: `Bearer ${counterstore.getCookie('atk')}`
-          }
+    const getMypage = () => {
+      axios({
+        method: 'get',
+        url: `${REST_MEMBER_API}/api/member/mypage`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+        .then((res) => {
+          console.log(res.data)
+          // mypage.value = res.data.data
+          // nickname.value = res.data.data.nickname
+          // profileImage.value = res.data.data.profileImage
+          // address_code.value = res.data.data.regionCd
+          // address_name.value = res.data.data.address
         })
-        console.log(res)
-        mypage.value = res.data.data
-        nickname.value = res.data.data.nickname
-        profileImage.value = res.data.data.profileImage
-        address_code.value = res.data.data.regionCd
-        address_name.value = res.data.data.address
-      } catch (err) {
-        console.log(err)
-      }
+        .catch((err) => {
+          console.log(err)
+        })
     }
 
     const modifyInfo = (payload) => {
       const formData = new FormData()
       if (payload.profileImage) {
-        formData.append('multipartFile', payload.profileImage)
+        formData.append('profileImage', payload.profileImage)
       }
-      formData.append('id', payload.memberId)
       formData.append('nickname', payload.nickname)
       formData.append('introduce', payload.introduce)
       formData.append('regionCd', payload.regionCd)
@@ -278,6 +278,52 @@ export const useMemberStore = defineStore(
           console.log(err)
           alert('정보 변경 실패')
         })
+    }
+    // 비밀번호 수정
+    const modifyPassword = (payload) => {
+      axios({
+        method: 'post',
+        url: `${REST_MEMBER_API}/api/member/modify-password`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        },
+        data: {
+          password: payload.password,
+          newPassword: payload.newPassword,
+          checkNewPassword: payload.checkNewPassword
+        }
+      })
+        .then((res) => {
+          console.log(res)
+          alert('비밀번호 변경 성공')
+        })
+        .catch((err) => {
+          console.log(err)
+          alert(err.value)
+        })
+    }
+
+    // 회원 탈퇴
+    const deleteMember = (password) => {
+      axios({
+        method: 'post',
+        url: `${REST_MEMBER_API}/api/member/delete`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        },
+        data: {
+          password: password
+        }
+      }).then((res) => {
+        console.log(res)
+        alert('회원 탈퇴 성공...')
+        // 로컬 쿠키 스토리지 초기화
+        localStorage.clear()
+        counterstore.deleteCookie('atk')
+        counterstore.deleteCookie('profileImage')
+        counterstore.deleteCookie('nickname')
+        router.push({ name: 'home' })
+      })
     }
     // const selectedMember = ref(null)
     // const clickMember = function (member) {
@@ -339,6 +385,8 @@ export const useMemberStore = defineStore(
       mypage,
       getMypage,
       modifyInfo,
+      modifyPassword,
+      deleteMember,
       // selectedMember,
       // clickMember,
       // updateMember,
@@ -348,6 +396,6 @@ export const useMemberStore = defineStore(
       getLocationInfo,
       resetStore
     }
-  }
-  // { persist: true }
+  },
+  { persist: true }
 )
