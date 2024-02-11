@@ -302,6 +302,27 @@ export const useMemberStore = defineStore(
           alert(err.value)
         })
     }
+
+    // 회원 탈퇴
+    const deleteMember = (password) => {
+      axios({
+        method: 'post',
+        url: `${REST_MEMBER_API}/api/member/delete`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        },
+        data: {
+          password: password
+        }
+      }).then((res) => {
+        console.log(res)
+        alert('회원 탈퇴 성공...')
+        counterstore.deleteCookie('atk')
+        counterstore.deleteCookie('profileImage')
+        counterstore.deleteCookie('nickname')
+        router.push({ name: 'home' })
+      })
+    }
     // const selectedMember = ref(null)
     // const clickMember = function (member) {
     //   selectedMember.value = member
@@ -363,6 +384,7 @@ export const useMemberStore = defineStore(
       getMypage,
       modifyInfo,
       modifyPassword,
+      deleteMember,
       // selectedMember,
       // clickMember,
       // updateMember,
