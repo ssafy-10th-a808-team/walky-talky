@@ -1,35 +1,57 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
+// import { axios } from '@/stores/jwtFilter'
+
 import { useCounterStore } from './counter'
-const REST_CLUB_API = 'https://i10a808.p.ssafy.io/api'
+import { useMemberStore } from './member'
+const REST_SHARE_BOARD_API = 'https://i10a808.p.ssafy.io/api'
 
 export const useShareBoardStore = defineStore('shareBoard', () => {
   const counterstore = useCounterStore()
 
   // 기록 공유 게시판 목록 보기
-  const shareContentList = ref([])
-  const getContentList = async () => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_CLUB_API}/share-board/list/content`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const totalCnt = ref(0)
+  const getTotalCnt = async () => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/list/total-count`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        totalCnt.value = res.data.data
       })
-      shareContentList.value = res.data.data
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  const shareContentList = ref([])
+  const getContentList = async (page) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/list/content?page=${page}`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareContentList.value = res.data.data
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   const shareRecordList = ref([])
-  const getRecordList = async () => {
+  const getRecordList = async (page) => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/list/record`,
+        url: `${REST_SHARE_BOARD_API}/share-board/list/record?page=${page}`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -41,11 +63,11 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   }
 
   const shareLikeList = ref([])
-  const getLikeList = async () => {
+  const getLikeList = async (page) => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/list/like`,
+        url: `${REST_SHARE_BOARD_API}/share-board/list/like?page=${page}`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -57,11 +79,11 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   }
 
   const shareScrapList = ref([])
-  const getScrapList = async () => {
+  const getScrapList = async (page) => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/list/scrap`,
+        url: `${REST_SHARE_BOARD_API}/share-board/list/scrap?page=${page}`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -78,7 +100,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/view/${seq}/content`,
+        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/content`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -94,7 +116,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/view/${seq}/record`,
+        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/record`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -110,7 +132,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/view/${seq}/like`,
+        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/like`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -126,7 +148,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/view/${seq}/scrap`,
+        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/scrap`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -142,7 +164,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
     try {
       const res = await axios({
         method: 'get',
-        url: `${REST_CLUB_API}/share-board/view/${seq}/comment`,
+        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/comment`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -156,9 +178,9 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   ///// 게시글 좋아요, 취소/////
   const like = (shareBoardSeq) => {
     try {
-      const res = axios({
+      axios({
         method: 'post',
-        url: `${REST_CLUB_API}/share-board/${shareBoardSeq}/like`,
+        url: `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/like`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -180,9 +202,9 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
 
   const dislike = (shareBoardSeq) => {
     try {
-      const res = axios({
+      axios({
         method: 'post',
-        url: `${REST_CLUB_API}/share-board/${shareBoardSeq}/like-cancel`,
+        url: `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/like-cancel`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -205,9 +227,9 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   ///// 기록 스크랩, 취소/////
   const scrap = (recordSeq) => {
     try {
-      const res = axios({
+      axios({
         method: 'post',
-        url: `${REST_CLUB_API}/scrap-record/${recordSeq}/scrap`,
+        url: `${REST_SHARE_BOARD_API}/scrap-record/${recordSeq}/scrap`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -229,9 +251,9 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
 
   const unscrap = (recordSeq) => {
     try {
-      const res = axios({
+      axios({
         method: 'post',
-        url: `${REST_CLUB_API}/scrap-record/${recordSeq}/cancel`,
+        url: `${REST_SHARE_BOARD_API}/scrap-record/${recordSeq}/cancel`,
         headers: {
           Authorization: `Bearer ${counterstore.getCookie('atk')}`
         }
@@ -254,8 +276,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   ///// 댓글 작성/////
   const commentWrite = async (shareBoardSeq, content) => {
     try {
-      const response = await axios.post(
-        `${REST_CLUB_API}/share-board/${shareBoardSeq}/comment/write`,
+      await axios.post(
+        `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/comment/write`,
         { content },
         {
           headers: {
@@ -276,8 +298,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   ///// 댓글 수정/////
   const commentEdit = async (shareBoardSeq, commentSeq, content) => {
     try {
-      const response = await axios.post(
-        `${REST_CLUB_API}/share-board/${shareBoardSeq}/comment/${commentSeq}/modify`,
+      await axios.post(
+        `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/comment/${commentSeq}/modify`,
         { content },
         {
           headers: {
@@ -298,8 +320,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   ///// 댓글 삭제/////
   const commentDel = async (shareBoardSeq, commentSeq) => {
     try {
-      const response = await axios.post(
-        `${REST_CLUB_API}/share-board/${shareBoardSeq}/comment/${commentSeq}/delete`,
+      await axios.post(
+        `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/comment/${commentSeq}/delete`,
         {},
         {
           headers: {
@@ -320,8 +342,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   ///// 글쓰기/////
   const write = async (recordSeq, title, content) => {
     try {
-      const response = await axios.post(
-        `${REST_CLUB_API}/share-board/write`,
+      await axios.post(
+        `${REST_SHARE_BOARD_API}/share-board/write`,
         { recordSeq, title, content },
         {
           headers: {
@@ -342,8 +364,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   ///// 글 수정/////
   const modify = async (seq, title, content) => {
     try {
-      const response = await axios.post(
-        `${REST_CLUB_API}/share-board/modify/${seq}`,
+      await axios.post(
+        `${REST_SHARE_BOARD_API}/share-board/modify/${seq}`,
         { title, content },
         {
           headers: {
@@ -364,8 +386,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
   ///// 글 삭제/////
   const deleteShareBoard = async (seq) => {
     try {
-      const response = await axios.post(
-        `${REST_CLUB_API}/share-board/delete/${seq}`,
+      await axios.post(
+        `${REST_SHARE_BOARD_API}/share-board/delete/${seq}`,
         {},
         {
           headers: {
@@ -385,6 +407,8 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
 
   return {
     // 목록 조회
+    totalCnt,
+    getTotalCnt,
     getContentList,
     shareContentList,
     getRecordList,
