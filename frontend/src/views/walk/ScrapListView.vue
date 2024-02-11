@@ -43,7 +43,7 @@ onMounted(async () => {
 })
 
 const moveDetail = (seq) => {
-  router.push({ name: 'WalkDetailView', params: { seq } })
+  router.push({ name: 'ScrapDetailView', params: { seq } })
 }
 </script>
 
