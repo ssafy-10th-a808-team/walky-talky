@@ -9,34 +9,83 @@
     <!-- 지도를 표시할 영역 -->
     <div class="map_wrap" style="position: relative">
       <div id="map" style="width: 100%; height: 600px">
-        <!-- 정보 및 버튼 표시 영역 -->
-        <div
-          style="
-            text-align: center;
-            position: absolute;
-            z-index: 2;
-            top: 73%;
-            left: 50%;
-            background-color: rgb(205, 238, 225);
-            display: flex;
-            width: 200px;
-            margin-left: -100px;
-            border-radius: 5%;
-          "
-        >
-          <!-- 거리와 시간 정보 -->
-          <div class="myRecord">
-            <div id="run_desc time">시간</div>
-            <span id="time" style="font-weight: 700; width: 100px; float: left">{{ clock }}</span>
+        <div>
+          <!-- 정보 및 버튼 표시 영역 -->
+          <div
+            v-if="!showWalkSummary"
+            style="
+              text-align: center;
+              position: absolute;
+              z-index: 2;
+              top: 73%;
+              left: 50%;
+              background-color: rgb(205, 238, 225);
+              display: flex;
+              width: 200px;
+              margin-left: -100px;
+              border-radius: 5%;
+            "
+          >
+            <!-- 거리와 시간 정보 -->
+            <div class="myRecord">
+              <div id="run_desc time">시간</div>
+              <span id="time" style="font-weight: 700; width: 100px; float: left">{{ clock }}</span>
+            </div>
+            <div class="myRecord">
+              <div id="run_desc distance">거리</div>
+              <span id="acc_dis" style="font-weight: 700; width: 100px; float: right">
+                {{ accumulated_distance.toFixed(2) }}km
+              </span>
+            </div>
           </div>
-          <div class="myRecord">
-            <div id="run_desc distance">거리</div>
-            <span id="acc_dis" style="font-weight: 700; width: 100px; float: right">
-              {{ accumulated_distance.toFixed(2) }}km
-            </span>
+          <!-- 산책 종료 시 화면 -->
+          <div v-if="showWalkSummary" class="formToPost">
+            <div
+              style="
+                text-align: center;
+                position: absolute;
+                z-index: 2;
+                top: 60%;
+                left: 50%;
+                background-color: rgb(205, 238, 225);
+                display: flex;
+                width: 300px;
+                margin-left: -150px;
+                border-radius: 5%;
+              "
+            >
+              <!-- 산책 정보 표시 -->
+              <div>
+                <div class="myRecord" style="font-weight: 700; width: 150px; float: left">
+                  <div id="run_desc time">시간</div>
+                  <span id="time">{{ clock }}</span>
+                </div>
+                <div class="myRecord" style="font-weight: 700; width: 150px; float: right">
+                  <div id="run_desc distance">거리</div>
+                  <span id="acc_dis"> {{ accumulated_distance.toFixed(2) }}km </span>
+                </div>
+              </div>
+
+              <!-- 산책 입력 폼 -->
+              <div style="font-weight: 700; width: 300px" class="form-grid">
+                <!-- <h2>산책 평가</h2> -->
+                <form @submit.prevent="submitWalkReview">
+                  <label for="title">제목:</label>
+                  <input type="text" v-model="walkReview.title" required />
+
+                  <label for="starRating">별점:</label>
+                  <input type="number" v-model="walkReview.starRating" min="1" max="5" required />
+
+                  <label for="comment">한줄평:</label>
+                  <textarea v-model="walkReview.comment" required></textarea>
+                </form>
+
+                <button type="submit" @click="submitWalkReview">작성</button>
+                <button @click="goHome">취소</button>
+              </div>
+            </div>
           </div>
         </div>
-
         <!-- 산책 버튼 및 일시정지, 정지 버튼 표시 영역 -->
         <div
           class="btn_container"
@@ -64,11 +113,11 @@
               "
             >
               <!-- 산책 시작 버튼 -->
-              <div v-if="!isPause">
+              <div v-if="!isPause && !showWalkSummary">
                 <button @click="startWalk">START</button>
               </div>
               <!-- 일시정지일 때 표시되는 버튼 -->
-              <div v-if="isPause">
+              <div v-if="isPause && !showWalkSummary">
                 <button @click="watchLocationUpdates">START</button>
                 <button @click="endLocationUpdates">STOP</button>
               </div>
@@ -94,6 +143,7 @@
             </section>
           </div>
         </div>
+        <!-- 뒤 : 지도 -->
       </div>
     </div>
   </div>
@@ -171,6 +221,14 @@ const state = ref({
   positionArr: []
 })
 
+const walkReview = ref({
+  title: '',
+  starRating: 1,
+  comment: ''
+})
+
+const showWalkSummary = ref(false)
+
 // 컴포넌트가 마운트되었을 때 실행되는 로직
 onMounted(() => {
   const script = document.createElement('script')
@@ -214,16 +272,18 @@ onMounted(() => {
 const initMap = () => {
   if (state.value.map) return
 
+  //마커 생성 및 초기 위치 설정
   const marker = new kakao.maps.Marker({
     position: new kakao.maps.LatLng(lat, lon)
   })
-
+  //지도를 표시할 컨테이너 요소 가져오기
   const container = document.getElementById('map')
+  //지도 옵션 설정정
   const options = {
     center: new kakao.maps.LatLng(lat, lon),
-    level: 4
+    level: 2
   }
-
+  // 좌표 배열 초기화
   state.value.positionArr = []
 
   state.value.map = new kakao.maps.Map(container, options)
@@ -237,6 +297,7 @@ const initMap = () => {
 // 주소 변환 콜백 함수
 const addrCallback = (result, status) => {
   if (status === kakao.maps.services.Status.OK) {
+    console.log('주소를 가져왔습니다')
     if (result[0].region_type === 'B') {
       address_name.value = result[0].address_name
       address_code.value = result[0].code
@@ -267,6 +328,10 @@ const resetLocations = function () {
   previous.value.lon = 0
 }
 
+const goHome = function () {
+  router.push('/')
+}
+
 // 위치 정보 감시 함수
 const watchLocationUpdates = function () {
   let intervalId // intervalId 변수를 함수 외부에 선언
@@ -275,17 +340,19 @@ const watchLocationUpdates = function () {
 
   // 초기설정 : 타이머와 관련된 여러 변수 및 객체 초기화
   if (timeBegan.value === null) {
-    // resetLocations()
+    resetLocations()
     timeBegan.value = new Date()
   }
 
   if (timeStopped.value !== null) {
+    //stoppedDuration -> 일시정지를 지속한 시간
     stoppedDuration.value += new Date() - timeStopped.value
   }
 
   started.value = setInterval(clockRunning, 1000)
   running.value = true
   isPause.value = false
+
   // 지도에 마커 추카(현재위치)
   const marker = new kakao.maps.Marker({
     position: new kakao.maps.LatLng(lat, lon)
@@ -337,7 +404,7 @@ const watchLocationUpdates = function () {
         setLinePathArr(position)
 
         tempRecords.value.push({ lat: current.value.lat, lon: current.value.lon, time: new Date() })
-        makeLine(linePath.value)
+        makeLine()
 
         intervalId = setInterval(() => {
           recordsForPost.value.push({
@@ -361,7 +428,7 @@ const watchLocationUpdates = function () {
           checkOneKm.value += distance
 
           linePath.value.push(new kakao.maps.LatLng(current.value.lat, current.value.lon))
-          makeLine(linePath.value)
+          makeLine()
         }
       }
       //위치 감시 오류 처리
@@ -392,9 +459,8 @@ const startWalk = function () {
   startTime.value = moment(startTime.value).format('YYYY-MM-DDTHH:mm:ss')
   region_cd.value = address_code.value
   console.log(startTime)
-
-  walkStore.startWalk()
   watchLocationUpdates()
+  walkStore.startWalk()
 }
 
 // 시간 포맷팅 함수
@@ -440,9 +506,9 @@ const savePosition = async function () {
       duration: accumulated_time.value,
       distance: accumulated_distance.value,
       points: recordsForPost.value.map((record) => [record.lat, record.lon, record.time]),
-      starRating: 1,
-      comment: '한줄평',
-      title: '제목',
+      starRating: walkReview.value.starRating,
+      comment: walkReview.value.comment,
+      title: walkReview.value.title,
       regionCd: region_cd.value
     }
 
@@ -454,17 +520,31 @@ const savePosition = async function () {
   }
 }
 
+const submitWalkReview = () => {
+  // 여기에서 API를 호출하여 평가 정보를 서버에 전송할 수 있습니다.
+  console.log('Submit Walk Review:', walkReview.value)
+
+  savePosition()
+  // 추가적인 로직이 필요한 경우 여기에 작성하세요.
+
+  // 산책 평가 제출 후 화면 갱신 등의 작업을 수행할 수 있습니다.
+  // 예: showWalkSummary 값을 다시 false로 설정하여 다른 화면을 보여줄 수 있습니다.
+  router.push('/walk/list')
+  showWalkSummary.value = false
+}
+
 // 산책 종료 함수
 const endLocationUpdates = function () {
   pauseLocationUpdates()
-  alert('산책 기록이 저장되었습니다 📬')
+  alert('산책이 완료되었습니다 📬')
 
   recordsForPost.value.push({
     lat: current.value.lat,
     lon: current.value.lon,
     time: new Date()
   })
-  savePosition()
+  showWalkSummary.value = true
+  // savePosition()
   isPause.value = false
   running.value = false
   stoppedDuration.value = 0
@@ -475,7 +555,6 @@ const endLocationUpdates = function () {
   checkOneKm.value = 0
   endTime.value = new Date()
   endTime.value = moment(endTime).format('YYYY-MM-DDTHH:mm:ss')
-  router.push('/walk/list')
 }
 
 // 일시정지 함수
@@ -486,7 +565,7 @@ const pauseLocationUpdates = function () {
   clearInterval(started.value)
 
   navigator.geolocation.clearWatch(watchPositionId.value)
-  // makeLine()
+  makeLine()
 }
 
 // 거리 비교 및 계산 함수
@@ -525,12 +604,12 @@ const makeLine = () => {
       strokeStyle: 'solid'
     })
 
-    if (poly.value) {
-      poly.value.setMap(null)
-    }
+    // if (poly.value) {
+    //   poly.value.setMap(null)
+    // }
 
     polyline.setMap(state.value.map)
-    poly.value = polyline
+    // poly.value = polyline
 
     // // 이전에 지도에 그려진 선이 있다면 제거
     // if (state.value.map.getPolyline()) {
@@ -538,7 +617,7 @@ const makeLine = () => {
     // }
 
     // 새로운 선을 지도에 추가
-    polyline.setMap(state.value.map)
+    // polyline.setMap(state.value.map)
   }
 }
 
@@ -547,7 +626,13 @@ const setLinePathArr = (position) => {
   if (position && position.coords) {
     const moveLatLon = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
 
+    // 초기값이 없다면 빈 배열로 설정
+    if (!state.value.positionArr) {
+      state.value.positionArr = []
+    }
     state.value.positionArr.push(moveLatLon)
+    // makeLine(state.value.positionArr)
+    // console.log(state.value.positionArr)
 
     if (running.value) {
       makeLine()
@@ -567,6 +652,16 @@ watchEffect(() => {
     }
   }
 })
+
+// watchEffect(() => {
+//   if (state.value.map && running.value) {
+//     navigator.geolocation.getCurrentPosition((position) => {
+//       setLinePathArr(position)
+//       // 위치를 받아오면 바로 선을 그리도록 수정
+//       makeLine()
+//     })
+//   }
+// })
 
 // watchEffect(() => {
 //   if (state.value.map && running.value) {
