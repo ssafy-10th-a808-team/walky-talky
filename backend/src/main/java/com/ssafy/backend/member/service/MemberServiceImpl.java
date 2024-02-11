@@ -34,8 +34,10 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-    //    private static final long atkExp = 900000L; // 15분
-    private static final long atkExp = 604800000L; // 일주일
+    //        private static final long atkExp = 900000L; // 15분
+//    private static final long atkExp = 604800000L; // 일주일
+    private static final long atkExp = 60000L; // 1분
+
     private static final long rtkExp = 604800000L; // 일주일
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
@@ -195,11 +197,10 @@ public class MemberServiceImpl implements MemberService {
 
         if (requestLocalSignupDto.getMultipartFile() == null || requestLocalSignupDto.getMultipartFile().isEmpty()) {
             // 로컬 회원가입 사진 등록 안 함
-            if(member.getUrl() == null || member.getUrl().isEmpty()){
+            if (member.getUrl() == null || member.getUrl().isEmpty()) {
                 savedMember.setUrl("https://walkytalky.s3.ap-northeast-2.amazonaws.com/member/38/profile/6305875e-9599-427a-acf5-19a231bce852.png");
             }
-        }
-        else{
+        } else {
             String tmpUrl = s3UploadService.uploadMemberProfileImg(requestLocalSignupDto.getMultipartFile(), savedMember.getSeq());
             savedMember.setUrl(tmpUrl);
         }
