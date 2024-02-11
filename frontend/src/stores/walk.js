@@ -136,6 +136,23 @@ export const useWalkStore = defineStore('walk', () => {
     }
   }
 
+  ///// 스크랩한 기록 상세보기/////
+  const scrapDetail = ref([])
+  const getScrapDetail = async (seq) => {
+    try {
+      const res = await axios({
+        method: 'get',
+        url: `${REST_WALK_API}/api/scrap-record/view/${seq}`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+      scrapDetail.value = res.data.data
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return {
     data,
     startWalk,
@@ -154,6 +171,9 @@ export const useWalkStore = defineStore('walk', () => {
     dislike,
     // 상세 보기
     recordDetail,
-    getRecordDetail
+    getRecordDetail,
+    // 스크랩 상세 보기
+    scrapDetail,
+    getScrapDetail
   }
 })

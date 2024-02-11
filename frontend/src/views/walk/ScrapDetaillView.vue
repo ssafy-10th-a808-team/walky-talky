@@ -59,8 +59,8 @@ const comment = ref(null)
 const startTime = ref(null)
 
 onMounted(async () => {
-  await walkStore.getRecordDetail(route.params.seq)
-  record.value = walkStore.recordDetail
+  await walkStore.getScrapDetail(route.params.seq)
+  record.value = walkStore.scrapDetail
 
   console.log(record.value)
 

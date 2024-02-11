@@ -15,6 +15,7 @@ import dowalk2 from '@/views/walk/dowalk2.vue' //임시
 import WalkList from '@/views/walk/WalkList.vue'
 import WalkDetaillView from '@/views/walk/WalkDetaillView.vue'
 import ScrapListView from '@/views/walk/ScrapListView.vue'
+import ScrapDetaillView from '@/views/walk/ScrapDetaillView.vue'
 import RecommendView from '@/views/walk/RecommendView.vue'
 
 // club router 소모임
@@ -108,6 +109,11 @@ const router = createRouter({
       path: '/walk/scrap-list',
       name: 'ScrapList',
       component: ScrapListView
+    },
+    {
+      path: '/scrap/view/:seq',
+      name: 'ScrapDetailView',
+      component: ScrapDetaillView
     },
     {
       path: '/walk/recommend-list',
