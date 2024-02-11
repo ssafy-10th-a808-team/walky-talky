@@ -232,24 +232,25 @@ export const useMemberStore = defineStore(
 
     // 내 정보
     const mypage = ref([])
-    const getMypage = async () => {
-      try {
-        const res = await axios({
-          method: 'get',
-          url: `${REST_MEMBER_API}/api/member/mypage`,
-          headers: {
-            Authorization: `Bearer ${counterstore.getCookie('atk')}`
-          }
+    const getMypage = () => {
+      axios({
+        method: 'get',
+        url: `${REST_MEMBER_API}/api/member/mypage`,
+        headers: {
+          Authorization: `Bearer ${counterstore.getCookie('atk')}`
+        }
+      })
+        .then((res) => {
+          console.log(res.data)
+          // mypage.value = res.data.data
+          // nickname.value = res.data.data.nickname
+          // profileImage.value = res.data.data.profileImage
+          // address_code.value = res.data.data.regionCd
+          // address_name.value = res.data.data.address
         })
-        console.log(res)
-        mypage.value = res.data.data
-        nickname.value = res.data.data.nickname
-        profileImage.value = res.data.data.profileImage
-        address_code.value = res.data.data.regionCd
-        address_name.value = res.data.data.address
-      } catch (err) {
-        console.log(err)
-      }
+        .catch((err) => {
+          console.log(err)
+        })
     }
 
     const modifyInfo = (payload) => {
