@@ -1,6 +1,8 @@
 <template>
   <WalkHeaderNav />
   <div class="map-container">
+    <button class="my-record-btn" @click="moveMyRecordList">목록으로</button>
+
     <div
       :id="'map-' + uniqueId"
       class="map"
@@ -9,12 +11,17 @@
     ></div>
 
     <div class="record-container">
+      <div class="content-edit-del-container">
+        <button class="content-edit-del-btn" @click="openEditModal">수정</button>
+        <button class="content-edit-del-btnr" @click="confirmDeleteRecord()">삭제</button>
+      </div>
+
       <div class="header">
         <div class="left-section">
           <h2>{{ title }}</h2>
         </div>
         <div class="right-section star-section">
-          <StarRating :starRating="parseInt(starRating)" />
+          <StarRating :starRating="parseInt(starRating)" :editable="false" />
         </div>
       </div>
 
@@ -32,18 +39,28 @@
         <p>{{ comment }}</p>
       </div>
     </div>
+
+    <RecordModifyModal
+      v-if="isEditModalVisible"
+      :initialStarRating="starRating"
+      :initialComment="comment"
+      @closeEditModal="closeEditModal"
+      @saveModal="saveModal"
+    />
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useWalkStore } from '@/stores/walk'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
 import StarRating from '@/components/walk/StarRating.vue'
+import RecordModifyModal from '@/components/walk/RecordModifyModal.vue'
 
 const walkStore = useWalkStore()
 const route = useRoute()
+const router = useRouter()
 
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
 let map = null // map is not defined Reference Error 방지
@@ -58,8 +75,8 @@ const starRating = ref(null)
 const comment = ref(null)
 const startTime = ref(null)
 
-onMounted(async () => {
-  await walkStore.getRecordDetail(route.params.seq)
+const loadDetail = async (seq) => {
+  await walkStore.getRecordDetail(seq)
   record.value = walkStore.recordDetail
 
   console.log(record.value)
@@ -71,6 +88,10 @@ onMounted(async () => {
   starRating.value = record.value.starRating
   comment.value = record.value.comment
   startTime.value = record.value.startTime.substr(0, 10)
+}
+
+onMounted(async () => {
+  await loadDetail(route.params.seq)
 
   if (window.kakao && window.kakao.maps) {
     initMap()
@@ -228,6 +249,40 @@ function convertTime(seconds) {
 
   return `${minutesString} ${secondsString}`.trim() || '0초'
 }
+
+//confirmDeleteRecord
+const deleteRecord = async (seq) => {
+  await walkStore.deleteRecord(seq)
+  router.push({ name: 'WalkList' })
+}
+
+const confirmDeleteRecord = async () => {
+  const isConfirmed = window.confirm('정말로 삭제하시겠습니까?')
+
+  if (isConfirmed) {
+    await deleteRecord(route.params.seq)
+  }
+}
+
+const isEditModalVisible = ref(false)
+
+const openEditModal = () => {
+  isEditModalVisible.value = true
+}
+
+const closeEditModal = () => {
+  isEditModalVisible.value = false
+}
+
+const saveModal = async (modifiedStar, modifiedComment) => {
+  await walkStore.modifyRecord(route.params.seq, modifiedStar, modifiedComment)
+  await loadDetail(route.params.seq)
+  closeEditModal()
+}
+
+const moveMyRecordList = () => {
+  router.push({ name: 'WalkList' })
+}
 </script>
 
 <style scoped>
@@ -268,6 +323,11 @@ function convertTime(seconds) {
 
 .comment-section {
   margin: 10px;
+}
+
+.my-record-btn {
+  margin-left: auto;
+  display: flex;
 }
 </style>
 
