@@ -86,12 +86,6 @@ const deleteMember = () => {
 }
 onMounted(async () => {
   await memberstore.getMypage()
-  mypage.value = memberstore.mypage
-  console.log(mypage.value)
-  console.log(mypage.value.birth)
-  year.value = mypage.value.birth.substring(0, 4)
-  month.value = mypage.value.birth.substring(4, 6)
-  day.value = mypage.value.birth.substring(6, 8)
 })
 const showGender = computed(() => {
   return mypage.value.gender === 'F' ? '여성' : '남성'
