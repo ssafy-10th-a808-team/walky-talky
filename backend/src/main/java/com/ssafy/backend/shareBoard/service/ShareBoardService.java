@@ -5,19 +5,23 @@ import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardModifyDto;
 import com.ssafy.backend.shareBoard.dto.request.RequestShareBoardWriteDto;
 import com.ssafy.backend.shareBoard.dto.response.*;
 import com.ssafy.backend.shareBoardCommet.dto.response.ResponseShareBoardCommentDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface ShareBoardService {
     void write(Long memberSeq, RequestShareBoardWriteDto requestShareBoardWriteDto) throws WTException;
 
-    List<ResponseShareBoardDto> listContent() throws WTException;
+    int getTotalCount();
 
-    List<ResponseRecordDto> listRecord() throws WTException;
+    List<ResponseShareBoardDto> listContent(Pageable pageable) throws WTException;
 
-    List<ResponseLikeDto> listLike(Long memberSeq) throws WTException;
+    List<ResponseRecordDto> listRecord(Pageable pageable) throws WTException;
 
-    List<ResponseScrapDto> listScrap(Long memberSeq) throws WTException;
+    List<ResponseLikeDto> listLike(Long memberSeq, Pageable pageable) throws WTException;
+
+    List<ResponseScrapDto> listScrap(Long memberSeq, Pageable pageable) throws WTException;
 
     ResponseShareBoardContentDto viewContent(Long shareBoardSeq) throws WTException;
 
