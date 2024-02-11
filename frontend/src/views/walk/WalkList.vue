@@ -5,12 +5,7 @@
   </div>
   <button class="share-button" @click="shareBoardWrite">내 산책 공유하기</button>
   <div class="record-list-container">
-    <div
-      v-for="record in records"
-      :key="record.recordSeq"
-      :class="{ 'record-list': true, selected: selectedRecord === record.recordSeq }"
-      @click="selectRecord(record.recordSeq)"
-    >
+    <div v-for="record in records" :key="record.recordSeq" :class="{ 'record-list': true }">
       <shareBoardRecord
         class="recommend-list-item"
         :duration="record.duration"
@@ -19,6 +14,7 @@
         :title="record.title"
         :seq="record.recordSeq"
         :movable="false"
+        @click="moveDetail(record.recordSeq)"
       />
     </div>
   </div>
@@ -44,17 +40,8 @@ onMounted(async () => {
   console.log(walkStore.myRecords)
 })
 
-const selectedRecord = ref(null)
-
-const selectRecord = (seq) => {
-  if (selectedRecord.value === seq) {
-    selectedRecord.value = null
-  } else {
-    selectedRecord.value = seq
-  }
-}
-const shareBoardWrite = () => {
-  router.push({ name: 'share-board-write' })
+const moveDetail = (seq) => {
+  router.push({ name: 'WalkDetailView', params: { seq } })
 }
 </script>
 
