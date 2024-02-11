@@ -7,6 +7,10 @@ import com.ssafy.backend.shareBoard.service.ShareBoardService;
 import com.ssafy.backend.shareBoardCommet.dto.response.ResponseShareBoardCommentDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,13 +43,26 @@ public class ShareBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(resultMap);
     }
 
+    @GetMapping("/list/total-count")
+    public ResponseEntity<?> getTotalCount(){
+        Map<String, Object> resultMap = new HashMap<>();
+
+        int totalCount = shareBoardService.getTotalCount();
+
+        resultMap.put("data", totalCount);
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
     @GetMapping("/list/content")
-    public ResponseEntity<?> listContent(HttpServletRequest request) {
+    public ResponseEntity<?> listContent(HttpServletRequest request,
+                                         @RequestParam(name="page", defaultValue = "0") int page) {
         Map<String, Object> resultMap = new HashMap<>();
 
         List<ResponseShareBoardDto> contentList;
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
         try {
-            contentList = shareBoardService.listContent();
+            contentList = shareBoardService.listContent(pageable);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
@@ -57,12 +74,13 @@ public class ShareBoardController {
     }
 
     @GetMapping("/list/record")
-    public ResponseEntity<?> listRecord(HttpServletRequest request) {
+    public ResponseEntity<?> listRecord(HttpServletRequest request, @RequestParam(name="page", defaultValue = "0") int page) {
         Map<String, Object> resultMap = new HashMap<>();
 
         List<ResponseRecordDto> recordList;
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
         try {
-            recordList = shareBoardService.listRecord();
+            recordList = shareBoardService.listRecord(pageable);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
@@ -74,14 +92,15 @@ public class ShareBoardController {
     }
 
     @GetMapping("/list/like")
-    public ResponseEntity<?> listLike(HttpServletRequest request) {
+    public ResponseEntity<?> listLike(HttpServletRequest request, @RequestParam(name="page", defaultValue = "0") int page) {
         Map<String, Object> resultMap = new HashMap<>();
 
         Long memberSeq = (Long) request.getAttribute("seq");
 
         List<ResponseLikeDto> likeList;
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
         try {
-            likeList = shareBoardService.listLike(memberSeq);
+            likeList = shareBoardService.listLike(memberSeq, pageable);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
@@ -93,14 +112,15 @@ public class ShareBoardController {
     }
 
     @GetMapping("/list/scrap")
-    public ResponseEntity<?> listScrap(HttpServletRequest request) {
+    public ResponseEntity<?> listScrap(HttpServletRequest request, @RequestParam(name="page", defaultValue = "0") int page) {
         Map<String, Object> resultMap = new HashMap<>();
 
         Long memberSeq = (Long) request.getAttribute("seq");
 
         List<ResponseScrapDto> scrapList;
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
         try {
-            scrapList = shareBoardService.listScrap(memberSeq);
+            scrapList = shareBoardService.listScrap(memberSeq, pageable);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);

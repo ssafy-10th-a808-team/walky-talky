@@ -20,8 +20,10 @@ import com.ssafy.backend.shareBoardCommet.dto.response.ResponseShareBoardComment
 import com.ssafy.backend.shareBoardCommet.service.ShareBoardCommentService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -67,8 +69,13 @@ public class ShareBoardServiceImpl implements ShareBoardService {
     }
 
     @Override
-    public List<ResponseShareBoardDto> listContent() throws WTException {
-        List<ShareBoard> boardList = shareBoardRepository.findAllByIsDeletedFalseOrderBySeqAsc();
+    public int getTotalCount() {
+        return shareBoardRepository.countAllByIsDeletedFalse();
+    }
+
+    @Override
+    public List<ResponseShareBoardDto> listContent(Pageable pageable) throws WTException {
+        Page<ShareBoard> boardList = shareBoardRepository.findAllByIsDeletedFalse(pageable);
         List<ResponseShareBoardDto> list = new ArrayList<>();
 
         for (ShareBoard shareBoard : boardList) {
@@ -95,8 +102,8 @@ public class ShareBoardServiceImpl implements ShareBoardService {
     }
 
     @Override
-    public List<ResponseRecordDto> listRecord() throws WTException {
-        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalseOrderBySeqAsc();
+    public List<ResponseRecordDto> listRecord(Pageable pageable) throws WTException {
+        Page<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalse(pageable);
         List<ResponseRecordDto> list = new ArrayList<>();
 
         for (ShareBoardMemberMapping shareBoardMapping : boardList) {
@@ -112,8 +119,8 @@ public class ShareBoardServiceImpl implements ShareBoardService {
     }
 
     @Override
-    public List<ResponseLikeDto> listLike(Long memberSeq) throws WTException {
-        List<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalseOrderBySeqAsc();
+    public List<ResponseLikeDto> listLike(Long memberSeq, Pageable pageable) throws WTException {
+        Page<ShareBoardMemberMapping> boardList = shareBoardRepository.findSeqAndMemberSeqByIsDeletedFalse(pageable);
         List<ResponseLikeDto> list = new ArrayList<>();
 
         for (ShareBoardMemberMapping shareBoardMapping : boardList) {
@@ -129,8 +136,8 @@ public class ShareBoardServiceImpl implements ShareBoardService {
     }
 
     @Override
-    public List<ResponseScrapDto> listScrap(Long memberSeq) throws WTException {
-        List<ShareBoardScrapMapping> boardList = shareBoardRepository.findSeqAndRecordSeqByIsDeletedFalseOrderBySeqAsc();
+    public List<ResponseScrapDto> listScrap(Long memberSeq, Pageable pageable) throws WTException {
+        Page<ShareBoardScrapMapping> boardList = shareBoardRepository.findSeqAndRecordSeqByIsDeletedFalse(pageable);
         List<ResponseScrapDto> list = new ArrayList<>();
 
         for (ShareBoardScrapMapping shareBoardScrapMapping : boardList) {
