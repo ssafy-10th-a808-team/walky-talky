@@ -43,6 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if ("/api/member/reissue".equals(requestURI)) { // 토큰 재발급 요청
                 String rtk = getToken(request.getHeader("Authorization"));
 
+                System.out.println("rtk = " + rtk);
                 try {
                     if (rtk != null && jwtProvider.validateToken(rtk)) {
                         Long seq = jwtProvider.getSeq(rtk);
@@ -51,9 +52,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         String token = (String) redisDao.readFromRedis("rtk:" + seq);
 
                         if (token == null) {
+                            System.out.println("token null");
                             throw new WTException("세션이 만료되었습니다.");
                         }
                     } else {
+                        System.out.println("rtk null or invalid rtk");
                         throw new WTException("세션이 만료되었습니다.");
                     }
                 } catch (Exception e) {
