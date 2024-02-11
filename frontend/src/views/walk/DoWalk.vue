@@ -117,7 +117,7 @@ import { useCounterStore } from '@/stores/counter'
 // VueX 스토어 인스턴스 생성
 const walkStore = useWalkStore()
 const memberStore = useMemberStore()
-const counterstore = useCounterStore()
+const counterStore = useCounterStore()
 
 // 카카오 API 키 가져오기
 const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
@@ -145,10 +145,10 @@ const checkSecond = ref(0)
 
 // 위치 기록 및 선 경로 정보
 const linePath = ref([])
-const poly = ref(null)
+// const poly = ref(null)
 
 // 현재 마커, 시작 및 종료 시간 등을 저장하는 변수들
-const cur_marker = ref(null)
+// const cur_marker = ref(null)
 const startTime = ref('')
 const endTime = ref('')
 
@@ -269,10 +269,13 @@ const resetLocations = function () {
 
 // 위치 정보 감시 함수
 const watchLocationUpdates = function () {
+  let intervalId // intervalId 변수를 함수 외부에 선언
+
   if (running.value) return
 
+  // 초기설정 : 타이머와 관련된 여러 변수 및 객체 초기화
   if (timeBegan.value === null) {
-    resetLocations()
+    // resetLocations()
     timeBegan.value = new Date()
   }
 
@@ -283,16 +286,17 @@ const watchLocationUpdates = function () {
   started.value = setInterval(clockRunning, 1000)
   running.value = true
   isPause.value = false
-
+  // 지도에 마커 추카(현재위치)
   const marker = new kakao.maps.Marker({
     position: new kakao.maps.LatLng(lat, lon)
   })
 
-  cur_marker.value = marker
+  // cur_marker.value = marker
   marker.setMap(state.value.map)
-
+  // 위치 감시 시작 : 사용자의 위치 변경 사항을 실시간으로 감시
   watchPositionId.value = navigator.geolocation.watchPosition(
     (position) => {
+      // 위치 정보 업데이터
       current.value.lat = position.coords.latitude
       current.value.lon = position.coords.longitude
       const now = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
@@ -316,23 +320,43 @@ const watchLocationUpdates = function () {
       state.value.map.setCenter(now)
       marker.setPosition(now)
 
+      // 산책 시작 또는 진행중인 경우
       if (previous.value.lat === 0) {
+        // 위치 초기화 및 산책 시작
         previous.value.lat = current.value.lat
         previous.value.lon = current.value.lon
 
+        recordsForPost.value.push({
+          lat: current.value.lat,
+          lon: current.value.lon,
+          time: new Date()
+        })
+
         const currentLatLng = new kakao.maps.LatLng(current.value.lat, current.value.lon)
-        linePath.value.push(currentLatLng)
+        linePath.value.push(currentLatLng) // 북마크
         setLinePathArr(position)
 
         tempRecords.value.push({ lat: current.value.lat, lon: current.value.lon, time: new Date() })
         makeLine(linePath.value)
+
+        intervalId = setInterval(() => {
+          recordsForPost.value.push({
+            lat: current.value.lat,
+            lon: current.value.lon,
+            time: new Date()
+          })
+        }, 60000)
       } else {
+        // 산책 중
+        // 위치 갱신 및 간격 체크 (현재 위치 갱신하고
+        // 일정 간격(1분)마다 recordsForPost.value에 위치 정보를 추가)
         const distance = computeDistance(previous, current)
         const threshold = 0.001
         previous.value.lat = current.value.lat
         previous.value.lon = current.value.lon
 
         if (distance > threshold) {
+          //거리가 일정 값 이상인 경우 추가 작업 수행
           accumulated_distance.value += distance
           checkOneKm.value += distance
 
@@ -340,27 +364,25 @@ const watchLocationUpdates = function () {
           makeLine(linePath.value)
         }
       }
-
-      const locationUpdateInterval = 60000
-      watchPositionId.value = setInterval(() => {
-        recordsForPost.value.push({
-          lat: current.value.lat,
-          lon: current.value.lon,
-          time: new Date()
-        })
-      }, locationUpdateInterval)
+      //위치 감시 오류 처리
     },
     () => {
       router.push('/walk/do-walk')
       console.log('위치 정보를 가져오는 도중 오류가 발생했습니다')
     },
+
+    //옵션 설정
     {
-      timeout: 5000,
+      timeout: 5000, // 위치 정보를 가져오기 위한 최대 시간 제한 (밀리초 단위). 이 시간 내에 위치 정보를 가져오지 못하면 오류 콜백이 호출됨. 현재는 5000ms(5초)로 설정
       maximumAge: 0,
       enableHighAccuracy: true,
       distanceFilter: 40
     }
-  )
+  ) // 함수 반환
+  return () => {
+    clearInterval(started.value)
+    clearInterval(intervalId)
+  }
 }
 
 // 산책 시작 함수
@@ -371,13 +393,8 @@ const startWalk = function () {
   region_cd.value = address_code.value
   console.log(startTime)
 
-  // recordsForPost.value.push({
-  //   lat: current.value.lat,
-  //   lon: current.value.lon,
-  //   time: new Date()
-  // })
-  watchLocationUpdates()
   walkStore.startWalk()
+  watchLocationUpdates()
 }
 
 // 시간 포맷팅 함수
@@ -410,9 +427,10 @@ const savePosition = async function () {
   console.log(walkStore.data.data.seq)
   console.log(accumulated_time.value)
   console.log(accumulated_distance.value)
+  console.log(recordsForPost.value)
   try {
     const url = 'https://i10a808.p.ssafy.io/api/walk/regist-record'
-    const accessToken = counterstore.getCookie('atk')
+    const accessToken = counterStore.getCookie('atk')
     const headers = {
       Authorization: `Bearer ${accessToken}`
     }
@@ -441,6 +459,11 @@ const endLocationUpdates = function () {
   pauseLocationUpdates()
   alert('산책 기록이 저장되었습니다 📬')
 
+  recordsForPost.value.push({
+    lat: current.value.lat,
+    lon: current.value.lon,
+    time: new Date()
+  })
   savePosition()
   isPause.value = false
   running.value = false
@@ -463,7 +486,7 @@ const pauseLocationUpdates = function () {
   clearInterval(started.value)
 
   navigator.geolocation.clearWatch(watchPositionId.value)
-  makeLine()
+  // makeLine()
 }
 
 // 거리 비교 및 계산 함수
@@ -508,6 +531,14 @@ const makeLine = () => {
 
     polyline.setMap(state.value.map)
     poly.value = polyline
+
+    // // 이전에 지도에 그려진 선이 있다면 제거
+    // if (state.value.map.getPolyline()) {
+    //   state.value.map.getPolyline().setMap(null)
+    // }
+
+    // 새로운 선을 지도에 추가
+    polyline.setMap(state.value.map)
   }
 }
 
@@ -516,9 +547,6 @@ const setLinePathArr = (position) => {
   if (position && position.coords) {
     const moveLatLon = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude)
 
-    if (!state.value.positionArr) {
-      state.value.positionArr = []
-    }
     state.value.positionArr.push(moveLatLon)
 
     if (running.value) {
@@ -539,6 +567,19 @@ watchEffect(() => {
     }
   }
 })
+
+// watchEffect(() => {
+//   if (state.value.map && running.value) {
+//     let timeoutId = setTimeout(() => {
+//       navigator.geolocation.getCurrentPosition((position) => setLinePathArr(position));
+//       timeoutId = setTimeout(arguments.callee, 5000);
+//     }, 5000);
+
+//     return () => {
+//       clearTimeout(timeoutId);
+//     };
+//   }
+// });
 </script>
 
 <style scoped>
