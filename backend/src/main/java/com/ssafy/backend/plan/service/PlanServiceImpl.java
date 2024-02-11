@@ -139,7 +139,7 @@ public class PlanServiceImpl implements PlanService {
 
             Member tmpMember = planClubMember.getClubMember().getMember();
 
-            ResponsePlanDetailDtoMember responsePlanDetailDtoMember = ResponsePlanDetailDtoMember.builder().seq(tmpMember.getSeq()).birth(tmpMember.getBirth()).gender(tmpMember.getGender()).introduce(tmpMember.getIntroduce()).nickname(tmpMember.getNickname()).address(tmpMember.getUrl()).build();
+            ResponsePlanDetailDtoMember responsePlanDetailDtoMember = ResponsePlanDetailDtoMember.builder().seq(tmpMember.getSeq()).birth(tmpMember.getBirth()).gender(tmpMember.getGender()).introduce(tmpMember.getIntroduce()).nickname(tmpMember.getNickname()).url(tmpMember.getUrl()).build();
 
             responsePlanDetailDtoMember.setAddress(regionService.findAddress(tmpMember.getRegionCd()));
 
