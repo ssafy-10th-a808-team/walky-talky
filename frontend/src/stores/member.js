@@ -241,7 +241,8 @@ export const useMemberStore = defineStore(
         }
       })
         .then((res) => {
-          console.log(res.data)
+          console.log(res.data.data)
+          mypage.value = res.data.data
           // mypage.value = res.data.data
           // nickname.value = res.data.data.nickname
           // profileImage.value = res.data.data.profileImage
@@ -272,6 +273,7 @@ export const useMemberStore = defineStore(
         .then((res) => {
           console.log(res)
           alert('정보 변경 성공')
+          // window.location.href = '/'
           router.push({ name: 'Mypage' })
         })
         .catch((err) => {
