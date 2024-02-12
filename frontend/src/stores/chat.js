@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+// import axios from 'axios'
+import { axios } from '@/stores/jwtFilter'
 import { ref } from 'vue'
 import { Client } from '@stomp/stompjs'
 import { useCounterStore } from './counter'
