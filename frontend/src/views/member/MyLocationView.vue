@@ -7,7 +7,7 @@
     내 동네: {{ address_name }}
     <div class="col-lg-3 cta-btn-container text-center">
       <!-- <div class="text-center"><button type="submit" @click="getAddressInfo">확인</button></div> -->
-      <button @click="reload">다시불러오기</button>
+      <button type="button" @click="reload">다시불러오기</button>
     </div>
   </div>
   <div style="display: none">지역 코드 : {{ address_code }}</div>

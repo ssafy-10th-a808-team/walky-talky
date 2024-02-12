@@ -1,7 +1,7 @@
 <template>
   <ClubDetailHeaderNav />
 
-  {{ clubstore.planList }}
+  <!-- {{ clubstore.planList }} -->
 
   <vue-cal
     @cell-click="handleDayClick"
@@ -36,6 +36,7 @@
       </li>
     </ul>
   </div>
+  <div v-else>해당 날짜는 일정이 없습니다</div>
 
   <!-- 소모임 만들기 버튼 -->
   <div class="fixed-button-container">
