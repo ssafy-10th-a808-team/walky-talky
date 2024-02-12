@@ -1,7 +1,7 @@
 <template>
   <ClubDetailHeaderNav />
 
-  <!-- {{ clubstore.planList }} -->
+  {{ clubstore.planList }}
 
   <vue-cal
     @cell-click="handleDayClick"

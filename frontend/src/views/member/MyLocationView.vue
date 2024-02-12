@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>내 위치 확인하는 페이지</h1>
+    <!-- <h1>내 위치 확인하는 페이지</h1> -->
     <div id="map" style="width: 500px; height: 400px" @load="getAddressInfo"></div>
   </div>
   <div>
