@@ -2,8 +2,12 @@
   <WalkHeaderNav />
   <div class="record-list-container">
     <div>
-      <h2>같은 동네 사람들은 이 경로로 산책했어요!</h2>
-      <div class="recom-scroll-container">
+      <h2>나와 같은 동네 사람들은 이 경로로 산책했어요!</h2>
+      <div v-if="recordsTown.size == 0" class="nothing-container">
+        <h4>같은 동네 사람들이 아직 산책을 하지 않았어요</h4>
+        <p @click="moveClub">우리 동네 사람들과 산책하러 가기</p>
+      </div>
+      <div v-else class="recom-scroll-container">
         <div v-for="record in recordsTown" :key="record.recordSeq" :class="{ 'record-list': true }">
           <div v-if="!record.notRecommended" class="recommend-list-item">
             <shareBoardRecord
@@ -13,10 +17,11 @@
               :title="record.title"
               :seq="record.recordSeq"
               :movable="false"
-              @click="moveDetail(record.recordSeq)"
             />
             <div class="action-buttons">
-              <p @click="notRecommend(record.recordSeq)">더 이상 이 코스 추천받지 않기</p>
+              <p class="not-recommend" @click="notRecommend(record.recordSeq)">
+                더 이상 이 코스 추천받지 않기
+              </p>
             </div>
           </div>
         </div>
@@ -25,7 +30,11 @@
 
     <div>
       <h2>나와 비슷한 사람들은 이 경로로 산책했어요!</h2>
-      <div class="recom-scroll-container">
+      <div v-if="recordsInfo.size == 0" class="nothing-container">
+        <h4>나와 비슷한 사람들이 아직 산책을 하지 않았어요</h4>
+        <p @click="moveShareBoard">다른 사람의 산책 기록 보러 가기</p>
+      </div>
+      <div v-else class="recom-scroll-container">
         <div v-for="record in recordsInfo" :key="record.recordSeq" :class="{ 'record-list': true }">
           <div v-if="!record.notRecommended" class="recommend-list-item">
             <shareBoardRecord
@@ -35,10 +44,11 @@
               :title="record.title"
               :seq="record.recordSeq"
               :movable="false"
-              @click="moveDetail(record.recordSeq)"
             />
             <div class="action-buttons">
-              <p @click="notRecommend(record.recordSeq)">더 이상 이 코스 추천받지 않기</p>
+              <p class="not-recommend" @click="notRecommend(record.recordSeq)">
+                더 이상 이 코스 추천받지 않기
+              </p>
             </div>
           </div>
         </div>
@@ -75,8 +85,12 @@ const notRecommend = async (seq) => {
   recordsInfo.value.find((item) => item.recordSeq === seq).notRecommended = true
 }
 
-const moveDetail = (seq) => {
-  router.push({ name: 'WalkDetailView', params: { seq } })
+const moveClub = () => {
+  router.push({ name: 'club' })
+}
+
+const moveShareBoard = () => {
+  router.push({ name: 'share-board' })
 }
 </script>
 
@@ -123,5 +137,33 @@ const moveDetail = (seq) => {
   gap: 10px;
   padding: 1rem 0;
   white-space: nowrap;
+  margin: 5px;
+}
+
+/* 스크롤바 스타일 */
+.recom-scroll-container::-webkit-scrollbar {
+  height: 12px;
+}
+
+.recom-scroll-container::-webkit-scrollbar-thumb {
+  background: darkgreen;
+  /* 스크롤바 색상을 테마에 맞춥니다 */
+  border-radius: 10px;
+}
+
+.recom-scroll-container::-webkit-scrollbar-track {
+  background: #e0f2f1;
+  border-radius: 10px;
+}
+
+.not-recommend {
+  font-size: xx-small;
+  text-decoration: darkgrey;
+}
+
+.nothing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
