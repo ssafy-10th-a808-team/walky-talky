@@ -100,6 +100,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         }
       })
       shareRecord.value = res.data.data
+      console.log(shareRecord.value)
     } catch (err) {
       console.log(err)
     }
