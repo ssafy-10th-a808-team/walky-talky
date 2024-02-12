@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+// import axios from 'axios'
+import { axios } from '@/stores/jwtFilter'
 import { useCounterStore } from './counter'
 import { useRouter } from 'vue-router'
 
