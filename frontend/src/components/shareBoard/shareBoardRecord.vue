@@ -170,5 +170,6 @@ const initMap = () => {
 
 .text-center {
   text-align: center;
+  margin: 20px;
 }
 </style>
