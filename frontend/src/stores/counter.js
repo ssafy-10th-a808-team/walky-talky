@@ -45,6 +45,35 @@ export const useCounterStore = defineStore('counter', () => {
     document.cookie = updatedCookie
   }
 
+  const setHttpOnlyCookie = (name, value, options = {}) => {
+    options = {
+      path: '/',
+      httpOnly: true,
+      // 필요한 경우, 옵션 기본값을 설정할 수도 있습니다.
+      ...options
+    }
+
+    if (options.expires instanceof Date) {
+      options.expires = options.expires.toUTCString()
+    }
+
+    let updatedCookie = encodeURIComponent(name) + '=' + encodeURIComponent(value)
+
+    for (let optionKey in options) {
+      updatedCookie += '; ' + optionKey
+      let optionValue = options[optionKey]
+      if (optionValue !== true) {
+        updatedCookie += '=' + optionValue
+      }
+    }
+
+    document.cookie = updatedCookie
+  }
+
+  const setRefreshTokenCookie = (token) => {
+    document.cookie = `rtk=${token}; HttpOnly; Secure; SameSite=Strict;`
+  }
+
   const deleteCookie = (name) => {
     setCookie(name, '', {
       'max-age': -1
@@ -56,6 +85,8 @@ export const useCounterStore = defineStore('counter', () => {
     selectButton,
     getCookie,
     setCookie,
+    setHttpOnlyCookie,
+    setRefreshTokenCookie,
     deleteCookie
   }
 })
