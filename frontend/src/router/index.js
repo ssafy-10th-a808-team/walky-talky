@@ -30,6 +30,7 @@ import ClubSettingClub from '@/views/club/ClubSettingClubView.vue'
 import ClubChatView from '@/views/club/ClubChatView.vue'
 import ClubPlanRegist from '@/views/club/ClubPlanRegist.vue'
 import ClubPlanDetail from '@/views/club/ClubPlanDetail.vue'
+import ClubPlanOverwrite from '@/views/club/ClubPlanOverwrite.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
@@ -173,6 +174,12 @@ const router = createRouter({
       path: '/club/:clubSeq/plan/:planSeq/detail',
       name: 'club-plan-detail',
       component: ClubPlanDetail,
+      props: true
+    },
+    {
+      path: '/club/:clubSeq/plan/:planSeq/overwrite',
+      name: 'club-plan-overwrite',
+      component: ClubPlanOverwrite,
       props: true
     },
 
