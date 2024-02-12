@@ -3,104 +3,101 @@
 
   <!-- {{ clubstore.planDetail }} -->
 
-  <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan.recordSeq != null">
-    <div
-      :id="'map-' + uniqueId"
-      class="map"
-      :style="{ width: '100%', height: '500px', justifyContent: 'center' }"
-      @click="setDraggable(true)"
-    ></div>
+  <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan">
+    <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan.recordSeq != null">
+      <div
+        :id="'map-' + uniqueId"
+        class="map"
+        :style="{ width: '100%', height: '500px', justifyContent: 'center' }"
+        @click="setDraggable(true)"
+      ></div>
 
-    <div class="record-container">
-      <!-- <div class="content-edit-del-container">
-        <button class="content-edit-del-btn" @click="openEditModal">수정</button>
-        <button class="content-edit-del-btnr" @click="confirmDeleteRecord()">삭제</button>
-      </div> -->
-
-      <div class="header">
-        <div class="left-section">
-          <h2>{{ title }}</h2>
+      <div class="record-container">
+        <div class="header">
+          <div class="left-section">
+            <p v-if="title != '제목'">{{ title }}</p>
+          </div>
+          <!-- <div class="right-section star-section">
+            <StarRating :starRating="parseInt(starRating)" :editable="false" />
+          </div> -->
         </div>
-        <div class="right-section star-section">
-          <StarRating :starRating="parseInt(starRating)" :editable="false" />
-        </div>
-      </div>
 
-      <div class="mid-container">
-        <div class="right-section">
-          <p>{{ startTime }}</p>
-          <p>
-            소요 시간 : {{ convertTime(parseInt(duration)) }} | 총 거리 :
-            {{ Math.round(distance * 10) / 10 }} km
-          </p>
+        <div class="mid-container">
+          <div class="right-section">
+            <p>기록 날짜 : {{ startTime }}</p>
+            <p>
+              소요 시간 : {{ convertTime(parseInt(duration)) }} | 총 거리 :
+              {{ Math.round(distance * 10) / 10 }} km
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="comment-section">
-        <p>{{ comment }}</p>
+        <div class="comment-section">
+          <p v-if="comment != '한줄평'">{{ comment }}</p>
+        </div>
       </div>
     </div>
-  </div>
+    <div v-else>현재 업데이트 된 기록이 없습니다</div>
 
-  <div v-else>현재 기록이 없습니다.</div>
+    <div class="plan-title">
+      일정 제목 : {{ clubstore.planDetail.responsePlanDetailDtoPlan.title }}
+    </div>
+    <div class="plan-start-time">
+      시작 예정 시각 :
+      {{
+        new Date(clubstore.planDetail.responsePlanDetailDtoPlan.startTime).toLocaleTimeString(
+          'ko-KR',
+          {
+            hour: '2-digit',
+            minute: '2-digit'
+          }
+        )
+      }}
+    </div>
+    <div class="plan-location">
+      시작 모임 장소 : {{ clubstore.planDetail.responsePlanDetailDtoPlan.location }}
+    </div>
+    <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan.content" class="plan-content">
+      내용: {{ clubstore.planDetail.responsePlanDetailDtoPlan.content }}
+    </div>
+    <div class="plan-capacity">
+      참여 인원 : {{ clubstore.planDetail.responsePlanDetailDtoPlan.nowCapacity }} /
+      {{ clubstore.planDetail.responsePlanDetailDtoPlan.maxCapacity }}
+    </div>
 
-  <div class="plan-title">{{ clubstore.planDetail.responsePlanDetailDtoPlan.title }}</div>
-  <div class="plan-start-time">
-    시작 시간:
-    {{
-      new Date(clubstore.planDetail.responsePlanDetailDtoPlan.startTime).toLocaleTimeString(
-        'ko-KR',
-        {
-          hour: '2-digit',
-          minute: '2-digit'
-        }
-      )
-    }}
-  </div>
-  <div class="plan-capacity">
-    참여 인원: {{ clubstore.planDetail.responsePlanDetailDtoPlan.nowCapacity }} /
-    {{ clubstore.planDetail.responsePlanDetailDtoPlan.maxCapacity }}
-  </div>
-  <div class="plan-location">
-    위치: {{ clubstore.planDetail.responsePlanDetailDtoPlan.location }}
-  </div>
-  <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan.content" class="plan-content">
-    내용: {{ clubstore.planDetail.responsePlanDetailDtoPlan.content }}
-  </div>
+    <div v-if="isPlanMember" class="buttons-container">
+      <button @click="clubstore.planClubMemberCancel">소모임 일정 참가 취소</button>
+      <button @click="goOverwrite">기록 업데이트 하기</button>
+      <button @click="clubstore.planCopy">내 기록으로 복사</button>
+    </div>
+    <div v-else class="buttons-container">
+      <button @click="clubstore.planClubMemberApply">소모임 일정 참가</button>
+    </div>
 
-  <div v-if="isPlanMember" class="buttons-container">
-    <button @click="clubstore.planClubMemberCancel">소모임 일정 참가 취소</button>
-    <button @click="goOverwrite">기록 업데이트 하기</button>
-    <button @click="clubstore.planCopy">내 기록으로 복사</button>
-  </div>
-  <div v-else class="buttons-container">
-    <button @click="clubstore.planClubMemberApply">소모임 일정 참가</button>
-  </div>
-
-  <h2 class="members-title">참가원</h2>
-  <div class="members-list">
-    <div
-      v-for="clubmember in clubstore.planDetail.responsePlanDetailDtoMembers"
-      :key="clubmember.nickname"
-      class="member-item"
-    >
-      <div class="member-container">
-        <div class="circular-small">
-          <img :src="clubmember.url" alt="" />
-        </div>
-        <div class="member-info">
-          <div>
-            {{ clubmember.nickname }} {{ clubmember.birth.substring(2, 4) }}년생
-            {{ clubmember.gender == 'M' ? '남자' : '여자' }}
+    <h2 class="members-title">참가원</h2>
+    <div class="members-list">
+      <div
+        v-for="clubmember in clubstore.planDetail.responsePlanDetailDtoMembers"
+        :key="clubmember.nickname"
+        class="member-item"
+      >
+        <div class="member-container">
+          <div class="circular-small">
+            <img :src="clubmember.url" alt="" />
           </div>
-          <div>
-            {{ clubmember.address }}
+          <div class="member-info">
+            <div>
+              {{ clubmember.nickname }} {{ clubmember.birth.substring(2, 4) }}년생
+              {{ clubmember.gender == 'M' ? '남자' : '여자' }}
+            </div>
+            <div>
+              {{ clubmember.address }}
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- </div> -->
 </template>
 
 <script setup>
