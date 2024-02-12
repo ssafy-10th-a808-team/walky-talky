@@ -15,6 +15,7 @@ import com.ssafy.backend.member.repository.StreakRepository;
 import com.ssafy.backend.region.repository.RegionRepository;
 import com.ssafy.backend.region.service.RegionService;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,8 +36,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     //        private static final long atkExp = 900000L; // 15분
-    private static final long atkExp = 604800000L; // 일주일
-//    private static final long atkExp = 60000L; // 1분
+//    private static final long atkExp = 604800000L; // 일주일
+    private static final long atkExp = 60000L; // 1분
 
     private static final long rtkExp = 604800000L; // 일주일
     private final MemberRepository memberRepository;
@@ -269,8 +270,28 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Map<String, String> reissue(Long seq) {
+    public Map<String, String> reissue(HttpServletRequest request) {
         Map<String, String> returnMap = new HashMap<>();
+
+        String requestRtk = getToken(request.getHeader("Authorization"));
+
+        Long seq;
+
+        try {
+            if (requestRtk != null && jwtProvider.validateToken(requestRtk)) {
+                seq = jwtProvider.getSeq(requestRtk);
+
+                String token = (String) redisDao.readFromRedis("rtk:" + seq);
+
+                if (token == null) {
+                    throw new WTException("세션이 만료되었습니다.");
+                }
+            } else {
+                throw new WTException("세션이 만료되었습니다.");
+            }
+        } catch (Exception e) {
+            throw new WTException("세션이 만료되었습니다.");
+        }
 
         String atk = jwtProvider.createAccessToken(seq, atkExp);
         String rtk = jwtProvider.createRefreshToken(seq, rtkExp);
@@ -455,6 +476,13 @@ public class MemberServiceImpl implements MemberService {
         responseMemberDto.setProfilePic(m.getUrl());
 
         return responseMemberDto;
+    }
+
+    private String getToken(String header) {
+        if (header != null && header.startsWith("Bearer")) {
+            return header.substring("Bearer ".length());
+        }
+        return null;
     }
 
 }

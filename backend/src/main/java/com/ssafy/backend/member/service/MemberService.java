@@ -5,6 +5,7 @@ import com.ssafy.backend.member.dto.mapping.StreakMapping;
 import com.ssafy.backend.member.dto.request.*;
 import com.ssafy.backend.member.dto.response.*;
 import com.ssafy.backend.shareBoard.dto.response.ResponseMemberDto;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public interface MemberService {
 
     public void logout(Long seq);
 
-    public Map<String, String> reissue(Long seq);
+    public Map<String, String> reissue(HttpServletRequest request);
 
     ResponseMemberDto getMemberNicknameUrl(Long memberSeq);
 
