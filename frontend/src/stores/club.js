@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useCounterStore } from './counter'
-import { useRouter } from 'vue-router'
 
 export const useClubStore = defineStore('club', {
   // 상태 정의
@@ -181,7 +180,7 @@ export const useClubStore = defineStore('club', {
     },
     async delete() {
       const counterstore = useCounterStore()
-      const router = useRouter()
+
       try {
         const response = await axios({
           method: 'post',
@@ -194,7 +193,7 @@ export const useClubStore = defineStore('club', {
           }
         })
         alert('소모임 삭제하였습니다.')
-        router.push({ name: 'club' })
+
         console.log(response)
       } catch (error) {
         console.log(error)
@@ -265,6 +264,98 @@ export const useClubStore = defineStore('club', {
       } catch (error) {
         console.log(error)
         alert('소모임 일정Detail 가져오기 실패')
+      }
+    },
+    async planClubMemberApply() {
+      const counterstore = useCounterStore()
+      try {
+        const response = await axios({
+          method: 'post',
+          url: `https://i10a808.p.ssafy.io/api/plan-club-member/apply`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          },
+          data: {
+            planSeq: this.planSeq
+          }
+        })
+        alert('일정 신청하였습니다.')
+        console.log(response)
+        window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
+      } catch (error) {
+        alert('일정 신청 실패하였습니다.')
+        console.log(error)
+      }
+    },
+    async planClubMemberCancel() {
+      const counterstore = useCounterStore()
+      try {
+        const response = await axios({
+          method: 'post',
+          url: `https://i10a808.p.ssafy.io/api/plan-club-member/cancel`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          },
+          data: {
+            planSeq: this.planSeq
+          }
+        })
+        alert('일정 신청 취소하였습니다.')
+        console.log(response)
+        window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
+      } catch (error) {
+        alert('일정 신청 취소 실패하였습니다.')
+        console.log(error)
+      }
+    },
+    async planCopy() {
+      const counterstore = useCounterStore()
+
+      if (this.planDetail.responsePlanDetailDtoPlan.recordSeq == null) {
+        alert('기록이 없습니다!')
+        return
+      }
+
+      try {
+        const response = await axios({
+          method: 'post',
+          url: `https://i10a808.p.ssafy.io/api/plan/copy`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          },
+          data: {
+            clubSeq: this.clubSeq,
+            recordSeq: this.planDetail.responsePlanDetailDtoPlan.recordSeq
+          }
+        })
+        alert('내 기록으로 복사하였습니다.')
+        console.log(response)
+        window.location.reload() // 상태 업데이트 방법에 대해 고려 필요
+      } catch (error) {
+        alert('내 기록으로 복사 실패하였습니다.')
+        console.log(error)
+      }
+    },
+    async planRecordOverwrite(recordSeq) {
+      const counterstore = useCounterStore()
+
+      try {
+        const response = await axios({
+          method: 'post',
+          url: `https://i10a808.p.ssafy.io/api/plan/record-overwrite`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          },
+          data: {
+            planSeq: this.planSeq,
+            recordSeq: recordSeq
+          }
+        })
+        alert('기록 업데이트 하였습니다.')
+        console.log(response)
+      } catch (error) {
+        alert('기록 업데이트 실패하였습니다.')
+        console.log(error)
       }
     }
   },
