@@ -50,7 +50,7 @@
                       <form @submit.prevent="submitForm">
                         <input type="text" v-model="nickname" />
                       </form>
-                      <button @click="closeModal('nickname')">확인</button>
+                      <button @click="checkNickname">확인</button>
                     </div>
                   </div>
                 </div>
@@ -250,6 +250,15 @@ const modifyInfo = function (event) {
   memberstore.modifyInfo(payload)
   // console.log(payload)
 }
+// 닉네임 중복 확인
+const checkNickname = (event) => {
+  event.preventDefault()
+  memberstore.checkNickname(nickname.value)
+  console.log(`${nickname.value}`)
+  closeModal('nickname')
+}
+
+
 </script>
 
 <style scoped>
