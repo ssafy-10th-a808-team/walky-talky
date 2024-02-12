@@ -254,7 +254,8 @@ export const useMemberStore = defineStore(
         })
     }
 
-    const modifyInfo = (payload) => {
+    // //테스트
+    const modifyInfo = async (payload) => {
       const formData = new FormData()
       if (payload.profileImage) {
         formData.append('profileImage', payload.profileImage)
@@ -262,28 +263,68 @@ export const useMemberStore = defineStore(
       formData.append('nickname', payload.nickname)
       formData.append('introduce', payload.introduce)
       formData.append('regionCd', payload.regionCd)
-      axios({
-        method: 'post',
-        url: `${REST_MEMBER_API}/api/member/modify-info`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        },
-        data: formData
-      })
-        .then((res) => {
-          console.log(res)
-          alert('정보 변경 성공')
-          // window.location.href = '/'
-          router.push({ name: 'Mypage' })
-          setTimeout(() => {
-            window.location.reload()
-          }, 100)
+      try {
+        const res = await axios({
+          method: 'post',
+          url: `${REST_MEMBER_API}/api/member/modify-info`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          },
+          data: formData
         })
-        .catch((err) => {
-          console.log(err)
-          alert('정보 변경 실패')
-        })
+        console.log(res)
+        alert('정보 변경 성공')
+        counterstore.deleteCookie('profileImage')
+        counterstore.deleteCookie('nickname')
+        getMypage()
+        router.push({ name: 'Mypage' })
+        counterstore.setCookie('profileImage', mypage.value.profileImage)
+        counterstore.setCookie('nickname', mypage.value.nickname)
+        setTimeout(() => {
+          window.location.reload()
+        }, 100)
+      } catch (err) {
+        console.log(err)
+        alert('정보 변경 실패')
+      }
     }
+
+    // const modifyInfo = (payload) => {
+    //   const formData = new FormData()
+    //   if (payload.profileImage) {
+    //     formData.append('profileImage', payload.profileImage)
+    //   }
+    //   formData.append('nickname', payload.nickname)
+    //   formData.append('introduce', payload.introduce)
+    //   formData.append('regionCd', payload.regionCd)
+    //   axios({
+    //     method: 'post',
+    //     url: `${REST_MEMBER_API}/api/member/modify-info`,
+    //     headers: {
+    //       Authorization: `Bearer ${counterstore.getCookie('atk')}`
+    //     },
+    //     data: formData
+    //   })
+    //     .then((res) => {
+    //       console.log(res)
+    //       alert('정보 변경 성공')
+    //       counterstore.deleteCookie('profileImage')
+    //       counterstore.deleteCookie('nickname')
+    //       getMypage()
+    //       router.push({ name: 'Mypage' })
+    //     })
+    //     .then((res) => {
+    //       counterstore.setCookie('profileImage', mypage.value.profileImage)
+    //       counterstore.setCookie('nickname', mypage.value.nickname)
+    //       setTimeout(() => {
+    //         window.location.reload()
+    //       }, 100)
+    //     })
+    //     .catch((err) => {
+    //       console.log(err)
+    //       alert('정보 변경 실패')
+    //     })
+    // }
     // 비밀번호 수정
     const modifyPassword = (payload) => {
       axios({
