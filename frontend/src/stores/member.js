@@ -275,6 +275,9 @@ export const useMemberStore = defineStore(
           alert('정보 변경 성공')
           // window.location.href = '/'
           router.push({ name: 'Mypage' })
+          setTimeout(() => {
+            window.location.reload()
+          }, 100)
         })
         .catch((err) => {
           console.log(err)
