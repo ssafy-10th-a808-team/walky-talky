@@ -108,7 +108,7 @@ onMounted(async function () {
     (member) => member.nickname === nickname
   )
 
-  record.value = await shareBoardStore.getRecord(planSeq)
+  record.value = await shareBoardStore.getRecord(clubstore.planDetail.record.seq)
 })
 </script>
 
