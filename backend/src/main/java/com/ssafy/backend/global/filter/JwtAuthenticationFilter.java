@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");  //이렇게 해서 모든 요청에 대해서 허용할 수도 있습니다.
         response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setHeader("Access-Control-Allow-Methods","*");
+        response.setHeader("Access-Control-Allow-Methods", "*");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers",
                 "Origin, X-Requested-With, Content-Type, Accept, Authorization");
@@ -38,48 +38,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String requestURI = request.getRequestURI();
         try {
-            if ("/api/member/reissue".equals(requestURI)) { // 토큰 재발급 요청
-                String rtk = getToken(request.getHeader("Authorization"));
+            String atk = getToken(request.getHeader("Authorization"));
 
-                try {
-                    if (rtk != null && jwtProvider.validateToken(rtk)) {
-                        Long seq = jwtProvider.getSeq(rtk);
-                        request.setAttribute("seq", seq);
+            try {
+                if (atk != null && jwtProvider.validateToken(atk)) {
+                    Long seq = jwtProvider.getSeq(atk);
+                    request.setAttribute("seq", seq);
 
-                        String token = (String) redisDao.readFromRedis("rtk:" + seq);
+                    String token = (String) redisDao.readFromRedis("atk:" + seq);
 
-                        if (token == null) {
-                            throw new WTException("세션이 만료되었습니다.");
-                        }
-                    } else {
+                    if (token == null) {
                         throw new WTException("세션이 만료되었습니다.");
                     }
-                } catch (Exception e) {
+
+                } else {
                     throw new WTException("세션이 만료되었습니다.");
                 }
-            } else { // 그 외의 모든 경우는 atk으로 사용자 검증
-                String atk = getToken(request.getHeader("Authorization"));
-
-                try {
-                    if (atk != null && jwtProvider.validateToken(atk)) {
-                        Long seq = jwtProvider.getSeq(atk);
-                        request.setAttribute("seq", seq);
-
-                        String token = (String) redisDao.readFromRedis("atk:" + seq);
-
-                        if (token == null) {
-                            throw new WTException("세션이 만료되었습니다.");
-                        }
-
-                    } else {
-                        throw new WTException("세션이 만료되었습니다.");
-                    }
-                } catch (Exception e) {
-                    throw new WTException("세션이 만료되었습니다.");
-                }
+            } catch (Exception e) {
+                throw new WTException("세션이 만료되었습니다.");
             }
+
             filterChain.doFilter(request, response);
         } catch (WTException e) {
             ObjectMapper mapper = new ObjectMapper();

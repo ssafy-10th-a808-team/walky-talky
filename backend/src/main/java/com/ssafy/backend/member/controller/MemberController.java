@@ -1,5 +1,8 @@
 package com.ssafy.backend.member.controller;
 
+import com.ssafy.backend.global.error.WTException;
+import com.ssafy.backend.global.util.JwtProvider;
+import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.dto.mapping.StreakMapping;
 import com.ssafy.backend.member.dto.request.*;
 import com.ssafy.backend.member.dto.response.*;
@@ -131,9 +134,8 @@ public class MemberController {
     public ResponseEntity<?> reissue(HttpServletRequest request) { // rtk만 갖고온 사람한테 atk 재발급해줘야됨
         Map<String, String> resultMap = new HashMap<>();
 
-        Long seq = (Long) request.getAttribute("seq");
         try {
-            Map<String, String> returnMap = memberService.reissue(seq);
+            Map<String, String> returnMap = memberService.reissue(request);
             HttpHeaders headers = new HttpHeaders();
 
             headers.add("atk", returnMap.get("atk"));
