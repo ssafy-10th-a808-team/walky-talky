@@ -42,20 +42,22 @@
           <div v-if="showWalkSummary" class="formToPost">
             <div
               style="
-                text-align: center;
+                /* text-align: center; */
                 position: absolute;
                 z-index: 2;
                 top: 60%;
                 left: 50%;
                 background-color: rgb(205, 238, 225);
                 display: flex;
+                flex-direction: column;
+                align-items: flex-start;
                 width: 300px;
                 margin-left: -150px;
                 border-radius: 5%;
               "
             >
               <!-- 산책 정보 표시 -->
-              <div>
+              <div style="display: flex; justify-content: space-between; text-align: center">
                 <div class="myRecord" style="font-weight: 700; width: 150px; float: left">
                   <div id="run_desc time">시간</div>
                   <span id="time">{{ clock }}</span>
@@ -67,21 +69,26 @@
               </div>
 
               <!-- 산책 입력 폼 -->
-              <div style="font-weight: 700; width: 300px" class="form-grid">
+              <div style="font-weight: 700; width: 300px; margin-left: 20px" class="form-grid">
                 <!-- <h2>산책 평가</h2> -->
                 <form @submit.prevent="submitWalkReview">
-                  <label for="title">제목:</label>
-                  <input type="text" v-model="walkReview.title" required />
-
-                  <label for="starRating">별점:</label>
-                  <input type="number" v-model="walkReview.starRating" min="1" max="5" required />
-
-                  <label for="comment">한줄평:</label>
-                  <textarea v-model="walkReview.comment" required></textarea>
+                  <div>
+                    <label for="title">제 목 : </label>&nbsp;
+                    <input type="text" v-model="walkReview.title" required />
+                  </div>
+                  <div>
+                    <label for="starRating">별 점 : </label>&nbsp;
+                    <input type="number" v-model="walkReview.starRating" min="1" max="5" required />
+                  </div>
+                  <div>
+                    <label for="comment">한줄평 : </label>&nbsp;
+                    <textarea v-model="walkReview.comment" required></textarea>
+                  </div>
                 </form>
-
-                <button type="submit" @click="submitWalkReview">작성</button>
-                <button @click="goHome">취소</button>
+                <div style="display: flex; justify-content: center">
+                  <button @click="goHome">취소</button>
+                  <button type="submit" @click="submitWalkReview">작성</button>
+                </div>
               </div>
             </div>
           </div>
@@ -222,9 +229,9 @@ const state = ref({
 })
 
 const walkReview = ref({
-  title: '',
+  title: '오늘의 산책',
   starRating: 1,
-  comment: ''
+  comment: '오늘의 산책은 어땠나요?'
 })
 
 const showWalkSummary = ref(false)

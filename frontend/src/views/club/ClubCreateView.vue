@@ -11,18 +11,25 @@
             <form @submit.prevent="createClub" class="php-email-form">
               <h1>소모임 정보</h1>
               <hr />
-              <!-- 내 동네 입력 필드 -->
+
+              <!-- 주소 -->
               <div class="form-group">
                 <div>
                   <label for="club-address">내 동네 인증하기 *필수</label>
                 </div>
-                <!-- <ButtonWithIcon :selectedIcon="locationIcon"> </ButtonWithIcon> -->
-                <RouterLink :to="{ name: 'mylocation' }">
-                  <img src="@/assets/img/LocationIcon.png" style="width: 100px; height: auto" />
-                </RouterLink>
                 <div>
-                  {{ region_name }}
+                  <MyLocationView
+                    @returnAddressName="updateAddressName"
+                    @returnAddressCode="updateAddressCode"
+                  />
                 </div>
+                <!-- <ButtonWithIcon :selectedIcon="locationIcon" /> -->
+                <!-- <RouterLink :to="{ name: 'mylocation' }">
+                  <img src="@/assets/img/LocationIcon.png" style="width: 100px; height: auto" />
+                </RouterLink> -->
+                <!-- <div>
+                  {{ region_name }}
+                </div> -->
               </div>
               <hr />
 
@@ -181,6 +188,7 @@ import ButtonWithIcon from '@/components/common/ButtonWithIcon.vue'
 import { useRouter } from 'vue-router'
 // 기본 이미지를 import 합니다.
 import defaultLogoPath from '@/assets/img/Logo.png'
+import MyLocationView from '../member/MyLocationView.vue'
 
 const router = useRouter()
 const counterstore = useCounterStore()
@@ -194,6 +202,12 @@ const region_name = ref('')
 const region_cd = ref('')
 region_name.value = memberstore.getLocationInfo()[0]
 region_cd.value = memberstore.getLocationInfo()[1]
+const updateAddressName = (name) => {
+  region_name.value = name
+}
+const updateAddressCode = (code) => {
+  region_cd.value = code
+}
 
 const profileImg = ref(defaultLogoPath)
 const clubname = ref('')
