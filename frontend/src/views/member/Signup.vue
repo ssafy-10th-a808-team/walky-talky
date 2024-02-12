@@ -24,9 +24,9 @@
                 <!-- <RouterLink :to="{ name: 'mylocation' }">
                   <img src="@/assets/img/LocationIcon.png" style="width: 100px; height: auto" />
                 </RouterLink> -->
-                <div>
+                <!-- <div>
                   {{ region_name }}
-                </div>
+                </div> -->
               </div>
               <hr />
 

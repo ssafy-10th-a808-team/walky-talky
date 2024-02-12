@@ -34,20 +34,6 @@
                   />
                 </div>
               </div>
-              <div
-                style="
-                  border-radius: 5px;
-                  border: 2px solid #5cb874;
-                  width: 300px;
-                  height: 44px;
-                  margin: 0 auto;
-                  text-align: center;
-                "
-              >
-                <RouterLink :to="{ name: 'Signup' }" style="display: inline-block; margin-top: 7px"
-                  >회원가입</RouterLink
-                >
-              </div>
               <div class="text-center">
                 <button type="submit" @click="login" style="width: 300px; margin-top: 10px">
                   로그인
@@ -61,6 +47,20 @@
                   style="margin: auto; display: block; margin-top: 10px"
                 />
               </div>
+              <!-- <div
+                style="
+                  border-radius: 5px;
+                  border: 2px solid #5cb874;
+                  width: 300px;
+                  height: 44px;
+                  margin: 0 auto;
+                  text-align: center;
+                "
+              > -->
+              <RouterLink :to="{ name: 'Signup' }" style="display: inline-block; margin-top: 7px"
+                >회원가입</RouterLink
+              >
+              <!-- </div> -->
             </form>
           </div>
         </div>
