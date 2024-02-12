@@ -36,8 +36,8 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     //        private static final long atkExp = 900000L; // 15분
-//    private static final long atkExp = 604800000L; // 일주일
-    private static final long atkExp = 60000L; // 1분
+    private static final long atkExp = 604800000L; // 일주일
+//    private static final long atkExp = 60000L; // 1분
 
     private static final long rtkExp = 604800000L; // 일주일
     private final MemberRepository memberRepository;
