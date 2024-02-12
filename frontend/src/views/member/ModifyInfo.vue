@@ -21,7 +21,7 @@
               <label for="image-upload">프로필 사진</label>
               <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
               <div class="d-flex justify-content-center align-items-center">
-                <div id="imageFrame" class="circular">
+                <div v-if="profileImage" id="imageFrame" class="circular">
                   <img :src="profileImage" />
                 </div>
               </div>
@@ -57,10 +57,7 @@
               </div>
 
               <div v-if="modals.address">
-                <MyLocationView
-                  @returnAddressName="updateAddressName"
-                  @returnAddressCode="updateAddressCode"
-                />
+                <MyLocationView @returnAddressName="updateAddressName" @returnAddressCode="updateAddressCode" />
                 <button @click="closeModal('address')">확인</button>
               </div>
             </div>
@@ -86,55 +83,34 @@
                   <p v-if="!modals.password">
                     <button @click="openModal('password')">비밀번호 수정</button>
                   </p>
-                  <div v-if="modals.password">
-                    <div>
+                  <div v-if="modals.password" class="modal">
+
+                    <div class="modal-content">
+
                       <form @submit.prevent="submitForm">
                         <!-- 현재 비밀번호 -->
                         <div class="form-group">
-                          <label for="inputPassword" class="col-sm-10 col-form-label"
-                            >현재 비밀번호</label
-                          >
-                          <input
-                            type="password"
-                            class="form-control"
-                            id="inputPassword"
-                            maxlength="16"
-                            v-model="password"
-                            required
-                          />
+                          <label for="inputPassword" class="col-sm-10 col-form-label">현재 비밀번호</label>
+                          <input type="password" class="form-control" id="inputPassword" maxlength="16" v-model="password"
+                            required />
                         </div>
                         <!-- 변경할 비밀번호 확인 -->
                         <div class="form-group">
-                          <label for="inputNewPassword" class="col-sm-10 col-form-label"
-                            >변경할 비밀번호</label
-                          >
-                          <input
-                            type="password"
-                            class="form-control"
-                            id="inputPassword"
-                            maxlength="16"
-                            v-model="newPassword"
-                            required
-                          />
+                          <label for="inputNewPassword" class="col-sm-10 col-form-label">변경할 비밀번호</label>
+                          <input type="password" class="form-control" id="inputNewPassword" maxlength="16"
+                            v-model="newPassword" required />
                         </div>
                         <div class="form-group">
-                          <label for="inputCheckNewPassword" class="col-sm-10 col-form-label"
-                            >비밀번호 확인</label
-                          >
-                          <input
-                            type="password"
-                            class="form-control"
-                            id="inputPassword"
-                            maxlength="16"
-                            v-model="checkNewPassword"
-                            required
-                          />
+                          <label for="inputCheckNewPassword" class="col-sm-10 col-form-label">비밀번호 확인</label>
+                          <input type="password" class="form-control" id="inputCheckNewPassword" maxlength="16"
+                            v-model="checkNewPassword" required />
                         </div>
                       </form>
-                      <button @click="changePassword()">비밀번호 변경</button>
+                      <button @click="changePassword">비밀번호 변경</button>
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
             <div>
@@ -151,12 +127,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useMemberStore } from '@/stores/member'
-import { useCounterStore } from '@/stores/counter'
+
 import MyLocationView from './MyLocationView.vue'
-import ImageUploader from '@/components/common/ImageUploader.vue'
+// import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const memberstore = useMemberStore()
-const counterstore = useCounterStore()
 const mypage = ref(null)
 
 const profileImage = ref(null)
@@ -169,42 +144,45 @@ const newPassword = ref('')
 const checkNewPassword = ref('')
 
 const readInputFile = (e) => {
-  document.getElementById('imageFrame').innerHTML = ''
   const files = e.target.files
-  const fileArr = Array.from(files)
-  console.log(fileArr[0])
-  profileImage.value = fileArr[0]
-  memberstore.profileImage = profileImage.value
-  console.log(`현재 저장된 프로필 이미지 : ${profileImage.value}`)
-  fileArr.forEach(function (f) {
-    if (!f.type.match('image/.*')) {
-      alert('이미지 확장자만 업로드 가능합니다.')
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = function (e) {
-      const img = document.createElement('img')
-      img.src = e.target.result
-      document.getElementById('imageFrame').appendChild(img)
-    }
-    reader.readAsDataURL(f)
-  })
+  if (files.length > 0) {
+    document.getElementById('imageFrame').innerHTML = ''
+    const fileArr = Array.from(files)
+    console.log(fileArr[0])
+
+    profileImage.value = fileArr[0]
+    memberstore.profileImage = profileImage.value
+    console.log(`현재 저장된 프로필 이미지 : ${profileImage.value}`)
+    fileArr.forEach(function (f) {
+      if (!f.type.match('image/.*')) {
+        alert('이미지 확장자만 업로드 가능합니다.')
+        return
+      }
+      const reader = new FileReader()
+      reader.onload = function (e) {
+        const img = document.createElement('img')
+        img.src = e.target.result
+        document.getElementById('imageFrame').appendChild(img)
+      }
+      reader.readAsDataURL(f)
+    })
+  }
 }
 
-const showImageUploader = ref(false)
+// const showImageUploader = ref(false)
 
-const openImageUploader = () => {
-  showImageUploader.value = true
-}
+// const openImageUploader = () => {
+//   showImageUploader.value = true
+// }
 
-const closeImageUploader = () => {
-  showImageUploader.value = false
-  memberstore.profileImage = profileImage.value
-}
+// const closeImageUploader = () => {
+//   showImageUploader.value = false
+//   memberstore.profileImage = profileImage.value
+// }
 
-const updateProfileImage = (image) => {
-  profileImage.value = image
-}
+// const updateProfileImage = (image) => {
+//   profileImage.value = image
+// }
 
 onMounted(async () => {
   await memberstore.getMypage()
@@ -229,8 +207,6 @@ const openModal = (modalName) => {
 }
 const closeModal = (modalName) => {
   modals.value[modalName] = false
-  memberstore.nickname = nickname.value
-  memberstore.introduce = introduce.value
 }
 const updateAddressName = (name) => {
   address.value = name
@@ -240,8 +216,9 @@ const updateAddressCode = (code) => {
 }
 // 비밀번호 변경
 
-const changePassword = () => {
-  modals.value[password] = false
+const changePassword = (event) => {
+  event.preventDefault()
+  closeModal('password')
   const payload = {
     password: password.value,
     newPassword: newPassword.value,
@@ -258,6 +235,7 @@ const modifyInfo = function (event) {
     introduce: introduce.value,
     regionCd: regionCd.value
   }
+
   // console.log(`아이디 : ${form.value.id}`)
   memberstore.modifyInfo(payload)
   // console.log(payload)
@@ -269,8 +247,8 @@ const modifyInfo = function (event) {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  height: 50%;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;

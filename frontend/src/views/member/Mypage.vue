@@ -22,7 +22,7 @@
 
             <div class="address">
               <h4>생일</h4>
-              <p>{{ year }}년 {{ month }}월 {{ day }}일</p>
+              <p v-if="mypage.birth">{{ year }}년 {{ month }}월 {{ day }}일</p>
             </div>
             <div class="address">
               <h4>내 동네</h4>
@@ -46,14 +46,7 @@
             <a @click="openModal" style="color: red" href="">회원탈퇴</a>
             <div v-if="deleteMemberModal">
               <label for="deleteMember"> 탈퇴하려면 비밀번호 입력 </label>
-              <input
-                type="password"
-                class="form-control"
-                id="inputPassword"
-                maxlength="16"
-                v-model="password"
-                required
-              />
+              <input type="password" class="form-control" id="inputPassword" maxlength="16" v-model="password" required />
               <form action=""></form>
 
               <button type="submit" @click="deleteMember">탈퇴</button>
