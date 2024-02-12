@@ -59,9 +59,11 @@
                   maxlength="16"
                   v-model="password"
                   required
+                  @blur="validatePassword"
                 />
                 <p style="color: grey">
-                  ※ 비밀번호는 8~16자의 영문 대/소문자, 숫자, 특수문자를 사용하세요.
+                  ※ 비밀번호는 8~16자의 영문 대/소문자, 숫자, 특수문자(@, $, !, %, *, ?, &)를
+                  사용하세요.
                 </p>
               </div>
               <!-- 비밀번호확인 -->
@@ -229,6 +231,13 @@ const isMember = async (code) => {
 
 // 아이디 중복 체크
 const checkId = function () {
+  // 정규 표현식을 사용하여 아이디가 영문자와 숫자로만 구성되었는지 확인
+  const alphanumericRegex = /^[a-zA-Z0-9]+$/
+
+  if (!alphanumericRegex.test(memberId.value)) {
+    alert('아이디는 영어와 숫자로만 구성되어야 합니다.')
+    return
+  }
   memberStore.checkId(memberId.value)
   console.log(`${memberId.value}`)
 }
@@ -237,6 +246,19 @@ const checkId = function () {
 const checkNickname = function () {
   memberStore.checkNickname(nickname.value)
   console.log(`${nickname.value}`)
+}
+
+// 비밀번호 유효성 검사 함수
+const validatePassword = function () {
+  // 정규 표현식을 사용하여 비밀번호가 규칙에 부합하는지 확인
+  const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/
+
+  if (!passwordRegex.test(password.value)) {
+    alert('비밀번호는 8~16자의 영문 대/소문자, 숫자, 특수문자를 포함해야 합니다.')
+    return false
+  }
+
+  return true
 }
 
 // 비밀번호 일치 여부 확인 함수
