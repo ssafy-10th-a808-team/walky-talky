@@ -209,10 +209,12 @@ const updateProfileImage = (image) => {
 onMounted(async () => {
   await memberstore.getMypage()
   mypage.value = memberstore.mypage
+  console.log(mypage.value.introduce)
   profileImage.value = mypage.value.profileImage
   nickname.value = mypage.value.nickname
   introduce.value = mypage.value.introduce
   address.value = mypage.value.address
+  regionCd.value = mypage.value.regionCd
 })
 
 // modal창 띄우기 위한 스위치들
