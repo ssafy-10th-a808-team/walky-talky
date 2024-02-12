@@ -192,7 +192,7 @@ const godetail = (seq) => {
 
 /* 스크롤바 스타일 */
 .scroll-container::-webkit-scrollbar {
-  height: 4px;
+  height: 12px;
 }
 
 .scroll-container::-webkit-scrollbar-thumb {

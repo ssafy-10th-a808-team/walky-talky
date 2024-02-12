@@ -11,7 +11,7 @@ import ModifyInfo from '@/views/member/ModifyInfo.vue'
 
 // walk router 산책
 import DoWalk from '@/views/walk/DoWalk.vue'
-import dowalk2 from '@/views/walk/dowalk2.vue' //임시
+// import dowalk2 from '@/views/walk/dowalk2.vue' //임시
 import WalkList from '@/views/walk/WalkList.vue'
 import WalkDetaillView from '@/views/walk/WalkDetaillView.vue'
 import ScrapListView from '@/views/walk/ScrapListView.vue'
@@ -32,6 +32,7 @@ import ClubSettingClub from '@/views/club/ClubSettingClubView.vue'
 import ClubChatView from '@/views/club/ClubChatView.vue'
 import ClubPlanRegist from '@/views/club/ClubPlanRegist.vue'
 import ClubPlanDetail from '@/views/club/ClubPlanDetail.vue'
+import ClubPlanOverwrite from '@/views/club/ClubPlanOverwrite.vue'
 
 // shareboard router 산책공유게시판
 import ShareBoardView from '@/views/shareboard/ShareBoardView.vue'
@@ -90,11 +91,11 @@ const router = createRouter({
       name: 'DoWalk',
       component: DoWalk
     },
-    {
-      path: '/walk/do-walk2',
-      name: 'dowalk2',
-      component: dowalk2
-    },
+    // {
+    //   path: '/walk/do-walk2',
+    //   name: 'dowalk2',
+    //   component: dowalk2
+    // },
     {
       path: '/walk/list',
       name: 'WalkList',
@@ -185,6 +186,12 @@ const router = createRouter({
       path: '/club/:clubSeq/plan/:planSeq/detail',
       name: 'club-plan-detail',
       component: ClubPlanDetail,
+      props: true
+    },
+    {
+      path: '/club/:clubSeq/plan/:planSeq/overwrite',
+      name: 'club-plan-overwrite',
+      component: ClubPlanOverwrite,
       props: true
     },
 
