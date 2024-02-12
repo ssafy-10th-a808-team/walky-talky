@@ -26,7 +26,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useShareBoardStore } from '@/stores/shareBoard'
 import { useRouter } from 'vue-router'
 const shareBoardStore = useShareBoardStore()

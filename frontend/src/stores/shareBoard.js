@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
-// import { axios } from '@/stores/jwtFilter'
+// import axios from 'axios'
+import { axios } from '@/stores/jwtFilter'
 
 import { useCounterStore } from './counter'
 import { useMemberStore } from './member'
@@ -122,6 +122,7 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         }
       })
       shareRecord.value = res.data.data
+      console.log(shareRecord.value)
     } catch (err) {
       console.log(err)
     }
