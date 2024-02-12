@@ -16,7 +16,6 @@ public class WebMvcConfig {
         registrationBean.setFilter(new JwtAuthenticationFilter(jwtProvider, redisDao));
         registrationBean.addUrlPatterns(
                 "/api/member/logout",
-                "/api/member/reissue",
                 "/api/member/mypage",
                 "/api/member/mystreak",
                 "/api/member/modify-info",
