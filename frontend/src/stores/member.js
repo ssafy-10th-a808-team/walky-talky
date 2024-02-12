@@ -1,7 +1,8 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '@/router'
-import axios from 'axios'
+// import axios from 'axios'
+import { axios } from '@/stores/jwtFilter'
 import { useCounterStore } from './counter'
 
 const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
@@ -133,6 +134,8 @@ export const useMemberStore = defineStore(
           counterstore.setCookie('profileImage', res.data.data.profileImage)
           nickname.value = res.data.data.nickname
           profileImage.value = res.data.data.profileImage
+
+          counterstore.setCookie('rtk', res.headers.get('rtk'))
 
           //router.push({ name: 'home' })
           console.log(nickname.value)
