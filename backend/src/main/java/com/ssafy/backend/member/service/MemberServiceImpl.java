@@ -9,7 +9,10 @@ import com.ssafy.backend.member.dto.mapping.NicknameUrlMapping;
 import com.ssafy.backend.member.dto.mapping.RegionCdMapping;
 import com.ssafy.backend.member.dto.mapping.StreakMapping;
 import com.ssafy.backend.member.dto.request.*;
-import com.ssafy.backend.member.dto.response.*;
+import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
+import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
+import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
+import com.ssafy.backend.member.dto.response.ResponseMypageDto;
 import com.ssafy.backend.member.repository.MemberRepository;
 import com.ssafy.backend.member.repository.StreakRepository;
 import com.ssafy.backend.region.repository.RegionRepository;
@@ -375,7 +378,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException {
+    public Map<String, Object> modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException {
         Optional<Member> memberOptional = memberRepository.findById(memberSeq);
 
         if (memberOptional.isEmpty()) {
@@ -383,6 +386,8 @@ public class MemberServiceImpl implements MemberService {
         }
 
         Member member = memberOptional.get();
+
+        Map<String, Object> resultMap = new HashMap<>();
 
         if (requestModifyInfoDto.getProfileImage() != null) {
             s3UploadService.deleteImg(member.getUrl());
@@ -399,6 +404,10 @@ public class MemberServiceImpl implements MemberService {
         }
 
         memberRepository.save(member);
+
+        resultMap.put("nickname", member.getNickname());
+        resultMap.put("url", member.getUrl());
+        return resultMap;
     }
 
     @Override

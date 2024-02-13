@@ -1,11 +1,11 @@
 package com.ssafy.backend.member.controller;
 
-import com.ssafy.backend.global.error.WTException;
-import com.ssafy.backend.global.util.JwtProvider;
-import com.ssafy.backend.global.util.RedisDao;
 import com.ssafy.backend.member.dto.mapping.StreakMapping;
 import com.ssafy.backend.member.dto.request.*;
-import com.ssafy.backend.member.dto.response.*;
+import com.ssafy.backend.member.dto.response.ResponseCheckIdDto;
+import com.ssafy.backend.member.dto.response.ResponseCheckNicknameDto;
+import com.ssafy.backend.member.dto.response.ResponseLocalSignupDto;
+import com.ssafy.backend.member.dto.response.ResponseMypageDto;
 import com.ssafy.backend.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -192,7 +192,8 @@ public class MemberController {
 
         Long memberSeq = (Long) request.getAttribute("seq");
         try {
-            memberService.modifyInfo(memberSeq, requestModifyInfoDto);
+            Map<String, Object> data = memberService.modifyInfo(memberSeq, requestModifyInfoDto);
+            resultMap.put("data", data);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
