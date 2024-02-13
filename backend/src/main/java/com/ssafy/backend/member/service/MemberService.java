@@ -36,7 +36,7 @@ public interface MemberService {
 
     List<StreakMapping> myStreak(Long memberSeq) throws WTException;
 
-    void modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException;
+    Map<String, Object> modifyInfo(Long memberSeq, RequestModifyInfoDto requestModifyInfoDto) throws WTException;
 
     void modifyPassword(Long memberSeq, RequestModifyPasswordDto requestModifyPasswordDto) throws WTException;
 
