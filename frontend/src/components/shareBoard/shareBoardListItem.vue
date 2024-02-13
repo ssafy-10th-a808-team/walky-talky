@@ -7,7 +7,13 @@
       :address="record.address"
       :hit="content.hit"
     />
-    <shareBoardTitle :title="content.title" :commentCount="content.commentCount" />
+    <div class="middle-info-container">
+      <shareBoardTitle :title="content.title" :commentCount="content.commentCount" />
+      <div class="like-scrap-container">
+        <shareBoardLike class="info" :likeCount="like.likeCount" :liked="like.liked" />
+        <shareBoardScrap class="info" :scrapCount="scrap.scrapCount" :scraped="scrap.scraped" />
+      </div>
+    </div>
     <shareBoardRecord
       :duration="record.duration"
       :distance="record.distance"
@@ -18,10 +24,6 @@
       :movable="false"
       :isList="false"
     />
-    <div class="like-scrap-container">
-      <shareBoardLike :likeCount="like.likeCount" :liked="like.liked" />
-      <shareBoardScrap :scrapCount="scrap.scrapCount" :scraped="scrap.scraped" />
-    </div>
   </div>
 </template>
 
@@ -44,6 +46,15 @@ const { content, record, like, scrap } = defineProps({
 .like-scrap-container {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+}
+
+.middle-info-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.info {
+  margin: 0px 5px 0px 5px;
 }
 </style>
