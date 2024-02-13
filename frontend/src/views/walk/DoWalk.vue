@@ -71,24 +71,50 @@
               <!-- <h2>산책 평가</h2> -->
               <form>
                 <div>
-                  <label for="title">제 목 : </label>&nbsp;
-                  <input type="text" v-model="walkReview.title" required />
+                  <b for="title">제 목 :</b>
+                  &nbsp;
+                  <input
+                    type="text"
+                    class="form-control"
+                    style="display: inline-block; width: 200px; height: 25px"
+                    v-model="walkReview.title"
+                    required
+                  />
                 </div>
                 <div>
-                  <label for="starRating">별 점 : </label>&nbsp;
-                  <input type="number" v-model="walkReview.starRating" min="1" max="5" required />
+                  <b for="starRating">별 점 :</b>
+                  &nbsp;
+                  <input
+                    type="number"
+                    class="form-control"
+                    style="display: inline-block; width: 100px; height: 25px"
+                    v-model="walkReview.starRating"
+                    min="1"
+                    max="5"
+                    required
+                  />
                 </div>
                 <div class="form-group mt-1">
-                  <label for="comment">한줄평 : </label>&nbsp;
+                  <b for="comment">한줄평 :</b>
+                  &nbsp;
                   <textarea
                     class="form-control"
                     name="message"
+                    style="display: inline-block; width: 260px"
                     v-model="walkReview.comment"
                     required
                   ></textarea>
                 </div>
-                <hr />
-                <div style="display: flex; justify-content: center; margin-left: -30px">
+                <br />
+                <div
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-left: -30px;
+                    margin-bottom: 10px;
+                    margin-top: 0;
+                  "
+                >
                   <div style="margin-right: 10px">
                     <button @click="submitWalkReview">작성</button>
                   </div>
@@ -279,7 +305,7 @@ onMounted(async () => {
     // 마운트 되었을 때 map이 있다면 interval 을 5초로
     const interval = setInterval(() => {
       navigator.geolocation.getCurrentPosition(setLinePathArr)
-    }, 5000)
+    }, 1000) //여기 바꿨음 ~~~
 
     onBeforeUnmount(() => {
       // 마운트가 되기 전에 map이 있다면 map 정보 초기화
@@ -688,29 +714,6 @@ watchEffect(() => {
     }
   }
 })
-
-// watchEffect(() => {
-//   if (state.value.map && running.value) {
-//     navigator.geolocation.getCurrentPosition((position) => {
-//       setLinePathArr(position)
-//       // 위치를 받아오면 바로 선을 그리도록 수정
-//       makeLine()
-//     })
-//   }
-// })
-
-// watchEffect(() => {
-//   if (state.value.map && running.value) {
-//     let timeoutId = setTimeout(() => {
-//       navigator.geolocation.getCurrentPosition((position) => setLinePathArr(position));
-//       timeoutId = setTimeout(arguments.callee, 5000);
-//     }, 5000);
-
-//     return () => {
-//       clearTimeout(timeoutId);
-//     };
-//   }
-// });
 </script>
 
 <style scoped>
