@@ -18,7 +18,7 @@
           </li>
 
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
+            <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책</RouterLink>
           </li>
           <li @click="closeNav">
             <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto"
@@ -75,16 +75,33 @@
 </template>
 
 <script setup>
-import { handleError, ref } from 'vue'
+import { handleError, ref, watch, onMounted } from 'vue'
 import { useMemberStore } from '@/stores/member'
 import { useCounterStore } from '@/stores/counter'
 
 const memberstore = useMemberStore()
 const counterstore = useCounterStore()
 
-const nickname = counterstore.getCookie('nickname')
-const url = counterstore.getCookie('profileImage')
+const nickname = ref(counterstore.getCookie('nickname'))
+const url = ref(counterstore.getCookie('profileImage'))
 
+onMounted(() => {
+  nickname.value = counterstore.getCookie('nickname')
+  url.value = counterstore.getCookie('profileImage')
+})
+
+watch(
+  () => counterstore.getCookie('nickname'),
+  (newVal) => {
+    nickname.value = newVal
+  }
+)
+watch(
+  () => counterstore.getCookie('profileImage'),
+  (newVal) => {
+    url.value = newVal
+  }
+)
 // const closeNav = () => {
 //   const navbar = document.querySelector('#navbar')
 //   if (navbar.classList.contains('navbar-mobile')) {

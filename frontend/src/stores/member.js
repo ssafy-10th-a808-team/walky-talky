@@ -1,7 +1,8 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '@/router'
-import axios from 'axios'
+// import axios from 'axios'
+import { axios } from '@/stores/jwtFilter'
 import { useCounterStore } from './counter'
 
 const REST_MEMBER_API = 'https://i10a808.p.ssafy.io'
@@ -68,11 +69,11 @@ export const useMemberStore = defineStore(
         }
       })
         .then((res) => {
-          // console.log(res)
+          console.log(res)
           alert('사용가능한 아이디입니다')
         })
         .catch((err) => {
-          // console.log(err)
+          console.log(err)
           const errmsg = err.response.data.message
           console.log(errmsg)
           if (errmsg == 'id is empty') {
@@ -133,6 +134,8 @@ export const useMemberStore = defineStore(
           counterstore.setCookie('profileImage', res.data.data.profileImage)
           nickname.value = res.data.data.nickname
           profileImage.value = res.data.data.profileImage
+
+          counterstore.setCookie('rtk', res.headers.get('rtk'))
 
           //router.push({ name: 'home' })
           console.log(nickname.value)
@@ -232,28 +235,30 @@ export const useMemberStore = defineStore(
 
     // 내 정보
     const mypage = ref([])
-    const getMypage = () => {
-      axios({
-        method: 'get',
-        url: `${REST_MEMBER_API}/api/member/mypage`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
-      })
-        .then((res) => {
-          console.log(res.data)
-          // mypage.value = res.data.data
-          // nickname.value = res.data.data.nickname
-          // profileImage.value = res.data.data.profileImage
-          // address_code.value = res.data.data.regionCd
-          // address_name.value = res.data.data.address
+    const getMypage = async () => {
+      try {
+        const res = await axios({
+          method: 'get',
+          url: `${REST_MEMBER_API}/api/member/mypage`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          }
         })
-        .catch((err) => {
-          console.log(err)
-        })
+        console.log(res.data.data)
+        mypage.value = res.data.data
+        counterstore.deleteCookie('profileImage')
+        counterstore.deleteCookie('nickname')
+        console.log(mypage.value)
+        counterstore.setCookie('profileImage', mypage.value.profileImage)
+        counterstore.setCookie('nickname', mypage.value.nickname)
+        console.log(counterstore.getCookie('nickname'))
+      } catch (err) {
+        console.log(err)
+      }
     }
 
-    const modifyInfo = (payload) => {
+    // //테스트
+    const modifyInfo = async (payload) => {
       const formData = new FormData()
       if (payload.profileImage) {
         formData.append('profileImage', payload.profileImage)
@@ -261,24 +266,28 @@ export const useMemberStore = defineStore(
       formData.append('nickname', payload.nickname)
       formData.append('introduce', payload.introduce)
       formData.append('regionCd', payload.regionCd)
-      axios({
-        method: 'post',
-        url: `${REST_MEMBER_API}/api/member/modify-info`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        },
-        data: formData
-      })
-        .then((res) => {
-          console.log(res)
-          alert('정보 변경 성공')
-          router.push({ name: 'Mypage' })
+
+      try {
+        const res = await axios({
+          method: 'post',
+          url: `${REST_MEMBER_API}/api/member/modify-info`,
+          headers: {
+            Authorization: `Bearer ${counterstore.getCookie('atk')}`
+          },
+          data: formData
         })
-        .catch((err) => {
-          console.log(err)
-          alert('정보 변경 실패')
-        })
+        console.log(res)
+        alert('정보 변경 성공')
+        router.push({ name: 'Mypage' })
+        setTimeout(() => {
+          window.location.reload()
+        }, 100)
+      } catch (err) {
+        console.log(err)
+        alert('정보 변경 실패')
+      }
     }
+
     // 비밀번호 수정
     const modifyPassword = (payload) => {
       axios({

@@ -17,11 +17,21 @@
               <ImageUploader @imageSelected="updateProfileImage" @close="closeImageUploader" />
             </div> -->
             <!-- 이미지 업로드 -->
+            <!-- <div class="form-group">
+              <label for="image-upload">프로필 사진</label>
+              <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
+              <div class="d-flex justify-content-center align-items-center">
+                <div v-if="profileImage" id="imageFrame" class="circular">
+                  <img :src="profileImage" />
+                </div>
+              </div>
+            </div> -->
+
             <div class="form-group">
               <label for="image-upload">프로필 사진</label>
               <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
               <div class="d-flex justify-content-center align-items-center">
-                <div id="imageFrame" class="circular">
+                <div v-if="profileImage" id="imageFrame" class="circular">
                   <img :src="profileImage" />
                 </div>
               </div>
@@ -40,7 +50,7 @@
                       <form @submit.prevent="submitForm">
                         <input type="text" v-model="nickname" />
                       </form>
-                      <button @click="closeModal('nickname')">확인</button>
+                      <button @click="checkNickname">확인</button>
                     </div>
                   </div>
                 </div>
@@ -86,8 +96,8 @@
                   <p v-if="!modals.password">
                     <button @click="openModal('password')">비밀번호 수정</button>
                   </p>
-                  <div v-if="modals.password">
-                    <div>
+                  <div v-if="modals.password" class="modal">
+                    <div class="modal-content">
                       <form @submit.prevent="submitForm">
                         <!-- 현재 비밀번호 -->
                         <div class="form-group">
@@ -111,7 +121,7 @@
                           <input
                             type="password"
                             class="form-control"
-                            id="inputPassword"
+                            id="inputNewPassword"
                             maxlength="16"
                             v-model="newPassword"
                             required
@@ -124,21 +134,21 @@
                           <input
                             type="password"
                             class="form-control"
-                            id="inputPassword"
+                            id="inputCheckNewPassword"
                             maxlength="16"
                             v-model="checkNewPassword"
                             required
                           />
                         </div>
                       </form>
-                      <button @click="changePassword()">비밀번호 변경</button>
+                      <button @click="changePassword">비밀번호 변경</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             <div>
-              <button @click="modifyInfo">완료</button>
+              <button type="submit" @click="modifyInfo">완료</button>
             </div>
           </div>
         </div>
@@ -151,15 +161,15 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useMemberStore } from '@/stores/member'
-import { useCounterStore } from '@/stores/counter'
+
 import MyLocationView from './MyLocationView.vue'
-import ImageUploader from '@/components/common/ImageUploader.vue'
+// import ImageUploader from '@/components/common/ImageUploader.vue'
 
 const memberstore = useMemberStore()
-const counterstore = useCounterStore()
 const mypage = ref(null)
 
 const profileImage = ref(null)
+const profileImageFile = ref(null)
 const address = ref('')
 const nickname = ref('')
 const introduce = ref('')
@@ -169,50 +179,39 @@ const newPassword = ref('')
 const checkNewPassword = ref('')
 
 const readInputFile = (e) => {
-  document.getElementById('imageFrame').innerHTML = ''
   const files = e.target.files
-  const fileArr = Array.from(files)
-  console.log(fileArr[0])
-  profileImage.value = fileArr[0]
-  memberstore.profileImage = profileImage.value
-  console.log(`현재 저장된 프로필 이미지 : ${profileImage.value}`)
-  fileArr.forEach(function (f) {
-    if (!f.type.match('image/.*')) {
-      alert('이미지 확장자만 업로드 가능합니다.')
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = function (e) {
-      const img = document.createElement('img')
-      img.src = e.target.result
-      document.getElementById('imageFrame').appendChild(img)
-    }
-    reader.readAsDataURL(f)
-  })
-}
+  if (files.length > 0) {
+    document.getElementById('imageFrame').innerHTML = ''
+    const fileArr = Array.from(files)
+    console.log(fileArr[0])
 
-const showImageUploader = ref(false)
-
-const openImageUploader = () => {
-  showImageUploader.value = true
-}
-
-const closeImageUploader = () => {
-  showImageUploader.value = false
-  memberstore.profileImage = profileImage.value
-}
-
-const updateProfileImage = (image) => {
-  profileImage.value = image
+    profileImageFile.value = fileArr[0]
+    console.log(`현재 저장된 프로필 이미지 : ${profileImageFile.value}`)
+    fileArr.forEach(function (f) {
+      if (!f.type.match('image/.*')) {
+        alert('이미지 확장자만 업로드 가능합니다.')
+        return
+      }
+      const reader = new FileReader()
+      reader.onload = function (e) {
+        const img = document.createElement('img')
+        img.src = e.target.result
+        document.getElementById('imageFrame').appendChild(img)
+      }
+      reader.readAsDataURL(f)
+    })
+  }
 }
 
 onMounted(async () => {
   await memberstore.getMypage()
   mypage.value = memberstore.mypage
+  console.log(mypage.value.introduce)
   profileImage.value = mypage.value.profileImage
   nickname.value = mypage.value.nickname
   introduce.value = mypage.value.introduce
   address.value = mypage.value.address
+  regionCd.value = mypage.value.regionCd
 })
 
 // modal창 띄우기 위한 스위치들
@@ -227,8 +226,6 @@ const openModal = (modalName) => {
 }
 const closeModal = (modalName) => {
   modals.value[modalName] = false
-  memberstore.nickname = nickname.value
-  memberstore.introduce = introduce.value
 }
 const updateAddressName = (name) => {
   address.value = name
@@ -238,8 +235,9 @@ const updateAddressCode = (code) => {
 }
 // 비밀번호 변경
 
-const changePassword = () => {
-  modals.value[password] = false
+const changePassword = (event) => {
+  event.preventDefault()
+  closeModal('password')
   const payload = {
     password: password.value,
     newPassword: newPassword.value,
@@ -251,14 +249,22 @@ const changePassword = () => {
 const modifyInfo = function (event) {
   event.preventDefault()
   const payload = {
-    profileImage: profileImage.value,
+    profileImage: profileImageFile.value,
     nickname: nickname.value,
     introduce: introduce.value,
     regionCd: regionCd.value
   }
+
   // console.log(`아이디 : ${form.value.id}`)
   memberstore.modifyInfo(payload)
   // console.log(payload)
+}
+// 닉네임 중복 확인
+const checkNickname = (event) => {
+  event.preventDefault()
+  memberstore.checkNickname(nickname.value)
+  console.log(`${nickname.value}`)
+  closeModal('nickname')
 }
 </script>
 

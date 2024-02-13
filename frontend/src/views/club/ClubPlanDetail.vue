@@ -1,21 +1,49 @@
 <template>
   <ClubDetailHeaderNav />
-  <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan">
-    <div v-if="record">
-      <shareBoardRecord
-        class="detail-record-container"
-        :duration="record.duration"
-        :distance="record.distance"
-        :points="record.points"
-        :address="record.address"
-        :movable="true"
-      />
-    </div>
-    <div v-else>현재 기록 없음</div>
 
-    <div class="plan-title">{{ clubstore.planDetail.responsePlanDetailDtoPlan.title }}</div>
+  <!-- {{ clubstore.planDetail }} -->
+
+  <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan">
+    <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan.recordSeq != null">
+      <div
+        :id="'map-' + uniqueId"
+        class="map"
+        :style="{ width: '100%', height: '500px', justifyContent: 'center' }"
+        @click="setDraggable(true)"
+      ></div>
+
+      <div class="record-container">
+        <div class="header">
+          <div class="left-section">
+            <p v-if="title != '제목'">{{ title }}</p>
+          </div>
+          <!-- <div class="right-section star-section">
+            <StarRating :starRating="parseInt(starRating)" :editable="false" />
+          </div> -->
+        </div>
+
+        <div class="mid-container">
+          <div class="right-section">
+            <p>기록 날짜 : {{ startTime }}</p>
+            <p>
+              소요 시간 : {{ convertTime(parseInt(duration)) }} | 총 거리 :
+              {{ Math.round(distance * 10) / 10 }} km
+            </p>
+          </div>
+        </div>
+
+        <div class="comment-section">
+          <p v-if="comment != '한줄평'">{{ comment }}</p>
+        </div>
+      </div>
+    </div>
+    <div v-else>현재 업데이트 된 기록이 없습니다</div>
+
+    <div class="plan-title">
+      일정 제목 : {{ clubstore.planDetail.responsePlanDetailDtoPlan.title }}
+    </div>
     <div class="plan-start-time">
-      시작 시간:
+      시작 예정 시각 :
       {{
         new Date(clubstore.planDetail.responsePlanDetailDtoPlan.startTime).toLocaleTimeString(
           'ko-KR',
@@ -26,15 +54,15 @@
         )
       }}
     </div>
-    <div class="plan-capacity">
-      참여 인원: {{ clubstore.planDetail.responsePlanDetailDtoPlan.nowCapacity }} /
-      {{ clubstore.planDetail.responsePlanDetailDtoPlan.maxCapacity }}
-    </div>
     <div class="plan-location">
-      위치: {{ clubstore.planDetail.responsePlanDetailDtoPlan.location }}
+      시작 모임 장소 : {{ clubstore.planDetail.responsePlanDetailDtoPlan.location }}
     </div>
     <div v-if="clubstore.planDetail.responsePlanDetailDtoPlan.content" class="plan-content">
       내용: {{ clubstore.planDetail.responsePlanDetailDtoPlan.content }}
+    </div>
+    <div class="plan-capacity">
+      참여 인원 : {{ clubstore.planDetail.responsePlanDetailDtoPlan.nowCapacity }} /
+      {{ clubstore.planDetail.responsePlanDetailDtoPlan.maxCapacity }}
     </div>
 
     <div v-if="isPlanMember" class="buttons-container">
@@ -77,16 +105,28 @@ import ClubDetailHeaderNav from '@/components/common/ClubDetailHeaderNav.vue'
 import { onMounted, ref } from 'vue'
 import { useClubStore } from '@/stores/club'
 import { useCounterStore } from '@/stores/counter'
-import shareBoardRecord from '@/components/shareBoard/shareBoardRecord.vue'
-import { useShareBoardStore } from '@/stores/shareBoard'
+import { useWalkStore } from '@/stores/walk'
 import { useRouter } from 'vue-router'
 
 const clubstore = useClubStore()
 const counterstore = useCounterStore()
 const isPlanMember = ref(false)
-const shareBoardStore = useShareBoardStore()
-const record = ref(null)
 const router = useRouter()
+
+const walkStore = useWalkStore()
+
+const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
+let map = null // map is not defined Reference Error 방지
+const uniqueId = ref(Date.now()) // 각 컴포넌트에 고유한 ID를 부여하기 위한 ref
+
+const record = ref(null)
+const title = ref(null)
+const duration = ref(null)
+const distance = ref(null)
+const points = ref(null)
+const starRating = ref(null)
+const comment = ref(null)
+const startTime = ref(null)
 
 const { clubSeq, planSeq } = defineProps({
   clubSeq: String,
@@ -108,8 +148,179 @@ onMounted(async function () {
     (member) => member.nickname === nickname
   )
 
-  record.value = await shareBoardStore.getRecord(clubstore.planDetail.record.seq)
+  if (clubstore.planDetail.responsePlanDetailDtoPlan.recordSeq != null) {
+    await loadDetail(clubstore.planDetail.responsePlanDetailDtoPlan.recordSeq)
+
+    if (window.kakao && window.kakao.maps) {
+      initMap()
+    } else {
+      const script = document.createElement('script')
+      script.onload = () => {
+        /* global kakao*/
+        kakao.maps.load(initMap)
+      }
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
+      document.head.appendChild(script)
+    }
+  }
 })
+
+const loadDetail = async (seq) => {
+  await walkStore.getRecordDetail(seq)
+  record.value = walkStore.recordDetail
+
+  console.log(record.value)
+
+  title.value = record.value.title
+  duration.value = record.value.duration
+  distance.value = record.value.distance
+  points.value = record.value.points
+  starRating.value = record.value.starRating
+  comment.value = record.value.comment
+  startTime.value = record.value.startTime.substr(0, 10)
+}
+
+const initMap = () => {
+  const container = document.getElementById(`map-${uniqueId.value}`)
+
+  const mid = parseInt(points.value.length / 2)
+
+  if (points.value && points.value.length > 0 && mid >= 0 && mid < points.value.length) {
+    const options = {
+      center: new kakao.maps.LatLng(points.value[mid].latitude, points.value[mid].longitude),
+      level: 5,
+      draggable: false
+    }
+
+    map = new kakao.maps.Map(container, options)
+
+    ///// 시작, 끝 점 /////
+    var startEndPositions = [
+      {
+        title: '산책 시작',
+        img: 'start.png',
+        latlng: new kakao.maps.LatLng(points.value[0].latitude, points.value[0].longitude)
+      },
+      {
+        title: '산책 끝',
+        img: 'end.png',
+        latlng: new kakao.maps.LatLng(
+          points.value[points.value.length - 1].latitude,
+          points.value[points.value.length - 1].longitude
+        )
+      }
+    ]
+
+    for (var i = 0; i < startEndPositions.length; i++) {
+      var imageSize = new kakao.maps.Size(20, 30)
+
+      var markerImage = new kakao.maps.MarkerImage(
+        import.meta.env.VITE_MARKER_IMAGE_ROUTE + startEndPositions[i].img,
+        imageSize
+      )
+
+      var marker = new kakao.maps.Marker({
+        map: map,
+        position: startEndPositions[i].latlng,
+        title: startEndPositions[i].title,
+        image: markerImage
+      })
+    }
+
+    ///// 마커찍기/////
+    for (const point of points.value) {
+      if (!point.url && !point.pointComment) {
+        continue
+      }
+
+      const latlng = new kakao.maps.LatLng(point.latitude, point.longitude)
+
+      const marker = new kakao.maps.Marker({
+        map: map,
+        position: latlng
+      })
+
+      let content = `<div class="wrap">` + `    <div class="info">` + `        <div class="body">`
+
+      if (point.url && point.pointComment) {
+        content +=
+          `            <div class="img">` +
+          `                <img src=${point.url} width="100" height="100">` +
+          `            </div>` +
+          `            <div class="desc">` +
+          `                <div class="ellipsis">${point.pointComment}</div>` +
+          `            </div>`
+      } else if (point.url) {
+        content +=
+          `            <div class="img">` +
+          `                <img src=${point.url} width="100" height="100">` +
+          `            </div>`
+      } else if (point.pointComment) {
+        content +=
+          `            <div class="desc">` +
+          `                <div class="ellipsis">${point.pointComment}</div>` +
+          `            </div>`
+      }
+      content += `        </div>` + `    </div>` + `</div>`
+
+      const contentElement = document.createElement('div')
+      contentElement.innerHTML = content
+
+      const overlay = new kakao.maps.CustomOverlay({
+        content: contentElement,
+        map: map,
+        position: marker.getPosition()
+      })
+
+      let isClose = true
+      overlay.setMap(null)
+
+      kakao.maps.event.addListener(marker, 'click', function () {
+        if (isClose) {
+          overlay.setMap(map)
+          isClose = false
+        } else {
+          overlay.setMap(null)
+          isClose = true
+        }
+      })
+    }
+
+    // 경로 폴리라인
+    var polyline = new kakao.maps.Polyline({
+      map: map,
+      path: points.value.map((point) => new kakao.maps.LatLng(point.latitude, point.longitude)),
+      strokeWeight: 5,
+      strokeColor: '#FF0000'
+    })
+
+    polyline.setMap(map)
+  } else {
+    const options = {
+      center: new kakao.maps.LatLng(37.501289692413124, 127.03961880220784),
+      level: 5
+    }
+
+    map = new kakao.maps.Map(container, options)
+  }
+}
+function setDraggable(draggable) {
+  map.setZoomable(draggable)
+  map.setDraggable(draggable)
+}
+function convertTime(seconds) {
+  if (typeof seconds !== 'number' || seconds < 0) {
+    return 'Invalid input'
+  }
+
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+
+  const minutesString = minutes > 0 ? `${minutes}분` : ''
+  const secondsString = remainingSeconds > 0 ? `${remainingSeconds}초` : ''
+
+  return `${minutesString} ${secondsString}`.trim() || '0초'
+}
 </script>
 
 <style scoped>
