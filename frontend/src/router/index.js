@@ -86,7 +86,7 @@ const router = createRouter({
 
     // walk router 산책
     {
-      path: '/walk/do-walk',
+      path: '/walk/do-walk/:seq?',
       name: 'DoWalk',
       component: DoWalk
     },

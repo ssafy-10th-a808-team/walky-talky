@@ -1,13 +1,13 @@
 <template>
   <div>
-    <h1>내 위치 확인하는 페이지</h1>
-    <div id="map" style="width: 500px; height: 400px" @load="getAddressInfo"></div>
+    <!-- <h1>내 위치 확인하는 페이지</h1> -->
+    <div id="map" @load="getAddressInfo"></div>
   </div>
   <div>
     내 동네: {{ address_name }}
     <div class="col-lg-3 cta-btn-container text-center">
       <!-- <div class="text-center"><button type="submit" @click="getAddressInfo">확인</button></div> -->
-      <button @click="reload">다시불러오기</button>
+      <button type="button" @click="reload">다시불러오기</button>
     </div>
   </div>
   <div style="display: none">지역 코드 : {{ address_code }}</div>
@@ -138,7 +138,7 @@ const goBack = () => {
 
 <style scoped>
 #map {
-  width: 400px;
+  max-width: 100%;
   height: 400px;
 }
 </style>

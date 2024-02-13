@@ -3,9 +3,6 @@
     <!-- WalkHeaderNav 컴포넌트를 불러와서 사용 -->
     <WalkHeaderNav />
 
-    <!-- 산책하기 제목 -->
-    <h1>산책하기</h1>
-
     <!-- 지도를 표시할 영역 -->
     <div class="map_wrap" style="position: relative">
       <div id="map" style="width: 100%; height: 600px">
@@ -39,57 +36,93 @@
             </div>
           </div>
           <!-- 산책 종료 시 화면 -->
-          <div v-if="showWalkSummary" class="formToPost">
-            <div
-              style="
-                /* text-align: center; */
-                position: absolute;
-                z-index: 2;
-                top: 60%;
-                left: 50%;
-                background-color: rgb(205, 238, 225);
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                width: 300px;
-                margin-left: -150px;
-                border-radius: 5%;
-              "
-            >
-              <!-- 산책 정보 표시 -->
-              <div style="display: flex; justify-content: space-between; text-align: center">
-                <div class="myRecord" style="font-weight: 700; width: 150px; float: left">
-                  <div id="run_desc time">시간</div>
-                  <span id="time">{{ clock }}</span>
-                </div>
-                <div class="myRecord" style="font-weight: 700; width: 150px; float: right">
-                  <div id="run_desc distance">거리</div>
-                  <span id="acc_dis"> {{ accumulated_distance.toFixed(2) }}km </span>
-                </div>
+          <div
+            v-if="showWalkSummary"
+            class="formToPost"
+            style="
+              /* text-align: center; */
+              position: absolute;
+              z-index: 2;
+              top: 55%;
+              left: 50%;
+              background-color: rgb(205, 238, 225);
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+              width: 300px;
+              margin-left: -150px;
+              border-radius: 5%;
+            "
+          >
+            <!-- 산책 정보 표시 -->
+            <div style="display: flex; justify-content: space-between; text-align: center">
+              <div class="myRecord" style="font-weight: 700; width: 150px; float: left">
+                <div id="run_desc time">시간</div>
+                <span id="time">{{ clock }}</span>
               </div>
+              <div class="myRecord" style="font-weight: 700; width: 150px; float: right">
+                <div id="run_desc distance">거리</div>
+                <span id="acc_dis"> {{ accumulated_distance.toFixed(2) }}km </span>
+              </div>
+            </div>
 
-              <!-- 산책 입력 폼 -->
-              <div style="font-weight: 700; width: 300px; margin-left: 20px" class="form-grid">
-                <!-- <h2>산책 평가</h2> -->
-                <form @submit.prevent="submitWalkReview">
-                  <div>
-                    <label for="title">제 목 : </label>&nbsp;
-                    <input type="text" v-model="walkReview.title" required />
-                  </div>
-                  <div>
-                    <label for="starRating">별 점 : </label>&nbsp;
-                    <input type="number" v-model="walkReview.starRating" min="1" max="5" required />
-                  </div>
-                  <div>
-                    <label for="comment">한줄평 : </label>&nbsp;
-                    <textarea v-model="walkReview.comment" required></textarea>
-                  </div>
-                </form>
-                <div style="display: flex; justify-content: center">
-                  <button @click="goHome">취소</button>
-                  <button type="submit" @click="submitWalkReview">작성</button>
+            <!-- 산책 입력 폼 -->
+            <div style="font-weight: 700; width: 300px; margin-left: 20px" class="form-grid">
+              <!-- <h2>산책 평가</h2> -->
+              <form>
+                <div>
+                  <b for="title">제 목 :</b>
+                  &nbsp;
+                  <input
+                    type="text"
+                    class="form-control"
+                    style="display: inline-block; width: 200px; height: 25px"
+                    v-model="walkReview.title"
+                    required
+                  />
                 </div>
-              </div>
+                <div>
+                  <b for="starRating">별 점 :</b>
+                  &nbsp;
+                  <input
+                    type="number"
+                    class="form-control"
+                    style="display: inline-block; width: 100px; height: 25px"
+                    v-model="walkReview.starRating"
+                    min="1"
+                    max="5"
+                    required
+                  />
+                </div>
+                <div class="form-group mt-1">
+                  <b for="comment">한줄평 :</b>
+                  &nbsp;
+                  <textarea
+                    class="form-control"
+                    name="message"
+                    style="display: inline-block; width: 260px"
+                    v-model="walkReview.comment"
+                    required
+                  ></textarea>
+                </div>
+                <br />
+                <div
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-left: -30px;
+                    margin-bottom: 10px;
+                    margin-top: 0;
+                  "
+                >
+                  <div style="margin-right: 10px">
+                    <button @click="submitWalkReview">작성</button>
+                  </div>
+                  <div>
+                    <button @click="goHome">취소</button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -163,6 +196,7 @@
 import { ref, onMounted, watchEffect, onBeforeUnmount } from 'vue'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
 import router from '../../router'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import moment from 'moment'
 
@@ -236,8 +270,16 @@ const walkReview = ref({
 
 const showWalkSummary = ref(false)
 
+const route = useRoute()
+const cloneRecord = ref([])
+
 // 컴포넌트가 마운트되었을 때 실행되는 로직
-onMounted(() => {
+onMounted(async () => {
+  if (!isNaN(route.params.seq) && route.params.seq != '') {
+    await walkStore.getCloneRecord(route.params.seq)
+    cloneRecord.value = walkStore.cloneRecord
+  }
+
   const script = document.createElement('script')
   script.onload = () => {
     kakao.maps.load(initMap)
@@ -263,7 +305,7 @@ onMounted(() => {
     // 마운트 되었을 때 map이 있다면 interval 을 5초로
     const interval = setInterval(() => {
       navigator.geolocation.getCurrentPosition(setLinePathArr)
-    }, 5000)
+    }, 1000) //여기 바꿨음 ~~~
 
     onBeforeUnmount(() => {
       // 마운트가 되기 전에 map이 있다면 map 정보 초기화
@@ -288,7 +330,7 @@ const initMap = () => {
   //지도 옵션 설정정
   const options = {
     center: new kakao.maps.LatLng(lat, lon),
-    level: 2
+    level: 3
   }
   // 좌표 배열 초기화
   state.value.positionArr = []
@@ -299,6 +341,19 @@ const initMap = () => {
 
   const geocoder = new kakao.maps.services.Geocoder()
   geocoder.coord2RegionCode(lon, lat, addrCallback)
+
+  // 따라 뛰기 경로 표시
+  if (cloneRecord.value.size !== 0) {
+    var clonePolyline = new kakao.maps.Polyline({
+      path: cloneRecord.value.map(
+        (point) => new kakao.maps.LatLng(point.latitude, point.longitude)
+      ),
+      strokeWeight: 3,
+      strokeColor: '#FF0000'
+    })
+
+    clonePolyline.setMap(state.value.map)
+  }
 }
 
 // 주소 변환 콜백 함수
@@ -533,6 +588,14 @@ const submitWalkReview = () => {
 
   savePosition()
   // 추가적인 로직이 필요한 경우 여기에 작성하세요.
+  stoppedDuration.value = 0
+  timeBegan.value = null
+  timeStopped.value = null
+  clock.value = '00:00:00'
+  checkSecond.value = 0
+  checkOneKm.value = 0
+  endTime.value = new Date()
+  endTime.value = moment(endTime).format('YYYY-MM-DDTHH:mm:ss')
 
   // 산책 평가 제출 후 화면 갱신 등의 작업을 수행할 수 있습니다.
   // 예: showWalkSummary 값을 다시 false로 설정하여 다른 화면을 보여줄 수 있습니다.
@@ -554,14 +617,6 @@ const endLocationUpdates = function () {
   // savePosition()
   isPause.value = false
   running.value = false
-  stoppedDuration.value = 0
-  timeBegan.value = null
-  timeStopped.value = null
-  clock.value = '00:00:00'
-  checkSecond.value = 0
-  checkOneKm.value = 0
-  endTime.value = new Date()
-  endTime.value = moment(endTime).format('YYYY-MM-DDTHH:mm:ss')
 }
 
 // 일시정지 함수
@@ -659,29 +714,6 @@ watchEffect(() => {
     }
   }
 })
-
-// watchEffect(() => {
-//   if (state.value.map && running.value) {
-//     navigator.geolocation.getCurrentPosition((position) => {
-//       setLinePathArr(position)
-//       // 위치를 받아오면 바로 선을 그리도록 수정
-//       makeLine()
-//     })
-//   }
-// })
-
-// watchEffect(() => {
-//   if (state.value.map && running.value) {
-//     let timeoutId = setTimeout(() => {
-//       navigator.geolocation.getCurrentPosition((position) => setLinePathArr(position));
-//       timeoutId = setTimeout(arguments.callee, 5000);
-//     }, 5000);
-
-//     return () => {
-//       clearTimeout(timeoutId);
-//     };
-//   }
-// });
 </script>
 
 <style scoped>

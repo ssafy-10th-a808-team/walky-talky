@@ -22,7 +22,7 @@
 
             <div class="address">
               <h4>생일</h4>
-              <p>{{ year }}년 {{ month }}월 {{ day }}일</p>
+              <p v-if="mypage.birth">{{ year }}년 {{ month }}월 {{ day }}일</p>
             </div>
             <div class="address">
               <h4>내 동네</h4>
@@ -43,7 +43,7 @@
                 <button>수정하기</button>
               </RouterLink>
             </div>
-            <a @click="openModal" style="color: red" href="">회원탈퇴</a>
+            <a @click="openModal" style="color: grey" href="">회원탈퇴</a>
             <div v-if="deleteMemberModal">
               <label for="deleteMember"> 탈퇴하려면 비밀번호 입력 </label>
               <input
@@ -86,13 +86,14 @@ const deleteMember = () => {
 }
 onMounted(async () => {
   await memberstore.getMypage()
+  mypage.value = memberstore.mypage
+  year.value = mypage.value.birth.substring(0, 4)
+  month.value = mypage.value.birth.substring(4, 6)
+  day.value = mypage.value.birth.substring(6, 8)
 })
 const showGender = computed(() => {
   return mypage.value.gender === 'F' ? '여성' : '남성'
 })
-// const year = mypage.value.birth.value.substring(0, 4)
-// const month = mypage.value.birth.value.substring(4, 6) - 1 // 월은 0부터 시작하므로 1을 빼줍니다.
-// const day = mypage.value.birth.value.substring(6, 8)
 </script>
 
 <style scoped></style>
