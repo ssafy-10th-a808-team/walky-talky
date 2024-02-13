@@ -216,7 +216,8 @@ export const useWalkStore = defineStore('walk', () => {
         cloneRecord.value = res.data.data
       })
       .catch((err) => {
-        errorHandle(err)
+        alert(err.response.data.message)
+        router.push({ name: 'home' })
       })
   }
 
