@@ -5,6 +5,7 @@ import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
+import com.ssafy.backend.record.dto.response.ResponsePointDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.service.RecordService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -291,6 +292,24 @@ public class RecordController {
 
         try {
             recordService.dislike(recordSeq, memberSeq);
+        } catch (Exception e) {
+            resultMap.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
+        }
+
+        resultMap.put("message", "OK");
+        return ResponseEntity.status(HttpStatus.OK).body(resultMap);
+    }
+
+    @GetMapping("/clone/{recordSeq}")
+    public ResponseEntity<?> clone(HttpServletRequest request, @PathVariable("recordSeq") Long recordSeq) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        Long memberSeq = (Long) request.getAttribute("seq");
+
+        try {
+            List<ResponsePointDto> data = recordService.clone(recordSeq, memberSeq);
+            resultMap.put("data", data);
         } catch (Exception e) {
             resultMap.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resultMap);
