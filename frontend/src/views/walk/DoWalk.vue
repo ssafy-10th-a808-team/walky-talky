@@ -84,14 +84,11 @@
                 <div>
                   <b for="starRating">별 점 :</b>
                   &nbsp;
-                  <input
-                    type="number"
-                    class="form-control"
-                    style="display: inline-block; width: 100px; height: 25px"
-                    v-model="walkReview.starRating"
-                    min="1"
-                    max="5"
-                    required
+                  <StarRating
+                    style="display: inline-block; height: 25px"
+                    :starRating="parseInt(walkReview.starRating)"
+                    :editable="true"
+                    @modifyStarRating="modifyStarRating"
                   />
                 </div>
                 <div class="form-group mt-1">
@@ -195,6 +192,7 @@
 // 필요한 모듈 및 라이브러리 불러오기
 import { ref, onMounted, watchEffect, onBeforeUnmount } from 'vue'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
+import StarRating from '@/components/walk/StarRating.vue'
 import router from '../../router'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
@@ -267,6 +265,10 @@ const walkReview = ref({
   starRating: 1,
   comment: '오늘의 산책은 어땠나요?'
 })
+
+const modifyStarRating = (rating) => {
+  walkReview.value.starRating = rating
+}
 
 const showWalkSummary = ref(false)
 
