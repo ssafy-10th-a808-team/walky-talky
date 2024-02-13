@@ -6,6 +6,7 @@ import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
+import com.ssafy.backend.record.dto.response.ResponsePointDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,4 +53,6 @@ public interface RecordService {
     List<ResponseListDto> recommendInfo(Long memberSeq) throws WTException;
 
     void dislike(Long recordSeq, Long memberSeq) throws WTException;
+
+    List<ResponsePointDto> clone(Long recordSeq, Long memberSeq) throws WTException;
 }
