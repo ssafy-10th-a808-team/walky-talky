@@ -148,7 +148,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resultMap);
         } catch (Exception e) {
             resultMap.put("message", "세션이 만료되었습니다.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(resultMap);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resultMap);
         }
     }
 
