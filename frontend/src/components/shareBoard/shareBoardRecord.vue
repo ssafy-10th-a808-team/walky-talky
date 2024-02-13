@@ -20,19 +20,25 @@
         <p>{{ distance.toFixed(2) }} km</p>
       </div>
     </div>
+    <div v-if="isList == undefined" class="record-clone-btn">
+      <button @click="moveWalk">따라 산책</button>
+    </div>
   </div>
 </template>
 
 <script setup>
-const { distance, duration, points, title, seq, movable } = defineProps([
+const { distance, duration, points, title, seq, movable, isList } = defineProps([
   'distance',
   'duration',
   'points',
   'title',
   'seq',
-  'movable'
+  'movable',
+  'isList'
 ])
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 function convertTime(seconds) {
   if (typeof seconds !== 'number' || seconds < 0) {
@@ -152,6 +158,11 @@ const initMap = () => {
     map.setZoomable(movable)
   }
 }
+
+const moveWalk = (event) => {
+  event.stopPropagation()
+  router.push({ name: 'DoWalk', params: { seq } })
+}
 </script>
 
 <style>
@@ -168,8 +179,12 @@ const initMap = () => {
   margin-top: 10px;
 }
 
+.record-clone-btn {
+  margin: 0px 10px 10px 10px;
+}
+
 .text-center {
   text-align: center;
-  margin: 20px;
+  margin: 20px 20px 0px 20px;
 }
 </style>
