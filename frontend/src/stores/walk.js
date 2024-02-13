@@ -202,6 +202,24 @@ export const useWalkStore = defineStore('walk', () => {
     })
   }
 
+  ///// 따라뛰기/////
+  const cloneRecord = ref([])
+  const getCloneRecord = async (seq) => {
+    await axios({
+      method: 'get',
+      url: `${REST_WALK_API}/api/walk/clone/${seq}`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        cloneRecord.value = res.data.data
+      })
+      .catch((err) => {
+        errorHandle(err)
+      })
+  }
+
   return {
     data,
     startWalk,
@@ -227,6 +245,9 @@ export const useWalkStore = defineStore('walk', () => {
     // 기록 삭제
     deleteRecord,
     // 기록 수정
-    modifyRecord
+    modifyRecord,
+    // 따라 뛰기
+    cloneRecord,
+    getCloneRecord
   }
 })
