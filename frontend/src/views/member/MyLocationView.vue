@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- <h1>내 위치 확인하는 페이지</h1> -->
-    <div id="map" style="width: 500px; height: 400px" @load="getAddressInfo"></div>
+    <div id="map" @load="getAddressInfo"></div>
   </div>
   <div>
     내 동네: {{ address_name }}
@@ -138,7 +138,7 @@ const goBack = () => {
 
 <style scoped>
 #map {
-  width: 400px;
+  max-width: 100%;
   height: 400px;
 }
 </style>
