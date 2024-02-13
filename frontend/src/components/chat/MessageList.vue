@@ -7,6 +7,7 @@
       :content="message.content"
       :createdAt="message.createdAt"
       :isMine="message.sender === counterstore.getCookie('nickname')"
+      :type="message.type"
     />
   </div>
 </template>
