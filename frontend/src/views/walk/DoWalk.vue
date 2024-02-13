@@ -174,6 +174,7 @@
 import { ref, onMounted, watchEffect, onBeforeUnmount } from 'vue'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
 import router from '../../router'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import moment from 'moment'
 
@@ -247,8 +248,16 @@ const walkReview = ref({
 
 const showWalkSummary = ref(false)
 
+const route = useRoute()
+const cloneRecord = ref([])
+
 // 컴포넌트가 마운트되었을 때 실행되는 로직
-onMounted(() => {
+onMounted(async () => {
+  if (!isNaN(route.params.seq) && route.params.seq != '') {
+    await walkStore.getCloneRecord(route.params.seq)
+    cloneRecord.value = walkStore.cloneRecord
+  }
+
   const script = document.createElement('script')
   script.onload = () => {
     kakao.maps.load(initMap)
@@ -310,6 +319,19 @@ const initMap = () => {
 
   const geocoder = new kakao.maps.services.Geocoder()
   geocoder.coord2RegionCode(lon, lat, addrCallback)
+
+  // 따라 뛰기 경로 표시
+  if (cloneRecord.value.size !== 0) {
+    var clonePolyline = new kakao.maps.Polyline({
+      path: cloneRecord.value.map(
+        (point) => new kakao.maps.LatLng(point.latitude, point.longitude)
+      ),
+      strokeWeight: 3,
+      strokeColor: '#FF0000'
+    })
+
+    clonePolyline.setMap(state.value.map)
+  }
 }
 
 // 주소 변환 콜백 함수
