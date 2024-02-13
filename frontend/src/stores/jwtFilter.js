@@ -42,7 +42,6 @@ async function refreshAndRetry(originalRequest) {
 
     window.location.href = '/'
     router.push({ name: 'home' })
-    throw err // 에러를 다시 던져서 호출자에게 알림
   }
 }
 
@@ -65,8 +64,6 @@ axios.interceptors.response.use(
           // throw retryError // 에러를 다시 던져서 호출자에게 알림
         }
       } else if (error.response.status === 403) {
-        alert(error.response.data.message)
-
         deleteCookie('atk')
         deleteCookie('rtk')
         deleteCookie('nickname')
@@ -75,6 +72,9 @@ axios.interceptors.response.use(
 
         window.location.href = '/'
         router.push({ name: 'home' })
+      } else {
+        // 401 에러가 아닌 다른 에러는 그대로 반환
+        return Promise.reject(error)
       }
     } else {
       // 401 에러가 아닌 다른 에러는 그대로 반환
