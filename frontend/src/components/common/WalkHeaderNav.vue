@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul class="nav justify-content-center">
+    <ul class="navbar justify-content-center">
       <li class="nav-item">
         <RouterLink :to="{ name: 'DoWalk' }" style="text-decoration-line: none">
           <a class="nav-link" aria-current="page" href="#">산책하기</a>
@@ -13,12 +13,12 @@
       </li>
       <li class="nav-item">
         <RouterLink :to="{ name: 'ScrapList' }" style="text-decoration-line: none">
-          <a class="nav-link" href="#">스크랩한 코스</a>
+          <a class="nav-link" href="#">스크랩</a>
         </RouterLink>
       </li>
       <li class="nav-item">
         <RouterLink :to="{ name: 'RecommendList' }" style="text-decoration-line: none">
-          <a class="nav-link" href="#">산책 경로추천</a>
+          <a class="nav-link" href="#">산책추천</a>
         </RouterLink>
       </li>
     </ul>
@@ -27,4 +27,8 @@
 
 <script setup></script>
 
-<style scoped></style>
+<style scoped>
+li {
+  list-style-type: none;
+}
+</style>

@@ -67,7 +67,10 @@
               </div>
 
               <div v-if="modals.address">
-                <MyLocationView @returnAddressName="updateAddressName" @returnAddressCode="updateAddressCode" />
+                <MyLocationView
+                  @returnAddressName="updateAddressName"
+                  @returnAddressCode="updateAddressCode"
+                />
                 <button @click="closeModal('address')">확인</button>
               </div>
             </div>
@@ -94,33 +97,54 @@
                     <button @click="openModal('password')">비밀번호 수정</button>
                   </p>
                   <div v-if="modals.password" class="modal">
-
                     <div class="modal-content">
-
                       <form @submit.prevent="submitForm">
                         <!-- 현재 비밀번호 -->
                         <div class="form-group">
-                          <label for="inputPassword" class="col-sm-10 col-form-label">현재 비밀번호</label>
-                          <input type="password" class="form-control" id="inputPassword" maxlength="16" v-model="password"
-                            required />
+                          <label for="inputPassword" class="col-sm-10 col-form-label"
+                            >현재 비밀번호</label
+                          >
+                          <input
+                            type="password"
+                            class="form-control"
+                            id="inputPassword"
+                            maxlength="16"
+                            v-model="password"
+                            required
+                          />
                         </div>
                         <!-- 변경할 비밀번호 확인 -->
                         <div class="form-group">
-                          <label for="inputNewPassword" class="col-sm-10 col-form-label">변경할 비밀번호</label>
-                          <input type="password" class="form-control" id="inputNewPassword" maxlength="16"
-                            v-model="newPassword" required />
+                          <label for="inputNewPassword" class="col-sm-10 col-form-label"
+                            >변경할 비밀번호</label
+                          >
+                          <input
+                            type="password"
+                            class="form-control"
+                            id="inputNewPassword"
+                            maxlength="16"
+                            v-model="newPassword"
+                            required
+                          />
                         </div>
                         <div class="form-group">
-                          <label for="inputCheckNewPassword" class="col-sm-10 col-form-label">비밀번호 확인</label>
-                          <input type="password" class="form-control" id="inputCheckNewPassword" maxlength="16"
-                            v-model="checkNewPassword" required />
+                          <label for="inputCheckNewPassword" class="col-sm-10 col-form-label"
+                            >비밀번호 확인</label
+                          >
+                          <input
+                            type="password"
+                            class="form-control"
+                            id="inputCheckNewPassword"
+                            maxlength="16"
+                            v-model="checkNewPassword"
+                            required
+                          />
                         </div>
                       </form>
                       <button @click="changePassword">비밀번호 변경</button>
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
             <div>
@@ -178,21 +202,6 @@ const readInputFile = (e) => {
     })
   }
 }
-
-// const showImageUploader = ref(false)
-
-// const openImageUploader = () => {
-//   showImageUploader.value = true
-// }
-
-// const closeImageUploader = () => {
-//   showImageUploader.value = false
-//   memberstore.profileImage = profileImage.value
-// }
-
-// const updateProfileImage = (image) => {
-//   profileImage.value = image
-// }
 
 onMounted(async () => {
   await memberstore.getMypage()
@@ -257,8 +266,6 @@ const checkNickname = (event) => {
   console.log(`${nickname.value}`)
   closeModal('nickname')
 }
-
-
 </script>
 
 <style scoped>
@@ -266,8 +273,8 @@ const checkNickname = (event) => {
   position: fixed;
   top: 0;
   left: 0;
-  width: 50%;
-  height: 50%;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
