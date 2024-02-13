@@ -3,11 +3,12 @@
   <div class="record-list-container">
     <div>
       <h2>나와 같은 동네 사람들은 이 경로로 산책했어요!</h2>
+      <img src="@/assets/img/reload.png" height="45px" @click="loadRecomTown" />
       <div v-if="recordsTown.size == 0" class="nothing-container">
         <h4>같은 동네 사람들이 아직 산책을 하지 않았어요</h4>
         <p @click="moveClub">우리 동네 사람들과 산책하러 가기</p>
       </div>
-      <div v-else class="recom-scroll-container">
+      <div v-else class="recom-scroll-container town">
         <div v-for="record in recordsTown" :key="record.recordSeq" :class="{ 'record-list': true }">
           <div v-if="!record.notRecommended" class="recommend-list-item">
             <shareBoardRecord
@@ -30,11 +31,12 @@
 
     <div>
       <h2>나와 비슷한 사람들은 이 경로로 산책했어요!</h2>
+      <img src="@/assets/img/reload.png" height="45px" @click="loadRecomInfo" />
       <div v-if="recordsInfo.size == 0" class="nothing-container">
         <h4>나와 비슷한 사람들이 아직 산책을 하지 않았어요</h4>
         <p @click="moveShareBoard">다른 사람의 산책 기록 보러 가기</p>
       </div>
-      <div v-else class="recom-scroll-container">
+      <div v-else class="recom-scroll-container info">
         <div v-for="record in recordsInfo" :key="record.recordSeq" :class="{ 'record-list': true }">
           <div v-if="!record.notRecommended" class="recommend-list-item">
             <shareBoardRecord
@@ -92,12 +94,31 @@ const moveClub = () => {
 const moveShareBoard = () => {
   router.push({ name: 'share-board' })
 }
+
+const loadRecomTown = async () => {
+  await walkStore.getMyRecomTown()
+  recordsTown.value = walkStore.myRecomTown
+  scrollToLeft('town')
+}
+
+const loadRecomInfo = async () => {
+  await walkStore.getMyRecomInfo()
+  recordsInfo.value = walkStore.myRecomInfo
+  scrollToLeft('info')
+}
+
+const scrollToLeft = (input) => {
+  const scrollContainer = document.querySelector(`.${input}`)
+  if (scrollContainer) {
+    scrollContainer.scrollLeft = 0
+  }
+}
 </script>
 
 <style scoped>
 .recommend-list-item {
   box-sizing: border-box; /* 요소의 padding과 border를 너비에 포함시킴 */
-  margin: 20px; /* 각 요소 사이의 간격 설정 */
+  margin: 10px; /* 각 요소 사이의 간격 설정 */
   padding: 10px;
   border: 1px solid #ccc; /* 테두리 스타일 및 색상 설정 */
   border-radius: 5px; /* 테두리의 둥근 정도 설정 */
@@ -128,6 +149,12 @@ const moveShareBoard = () => {
     0 4px 6px rgba(50, 50, 93, 0.11),
     0 1px 3px rgba(0, 0, 0, 0.08);
   /* 그림자를 추가합니다 */
+}
+
+.record-list-container img {
+  display: flex;
+  margin-left: auto;
+  margin-top: 10px;
 }
 
 .recom-scroll-container {
