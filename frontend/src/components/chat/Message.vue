@@ -1,8 +1,8 @@
 <template>
-  <div :class="['message', { mine: isMine }]">
-    <div class="sender">{{ sender }}</div>
+  <div :class="['message', { mine: isMine }, type]">
+    <div v-if="type === 'TALK'" class="sender">{{ sender }}</div>
     <div class="content">{{ content }}</div>
-    <div class="createdAt">{{ formatDate(createdAt) }}</div>
+    <div v-if="type === 'TALK'" class="createdAt">{{ formatDate(createdAt) }}</div>
   </div>
 </template>
 
@@ -11,7 +11,8 @@ defineProps({
   sender: String,
   content: String,
   createdAt: String,
-  isMine: Boolean // 현재 메시지가 사용자 자신에 의해 보내졌는지 여부
+  isMine: Boolean, // 현재 메시지가 사용자 자신에 의해 보내졌는지 여부
+  type: String
 })
 
 function formatDate(dateString) {
@@ -67,12 +68,19 @@ function formatDate(dateString) {
 
 .mine {
   align-self: flex-end;
-  background-color: #5cb874; /* 예: 연두색 */
+  background-color: #5cb874;
 }
 
 /* 다른 사람이 보낸 메시지의 스타일 */
 :not(.mine) {
   align-self: flex-start;
-  background-color: #5cb874; /* 예: 연회색 */
+}
+
+.JOIN,
+.LEAVE {
+  align-self: center; /* 시스템 메시지를 중앙에 정렬 */
+  background-color: transparent; /* 배경색 없음 */
+  color: #757575; /* 시스템 메시지 색상 */
+  font-style: italic; /* 기울임꼴로 표시 */
 }
 </style>
