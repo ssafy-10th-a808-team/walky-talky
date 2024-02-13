@@ -18,10 +18,12 @@
           </li>
 
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책하기</RouterLink>
+            <RouterLink :to="{ name: 'DoWalk' }" class="nav-link scrollto">산책</RouterLink>
           </li>
           <li @click="closeNav">
-            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto">산책공유</RouterLink>
+            <RouterLink :to="{ name: 'share-board' }" class="nav-link scrollto"
+              >산책공유</RouterLink
+            >
           </li>
           <!-- <li><a class="nav-link scrollto" href="#portfolio">Portfolio</a></li>
           <li><a class="nav-link scrollto" href="#team">Team</a></li> -->
@@ -88,12 +90,18 @@ onMounted(() => {
   url.value = counterstore.getCookie('profileImage')
 })
 
-watch(() => counterstore.getCookie('nickname'), (newVal) => {
-  nickname.value = newVal
-})
-watch(() => counterstore.getCookie('profileImage'), (newVal) => {
-  url.value = newVal
-})
+watch(
+  () => counterstore.getCookie('nickname'),
+  (newVal) => {
+    nickname.value = newVal
+  }
+)
+watch(
+  () => counterstore.getCookie('profileImage'),
+  (newVal) => {
+    url.value = newVal
+  }
+)
 // const closeNav = () => {
 //   const navbar = document.querySelector('#navbar')
 //   if (navbar.classList.contains('navbar-mobile')) {

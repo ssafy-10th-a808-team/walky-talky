@@ -11,12 +11,25 @@
   /**
    * Easy selector helper function
    */
+  // const select = (el, all = false) => {
+  //   el = el.trim()
+  //   if (all) {
+  //     return [...document.querySelectorAll(el)]
+  //   } else {
+  //     return document.querySelector(el)
+  //   }
+  // }
   const select = (el, all = false) => {
     el = el.trim()
-    if (all) {
-      return [...document.querySelectorAll(el)]
+    if (el) {
+      // 빈 문자열이 아닌 경우에만 진행
+      if (all) {
+        return [...document.querySelectorAll(el)]
+      } else {
+        return document.querySelector(el)
+      }
     } else {
-      return document.querySelector(el)
+      return null // 빈 문자열인 경우 null 또는 다른 기본값 반환
     }
   }
 
