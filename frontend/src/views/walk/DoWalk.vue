@@ -77,10 +77,6 @@
                 <div>
                   <label for="starRating">별 점 : </label>&nbsp;
                   <input type="number" v-model="walkReview.starRating" min="1" max="5" required />
-                  <!-- 여기 봐줘요오오오오오 -->
-                  <!-- <div class="right-section star-section">
-                    <StarRating :starRating="parseInt(starRating)" :editable="true" />
-                  </div> -->
                 </div>
                 <div class="form-group mt-1">
                   <label for="comment">한줄평 : </label>&nbsp;
@@ -94,10 +90,10 @@
                 <hr />
                 <div style="display: flex; justify-content: center; margin-left: -30px">
                   <div style="margin-right: 10px">
-                    <button type="submit" @click="submitWalkReview">작성</button>
+                    <button @click="submitWalkReview">작성</button>
                   </div>
                   <div>
-                    <button type="submit" @click="goHome">취소</button>
+                    <button @click="goHome">취소</button>
                   </div>
                 </div>
               </form>
