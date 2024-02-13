@@ -13,6 +13,7 @@ import com.ssafy.backend.record.dto.request.RequestRegistCommentDto;
 import com.ssafy.backend.record.dto.request.RequestRegistImageDto;
 import com.ssafy.backend.record.dto.request.RequestRegistRecordDto;
 import com.ssafy.backend.record.dto.response.ResponseListDto;
+import com.ssafy.backend.record.dto.response.ResponsePointDto;
 import com.ssafy.backend.record.dto.response.ResponseViewDto;
 import com.ssafy.backend.record.repository.DislikeRepository;
 import com.ssafy.backend.record.repository.RecordDetailRepository;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -405,6 +407,26 @@ public class RecordServiceImpl implements RecordService {
         } catch (Exception e) {
             throw new WTException("싫어요에 실패하였습니다.");
         }
+    }
+
+    @Override
+    public List<ResponsePointDto> clone(Long recordSeq, Long memberSeq) throws WTException {
+        List<ResponsePointDto> responsePointDtoList;
+
+        List<PointsMapping> list = recordDetailRepository.findAllByRecordSeq(recordSeq);
+        if (list.isEmpty()) {
+            throw new WTException("해당하는 산책 기록이 없습니다.");
+        }
+
+        try {
+            responsePointDtoList = list.stream()
+                    .map(mapping -> new ResponsePointDto(mapping.getLatitude(), mapping.getLongitude()))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new WTException("따라 뛰기에 실패하였습니다.");
+        }
+
+        return responsePointDtoList;
     }
 
     private void validateRecord(Long recordSeq, Long memberSeq) throws WTException {
