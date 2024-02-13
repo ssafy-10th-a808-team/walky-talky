@@ -5,15 +5,29 @@ import { useRouter } from 'vue-router'
 import { axios } from '@/stores/jwtFilter'
 
 import { useCounterStore } from './counter'
-import { useMemberStore } from './member'
 const REST_SHARE_BOARD_API = 'https://i10a808.p.ssafy.io/api'
 
 export const useShareBoardStore = defineStore('shareBoard', () => {
   const counterstore = useCounterStore()
+  const router = useRouter()
+
+  const errorHandle = (err) => {
+    if (err.response && err.response.data.message) {
+      alert(err.response.data.message)
+      if (err.response.status == 400) {
+        window.location.reload()
+      } else if (err.response.status == 401) {
+        router.push({ name: 'home' })
+      }
+    } else {
+      alert('죄송합니다. 현재 오류가 발생했습니다. 불편을 드려 죄송합니다.')
+      router.push({ name: 'home' })
+    }
+  }
 
   // 기록 공유 게시판 목록 보기
   const totalCnt = ref(0)
-  const getTotalCnt = async () => {
+  const getTotalCnt = () => {
     axios({
       method: 'get',
       url: `${REST_SHARE_BOARD_API}/share-board/list/total-count`,
@@ -25,12 +39,12 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         totalCnt.value = res.data.data
       })
       .catch((err) => {
-        console.log(err)
+        errorHandle(err)
       })
   }
 
   const shareContentList = ref([])
-  const getContentList = async (page) => {
+  const getContentList = (page) => {
     axios({
       method: 'get',
       url: `${REST_SHARE_BOARD_API}/share-board/list/content?page=${page}`,
@@ -42,242 +56,201 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
         shareContentList.value = res.data.data
       })
       .catch((err) => {
-        console.log(err)
+        errorHandle(err)
       })
   }
 
   const shareRecordList = ref([])
-  const getRecordList = async (page) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_SHARE_BOARD_API}/share-board/list/record?page=${page}`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const getRecordList = (page) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/list/record?page=${page}`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareRecordList.value = res.data.data
       })
-      shareRecordList.value = res.data.data
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   const shareLikeList = ref([])
-  const getLikeList = async (page) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_SHARE_BOARD_API}/share-board/list/like?page=${page}`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const getLikeList = (page) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/list/like?page=${page}`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareLikeList.value = res.data.data
       })
-      shareLikeList.value = res.data.data
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   const shareScrapList = ref([])
-  const getScrapList = async (page) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_SHARE_BOARD_API}/share-board/list/scrap?page=${page}`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const getScrapList = (page) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/list/scrap?page=${page}`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareScrapList.value = res.data.data
       })
-      shareScrapList.value = res.data.data
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   ///// 기록 공유 게시판 상세 보기/////
   const shareContent = ref([])
-  const getContent = async (seq) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/content`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const getContent = (seq) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/content`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareContent.value = res.data.data
       })
-      shareContent.value = res.data.data
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   const shareRecord = ref([])
-  const getRecord = async (seq) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/record`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const getRecord = (seq) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/record`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareRecord.value = res.data.data
       })
-      shareRecord.value = res.data.data
-      console.log(shareRecord.value)
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   const shareLike = ref([])
-  const getLike = async (seq) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/like`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const getLike = (seq) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/like`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareLike.value = res.data.data
       })
-      shareLike.value = res.data.data
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   const shareScrap = ref([])
-  const getScrap = async (seq) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/scrap`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const getScrap = (seq) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/scrap`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareScrap.value = res.data.data
       })
-      shareScrap.value = res.data.data
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   const shareComment = ref([])
-  const getComment = async (seq) => {
-    try {
-      const res = await axios({
-        method: 'get',
-        url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/comment`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
+  const getComment = (seq) => {
+    axios({
+      method: 'get',
+      url: `${REST_SHARE_BOARD_API}/share-board/view/${seq}/comment`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
+      }
+    })
+      .then((res) => {
+        shareComment.value = res.data.data
       })
-      shareComment.value = res.data.data
-    } catch (err) {
-      console.log(err)
-    }
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   ///// 게시글 좋아요, 취소/////
   const like = (shareBoardSeq) => {
-    try {
-      axios({
-        method: 'post',
-        url: `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/like`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
-      }).catch(function (err) {
-        if (err.response.status == 400) {
-          alert(err.response.data.message)
-          window.location.reload()
-        }
-      })
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-      } else {
-        console.error('좋아요 중 오류 발생:', error)
-        window.location.reload()
+    axios({
+      method: 'post',
+      url: `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/like`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
-    }
+    }).catch(function (err) {
+      errorHandle(err)
+    })
   }
 
   const dislike = (shareBoardSeq) => {
-    try {
-      axios({
-        method: 'post',
-        url: `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/like-cancel`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
-      }).catch(function (err) {
-        if (err.response.status == 400) {
-          alert(err.response.data.message)
-          window.location.reload()
-        }
-      })
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-        window.location.reload()
-      } else {
-        console.error('좋아요 취소 중 오류 발생:', error)
+    axios({
+      method: 'post',
+      url: `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/like-cancel`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
-    }
+    }).catch(function (err) {
+      errorHandle(err)
+    })
   }
 
   ///// 기록 스크랩, 취소/////
   const scrap = (recordSeq) => {
-    try {
-      axios({
-        method: 'post',
-        url: `${REST_SHARE_BOARD_API}/scrap-record/${recordSeq}/scrap`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
-      }).catch(function (err) {
-        if (err.response.status == 400) {
-          alert(err.response.data.message)
-          window.location.reload()
-        }
-      })
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-        window.location.reload()
-      } else {
-        console.error('기록 스크랩 중 오류 발생:', error)
+    axios({
+      method: 'post',
+      url: `${REST_SHARE_BOARD_API}/scrap-record/${recordSeq}/scrap`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
-    }
+    }).catch(function (err) {
+      errorHandle(err)
+    })
   }
 
   const unscrap = (recordSeq) => {
-    try {
-      axios({
-        method: 'post',
-        url: `${REST_SHARE_BOARD_API}/scrap-record/${recordSeq}/cancel`,
-        headers: {
-          Authorization: `Bearer ${counterstore.getCookie('atk')}`
-        }
-      }).catch(function (err) {
-        if (err.response.status == 400) {
-          alert(err.response.data.message)
-          window.location.reload()
-        }
-      })
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-        window.location.reload()
-      } else {
-        console.error('스크랩 취소 중 오류 발생:', error)
+    axios({
+      method: 'post',
+      url: `${REST_SHARE_BOARD_API}/scrap-record/${recordSeq}/cancel`,
+      headers: {
+        Authorization: `Bearer ${counterstore.getCookie('atk')}`
       }
-    }
+    }).catch(function (err) {
+      errorHandle(err)
+    })
   }
 
   ///// 댓글 작성/////
-  const commentWrite = async (shareBoardSeq, content) => {
-    try {
-      await axios.post(
+  const commentWrite = (shareBoardSeq, content) => {
+    axios
+      .post(
         `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/comment/write`,
         { content },
         {
@@ -286,20 +259,18 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           }
         }
       )
-      alert('댓글 작성 성공!')
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-      } else {
-        console.error('댓글 작성 중 오류 발생:', error)
-      }
-    }
+      .then(() => {
+        alert('댓글 작성 성공!')
+      })
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   ///// 댓글 수정/////
-  const commentEdit = async (shareBoardSeq, commentSeq, content) => {
-    try {
-      await axios.post(
+  const commentEdit = (shareBoardSeq, commentSeq, content) => {
+    axios
+      .post(
         `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/comment/${commentSeq}/modify`,
         { content },
         {
@@ -308,20 +279,18 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           }
         }
       )
-      alert('댓글 수정 성공!')
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-      } else {
-        console.error('댓글 수정 중 오류 발생:', error)
-      }
-    }
+      .then(() => {
+        alert('댓글 수정 성공!')
+      })
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   ///// 댓글 삭제/////
-  const commentDel = async (shareBoardSeq, commentSeq) => {
-    try {
-      await axios.post(
+  const commentDel = (shareBoardSeq, commentSeq) => {
+    axios
+      .post(
         `${REST_SHARE_BOARD_API}/share-board/${shareBoardSeq}/comment/${commentSeq}/delete`,
         {},
         {
@@ -330,20 +299,18 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           }
         }
       )
-      alert('댓글 삭제 성공!')
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-      } else {
-        console.error('댓글 삭제 중 오류 발생:', error)
-      }
-    }
+      .then(() => {
+        alert('댓글 삭제 성공!')
+      })
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   ///// 글쓰기/////
-  const write = async (recordSeq, title, content) => {
-    try {
-      await axios.post(
+  const write = (recordSeq, title, content) => {
+    axios
+      .post(
         `${REST_SHARE_BOARD_API}/share-board/write`,
         { recordSeq, title, content },
         {
@@ -352,20 +319,18 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           }
         }
       )
-      alert('기록 공유 성공!')
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-      } else {
-        console.error('글 쓰기 중 오류 발생:', error)
-      }
-    }
+      .then(() => {
+        alert('기록 공유 성공!')
+      })
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   ///// 글 수정/////
-  const modify = async (seq, title, content) => {
-    try {
-      await axios.post(
+  const modify = (seq, title, content) => {
+    axios
+      .post(
         `${REST_SHARE_BOARD_API}/share-board/modify/${seq}`,
         { title, content },
         {
@@ -374,20 +339,18 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           }
         }
       )
-      alert('기록 수정 성공!')
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-      } else {
-        console.error('글 쓰기 중 오류 발생:', error)
-      }
-    }
+      .then(() => {
+        alert('기록 수정 성공!')
+      })
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   ///// 글 삭제/////
-  const deleteShareBoard = async (seq) => {
-    try {
-      await axios.post(
+  const deleteShareBoard = (seq) => {
+    axios
+      .post(
         `${REST_SHARE_BOARD_API}/share-board/delete/${seq}`,
         {},
         {
@@ -396,14 +359,12 @@ export const useShareBoardStore = defineStore('shareBoard', () => {
           }
         }
       )
-      alert('기록 삭제 성공!')
-    } catch (error) {
-      if (error.response) {
-        alert(error.response.data.message)
-      } else {
-        console.error('글 쓰기 중 오류 발생:', error)
-      }
-    }
+      .then(() => {
+        alert('기록 삭제 성공!')
+      })
+      .catch((err) => {
+        errorHandle(err)
+      })
   }
 
   return {

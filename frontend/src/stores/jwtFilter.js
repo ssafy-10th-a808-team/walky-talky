@@ -32,9 +32,7 @@ async function refreshAndRetry(originalRequest) {
     // 재시도가 성공하면 해당 응답 반환
     return retryResponse
   } catch (err) {
-    console.log(err)
     // 토큰 재발급 실패 시 처리
-    alert(err.response.data.message)
 
     deleteCookie('atk')
     deleteCookie('rtk')
