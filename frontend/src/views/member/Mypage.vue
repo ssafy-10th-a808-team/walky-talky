@@ -43,10 +43,17 @@
                 <button>수정하기</button>
               </RouterLink>
             </div>
-            <a @click="openModal" style="color: red" href="">회원탈퇴</a>
+            <a @click="openModal" style="color: grey" href="">회원탈퇴</a>
             <div v-if="deleteMemberModal">
               <label for="deleteMember"> 탈퇴하려면 비밀번호 입력 </label>
-              <input type="password" class="form-control" id="inputPassword" maxlength="16" v-model="password" required />
+              <input
+                type="password"
+                class="form-control"
+                id="inputPassword"
+                maxlength="16"
+                v-model="password"
+                required
+              />
               <form action=""></form>
 
               <button type="submit" @click="deleteMember">탈퇴</button>
