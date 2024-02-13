@@ -17,6 +17,16 @@
               <ImageUploader @imageSelected="updateProfileImage" @close="closeImageUploader" />
             </div> -->
             <!-- 이미지 업로드 -->
+            <!-- <div class="form-group">
+              <label for="image-upload">프로필 사진</label>
+              <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
+              <div class="d-flex justify-content-center align-items-center">
+                <div v-if="profileImage" id="imageFrame" class="circular">
+                  <img :src="profileImage" />
+                </div>
+              </div>
+            </div> -->
+
             <div class="form-group">
               <label for="image-upload">프로필 사진</label>
               <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
@@ -40,7 +50,7 @@
                       <form @submit.prevent="submitForm">
                         <input type="text" v-model="nickname" />
                       </form>
-                      <button @click="closeModal('nickname')">확인</button>
+                      <button @click="checkNickname">확인</button>
                     </div>
                   </div>
                 </div>
@@ -114,7 +124,7 @@
               </div>
             </div>
             <div>
-              <button @click="modifyInfo">완료</button>
+              <button type="submit" @click="modifyInfo">완료</button>
             </div>
           </div>
         </div>
@@ -135,6 +145,7 @@ const memberstore = useMemberStore()
 const mypage = ref(null)
 
 const profileImage = ref(null)
+const profileImageFile = ref(null)
 const address = ref('')
 const nickname = ref('')
 const introduce = ref('')
@@ -150,9 +161,8 @@ const readInputFile = (e) => {
     const fileArr = Array.from(files)
     console.log(fileArr[0])
 
-    profileImage.value = fileArr[0]
-    memberstore.profileImage = profileImage.value
-    console.log(`현재 저장된 프로필 이미지 : ${profileImage.value}`)
+    profileImageFile.value = fileArr[0]
+    console.log(`현재 저장된 프로필 이미지 : ${profileImageFile.value}`)
     fileArr.forEach(function (f) {
       if (!f.type.match('image/.*')) {
         alert('이미지 확장자만 업로드 가능합니다.')
@@ -230,7 +240,7 @@ const changePassword = (event) => {
 const modifyInfo = function (event) {
   event.preventDefault()
   const payload = {
-    profileImage: profileImage.value,
+    profileImage: profileImageFile.value,
     nickname: nickname.value,
     introduce: introduce.value,
     regionCd: regionCd.value
@@ -240,6 +250,15 @@ const modifyInfo = function (event) {
   memberstore.modifyInfo(payload)
   // console.log(payload)
 }
+// 닉네임 중복 확인
+const checkNickname = (event) => {
+  event.preventDefault()
+  memberstore.checkNickname(nickname.value)
+  console.log(`${nickname.value}`)
+  closeModal('nickname')
+}
+
+
 </script>
 
 <style scoped>

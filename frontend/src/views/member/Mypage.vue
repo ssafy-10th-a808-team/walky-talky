@@ -81,7 +81,7 @@ onMounted(async () => {
   await memberstore.getMypage()
   mypage.value = memberstore.mypage
   year.value = mypage.value.birth.substring(0, 4)
-  month.value = mypage.value.birth.substring(4, 6) - 1 // 월은 0부터 시작하므로 1을 빼줍니다.
+  month.value = mypage.value.birth.substring(4, 6)
   day.value = mypage.value.birth.substring(6, 8)
 })
 const showGender = computed(() => {
