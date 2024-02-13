@@ -360,7 +360,7 @@ public class RecordServiceImpl implements RecordService {
 
             List<Record> recordList = recordRepository.findByRegionCdAndSeqNotInAndMemberSeqNot(regionCd, dislikeList, memberSeq);
 
-            return listMapping(recordList);
+            return listMappingRecommand(recordList);
         } catch (Exception e) {
             throw new WTException("동네 기반 코스 추천에 실패하였습니다.");
         }
@@ -385,7 +385,7 @@ public class RecordServiceImpl implements RecordService {
 
             List<Record> recordList = recordRepository.findByMemberSeqInAndSeqNotIn(memberList, dislikeList);
 
-            return listMapping(recordList);
+            return listMappingRecommand(recordList);
         } catch (Exception e) {
             throw new WTException("사용자기반 코스 추천에 실패하였습니다.");
         }
@@ -444,6 +444,30 @@ public class RecordServiceImpl implements RecordService {
     }
 
     private List<ResponseListDto> listMapping(List<Record> recordList) {
+        List<ResponseListDto> list = new ArrayList<>();
+        for (Record record : recordList) {
+            try {
+                ResponseListDto responseListDto = new ResponseListDto();
+
+                responseListDto.setRecordSeq(record.getSeq());
+                responseListDto.setTitle(record.getTitle());
+                responseListDto.setPoints(view(record.getSeq()).getPoints());
+                responseListDto.setStarRating(record.getStarRating());
+                responseListDto.setComment(record.getComment());
+                responseListDto.setDistance(record.getDistance());
+                responseListDto.setDuration(record.getDuration());
+
+                list.add(responseListDto);
+            } catch (Exception e) {
+                continue;
+            }
+
+        }
+        return list;
+    }
+
+
+    private List<ResponseListDto> listMappingRecommand(List<Record> recordList) {
         List<ResponseListDto> list = new ArrayList<>();
 
         Collections.shuffle(recordList);
