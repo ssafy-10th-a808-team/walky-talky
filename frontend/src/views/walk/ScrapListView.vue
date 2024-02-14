@@ -5,7 +5,7 @@
   </div>
   <div class="record-list-container">
     <div v-if="records.length == 0" class="nothing-container">
-      <h4>아직 스크랩을 하지 않았어요</h4>
+      <h4>아직 스크랩을 하지 않았어요!</h4>
       <p @click="moveShareBoard">다른 사람이 공유한 기록 보러가기</p>
     </div>
 
