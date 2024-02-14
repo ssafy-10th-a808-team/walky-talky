@@ -220,8 +220,9 @@ const router = createRouter({
     }
   ]
 })
+
+// 라우터가드 설정
 import { useMemberStore } from '@/stores/member'
-import ModifyInfoVue from '@/views/member/ModifyInfo.vue'
 router.beforeEach((to, from) => {
   const memberstore = useMemberStore()
   if (
