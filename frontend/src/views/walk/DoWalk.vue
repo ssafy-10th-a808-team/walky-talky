@@ -567,6 +567,7 @@ const savePosition = async function () {
       title: walkReview.value.title,
       regionCd: region_cd.value
     }
+    console.log(data)
 
     const response = await axios.post(url, data, { headers })
   } catch (error) {
@@ -591,9 +592,7 @@ const submitWalkReview = () => {
   // 산책 평가 제출 후 화면 갱신 등의 작업을 수행할 수 있습니다.
   // 예: showWalkSummary 값을 다시 false로 설정하여 다른 화면을 보여줄 수 있습니다.
   // 페이지 이동 후에 새로고침
-  router.push('/walk/list').then(() => {
-    location.reload()
-  })
+  router.push('/walk/list')
   showWalkSummary.value = false
 }
 

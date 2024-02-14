@@ -305,16 +305,18 @@ export const useMemberStore = defineStore(
         data: {
           password: password
         }
-      }).then((res) => {
-        // console.log(res)
-        alert('회원 탈퇴 성공...')
-        // 로컬 쿠키 스토리지 초기화
-        localStorage.clear()
-        counterstore.deleteCookie('atk')
-        counterstore.deleteCookie('profileImage')
-        counterstore.deleteCookie('nickname')
-        router.push({ name: 'home' })
       })
+        .then((res) => {
+          // console.log(res)
+          alert('회원 탈퇴 성공...')
+          router.push({ name: 'home' })
+        })
+        .then((res) => {
+          logout()
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
 
     // 지역코드 및 주소 가져오기

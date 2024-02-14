@@ -25,22 +25,7 @@ const address_code = ref('')
 
 // 위치 정보 비허용 등으로 인해 맵이 뜨지 않았을 경우 함수 재실행
 const reload = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      lat = position.coords.latitude // 위도
-      lon = position.coords.longitude // 경도
-
-      // geolocation 가능한 경우 내 위치
-      // 크롬 브라우저는 https 환경에서만 geolocation이 지원
-      // console.log('내 좌표를 가져왔습니다')
-    })
-  } else {
-    lat = 37.5014
-    lon = 127.0395
-    // geolocation 불가능하면 위치를 멀티캠퍼스로
-    // console.log('멀티캠퍼스 좌표를 가져왔습니다')
-  }
-  initMap()
+  getLocation()
   getAddressInfo()
 }
 
@@ -52,39 +37,26 @@ const getAddressInfo = () => {
 }
 // 화면 실행 시
 onMounted(async () => {
-  if (window.kakao && window.kakao.maps) {
-    initMap()
-    // 카카오 스크립트가 불러와졌다면 카카오 맵 띄우기
-  } else {
-    const script = document.createElement('script')
-    // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
-    /* global kakao */
-    script.onload = () => {
-      // 카카오맵 api script 불러오기
-      kakao.maps.load(initMap)
-      // console.log('카카오맵 api script loaded')
+  setTimeout(() => {
+    if (window.kakao && window.kakao.maps) {
+      initMap()
+      // 카카오 스크립트가 불러와졌다면 카카오 맵 띄우기
+    } else {
+      const script = document.createElement('script')
+      // eslint 사용 시  kakao 변수가 선언되지 않았다고 오류가 나기 때문에 아래줄 추가
+      /* global kakao */
+      script.onload = () => {
+        // 카카오맵 api script 불러오기
+        kakao.maps.load(initMap)
+        // console.log('카카오맵 api script loaded')
+      }
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
+      //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
+      document.head.appendChild(script)
     }
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
-    //autoload=false를 통해 로딩이 끝나는 시점에 콜백을 통해 객체에 접근
-    document.head.appendChild(script)
-  }
-
-  if (navigator.geolocation) {
-    // geolocation 라이브러리를 통해 gps로 내 위치 가져오기
-    navigator.geolocation.getCurrentPosition(function (position) {
-      lat = position.coords.latitude // 위도
-      lon = position.coords.longitude // 경도
-
-      // geolocation 가능한 경우 내 위치
-      // 크롬 브라우저는 https 환경에서만 geolocation이 지원된다고 하네요 local도 되긴 했음
-      // console.log('내 좌표를 가져왔습니다')
-    })
-  } else {
-    lat = 37.5014
-    lon = 127.0395
-    // geolocation 불가능하면 위치를 멀티캠퍼스로
-    // console.log('멀티캠퍼스 좌표를 가져왔습니다')
-  }
+  }, 150)
+  // 좌표 가져오는 함수
+  getLocation()
 })
 
 const initMap = async () => {
@@ -115,7 +87,7 @@ const addrCallback = (result, status) => {
     // console.log('주소 가져왔습니다')
     // console.log(result[0])
     if (result[0].region_type === 'B') {
-      // 법정동 코드일 경우에만 저장하기, 수정가능성 높음
+      // 법정동 코드일 경우에만 저장하기
       address_name.value = result[0].address_name
       address_code.value = result[0].code
       memberstore.address_name = address_name.value
@@ -127,6 +99,26 @@ const addrCallback = (result, status) => {
     console.log(kakao.maps.services.Status)
     console.log(result)
   }
+}
+
+const getLocation = () => {
+  if (navigator.geolocation) {
+    // geolocation 라이브러리를 통해 gps로 내 위치 가져오기
+    navigator.geolocation.getCurrentPosition(function (position) {
+      lat = position.coords.latitude // 위도
+      lon = position.coords.longitude // 경도
+
+      // geolocation 가능한 경우 내 위치
+      // 크롬 브라우저는 https 환경에서만 geolocation이 지원
+      // console.log('내 좌표를 가져왔습니다')
+    })
+  } else {
+    lat = 37.5014
+    lon = 127.0395
+    // geolocation 불가능하면 위치를 멀티캠퍼스로
+    // console.log('멀티캠퍼스 좌표를 가져왔습니다')
+  }
+  initMap()
 }
 </script>
 
