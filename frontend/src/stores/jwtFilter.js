@@ -32,8 +32,6 @@ async function refreshAndRetry(originalRequest) {
     return retryResponse
   } catch (err) {
     // 토큰 재발급 실패 시 처리
-    console.log('catch')
-
     deleteCookie('atk')
     deleteCookie('rtk')
     deleteCookie('nickname')
@@ -51,7 +49,6 @@ axios.interceptors.response.use(
   async (error) => {
     if (error.response) {
       if (error.response.status === 401) {
-        console.log('401 unauthorized')
         const originalRequest = error.config
 
         try {
@@ -60,8 +57,6 @@ axios.interceptors.response.use(
           return retryResponse
         } catch (retryError) {
           // 토큰 재발급 및 재시도 실패 시 처리
-          console.log(retryError)
-          // throw retryError // 에러를 다시 던져서 호출자에게 알림
         }
       } else if (error.response.status === 403) {
         deleteCookie('atk')
@@ -74,10 +69,14 @@ axios.interceptors.response.use(
         router.push({ name: 'home' })
       } else {
         // 401 에러가 아닌 다른 에러는 그대로 반환
+        console.log('filter')
+        console.log(error)
         return Promise.reject(error)
       }
     } else {
       // 401 에러가 아닌 다른 에러는 그대로 반환
+      console.log('filter')
+      console.log(error)
       return Promise.reject(error)
     }
   }
