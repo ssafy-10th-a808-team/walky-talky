@@ -358,7 +358,7 @@ public class RecordServiceImpl implements RecordService {
 
             dislikeList.add(0L);
 
-            List<Record> recordList = recordRepository.findByRegionCdAndSeqNotInAndMemberSeqNot(regionCd, dislikeList, memberSeq);
+            List<Record> recordList = recordRepository.findByRegionCdAndSeqNotInAndMemberSeqNotAndIsDeletedFalse(regionCd, dislikeList, memberSeq);
 
             return listMappingRecommand(recordList);
         } catch (Exception e) {
@@ -383,7 +383,7 @@ public class RecordServiceImpl implements RecordService {
 
             dislikeList.add(0L);
 
-            List<Record> recordList = recordRepository.findByMemberSeqInAndSeqNotIn(memberList, dislikeList);
+            List<Record> recordList = recordRepository.findByMemberSeqInAndSeqNotInAndIsDeletedFalse(memberList, dislikeList);
 
             return listMappingRecommand(recordList);
         } catch (Exception e) {
