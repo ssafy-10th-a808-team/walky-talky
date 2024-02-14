@@ -62,8 +62,6 @@ onMounted(async () => {
   await walkStore.getScrapDetail(route.params.seq)
   record.value = walkStore.scrapDetail
 
-  console.log(record.value)
-
   title.value = record.value.title
   duration.value = record.value.duration
   distance.value = record.value.distance
