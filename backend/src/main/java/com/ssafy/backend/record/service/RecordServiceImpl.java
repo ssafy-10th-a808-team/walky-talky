@@ -435,12 +435,6 @@ public class RecordServiceImpl implements RecordService {
             // 이는 사용자가 시작을 누르지 않은 비정상 요청임
             throw new WTException("비정상적인 요청입니다.");
         }
-
-        if (!memberSeq.equals(recordRepository.findMemberSeqBySeq(recordSeq).getMemberSeq())) {
-            // 기존 저장되어있던 기록 식별번호를 등록한 사용자와
-            // 지금 가져온 사용자 아이디에 해당하는 사람이 다르면 비정상 요청임
-            throw new WTException("비정상적인 요청입니다.");
-        }
     }
 
     private List<ResponseListDto> listMapping(List<Record> recordList) {
