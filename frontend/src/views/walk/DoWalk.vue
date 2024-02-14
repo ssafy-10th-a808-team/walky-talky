@@ -1,8 +1,6 @@
 <template>
   <div>
-    <!-- WalkHeaderNav 컴포넌트를 불러와서 사용 -->
     <WalkHeaderNav />
-
     <!-- 지도를 표시할 영역 -->
     <div class="map_wrap" style="position: relative">
       <div id="map" style="width: 100%; height: 600px">
@@ -189,8 +187,6 @@
 </template>
 
 <script setup>
-// Vue 3의 Composition API를 사용하여 코드를 구성
-
 // 필요한 모듈 및 라이브러리 불러오기
 import { ref, onMounted, watchEffect, onBeforeUnmount } from 'vue'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
@@ -373,8 +369,6 @@ const addrCallback = (result, status) => {
     address.value = result[0].address_name
   } else {
     console.error('Failed to get address info')
-    console.log(kakao.maps.services.Status)
-    console.log(result)
   }
 }
 
@@ -524,7 +518,7 @@ const startWalk = function () {
   startTime.value = new Date()
   startTime.value = moment(startTime.value).format('YYYY-MM-DDTHH:mm:ss')
   region_cd.value = address_code.value
-  console.log(startTime)
+  console.log(region_cd.value) // 지울것
   watchLocationUpdates()
   walkStore.startWalk()
 }
@@ -556,10 +550,6 @@ const clockRunning = function () {
 
 // 위치 저장 함수
 const savePosition = async function () {
-  console.log(walkStore.data.data.seq)
-  console.log(accumulated_time.value)
-  console.log(accumulated_distance.value)
-  console.log(recordsForPost.value)
   try {
     const url = 'https://i10a808.p.ssafy.io/api/walk/regist-record'
     const accessToken = counterStore.getCookie('atk')
@@ -577,10 +567,9 @@ const savePosition = async function () {
       title: walkReview.value.title,
       regionCd: region_cd.value
     }
+    console.log(data)
 
     const response = await axios.post(url, data, { headers })
-
-    console.log(response.data)
   } catch (error) {
     console.error('Error while saving position:', error)
   }
@@ -588,7 +577,6 @@ const savePosition = async function () {
 
 const submitWalkReview = () => {
   // 여기에서 API를 호출하여 평가 정보를 서버에 전송할 수 있습니다.
-  console.log('Submit Walk Review:', walkReview.value)
 
   savePosition()
   // 추가적인 로직이 필요한 경우 여기에 작성하세요.
@@ -604,9 +592,7 @@ const submitWalkReview = () => {
   // 산책 평가 제출 후 화면 갱신 등의 작업을 수행할 수 있습니다.
   // 예: showWalkSummary 값을 다시 false로 설정하여 다른 화면을 보여줄 수 있습니다.
   // 페이지 이동 후에 새로고침
-  router.push('/walk/list').then(() => {
-    location.reload()
-  })
+  router.push('/walk/list')
   showWalkSummary.value = false
 }
 
@@ -673,20 +659,7 @@ const makeLine = () => {
       strokeStyle: 'solid'
     })
 
-    // if (poly.value) {
-    //   poly.value.setMap(null)
-    // }
-
     polyline.setMap(state.value.map)
-    // poly.value = polyline
-
-    // // 이전에 지도에 그려진 선이 있다면 제거
-    // if (state.value.map.getPolyline()) {
-    //   state.value.map.getPolyline().setMap(null)
-    // }
-
-    // 새로운 선을 지도에 추가
-    // polyline.setMap(state.value.map)
   }
 }
 
@@ -700,8 +673,6 @@ const setLinePathArr = (position) => {
       state.value.positionArr = []
     }
     state.value.positionArr.push(moveLatLon)
-    // makeLine(state.value.positionArr)
-    // console.log(state.value.positionArr)
 
     if (running.value) {
       makeLine()
