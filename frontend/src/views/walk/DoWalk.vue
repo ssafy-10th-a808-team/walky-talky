@@ -82,21 +82,21 @@
                   <label for="comment">한줄평 : </label>&nbsp;
                   <textarea
                     class="form-control"
-                    name="message"
                     v-model="walkReview.comment"
+                    style="width: 260px"
                     required
                   ></textarea>
                 </div>
                 <hr />
-                <div style="display: flex; justify-content: center; margin-left: -30px">
-                  <div style="margin-right: 10px">
-                    <button @click="submitWalkReview">작성</button>
-                  </div>
-                  <div>
-                    <button @click="goHome">취소</button>
-                  </div>
-                </div>
               </form>
+              <div style="display: flex; justify-content: center; margin-left: -30px">
+                <div style="margin-right: 10px">
+                  <button @click="submitWalkReview">작성</button>
+                </div>
+                <div>
+                  <button @click="goHome">취소</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
