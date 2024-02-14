@@ -78,11 +78,9 @@
 import { handleError, ref, watch, onMounted } from 'vue'
 import { useMemberStore } from '@/stores/member'
 import { useCounterStore } from '@/stores/counter'
-import { useRouter } from 'vue-router'
 
 const memberstore = useMemberStore()
 const counterstore = useCounterStore()
-const router = useRouter()
 
 const nickname = ref(counterstore.getCookie('nickname'))
 const url = ref(counterstore.getCookie('profileImage'))
@@ -117,16 +115,6 @@ const closeNav = () => {
   const navtoggle = document.querySelector('.bi-x')
   if (navtoggle) {
     navtoggle.click()
-  }
-}
-
-const beforeRouteEnter = (to, from, next) => {
-  if (to.name === 'DoWalk') {
-    // 'DoWalk'로 이동할 때 페이지를 새로 고침
-    window.location.reload()
-  } else {
-    // 계속해서 네비게이션 진행
-    next()
   }
 }
 </script>

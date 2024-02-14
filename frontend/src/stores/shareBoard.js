@@ -10,6 +10,8 @@ const REST_SHARE_BOARD_API = 'https://i10a808.p.ssafy.io/api'
 const router = useRouter()
 
 const errorHandle = (err) => {
+  console.log('share-board')
+  console.log(err)
   if (err.response && err.response.data.message) {
     alert(err.response.data.message)
     if (err.response.status == 400) {
@@ -17,9 +19,6 @@ const errorHandle = (err) => {
     } else if (err.response.status == 401) {
       router.push({ name: 'home' })
     }
-  } else {
-    alert('죄송합니다. 현재 오류가 발생했습니다. 불편을 드려 죄송합니다.')
-    router.push({ name: 'home' })
   }
 }
 
