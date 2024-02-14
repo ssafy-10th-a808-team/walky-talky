@@ -1,5 +1,4 @@
 <template>
-  <!-- ======= Team Section ======= -->
   <section v-if="mypage !== null" id="team" class="team section-bg">
     <!-- mypage가 render될 때 null임을 방지 (비동기) -->
     <div class="container">
@@ -10,23 +9,6 @@
       <div class="row">
         <div class="col-lg-10 col-md-10 align-items-stretch">
           <div class="member">
-            <!-- <div class="circular">
-              <img :src="profileImage" alt="프사" @click="openImageUploader" />
-            </div>
-            <div v-if="showImageUploader">
-              <ImageUploader @imageSelected="updateProfileImage" @close="closeImageUploader" />
-            </div> -->
-            <!-- 이미지 업로드 -->
-            <!-- <div class="form-group">
-              <label for="image-upload">프로필 사진</label>
-              <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
-              <div class="d-flex justify-content-center align-items-center">
-                <div v-if="profileImage" id="imageFrame" class="circular">
-                  <img :src="profileImage" />
-                </div>
-              </div>
-            </div> -->
-
             <div class="form-group">
               <label for="image-upload">프로필 사진</label>
               <input type="file" class="form-control" id="image-upload" @change="readInputFile" />
@@ -155,7 +137,6 @@
       </div>
     </div>
   </section>
-  <!-- End Team Section -->
 </template>
 
 <script setup>
@@ -183,10 +164,8 @@ const readInputFile = (e) => {
   if (files.length > 0) {
     document.getElementById('imageFrame').innerHTML = ''
     const fileArr = Array.from(files)
-    console.log(fileArr[0])
 
     profileImageFile.value = fileArr[0]
-    console.log(`현재 저장된 프로필 이미지 : ${profileImageFile.value}`)
     fileArr.forEach(function (f) {
       if (!f.type.match('image/.*')) {
         alert('이미지 확장자만 업로드 가능합니다.')
@@ -206,7 +185,6 @@ const readInputFile = (e) => {
 onMounted(async () => {
   await memberstore.getMypage()
   mypage.value = memberstore.mypage
-  console.log(mypage.value.introduce)
   profileImage.value = mypage.value.profileImage
   nickname.value = mypage.value.nickname
   introduce.value = mypage.value.introduce
@@ -233,8 +211,8 @@ const updateAddressName = (name) => {
 const updateAddressCode = (code) => {
   regionCd.value = code
 }
-// 비밀번호 변경
 
+// 비밀번호 변경
 const changePassword = (event) => {
   event.preventDefault()
   closeModal('password')
@@ -263,7 +241,7 @@ const modifyInfo = function (event) {
 const checkNickname = (event) => {
   event.preventDefault()
   memberstore.checkNickname(nickname.value)
-  console.log(`${nickname.value}`)
+  // console.log(`${nickname.value}`)
   closeModal('nickname')
 }
 </script>

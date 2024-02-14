@@ -1,7 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '@/router'
-// import axios from 'axios'
 import { axios } from '@/stores/jwtFilter'
 import { useCounterStore } from './counter'
 
@@ -11,7 +10,6 @@ export const useMemberStore = defineStore(
   'member',
   () => {
     const counterstore = useCounterStore()
-    const memberList = ref([])
     const address_name = ref('')
     const address_code = ref('')
     const token = ref(null)
@@ -69,11 +67,11 @@ export const useMemberStore = defineStore(
         }
       })
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           alert('사용가능한 아이디입니다')
         })
         .catch((err) => {
-          console.log(err)
+          // console.log(err)
           const errmsg = err.response.data.message
           console.log(errmsg)
           if (errmsg == 'id is empty') {
@@ -94,7 +92,7 @@ export const useMemberStore = defineStore(
         }
       })
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           alert('사용가능한 닉네임입니다')
         })
         .catch((err) => {
@@ -109,12 +107,6 @@ export const useMemberStore = defineStore(
         })
     } //닉네임 중복 체크 end
 
-    // const loginMember = ref([])
-    // if (localStorage.getItem('loginMember') != null) {
-    //   loginMember.value.push(localStorage.getItem('loginMember'))
-    //   //페이지 로딩시 로컬스토리지에 로그인 정보가 남아있으면 바로 로그인 정보를 수토어 유저 정보에 할당
-    // }
-
     // 로그인
     const login = (payload) => {
       axios({
@@ -126,7 +118,7 @@ export const useMemberStore = defineStore(
         }
       })
         .then((res) => {
-          alert('로그인 성공')
+          // alert('로그인 성공')
           token.value = res.headers.get('atk')
 
           counterstore.setCookie('atk', token.value)
@@ -138,15 +130,15 @@ export const useMemberStore = defineStore(
           counterstore.setCookie('rtk', res.headers.get('rtk'))
 
           //router.push({ name: 'home' })
-          console.log(nickname.value)
           window.location.href = '/'
         })
         .catch((err) => {
           alert('로그인 실패')
           console.log(err)
         })
-    }
+    } // 로그인 end
 
+    // 카카오 로그인
     const kakaoLogin = () => {
       const clientId = import.meta.env.VITE_KAKAO_CLIENT_Id
       const redirectUri = import.meta.env.VITE_KAKAO_REDIRECT_URI
@@ -176,23 +168,12 @@ export const useMemberStore = defineStore(
           window.location.href = '/'
         }
       })
-    }
-    // const isLogin = computed(() => {
-    //   if (counterstore.getCookie("atk") === null) {
-    //     return false
-    //   } else {
-    //     return true
-    //   }
-    // })
-    const isLogin = computed(() => counterstore.getCookie('atk') !== undefined)
+    } // 카카오 로그인 end
 
-    const getIsOauth = () => {
-      return profileImage.value
-    }
+    const isLogin = computed(() => counterstore.getCookie('atk') !== undefined)
 
     // 스토어의 상태를 초기화하는 함수
     const resetStore = () => {
-      memberList.value = []
       address_name.value = ''
       address_code.value = ''
       token.value = null
@@ -203,6 +184,7 @@ export const useMemberStore = defineStore(
       // 여기에 더 많은 상태를 초기화하십시오.
     }
 
+    // 로그아웃
     const logout = () => {
       axios({
         method: 'post',
@@ -212,7 +194,7 @@ export const useMemberStore = defineStore(
         }
       })
         .then((res) => {
-          alert('로그아웃 성공')
+          // alert('로그아웃 성공')
 
           // 스토어 상태 초기화
           // resetStore()
@@ -231,9 +213,9 @@ export const useMemberStore = defineStore(
           alert('로그아웃 실패')
           console.log(err)
         })
-    }
+    } // 로그아웃 end
 
-    // 내 정보
+    // 마이페이지
     const mypage = ref([])
     const getMypage = async () => {
       try {
@@ -244,20 +226,20 @@ export const useMemberStore = defineStore(
             Authorization: `Bearer ${counterstore.getCookie('atk')}`
           }
         })
-        console.log(res.data.data)
+        // console.log(res.data.data)
         mypage.value = res.data.data
+        // 내 정보 수정 시 네비게이션 바를 즉시 업데이트 하기 위해 쿠키를 이때 변경
         counterstore.deleteCookie('profileImage')
         counterstore.deleteCookie('nickname')
-        console.log(mypage.value)
+        // console.log(mypage.value)
         counterstore.setCookie('profileImage', mypage.value.profileImage)
         counterstore.setCookie('nickname', mypage.value.nickname)
-        console.log(counterstore.getCookie('nickname'))
       } catch (err) {
         console.log(err)
       }
-    }
+    } // 마이페이지 end
 
-    // //테스트
+    // 정보 수정
     const modifyInfo = async (payload) => {
       const formData = new FormData()
       if (payload.profileImage) {
@@ -276,7 +258,7 @@ export const useMemberStore = defineStore(
           },
           data: formData
         })
-        console.log(res)
+        // console.log(res)
         alert('정보 변경 성공')
         router.push({ name: 'Mypage' })
         setTimeout(() => {
@@ -286,7 +268,7 @@ export const useMemberStore = defineStore(
         console.log(err)
         alert('정보 변경 실패')
       }
-    }
+    } // 정보 수정 end
 
     // 비밀번호 수정
     const modifyPassword = (payload) => {
@@ -303,14 +285,14 @@ export const useMemberStore = defineStore(
         }
       })
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           alert('비밀번호 변경 성공')
         })
         .catch((err) => {
           console.log(err)
           alert(err.value)
         })
-    }
+    } // 비밀번호 수정 end
 
     // 회원 탈퇴
     const deleteMember = (password) => {
@@ -324,7 +306,7 @@ export const useMemberStore = defineStore(
           password: password
         }
       }).then((res) => {
-        console.log(res)
+        // console.log(res)
         alert('회원 탈퇴 성공...')
         // 로컬 쿠키 스토리지 초기화
         localStorage.clear()
@@ -334,44 +316,13 @@ export const useMemberStore = defineStore(
         router.push({ name: 'home' })
       })
     }
-    // const selectedMember = ref(null)
-    // const clickMember = function (member) {
-    //   selectedMember.value = member
-    //   router.push(`/ssafit/member/${selectedMember.value.memberId}`)
-    // }
-    // // 회원정보 수정
-    // const updateMember = function () {
-    //   axios.put(REST_MEMBER_API, loginMember.value[0]).then(() => {
-    //     router.push(`/ssafit/member/${loginMember.value[0].memberId}`)
-    //   })
-    // }
 
     // 지역코드 및 주소 가져오기
     const getLocationInfo = () => {
       return [address_name.value, address_code.value]
     }
 
-    const getMemberId = () => {
-      return memberId.value
-    }
-
-    const getNickname = () => {
-      return nickname.value
-    }
-
-    const getProfileImage = () => {
-      return profileImage.value
-    }
-
-    const getImgUrl = () => {
-      return imgUrl.value
-    }
-
     return {
-      memberList,
-      // member,
-      // getMember,
-
       createMember,
       // 로그인
       checkId,
@@ -379,6 +330,7 @@ export const useMemberStore = defineStore(
       login,
       kakaoLogin,
       isMember,
+      // 로그인 정보
       memberId,
       isOauth,
       token,
@@ -386,7 +338,6 @@ export const useMemberStore = defineStore(
       profileImage,
       imgUrl,
       loginType,
-      // loginMember,
       isLogin,
       // 로그아웃
       logout,
@@ -396,15 +347,13 @@ export const useMemberStore = defineStore(
       modifyInfo,
       modifyPassword,
       deleteMember,
-      // selectedMember,
-      // clickMember,
-      // updateMember,
       // 지역 가져오기 카카오맵
       address_name,
       address_code,
       getLocationInfo,
       resetStore
     }
-  },
-  { persist: true }
+  }
+  // 로컬에 memberstore 정보를 저장하고 싶을 때 사용
+  // { persist: true }
 )
