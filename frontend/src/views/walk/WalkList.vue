@@ -42,7 +42,6 @@ onMounted(async () => {
   await walkStore.getMyRecord()
 
   records.value = walkStore.myRecords
-  console.log(walkStore.myRecords)
 })
 
 const moveDetail = (seq) => {

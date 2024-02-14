@@ -78,7 +78,6 @@ const shareBoardWrite = () => {
 const prevPage = () => {
   if (currentPage.value > 0) {
     currentPage.value -= 1
-    console.log(currentPage.value)
     loadData(currentPage.value)
     window.scrollTo(0, 0)
   }
@@ -87,7 +86,6 @@ const prevPage = () => {
 const nextPage = () => {
   if (currentPage.value < totalPage.value - 1) {
     currentPage.value += 1
-    console.log(currentPage.value)
     loadData(currentPage.value)
     window.scrollTo(0, 0)
   }
@@ -95,7 +93,6 @@ const nextPage = () => {
 
 const goToPage = (page) => {
   currentPage.value = page - 1
-  console.log(currentPage.value)
   loadData(currentPage.value)
   window.scrollTo(0, 0)
 }

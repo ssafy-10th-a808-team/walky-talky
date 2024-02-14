@@ -31,7 +31,7 @@
       :distance="record.distance"
       :points="record.points"
       :address="record.address"
-      :movable="false"
+      :movable="true"
     />
     <div class="detail-content-container" v-if="content">{{ content.content }}</div>
     <div v-if="like && scrap" class="like-scrap-container">
