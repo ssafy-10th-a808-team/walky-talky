@@ -79,8 +79,6 @@ const loadDetail = async (seq) => {
   await walkStore.getRecordDetail(seq)
   record.value = walkStore.recordDetail
 
-  console.log(record.value)
-
   title.value = record.value.title
   duration.value = record.value.duration
   distance.value = record.value.distance
