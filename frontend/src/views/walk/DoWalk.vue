@@ -275,31 +275,35 @@ const cloneRecord = ref([])
 
 // 컴포넌트가 마운트되었을 때 실행되는 로직
 onMounted(async () => {
+  /* global kakao */
+
   if (!isNaN(route.params.seq) && route.params.seq != '') {
     await walkStore.getCloneRecord(route.params.seq)
     cloneRecord.value = walkStore.cloneRecord
   }
 
-  const script = document.createElement('script')
-  script.onload = () => {
-    kakao.maps.load(initMap)
-  }
-  script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
-  document.head.appendChild(script)
+  setTimeout(() => {
+    const script = document.createElement('script')
+    script.onload = () => {
+      kakao.maps.load(initMap)
+    }
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEY}&libraries=services&autoload=false`
+    document.head.appendChild(script)
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        lat = position.coords.latitude
-        lon = position.coords.longitude
-      },
-      function (error) {
-        console.error('지오로케이션을 가져오는 중 오류 발생:', error)
-      }
-    )
-  } else {
-    alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
-  }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          lat = position.coords.latitude
+          lon = position.coords.longitude
+        },
+        function (error) {
+          console.error('지오로케이션을 가져오는 중 오류 발생:', error)
+        }
+      )
+    } else {
+      alert('GPS를 사용할 수 없습니다. 위치정보 설정을 확인해주세요.')
+    }
+  }, 500)
 
   if (state.value.map) {
     // 마운트 되었을 때 map이 있다면 interval 을 5초로
