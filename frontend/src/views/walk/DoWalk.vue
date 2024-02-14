@@ -77,6 +77,7 @@
                     type="text"
                     class="form-control"
                     style="display: inline-block; width: 200px; height: 25px"
+                    placeholder="산책 제목을 입력하세요"
                     v-model="walkReview.title"
                     required
                   />
@@ -98,6 +99,7 @@
                     class="form-control"
                     name="message"
                     style="display: inline-block; width: 260px"
+                    placeholder="산책에 대한 한줄평을 남겨주세요"
                     v-model="walkReview.comment"
                     required
                   ></textarea>
@@ -261,9 +263,9 @@ const state = ref({
 })
 
 const walkReview = ref({
-  title: '오늘의 산책',
+  title: '',
   starRating: 1,
-  comment: '오늘의 산책은 어땠나요?'
+  comment: ''
 })
 
 const modifyStarRating = (rating) => {
@@ -601,7 +603,10 @@ const submitWalkReview = () => {
 
   // 산책 평가 제출 후 화면 갱신 등의 작업을 수행할 수 있습니다.
   // 예: showWalkSummary 값을 다시 false로 설정하여 다른 화면을 보여줄 수 있습니다.
-  router.push('/walk/list')
+  // 페이지 이동 후에 새로고침
+  router.push('/walk/list').then(() => {
+    location.reload()
+  })
   showWalkSummary.value = false
 }
 
