@@ -1,11 +1,14 @@
 <template>
   <div class="map-container">
-    <div
-      :id="'map-' + uniqueId + seq"
-      class="map"
-      :style="{ width: containerWidth, height: containerHeight, justifyContent: 'center' }"
-      @click="changeMovable"
-    />
+    <div class="scroll-over-container">
+      <div
+        :id="'map-' + uniqueId + seq"
+        class="map"
+        :style="{ width: containerWidth, height: containerHeight, justifyContent: 'center' }"
+        @click="changeMovable"
+      />
+    </div>
+
     <div class="record-container">
       <div v-if="title != undefined" class="text-center">
         <p>산책 제목</p>
@@ -66,7 +69,7 @@ const API_KEY = import.meta.env.VITE_KAKAO_API_KEY
 let map = null // map is not defined Reference Error 방지
 const uniqueId = ref(Date.now()) // 각 컴포넌트에 고유한 ID를 부여하기 위한 ref
 
-const containerWidth = ref('95%')
+const containerWidth = ref('100%')
 const containerHeight = ref('300px')
 
 onMounted(() => {
@@ -84,13 +87,6 @@ onMounted(() => {
 
 const initMap = () => {
   const container = document.getElementById(`map-${uniqueId.value}` + seq)
-
-  if (container.offsetWidth < container.offsetHeight * 0.6) {
-    containerWidth.value = `${container.offsetHeight}px`
-  } else {
-    containerWidth.value = `${container.offsetWidth}px`
-  }
-  containerHeight.value = `${container.offsetHeight}px`
 
   const mid = parseInt(points.length / 2)
 
@@ -186,5 +182,10 @@ const moveWalk = (event) => {
 .text-center {
   text-align: center;
   margin: 20px 20px 0px 20px;
+}
+
+.scroll-over-container {
+  width: 100%;
+  z-index: 9;
 }
 </style>
