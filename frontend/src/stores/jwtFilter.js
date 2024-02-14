@@ -69,10 +69,14 @@ axios.interceptors.response.use(
         router.push({ name: 'home' })
       } else {
         // 401 에러가 아닌 다른 에러는 그대로 반환
+        console.log('filter')
+        console.log(error)
         return Promise.reject(error)
       }
     } else {
       // 401 에러가 아닌 다른 에러는 그대로 반환
+      console.log('filter')
+      console.log(error)
       return Promise.reject(error)
     }
   }
