@@ -72,7 +72,7 @@ onMounted(async () => {
   content.value = defaultContent.value.content
   selectedRecord.value = defaultContent.value.recordSeq
 
-  await shareBoardStore.getRecord(defaultContent.value.recordSeq)
+  await shareBoardStore.getRecord(route.params.seq)
   record.value = shareBoardStore.shareRecord
 
   myNickname.value = counterStore.getCookie('nickname')
