@@ -19,8 +19,8 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     List<Record> findBySeqIn(List<Long> recordSeq);
 
-    List<Record> findByRegionCdAndSeqNotInAndMemberSeqNot(String regionCd, List<Long> recordSeq, Long memberSeq);
+    List<Record> findByRegionCdAndSeqNotInAndMemberSeqNotAndIsDeletedFalse(String regionCd, List<Long> recordSeq, Long memberSeq);
 
-    List<Record> findByMemberSeqInAndSeqNotIn(List<Long> memberSeqList, List<Long> recordSeq);
+    List<Record> findByMemberSeqInAndSeqNotInAndIsDeletedFalse(List<Long> memberSeqList, List<Long> recordSeq);
 
 }
