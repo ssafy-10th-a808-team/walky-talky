@@ -2,26 +2,34 @@
   <div class="section-title">
     <h2>산책 공유 게시판</h2>
   </div>
+
   <button class="share-button" @click="shareBoardWrite">내 산책 공유하기</button>
-  <div v-for="(content, key) in contents" :key="content.shareBoardSeq">
-    <shareBoardListItem
-      class="share-board-item"
-      :content="content"
-      :record="records[key]"
-      :like="likes[key]"
-      :scrap="scraps[key]"
-      @click="shareBoardDetail(content.shareBoardSeq)"
-    />
+
+  <div v-if="records.length == 0" class="nothing-container">
+    <h4>처음으로 산책을 공유해보세요!</h4>
   </div>
 
-  <div class="pagination">
-    <button @click="prevPage" :disabled="currentPage === 0" key="prev">이전</button>
-    <template v-for="page in totalPage" :key="page">
-      <button @click="goToPage(page)" :class="{ active: page === currentPage + 1 }">
-        {{ page }}
-      </button>
-    </template>
-    <button @click="nextPage" :disabled="currentPage === totalPage - 1" key="next">다음</button>
+  <div v-else>
+    <div v-for="(content, key) in contents" :key="content.shareBoardSeq">
+      <shareBoardListItem
+        class="share-board-item"
+        :content="content"
+        :record="records[key]"
+        :like="likes[key]"
+        :scrap="scraps[key]"
+        @click="shareBoardDetail(content.shareBoardSeq)"
+      />
+    </div>
+
+    <div class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 0" key="prev">이전</button>
+      <template v-for="page in totalPage" :key="page">
+        <button @click="goToPage(page)" :class="{ active: page === currentPage + 1 }">
+          {{ page }}
+        </button>
+      </template>
+      <button @click="nextPage" :disabled="currentPage === totalPage - 1" key="next">다음</button>
+    </div>
   </div>
 </template>
 
@@ -124,5 +132,12 @@ const goToPage = (page) => {
 .pagination button.active {
   background-color: #fff; /* 선택된 페이지의 배경색 */
   color: #000; /* 선택된 페이지의 텍스트 색상 */
+}
+
+.nothing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
 }
 </style>

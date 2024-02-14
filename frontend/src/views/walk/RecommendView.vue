@@ -4,7 +4,7 @@
     <div>
       <h2>나와 같은 동네 사람들은 이 경로로 산책했어요!</h2>
       <img src="@/assets/img/reload.png" height="45px" @click="loadRecomTown" />
-      <div v-if="recordsTown.size == 0" class="nothing-container">
+      <div v-if="recordsTown.length == 0" class="nothing-container">
         <h4>같은 동네 사람들이 아직 산책을 하지 않았어요</h4>
         <p @click="moveClub">우리 동네 사람들과 산책하러 가기</p>
       </div>
@@ -32,7 +32,7 @@
     <div>
       <h2>나와 비슷한 사람들은 이 경로로 산책했어요!</h2>
       <img src="@/assets/img/reload.png" height="45px" @click="loadRecomInfo" />
-      <div v-if="recordsInfo.size == 0" class="nothing-container">
+      <div v-if="recordsInfo.length == 0" class="nothing-container">
         <h4>나와 비슷한 사람들이 아직 산책을 하지 않았어요</h4>
         <p @click="moveShareBoard">다른 사람의 산책 기록 보러 가기</p>
       </div>
