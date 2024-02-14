@@ -71,32 +71,57 @@
               <!-- <h2>산책 평가</h2> -->
               <form>
                 <div>
-                  <label for="title">제 목 : </label>&nbsp;
-                  <input type="text" v-model="walkReview.title" required />
+                  <b for="title">제 목 :</b>
+                  &nbsp;
+                  <input
+                    type="text"
+                    class="form-control"
+                    style="display: inline-block; width: 200px; height: 25px"
+                    placeholder="산책 제목을 입력하세요"
+                    v-model="walkReview.title"
+                    required
+                  />
                 </div>
                 <div>
-                  <label for="starRating">별 점 : </label>&nbsp;
-                  <input type="number" v-model="walkReview.starRating" min="1" max="5" required />
+                  <b for="starRating">별 점 :</b>
+                  &nbsp;
+                  <StarRating
+                    style="display: inline-block; height: 25px"
+                    :starRating="parseInt(walkReview.starRating)"
+                    :editable="true"
+                    @modifyStarRating="modifyStarRating"
+                  />
                 </div>
                 <div class="form-group mt-1">
-                  <label for="comment">한줄평 : </label>&nbsp;
+                  <b for="comment">한줄평 :</b>
+                  &nbsp;
                   <textarea
                     class="form-control"
+                    name="message"
+                    style="display: inline-block; width: 260px"
+                    placeholder="산책에 대한 한줄평을 남겨주세요"
                     v-model="walkReview.comment"
-                    style="width: 260px"
                     required
                   ></textarea>
                 </div>
-                <hr />
+                <br />
+                <div
+                  style="
+                    display: flex;
+                    justify-content: center;
+                    margin-left: -30px;
+                    margin-bottom: 10px;
+                    margin-top: 0;
+                  "
+                >
+                  <div style="margin-right: 10px">
+                    <button @click="submitWalkReview">작성</button>
+                  </div>
+                  <div>
+                    <button @click="goHome">취소</button>
+                  </div>
+                </div>
               </form>
-              <div style="display: flex; justify-content: center; margin-left: -30px">
-                <div style="margin-right: 10px">
-                  <button @click="submitWalkReview">작성</button>
-                </div>
-                <div>
-                  <button @click="goHome">취소</button>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -169,6 +194,7 @@
 // 필요한 모듈 및 라이브러리 불러오기
 import { ref, onMounted, watchEffect, onBeforeUnmount } from 'vue'
 import WalkHeaderNav from '@/components/common/WalkHeaderNav.vue'
+import StarRating from '@/components/walk/StarRating.vue'
 import router from '../../router'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
@@ -237,10 +263,14 @@ const state = ref({
 })
 
 const walkReview = ref({
-  title: '오늘의 산책',
+  title: '',
   starRating: 1,
-  comment: '오늘의 산책은 어땠나요?'
+  comment: ''
 })
+
+const modifyStarRating = (rating) => {
+  walkReview.value.starRating = rating
+}
 
 const showWalkSummary = ref(false)
 
@@ -279,7 +309,7 @@ onMounted(async () => {
     // 마운트 되었을 때 map이 있다면 interval 을 5초로
     const interval = setInterval(() => {
       navigator.geolocation.getCurrentPosition(setLinePathArr)
-    }, 5000)
+    }, 1000) //여기 바꿨음 ~~~
 
     onBeforeUnmount(() => {
       // 마운트가 되기 전에 map이 있다면 map 정보 초기화
@@ -573,7 +603,10 @@ const submitWalkReview = () => {
 
   // 산책 평가 제출 후 화면 갱신 등의 작업을 수행할 수 있습니다.
   // 예: showWalkSummary 값을 다시 false로 설정하여 다른 화면을 보여줄 수 있습니다.
-  router.push('/walk/list')
+  // 페이지 이동 후에 새로고침
+  router.push('/walk/list').then(() => {
+    location.reload()
+  })
   showWalkSummary.value = false
 }
 
@@ -688,29 +721,6 @@ watchEffect(() => {
     }
   }
 })
-
-// watchEffect(() => {
-//   if (state.value.map && running.value) {
-//     navigator.geolocation.getCurrentPosition((position) => {
-//       setLinePathArr(position)
-//       // 위치를 받아오면 바로 선을 그리도록 수정
-//       makeLine()
-//     })
-//   }
-// })
-
-// watchEffect(() => {
-//   if (state.value.map && running.value) {
-//     let timeoutId = setTimeout(() => {
-//       navigator.geolocation.getCurrentPosition((position) => setLinePathArr(position));
-//       timeoutId = setTimeout(arguments.callee, 5000);
-//     }, 5000);
-
-//     return () => {
-//       clearTimeout(timeoutId);
-//     };
-//   }
-// });
 </script>
 
 <style scoped>

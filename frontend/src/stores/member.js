@@ -69,11 +69,11 @@ export const useMemberStore = defineStore(
         }
       })
         .then((res) => {
-          // console.log(res)
+          console.log(res)
           alert('사용가능한 아이디입니다')
         })
         .catch((err) => {
-          // console.log(err)
+          console.log(err)
           const errmsg = err.response.data.message
           console.log(errmsg)
           if (errmsg == 'id is empty') {
