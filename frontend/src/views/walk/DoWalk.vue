@@ -518,6 +518,7 @@ const startWalk = function () {
   startTime.value = new Date()
   startTime.value = moment(startTime.value).format('YYYY-MM-DDTHH:mm:ss')
   region_cd.value = address_code.value
+  console.log(region_cd.value) // 지울것
   watchLocationUpdates()
   walkStore.startWalk()
 }
