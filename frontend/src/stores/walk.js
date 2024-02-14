@@ -23,9 +23,7 @@ const errorHandle = (err) => {
 }
 
 export const useWalkStore = defineStore('walk', () => {
-  //   const router = useRouter()
   const counterstore = useCounterStore()
-  // const memberStore = useMemberStore()
   const data = ref(null)
   // 산책시작
   const startWalk = function () {
@@ -38,16 +36,9 @@ export const useWalkStore = defineStore('walk', () => {
     })
       .then((res) => {
         data.value = res.data
-        // console.log(res.data.data.seq)
-        // console.log(data.value.data.seq)
-        // console.log(res)
-        console.log('산책을 시작합니다')
       })
       .catch((err) => {
-        // console.log(err)
         const errmsg = err.response.data.message
-        // alert(errmsg)
-        console.log(errmsg)
       })
   } // 산책시작
 
