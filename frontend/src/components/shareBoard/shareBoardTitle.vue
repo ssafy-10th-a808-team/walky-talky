@@ -17,11 +17,16 @@ const { title, commentCount } = defineProps(['title', 'commentCount'])
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 10px;
+}
+
+.title-container h2 {
+  margin-right: 10px;
 }
 
 .comment-container {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
 }
 
 .comment-container img {
