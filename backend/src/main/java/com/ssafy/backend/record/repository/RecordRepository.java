@@ -15,7 +15,7 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
 
     boolean existsBySeqAndIsDeletedTrue(Long seq);
 
-    List<Record> findByMemberSeqAndIsDeletedFalse(Long memberSeq);
+    List<Record> findByMemberSeqAndIsDeletedFalseOrderByCreatedAtDesc(Long memberSeq);
 
     List<Record> findBySeqIn(List<Long> recordSeq);
 

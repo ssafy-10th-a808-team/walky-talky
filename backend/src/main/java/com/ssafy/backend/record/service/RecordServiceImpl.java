@@ -233,7 +233,7 @@ public class RecordServiceImpl implements RecordService {
     @Transactional
     public List<ResponseListDto> list(Long memberSeq) throws WTException {
         try {
-            List<Record> recordList = recordRepository.findByMemberSeqAndIsDeletedFalse(memberSeq);
+            List<Record> recordList = recordRepository.findByMemberSeqAndIsDeletedFalseOrderByCreatedAtDesc(memberSeq);
 
             return listMapping(recordList);
         } catch (Exception e) {
