@@ -211,7 +211,7 @@
 
 ## 문서
 
-- [ERD](https://www.erdcloud.com/d/Sh9PxS3MDoB7fyCyC)
+- [ERD](https://www.erdcloud.com/d/EQGT5edvcxBBzAcPR)
 - [API 명세서](https://www.notion.so/ee47fd310c7b40d4b581b4f313514baa?pvs=21)
 - [Figma](https://www.figma.com/file/QcdcQyWpdbUQMWfj0cwQ5A/WalkyTalky?type=design&node-id=0-1&mode=design&t=4vfgV5hQb4Y1JbKe-0)
 - [코드 및 커밋 컨벤션](https://www.notion.so/Git-bfca2331473a433a8ff5c9eeb0d76bfb?pvs=21)
@@ -333,6 +333,7 @@
   - 산책 기록 공유 게시글 작성
 
     <img src="images/산책공유게시글/산책공유게시글작성.gif" height=600>
+    
     - 제목이나 내용을 입력하지 않거나 공유 할 기록을 선택하지 않으면 글을 작성하지 못함
 
       <img src="images/산책공유게시글/산책공유게시글작성오류.gif" height=600>
