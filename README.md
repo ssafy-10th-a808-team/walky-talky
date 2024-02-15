@@ -295,6 +295,7 @@
 
 <details>
 <summary>로컬 회원가입 및 로그인</summary>
+
 - 카카오 맵 api의 geolocation을 활용, gps상의 좌표로 주소를 가져와 내 동네 저장
 - 닉네임, 아이디 중복 등 유효성검사
 - 로그인 시 네비게이션바에 프로필 사진과 닉네임, 마이페이지 및 로그아웃 항목 렌더링
@@ -304,6 +305,7 @@
 
 <details>
 <summary>라우터가드</summary>
+
 - 비 로그인 상태일 때 클럽, 산책 등 주소로 접근 방지
 - 로그인 상태일 때 로그인, 회원가입 주소로 접근 방지
 
@@ -312,13 +314,14 @@
 
 <details>
 <summary>마이페이지</summary>
+
 - 내 정보 렌더링
 - 프로필 사진, 닉네임, 소개, 내 동네, 비밀번호 수정 가능
 - 유효성검사 시행
 - 회원탈퇴 기능
 
   <img src="images/member/mypage.gif/" height=600>
-  </details>
+</details>
 
 <details>
 <summary>산책하기</summary>
