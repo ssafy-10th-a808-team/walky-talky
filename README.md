@@ -417,7 +417,7 @@
 
 - 스크랩 한 코스 상세 보기
 
-      <img src="images/스크랩/스크랩한코스상세보기.gif" height=600>
+  <img src="images/스크랩/스크랩한코스상세보기.gif" height=600>
 
 </details>
 
@@ -438,7 +438,7 @@
 
 - 내 기록 삭제
 
-      <img src="images/내기록/내기록삭제.gif" height=600>
+  <img src="images/내기록/내기록삭제.gif" height=600>
 
 </details>
 
@@ -455,7 +455,7 @@
 
 - 추천 받은 기록이 기호에 부합하지 않으면 해당 기록을 더 이상 추천 받지 않을 수 있음
 
-      <img src="images/산책추천/동네기반추천싫어요.gif" height=600> &nbsp; <img src="images/산책추천/정보기반추천싫어요.gif" height=600>
+  <img src="images/산책추천/동네기반추천싫어요.gif" height=600> &nbsp; <img src="images/산책추천/정보기반추천싫어요.gif" height=600>
 
 </details>
 
