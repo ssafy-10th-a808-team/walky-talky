@@ -20,7 +20,7 @@
               :movable="false"
             />
             <div class="action-buttons">
-              <p class="not-recommend" @click="notRecommend(record.recordSeq)">
+              <p class="not-recommend" @click="notRecommendTown(record.recordSeq)">
                 더 이상 이 코스 추천받지 않기
               </p>
             </div>
@@ -48,7 +48,7 @@
               :movable="false"
             />
             <div class="action-buttons">
-              <p class="not-recommend" @click="notRecommend(record.recordSeq)">
+              <p class="not-recommend" @click="notRecommendInfo(record.recordSeq)">
                 더 이상 이 코스 추천받지 않기
               </p>
             </div>
@@ -80,10 +80,15 @@ onMounted(async () => {
   recordsInfo.value = walkStore.myRecomInfo
 })
 
-const notRecommend = async (seq) => {
+const notRecommendTown = async (seq) => {
   await walkStore.dislike(seq)
 
   recordsTown.value.find((item) => item.recordSeq === seq).notRecommended = true
+}
+
+const notRecommendInfo = async (seq) => {
+  await walkStore.dislike(seq)
+
   recordsInfo.value.find((item) => item.recordSeq === seq).notRecommended = true
 }
 
