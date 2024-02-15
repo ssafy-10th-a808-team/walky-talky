@@ -1,5 +1,4 @@
-# WalkyTalky
-
+# <img src="images/WalkyTalky_logo.png" weight=30 height=30> WalkyTalky
 <div align=center>
 <img src="images/MainPage.png" height=600>
 </div>
