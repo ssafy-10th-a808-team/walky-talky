@@ -408,13 +408,13 @@
 git clone https://lab.ssafy.com/s10-webmobile2-sub2/S10P12A808.git
 ```
 
-1. change path to /frontend & npm install
+2. change path to /frontend & npm install
 
 ```bash
 npm i
 ```
 
-1. create .env file
+3. create .env file
 
 ```bash
 VITE_KAKAO_API_KEY = {kakao JavaScript API key}
@@ -423,25 +423,25 @@ VITE_KAKAO_REDIRECT_URI = {service url}/member/local-signup
 VITE_MARKER_IMAGE_ROUTE = https://walkytalky.s3.ap-northeast-2.amazonaws.com/marker/
 ```
 
-1. frontend start
+4. frontend start
 
 ```bash
 npm run dev
 ```
 
-1. change path to /backend/src/main
+5. change path to /backend/src/main
 
 ```bash
 mkdir resources
 ```
 
-1. change path to /backend/src/main/resources
+6. change path to /backend/src/main/resources
 
 ```bash
 cd resources
 ```
 
-1. create application.yml
+7. create application.yml
 
 ```bash
 server:
