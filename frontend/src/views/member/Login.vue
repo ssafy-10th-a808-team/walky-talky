@@ -10,8 +10,8 @@
             <form method="post" role="form" class="php-email-form">
               <div class="row">
                 <!-- 아이디 -->
-                <div class="form-group col-md-8">
-                  <label>ID</label>
+                <div class="form-group col-md-8" style="margin: 0 auto">
+                  <label>아이디</label>
                   <input
                     type="text"
                     name="name"
@@ -22,20 +22,45 @@
                 </div>
               </div>
               <!-- 비밀번호 -->
-              <div class="mb-3 row">
-                <label for="inputPassword" class="col-sm-2 col-form-label">비밀번호</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="inputPassword"
-                  v-model="password"
-                  required
+              <div class="row">
+                <div class="form-group col-md-8" style="margin: 0 auto">
+                  <label>비밀번호</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="inputPassword"
+                    v-model="password"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="text-center">
+                <button type="submit" @click="login" style="width: 300px; margin-top: 10px">
+                  로그인
+                </button>
+              </div>
+              <div>
+                <img
+                  src="/src/assets/img/KakaoLoginIcon.png"
+                  alt="Kakao Login"
+                  @click="kakaoLogin"
+                  style="margin: auto; display: block; margin-top: 10px"
                 />
               </div>
-              <RouterLink :to="{ name: 'Signup' }">회원가입</RouterLink>
-              <div class="text-center">
-                <button type="button" @click="login">로그인</button>
-              </div>
+              <!-- <div
+                style="
+                  border-radius: 5px;
+                  border: 2px solid #5cb874;
+                  width: 300px;
+                  height: 44px;
+                  margin: 0 auto;
+                  text-align: center;
+                "
+              > -->
+              <RouterLink :to="{ name: 'Signup' }" style="display: inline-block; margin-top: 7px"
+                >회원가입</RouterLink
+              >
+              <!-- </div> -->
             </form>
           </div>
         </div>
@@ -52,12 +77,17 @@ const memberstore = useMemberStore()
 const memberId = ref(null)
 const password = ref(null)
 
-const login = () => {
+const login = (event) => {
+  event.preventDefault()
   const payload = {
     memberId: memberId.value,
     password: password.value
   }
   memberstore.login(payload)
+}
+
+const kakaoLogin = () => {
+  memberstore.kakaoLogin()
 }
 </script>
 
