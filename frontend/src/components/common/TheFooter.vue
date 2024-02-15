@@ -3,7 +3,7 @@
   <footer id="footer">
     <div class="container">
       <h3>WalkyTalky</h3>
-      <p>산책해듀오</p>
+      <p>우리의 걷기, 산책을 기록하고 나누다</p>
       <div class="copyright">
         &copy; Copyright <strong><span>WalkyTalky</span></strong
         >. All Rights Reserved
