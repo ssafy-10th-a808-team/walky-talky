@@ -1,9 +1,22 @@
-# WalkyTalky
+# <img src="images/WalkyTalky_logo.png" height=50>WalkyTalky
 
+<div align=center>
 <img src="images/MainPage.png" height=600>
-<br>
+</div>
 
-## 프로젝트 소개
+## :book: 목차
+- [프로젝트 소개](#프로젝트-소개)
+- [팀원 구성](#팀원-구성)
+- [개발 기간](#개발-기간)
+- [기술 스택](#기술-스택)
+- [프로젝트 구조](#프로젝트-구조)
+- [아키텍처](#아키텍처)
+- [문서](#문서)
+- [역할 분담](#역할-분담)
+- [기능 시연](#기능-시연)
+- [구동 방법]($구동-방법)
+
+## :walking: 프로젝트 소개
 
 - WalkyTalky는 산책을 좋아하는 사람들이 본 서비스를 이용하여 산책을 한 뒤 자신의 산책 기록을 공유하고 같이 산책 할 사람들을 구하여 산책을 할 수 있는 서비스입니다.
 - 사용자가 산책을 시작하면 실시간으로 지도에 산책 경로가 표시되며 산책을 마친 후에는 자신의 산책의 제목, 한줄평, 별점을 기록하고 확인 할 수 있습니다.
@@ -11,18 +24,18 @@
 - 자신의 산책 기록을 다른 사용자와 공유하고 싶은 사용자는 산책 기록 공유 게시판을 통해 다른 사용자들과 자신의 기록을 공유할 수 있습니다.
 - 지도를 통해 원하는 사용자의 산책 기록을 확인하며 산책 할 수 있습니다.
 
-## 팀원 구성
+## :construction_worker: 팀원 구성
 
 |                                   김진용                                   |                                   강민정                                   |                                   김연화                                    |                                   신우섭                                   |                                   임덕기                                    |
 | :------------------------------------------------------------------------: | :------------------------------------------------------------------------: | :-------------------------------------------------------------------------: | :------------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
 | <img src="https://avatars.githubusercontent.com/u/88269663?v=4" width=150> | <img src="https://avatars.githubusercontent.com/u/57582487?v=4" width=150> | <img src="https://avatars.githubusercontent.com/u/124342362?v=4" width=150> | <img src="https://avatars.githubusercontent.com/u/87111673?v=4" width=150> | <img src="https://avatars.githubusercontent.com/u/130431922?v=4" width=150> |
 |               [@jinyong3512](https://github.com/jinyong3512)               |                    [@min922](https://github.com/min922)                    |                 [@myeon0109](https://github.com/myeon0109)                  |                 [@Wooseobee](https://github.com/Wooseobee)                 |                    [@DKIMDK](https://github.com/DKIMDK)                     |
 
-## 개발 기간
+## :calendar: 개발 기간
 
 2024.01.08 - 2024.02.16 (6주)
 
-## 기술 스택
+## :hammer_and_wrench: 기술 스택
 
 #### Front-end
 
@@ -62,7 +75,7 @@
 
 <img alt="jenkins" src ="https://img.shields.io/badge/jenkins-D24939.svg?&style=for-the-badge&logo=jenkins&logoColor=white"/>
 
-## 프로젝트 구조
+## 👷 프로젝트 구조
 
 <details>
 <summary>Frontend</summary>
@@ -212,18 +225,18 @@
 
 </details>
 
-## 아키텍처
+## 🏗️ 아키텍처
 
 <img src="images/architecture.png">
 
-## 문서
+## :memo: 문서
 
 - [ERD](https://www.erdcloud.com/d/EQGT5edvcxBBzAcPR)
 - [API 명세서](https://www.notion.so/ee47fd310c7b40d4b581b4f313514baa?pvs=21)
 - [Figma](https://www.figma.com/file/QcdcQyWpdbUQMWfj0cwQ5A/WalkyTalky?type=design&node-id=0-1&mode=design&t=4vfgV5hQb4Y1JbKe-0)
 - [코드 및 커밋 컨벤션](https://www.notion.so/Git-bfca2331473a433a8ff5c9eeb0d76bfb?pvs=21)
 
-## 역할 분담
+## :pushpin: 역할 분담
 
 - 신우섭
   - Infra
@@ -286,7 +299,7 @@
     - 소모임 멤버 API
     - 소모임 일정 API
 
-## 기능 시연
+## :movie_camera: 기능 시연
 
 <details>
 <summary>카카오 로그인</summary>
@@ -528,7 +541,7 @@
 
 </details>
 
-## 구동 방법
+## :computer: 구동 방법
 
 1. Clone Project
 
