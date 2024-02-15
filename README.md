@@ -294,7 +294,7 @@
     - 소모임 페이지
   - 기능
     - 회원가입 API
-      - SHA-256 비밀번호 암호화, 비밀번호 패턴 매칭, 멤버 정보 유효성 검사
+      - SHA - 256 비밀번호 암호화, 비밀번호 패턴 매칭, 멤버 정보 유효성 검사
     - 소모임 API
     - 소모임 멤버 API
     - 소모임 일정 API
@@ -303,7 +303,7 @@
 
 <details>
 <summary>카카오 로그인</summary>
-  <img src="images/kakaoLogin.gif">
+  <img src="images/member/kakaoLogin.gif">
 </details>
 
 <details>
@@ -313,7 +313,7 @@
 - 소모임원들만 채팅방에 접근할 수 있게 제한
 - 가입 이전의 내용은 확인 불가
 
-  <img src="images/chatting.gif">
+  <img src="images/소모임/chatting.gif">
   </details>
 
 <details>
