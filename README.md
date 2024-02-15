@@ -1,11 +1,9 @@
 # WalkyTalky
 
-<img src="https://walkytalky.s3.ap-northeast-2.amazonaws.com/profile/WalkyTalky_logo.png" height=150 width=150>
+<img src="images/MainPage.png" height=600>
 <br>
 
 ## 프로젝트 소개
-
----
 
 - WalkyTalky는 산책을 좋아하는 사람들이 본 서비스를 이용하여 산책을 한 뒤 자신의 산책 기록을 공유하고 같이 산책 할 사람들을 구하여 산책을 할 수 있는 서비스입니다.
 - 사용자가 산책을 시작하면 실시간으로 지도에 산책 경로가 표시되며 산책을 마친 후에는 자신의 산책의 제목, 한줄평, 별점을 기록하고 확인 할 수 있습니다.
@@ -15,8 +13,6 @@
 
 ## 팀원 구성
 
----
-
 |                                   김진용                                   |                                   강민정                                   |                                   김연화                                    |                                   신우섭                                   |                                   임덕기                                    |
 | :------------------------------------------------------------------------: | :------------------------------------------------------------------------: | :-------------------------------------------------------------------------: | :------------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
 | <img src="https://avatars.githubusercontent.com/u/88269663?v=4" width=150> | <img src="https://avatars.githubusercontent.com/u/57582487?v=4" width=150> | <img src="https://avatars.githubusercontent.com/u/124342362?v=4" width=150> | <img src="https://avatars.githubusercontent.com/u/87111673?v=4" width=150> | <img src="https://avatars.githubusercontent.com/u/130431922?v=4" width=150> |
@@ -24,13 +20,9 @@
 
 ## 개발 기간
 
----
-
 2024.01.08 - 2024.02.16 (6주)
 
 ## 기술 스택
-
----
 
 - Front : Vue, StompJS
 - Back-end : Spring Boot, Redis, MariaDB
@@ -40,8 +32,6 @@
 - CI/CD : Jenkins
 
 ## 프로젝트 구조
-
----
 
 <details>
 <summary>Frontend</summary>
@@ -192,13 +182,9 @@
 </details>
 ## 아키텍처
 
----
-
 <img src="images/architecture.png">
 
 ## 문서
-
----
 
 - [ERD](https://www.erdcloud.com/d/Sh9PxS3MDoB7fyCyC)
 - [API 명세서](https://www.notion.so/ee47fd310c7b40d4b581b4f313514baa?pvs=21)
@@ -206,8 +192,6 @@
 - [코드 및 커밋 컨벤션](https://www.notion.so/Git-bfca2331473a433a8ff5c9eeb0d76bfb?pvs=21)
 
 ## 역할 분담
-
----
 
 - 신우섭
   - Infra
@@ -263,8 +247,6 @@
 
 ## 기능 시연
 
----
-
 여기 이제 움짤이랑 각자 기능 설명들 넣으면 됨
 
 - 카카오 로그인
@@ -284,13 +266,15 @@
   - 카카오 맵 api의 geolocation을 활용, gps상의 좌표로 주소를 가져와 내 동네 저장
   - 닉네임, 아이디 중복 등 유효성검사
   - 로그인 시 네비게이션바에 프로필 사진과 닉네임, 마이페이지 및 로그아웃 항목 렌더링
-    <img src="images/member/local_signup.gif">
+
+    <img src="images/member/local_signup.gif" height=600>
 
 - 라우터가드
 
   - 비 로그인 상태일 때 클럽, 산책 등 주소로 접근 방지
   - 로그인 상태일 때 로그인, 회원가입 주소로 접근 방지
-    <img src="images/member/login_logout.gif">
+
+    <img src="images/member/login_logout.gif" height=600>
 
 - 마이페이지
 
@@ -298,7 +282,8 @@
   - 프로필 사진, 닉네임, 소개, 내 동네, 비밀번호 수정 가능
   - 유효성검사 시행
   - 회원탈퇴 기능
-    <img src="images/member/mypage.gif/">
+
+    <img src="images/member/mypage.gif/" height=600>
 
 - 산책하기
 
@@ -306,7 +291,7 @@
   - 사용자의 산책을 GPS와 KakaoMap을 이용해 실시간으로 추적하여 거리, 시간을 측정하고, 경로를 지도에 그린다.
   - 산책 종료 시 기록을 DB에 저장한다
 
-  <img src="images/산책/산책하기.gif" align='left'><img src="images/산책/산책기록입력.gif">
+  <img src="images/산책/산책하기.gif" height=600><img src="images/산책/산책기록입력.gif" height=600>
 
 - 따라 산책하기
 
@@ -314,40 +299,108 @@
   - 따라 걸을 라인(빨간색)이 뜨고, 내가 걷는 라인(노란색)도 역시 보여짐
   - 따라 산책후 기록 입력
 
-  <img src="images/산책/따라걷기.gif"> &nbsp; <img src="images/산책/따라걷고산책기록입력.gif">
+  <img src="images/산책/따라걷기.gif" height=600> &nbsp; <img src="images/산책/따라걷고산책기록입력.gif" height=600>
 
 - 산책 기록 공유 게시판
+
   - 산책 기록 공유 게시글 목록 조회
+
+    <img src="images/산책공유게시글/산책기록공유게시판목록조회.gif" height=600>
+
   - 산책 기록 공유 게시글 작성
+
+    <img src="images/산책공유게시글/산책공유게시글작성.gif" height=600>
     - 제목이나 내용을 입력하지 않거나 공유 할 기록을 선택하지 않으면 글을 작성하지 못함
+
+      <img src="images/산책공유게시글/산책공유게시글작성오류.gif" height=600>
+
   - 산책 기록 공유 게시글 상세 조회
+
+    <img src="images/산책공유게시글/산책공유게시글상세조회.gif" height=600>
+
   - 산책 기록 공유 게시글 수정
+
+    <img src="images/산책공유게시글/산책공유게시글수정.gif" height=600>
+
   - 산책 기록 공유 게시글 삭제
+
+    <img src="images/산책공유게시글/산책공유게시글삭제.gif" height=600>
+
   - 산책 기록 공유 게시글 댓글 작성
+
+    <img src="images/산책공유게시글댓글/산책공유게시글댓글작성.gif" height=600>
+
   - 산책 기록 공유 게시글 댓글 수정
+
+    <img src="images/산책공유게시글댓글/댓글수정.gif" height=600>
+
   - 산책 기록 공유 게시글 댓글 삭제
+
+    <img src="images/산책공유게시글댓글/댓글삭제.gif" height=600>
+
   - 산책 기록 공유 게시글 좋아요
+
+    <img src="images/좋아요/좋아요.gif" height=600>
+
     - 자신의 글은 좋아요를 누를 수 없음
+
+      <img src="images/좋아요/좋아요오류.gif" height=600>
+
   - 산책 기록 공유 게시글 좋아요 취소
+
+    <img src="images/좋아요/좋아요취소.gif" height=600>
+
 - 산책 기록 스크랩
-  - 산책 기록 공유 게시글 스크랩
+
+  - 산책 기록 공유 게시글 스크랩 및 확인
+
+    <img src="images/스크랩/스크랩후확인.gif" height=600>
+
     - 자신의 글은 스크랩 할 수 없음
+
+      <img src="images/스크랩/스크랩오류.gif" height=600>
+
   - 산책 기록 공유 게시글 스크랩 취소
-  - 산책 기록 공유 기록 스크랩 확인
+
+    <img src="images/스크랩/스크랩취소.gif" height=600>
+
   - 스크랩 한 코스 상세 보기
+
+    <img src="images/스크랩/스크랩한코스상세보기.gif" height=600>
+
 - 나의 산책 기록
+
   - 내 기록 목록 조회
+
+    <img src="images/내기록/내기록목록조회.gif" height=600>
+
   - 내 기록 상세 조회
+
+    <img src="images/내기록/내기록상세.gif" height=600>
+
   - 내 기록 수정
+
+    <img src="images/내기록/내기록수정.gif" height=600>
+
   - 내 기록 삭제
+
+    <img src="images/내기록/내기록삭제.gif" height=600>
+
 - 산책 기록 추천
+
   - 사용자의 동네에 기반하여 해당 동네의 산책 기록을 필터링 하여 보여줌
+
+    <img src="images/산책추천/동네기반추천.gif" height=600>
+
   - 사용자의 정보에 기반하여 유사한 사용자의 산책 기록을 필터링 하여 보여줌
+
+    <img src="images/산책추천/정보기반추천.gif" height=600>
+
   - 추천 받은 기록이 기호에 부합하지 않으면 해당 기록을 더 이상 추천 받지 않을 수 있음
 
-## 구동 방법
+    <img src="images/산책추천/동네기반추천싫어요.gif" height=600> &nbsp; <img src="images/산책추천/정보기반추천싫어요.gif" height=600>
 
----
+## 구동 방법
 
 1. Clone Project
 
