@@ -20,7 +20,7 @@
               <h2 class="animate__animated animate__fadeInDown">
                 Welcome to <span>WalkyTalky</span>
               </h2>
-              <p class="animate__animated animate__fadeInUp">산책해듀오</p>
+              <p class="animate__animated animate__fadeInUp">우리의 걷기, 산책을 기록하고 나누다</p>
               <!-- <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto"
                 >Read More</a
               > -->
