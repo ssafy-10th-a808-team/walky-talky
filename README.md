@@ -286,6 +286,7 @@
 
 <details>
 <summary>채팅</summary>
+
 - 소모임 가입, 탈퇴시 채팅방 알림 구현
 - 소모임원들만 채팅방에 접근할 수 있게 제한
 - 가입 이전의 내용은 확인 불가
@@ -325,6 +326,7 @@
 
 <details>
 <summary>산책하기</summary>
+
 - 사용자의 산책을 GPS와 KakaoMap을 이용해 실시간으로 추적하여 거리, 시간을 측정하고, 경로를 지도에 그린다.
 - 산책 종료 시 기록을 DB에 저장한다
 
@@ -334,6 +336,7 @@
 
 <details>
 <summary>따라 산책하기</summary>
+
 - 따라 산책
 - 따라 걸을 라인(빨간색)이 뜨고, 내가 걷는 라인(노란색)도 역시 보여짐
 - 따라 산책후 기록 입력
@@ -416,7 +419,7 @@
 
       <img src="images/스크랩/스크랩한코스상세보기.gif" height=600>
 
-  </details>
+</details>
 
 <details>
 <summary>나의 산책 기록</summary>
@@ -437,7 +440,7 @@
 
       <img src="images/내기록/내기록삭제.gif" height=600>
 
-  </details>
+</details>
 
 <details>
 <summary>산책 기록 추천</summary>
@@ -454,7 +457,7 @@
 
       <img src="images/산책추천/동네기반추천싫어요.gif" height=600> &nbsp; <img src="images/산책추천/정보기반추천싫어요.gif" height=600>
 
-  </details>
+</details>
 
 ## 구동 방법
 
