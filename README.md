@@ -281,59 +281,47 @@
 
 <details>
 <summary>카카오 로그인</summary>
-
-    <img src="images/kakaoLogin.gif">
-
+  <img src="images/kakaoLogin.gif">
 </details>
 
 <details>
 <summary>채팅</summary>
-
 - 소모임 가입, 탈퇴시 채팅방 알림 구현
 - 소모임원들만 채팅방에 접근할 수 있게 제한
 - 가입 이전의 내용은 확인 불가
 
-      <img src="images/chatting.gif">
-
+  <img src="images/chatting.gif">
   </details>
 
 <details>
 <summary>로컬 회원가입 및 로그인</summary>
-
 - 카카오 맵 api의 geolocation을 활용, gps상의 좌표로 주소를 가져와 내 동네 저장
 - 닉네임, 아이디 중복 등 유효성검사
 - 로그인 시 네비게이션바에 프로필 사진과 닉네임, 마이페이지 및 로그아웃 항목 렌더링
 
-      <img src="images/member/local_signup.gif" height=600>
-
-  </details>
+  <img src="images/member/local_signup.gif" height=600>
+</details>
 
 <details>
 <summary>라우터가드</summary>
-
 - 비 로그인 상태일 때 클럽, 산책 등 주소로 접근 방지
 - 로그인 상태일 때 로그인, 회원가입 주소로 접근 방지
 
-      <img src="images/member/login_logout.gif" height=600>
-
-  </details>
+  <img src="images/member/login_logout.gif" height=600>
+</details>
 
 <details>
 <summary>마이페이지</summary>
-
 - 내 정보 렌더링
 - 프로필 사진, 닉네임, 소개, 내 동네, 비밀번호 수정 가능
 - 유효성검사 시행
 - 회원탈퇴 기능
 
-      <img src="images/member/mypage.gif/" height=600>
-
+  <img src="images/member/mypage.gif/" height=600>
   </details>
 
 <details>
 <summary>산책하기</summary>
-
-- 산책하기
 - 사용자의 산책을 GPS와 KakaoMap을 이용해 실시간으로 추적하여 거리, 시간을 측정하고, 경로를 지도에 그린다.
 - 산책 종료 시 기록을 DB에 저장한다
 
@@ -343,7 +331,6 @@
 
 <details>
 <summary>따라 산책하기</summary>
-
 - 따라 산책
 - 따라 걸을 라인(빨간색)이 뜨고, 내가 걷는 라인(노란색)도 역시 보여짐
 - 따라 산책후 기록 입력
@@ -361,22 +348,21 @@
 
 - 산책 기록 공유 게시글 작성
 
-      <img src="images/산책공유게시글/산책공유게시글작성.gif" height=600>
+  <img src="images/산책공유게시글/산책공유게시글작성.gif" height=600>
 
-      - 제목이나 내용을 입력하지 않거나 공유 할 기록을 선택하지 않으면 글을 작성하지 못함
+  - 제목이나 내용을 입력하지 않거나 공유 할 기록을 선택하지 않으면 글을 작성하지 못함
 
-        <img src="images/산책공유게시글/산책공유게시글작성오류.gif" height=600>
+    <img src="images/산책공유게시글/산책공유게시글작성오류.gif" height=600>
 
 </details>
 
 <details>
-  <summary>산책 기록 공유 게시글 상세 조회</summary>
+<summary>산책 기록 공유 게시글 상세 조회</summary>
+  <img src="images/산책공유게시글/산책공유게시글상세조회.gif" height=600>
 
-    <img src="images/산책공유게시글/산책공유게시글상세조회.gif" height=600>
+- 산책 기록 공유 게시글 수정
 
-산책 기록 공유 게시글 수정
-
-    <img src="images/산책공유게시글/산책공유게시글수정.gif" height=600>
+  <img src="images/산책공유게시글/산책공유게시글수정.gif" height=600>
 
 - 산책 기록 공유 게시글 삭제
 
@@ -400,11 +386,11 @@
 
   - 자신의 글은 좋아요를 누를 수 없음
 
-    <img src="images/좋아요/좋아요오류.gif" height=600>
+  <img src="images/좋아요/좋아요오류.gif" height=600>
 
 - 산책 기록 공유 게시글 좋아요 취소
 
-      <img src="images/좋아요/좋아요취소.gif" height=600>
+  <img src="images/좋아요/좋아요취소.gif" height=600>
 
 </details>
 
