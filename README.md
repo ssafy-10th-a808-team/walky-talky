@@ -247,8 +247,6 @@
 
 ## 기능 시연
 
-여기 이제 움짤이랑 각자 기능 설명들 넣으면 됨
-
 - 카카오 로그인
 
     <img src="images/kakaoLogin.gif">
