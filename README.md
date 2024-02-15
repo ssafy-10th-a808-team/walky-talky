@@ -43,149 +43,153 @@
 
 ---
 
-- Frontend
+<details>
+<summary>Frontend</summary>
 
-  ```
-  └──src
-      ├──assets
-      │   └──img
-      │
-      ├──components
-      │   ├──common
-      │   │   ├──ButtonWithIcon
-      │   │   ├──ClubDetailHeaderNav
-      │   │   ├──TheFooter
-      │   │   ├──TheHeaderNav
-      │   │   ├──CourseFeed
-      │   │   └──WalkHeaderNav
-      │   ├──chat
-      │   │   ├──Message
-      │   │   └──MessageList
-      │   ├──club
-      │   │   └──ClubList
-      │   ├──member
-      │   │   └──MemberListView
-      │   ├──walk
-      │   │   ├──StarRating
-      │   │   ├──StopWatch
-      │   │   └──RecordModifyModal
-      │   └──shareboard
-      │       ├──shareBoardComment
-      │       ├──shareBoardCommentForm
-      │       ├──shareBoardLike
-      │       ├──shareBoardListItem
-      │       ├──shareBoardListUpper
-      │       ├──shareBoardMember
-      │       ├──shareBoardRecord
-      │       ├──shareBoardScrap
-      │       └──shareBoardTitle
-      │
-      ├──router
-      │   └──index
-      │
-      ├──stores
-      │   ├──chat
-      │   ├──jwtFilter
-      │   ├──counter
-      │   ├──club
-      │   ├──member
-      │   ├──shareboard
-      │   └──walk
-      │
-      ├──views
-      │   ├──club
-      │   │   ├──ClubView
-      │   │   ├──ClubDetailView
-      │   │   ├──ClubCreateView
-      │   │   ├──ClubPlanDetail
-      │   │   ├──ClubPlanOverwrite
-      │   │   ├──ClubPlanRegist
-      │   │   ├──ClubPlanView
-      │   │   ├──ClubSettingApplicantView
-      │   │   ├──ClubSettingClubView
-      │   │   ├──ClubSettingHeaderNav
-      │   │   ├──ClubSettingMemberView
-      │   │   └──ClubChatView
-      │   ├──member
-      │   │   ├──Login
-      │   │   ├──Logout
-      │   │   ├──ModifyInfo
-      │   │   ├──MyLocationView
-      │   │   ├──Mypage
-      │   │   ├──RecordScrapList
-      │   │   └──Signup
-      │   ├──shareboard
-      │   │   ├──ShareBoardView
-      │   │   ├──ShareBoardDetailView
-      │   │   ├──ShareBoardModifyView
-      │   │   └──ShareBoardWriteView
-      │   ├──walk
-      │   │   ├──DoWalk
-      │   │   ├──RecommendView
-      │   │   ├──ScrapDetaillView
-      │   │   ├──ScrapListView
-      │   │   ├──WalkDetaillView
-      │   │   └──WalkList
-      │   └──Homewview
+```
+└──src
+    ├──assets
+    │   └──img
+    │
+    ├──components
+    │   ├──common
+    │   │   ├──ButtonWithIcon
+    │   │   ├──ClubDetailHeaderNav
+    │   │   ├──TheFooter
+    │   │   ├──TheHeaderNav
+    │   │   ├──CourseFeed
+    │   │   └──WalkHeaderNav
+    │   ├──chat
+    │   │   ├──Message
+    │   │   └──MessageList
+    │   ├──club
+    │   │   └──ClubList
+    │   ├──member
+    │   │   └──MemberListView
+    │   ├──walk
+    │   │   ├──StarRating
+    │   │   ├──StopWatch
+    │   │   └──RecordModifyModal
+    │   └──shareboard
+    │       ├──shareBoardComment
+    │       ├──shareBoardCommentForm
+    │       ├──shareBoardLike
+    │       ├──shareBoardListItem
+    │       ├──shareBoardListUpper
+    │       ├──shareBoardMember
+    │       ├──shareBoardRecord
+    │       ├──shareBoardScrap
+    │       └──shareBoardTitle
+    │
+    ├──router
+    │   └──index
+    │
+    ├──stores
+    │   ├──chat
+    │   ├──jwtFilter
+    │   ├──counter
+    │   ├──club
+    │   ├──member
+    │   ├──shareboard
+    │   └──walk
+    │
+    ├──views
+    │   ├──club
+    │   │   ├──ClubView
+    │   │   ├──ClubDetailView
+    │   │   ├──ClubCreateView
+    │   │   ├──ClubPlanDetail
+    │   │   ├──ClubPlanOverwrite
+    │   │   ├──ClubPlanRegist
+    │   │   ├──ClubPlanView
+    │   │   ├──ClubSettingApplicantView
+    │   │   ├──ClubSettingClubView
+    │   │   ├──ClubSettingHeaderNav
+    │   │   ├──ClubSettingMemberView
+    │   │   └──ClubChatView
+    │   ├──member
+    │   │   ├──Login
+    │   │   ├──Logout
+    │   │   ├──ModifyInfo
+    │   │   ├──MyLocationView
+    │   │   ├──Mypage
+    │   │   ├──RecordScrapList
+    │   │   └──Signup
+    │   ├──shareboard
+    │   │   ├──ShareBoardView
+    │   │   ├──ShareBoardDetailView
+    │   │   ├──ShareBoardModifyView
+    │   │   └──ShareBoardWriteView
+    │   ├──walk
+    │   │   ├──DoWalk
+    │   │   ├──RecommendView
+    │   │   ├──ScrapDetaillView
+    │   │   ├──ScrapListView
+    │   │   ├──WalkDetaillView
+    │   │   └──WalkList
+    │   └──Homewview
 
-  ```
+```
 
-- Backend
+</details>
+<details>
+<summary>Backend</summary>
 
-  ```
-  └── src
-      ├── main
-      │   ├── java
-      │   │   └── com
-      │   │       └── ssafy
-      │   │           └── backend
-      │   │               ├── BackendApplication.java
-      │   │               ├── member
-      │   │               │   ├── controller
-      │   │               │   ├── domain
-      │   │               │   ├── dto
-      │   │               │   ├── repository
-      │   │               │   └── service
-      │   │               ├── group
-      │   │               │   ├── controller
-      │   │               │   ├── domain
-      │   │               │   ├── dto
-      │   │               │   ├── repository
-      │   │               │   └── service
-      │   │               ├── record
-      │   │               │   ├── controller
-      │   │               │   ├── domain
-      │   │               │   ├── dto
-      │   │               │   ├── repository
-      │   │               │   └── service
-      │   │               ├── shareBoard
-      │   │               │   ├── controller
-      │   │               │   ├── domain
-      │   │               │   ├── dto
-      │   │               │   ├── repository
-      │   │               │   └── service
-      │   │               ├── shareBoardComment
-      │   │               │   ├── controller
-      │   │               │   ├── domain
-      │   │               │   ├── dto
-      │   │               │   ├── repository
-      │   │               │   └── service
-      │   │               ├── global
-      │   │               │   ├── config
-      │   │               │   │   ├── SwaggerConfig.java
-      │   │               │   │   ├── properties
-      │   │               │   │   ├── resttemplate
-      │   │               │   │   └── security
-      │   │               │   ├── error
-      │   │               │   │   ├── ErrorResponse.java
-      │   │               │   │   ├── GlobalExceptionHandler.java
-      │   │               │   │   └── exception
-      │   │               │   └── util
-      │   └── resources
-      │       └── application.yml
+```
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── com
+    │   │       └── ssafy
+    │   │           └── backend
+    │   │               ├── BackendApplication.java
+    │   │               ├── member
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── group
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── record
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── shareBoard
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── shareBoardComment
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── global
+    │   │               │   ├── config
+    │   │               │   │   ├── SwaggerConfig.java
+    │   │               │   │   ├── properties
+    │   │               │   │   ├── resttemplate
+    │   │               │   │   └── security
+    │   │               │   ├── error
+    │   │               │   │   ├── ErrorResponse.java
+    │   │               │   │   ├── GlobalExceptionHandler.java
+    │   │               │   │   └── exception
+    │   │               │   └── util
+    │   └── resources
+    │       └── application.yml
 
-  ```
+```
 
+</details>
 ## 아키텍처
 
 ---
@@ -216,7 +220,7 @@
     - Oauth - 카카오 로그인 구현
     - Chatting - 소모임 가입자들간의 채팅 구현
     - S3 Image Upload 구현
-- 임덕끼끼
+- 임덕기
   - UI
     - 홈
     - 로그인, 로그아웃
@@ -275,16 +279,18 @@
 
     <img src="images/chatting.gif">
 
-- 라우터가드
-
-  - 비 로그인 상태일 때 클럽, 산책 등 주소로 접근 방지
-  - 로그인 상태일 때 로그인, 회원가입 주소로 접근 방지
-
 - 로컬 회원가입 및 로그인
 
   - 카카오 맵 api의 geolocation을 활용, gps상의 좌표로 주소를 가져와 내 동네 저장
   - 닉네임, 아이디 중복 등 유효성검사
   - 로그인 시 네비게이션바에 프로필 사진과 닉네임, 마이페이지 및 로그아웃 항목 렌더링
+    <img src="images/member/local_signup.gif">
+
+- 라우터가드
+
+  - 비 로그인 상태일 때 클럽, 산책 등 주소로 접근 방지
+  - 로그인 상태일 때 로그인, 회원가입 주소로 접근 방지
+    <img src="images/member/login_logout.gif">
 
 - 마이페이지
 
@@ -292,6 +298,7 @@
   - 프로필 사진, 닉네임, 소개, 내 동네, 비밀번호 수정 가능
   - 유효성검사 시행
   - 회원탈퇴 기능
+    <img src="images/member/mypage.gif/">
 
 - 산책하기
 
