@@ -82,13 +82,11 @@ onMounted(async () => {
 
 const notRecommendTown = async (seq) => {
   await walkStore.dislike(seq)
-
   recordsTown.value.find((item) => item.recordSeq === seq).notRecommended = true
 }
 
 const notRecommendInfo = async (seq) => {
   await walkStore.dislike(seq)
-
   recordsInfo.value.find((item) => item.recordSeq === seq).notRecommended = true
 }
 
