@@ -1,20 +1,20 @@
-# <img src="images/WalkyTalky_logo.png" height=50>WalkyTalky
+# WalkyTalky
 
 <div align=center>
 <img src="images/MainPage.png" height=600>
 </div>
 
 ## :book: 목차
-- [프로젝트 소개](#프로젝트-소개)
-- [팀원 구성](#팀원-구성)
-- [개발 기간](#개발-기간)
-- [기술 스택](#기술-스택)
-- [프로젝트 구조](#프로젝트-구조)
-- [아키텍처](#아키텍처)
-- [문서](#문서)
-- [역할 분담](#역할-분담)
-- [기능 시연](#기능-시연)
-- [구동 방법]($구동-방법)
+- [프로젝트 소개](#walking-프로젝트-소개)
+- [팀원 구성](#construction_worker-팀원-구성)
+- [개발 기간](#calendar-개발-기간)
+- [기술 스택](#hammer_and_wrench-기술-스택)
+- [프로젝트 구조](#-프로젝트-구조)
+- [아키텍처](#%EF%B8%8F-아키텍처)
+- [문서](#memo-문서)
+- [역할 분담](#pushpin-역할-분담)
+- [기능 시연](#movie_camera-기능-시연)
+- [구동 방법](#computer-구동-방법)
 
 ## :walking: 프로젝트 소개
 
