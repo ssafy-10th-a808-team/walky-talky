@@ -9,8 +9,8 @@
 - [팀원 구성](#construction_worker-팀원-구성)
 - [개발 기간](#calendar-개발-기간)
 - [기술 스택](#hammer_and_wrench-기술-스택)
-- [프로젝트 구조](#-프로젝트-구조)
-- [아키텍처](#%EF%B8%8F-아키텍처)
+- [프로젝트 구조](#package-프로젝트-구조)
+- [아키텍처](#building_construction-아키텍처)
 - [문서](#memo-문서)
 - [역할 분담](#pushpin-역할-분담)
 - [기능 시연](#movie_camera-기능-시연)
@@ -75,7 +75,7 @@
 
 <img alt="jenkins" src ="https://img.shields.io/badge/jenkins-D24939.svg?&style=for-the-badge&logo=jenkins&logoColor=white"/>
 
-## 👷 프로젝트 구조
+## :package: 프로젝트 구조
 
 <details>
 <summary>Frontend</summary>
@@ -225,7 +225,7 @@
 
 </details>
 
-## 🏗️ 아키텍처
+## :building_construction: 아키텍처
 
 <img src="images/architecture.png">
 
