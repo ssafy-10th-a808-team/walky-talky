@@ -8,12 +8,12 @@
 - [팀원 구성](#construction_worker-팀원-구성)
 - [개발 기간](#calendar-개발-기간)
 - [기술 스택](#hammer_and_wrench-기술-스택)
-- [프로젝트 구조](#package-프로젝트-구조)
 - [아키텍처](#building_construction-아키텍처)
 - [문서](#memo-문서)
 - [역할 분담](#pushpin-역할-분담)
 - [기능 시연](#movie_camera-기능-시연)
 - [구동 방법](#computer-구동-방법)
+- [프로젝트 구조](#package-프로젝트-구조)
 
 ## :walking: 프로젝트 소개
 
@@ -73,156 +73,6 @@
 #### CI/CD
 
 <img alt="jenkins" src ="https://img.shields.io/badge/jenkins-D24939.svg?&style=for-the-badge&logo=jenkins&logoColor=white"/>
-
-## :package: 프로젝트 구조
-
-<details>
-<summary>Frontend</summary>
-
-```
-└──src
-    ├──assets
-    │   └──img
-    │
-    ├──components
-    │   ├──common
-    │   │   ├──ButtonWithIcon
-    │   │   ├──ClubDetailHeaderNav
-    │   │   ├──TheFooter
-    │   │   ├──TheHeaderNav
-    │   │   ├──CourseFeed
-    │   │   └──WalkHeaderNav
-    │   ├──chat
-    │   │   ├──Message
-    │   │   └──MessageList
-    │   ├──club
-    │   │   └──ClubList
-    │   ├──member
-    │   │   └──MemberListView
-    │   ├──walk
-    │   │   ├──StarRating
-    │   │   ├──StopWatch
-    │   │   └──RecordModifyModal
-    │   └──shareboard
-    │       ├──shareBoardComment
-    │       ├──shareBoardCommentForm
-    │       ├──shareBoardLike
-    │       ├──shareBoardListItem
-    │       ├──shareBoardListUpper
-    │       ├──shareBoardMember
-    │       ├──shareBoardRecord
-    │       ├──shareBoardScrap
-    │       └──shareBoardTitle
-    │
-    ├──router
-    │   └──index
-    │
-    ├──stores
-    │   ├──chat
-    │   ├──jwtFilter
-    │   ├──counter
-    │   ├──club
-    │   ├──member
-    │   ├──shareboard
-    │   └──walk
-    │
-    ├──views
-    │   ├──club
-    │   │   ├──ClubView
-    │   │   ├──ClubDetailView
-    │   │   ├──ClubCreateView
-    │   │   ├──ClubPlanDetail
-    │   │   ├──ClubPlanOverwrite
-    │   │   ├──ClubPlanRegist
-    │   │   ├──ClubPlanView
-    │   │   ├──ClubSettingApplicantView
-    │   │   ├──ClubSettingClubView
-    │   │   ├──ClubSettingHeaderNav
-    │   │   ├──ClubSettingMemberView
-    │   │   └──ClubChatView
-    │   ├──member
-    │   │   ├──Login
-    │   │   ├──Logout
-    │   │   ├──ModifyInfo
-    │   │   ├──MyLocationView
-    │   │   ├──Mypage
-    │   │   ├──RecordScrapList
-    │   │   └──Signup
-    │   ├──shareboard
-    │   │   ├──ShareBoardView
-    │   │   ├──ShareBoardDetailView
-    │   │   ├──ShareBoardModifyView
-    │   │   └──ShareBoardWriteView
-    │   ├──walk
-    │   │   ├──DoWalk
-    │   │   ├──RecommendView
-    │   │   ├──ScrapDetaillView
-    │   │   ├──ScrapListView
-    │   │   ├──WalkDetaillView
-    │   │   └──WalkList
-    │   └──Homewview
-
-```
-
-</details>
-<details>
-<summary>Backend</summary>
-
-```
-└── src
-    ├── main
-    │   ├── java
-    │   │   └── com
-    │   │       └── ssafy
-    │   │           └── backend
-    │   │               ├── BackendApplication.java
-    │   │               ├── member
-    │   │               │   ├── controller
-    │   │               │   ├── domain
-    │   │               │   ├── dto
-    │   │               │   ├── repository
-    │   │               │   └── service
-    │   │               ├── group
-    │   │               │   ├── controller
-    │   │               │   ├── domain
-    │   │               │   ├── dto
-    │   │               │   ├── repository
-    │   │               │   └── service
-    │   │               ├── record
-    │   │               │   ├── controller
-    │   │               │   ├── domain
-    │   │               │   ├── dto
-    │   │               │   ├── repository
-    │   │               │   └── service
-    │   │               ├── shareBoard
-    │   │               │   ├── controller
-    │   │               │   ├── domain
-    │   │               │   ├── dto
-    │   │               │   ├── repository
-    │   │               │   └── service
-    │   │               ├── shareBoardComment
-    │   │               │   ├── controller
-    │   │               │   ├── domain
-    │   │               │   ├── dto
-    │   │               │   ├── repository
-    │   │               │   └── service
-    │   │               ├── global
-    │   │               │   ├── config
-    │   │               │   │   ├── SwaggerConfig.java
-    │   │               │   │   ├── properties
-    │   │               │   │   ├── resttemplate
-    │   │               │   │   └── security
-    │   │               │   ├── error
-    │   │               │   │   ├── ErrorResponse.java
-    │   │               │   │   ├── GlobalExceptionHandler.java
-    │   │               │   │   └── exception
-    │   │               │   └── util
-    │   └── resources
-    │       └── application.yml
-
-```
-
-</details>
 
 ## :building_construction: 아키텍처
 
@@ -623,6 +473,8 @@ management:
 
 security:
   salt: {JWT secret value}
+  atkExp: 3600000 # 1시간
+  rtkExp: 604800000 # 7일
 
 cloud:
   aws:
@@ -645,3 +497,153 @@ oauth:
     request-token-uri: https://kauth.kakao.com/oauth/token
     request-user-info-uri: https://kapi.kakao.com/v2/user/me
 ```
+
+## :package: 프로젝트 구조
+
+<details>
+<summary>Frontend</summary>
+
+```
+└──src
+    ├──assets
+    │   └──img
+    │
+    ├──components
+    │   ├──common
+    │   │   ├──ButtonWithIcon
+    │   │   ├──ClubDetailHeaderNav
+    │   │   ├──TheFooter
+    │   │   ├──TheHeaderNav
+    │   │   ├──CourseFeed
+    │   │   └──WalkHeaderNav
+    │   ├──chat
+    │   │   ├──Message
+    │   │   └──MessageList
+    │   ├──club
+    │   │   └──ClubList
+    │   ├──member
+    │   │   └──MemberListView
+    │   ├──walk
+    │   │   ├──StarRating
+    │   │   ├──StopWatch
+    │   │   └──RecordModifyModal
+    │   └──shareboard
+    │       ├──shareBoardComment
+    │       ├──shareBoardCommentForm
+    │       ├──shareBoardLike
+    │       ├──shareBoardListItem
+    │       ├──shareBoardListUpper
+    │       ├──shareBoardMember
+    │       ├──shareBoardRecord
+    │       ├──shareBoardScrap
+    │       └──shareBoardTitle
+    │
+    ├──router
+    │   └──index
+    │
+    ├──stores
+    │   ├──chat
+    │   ├──jwtFilter
+    │   ├──counter
+    │   ├──club
+    │   ├──member
+    │   ├──shareboard
+    │   └──walk
+    │
+    ├──views
+    │   ├──club
+    │   │   ├──ClubView
+    │   │   ├──ClubDetailView
+    │   │   ├──ClubCreateView
+    │   │   ├──ClubPlanDetail
+    │   │   ├──ClubPlanOverwrite
+    │   │   ├──ClubPlanRegist
+    │   │   ├──ClubPlanView
+    │   │   ├──ClubSettingApplicantView
+    │   │   ├──ClubSettingClubView
+    │   │   ├──ClubSettingHeaderNav
+    │   │   ├──ClubSettingMemberView
+    │   │   └──ClubChatView
+    │   ├──member
+    │   │   ├──Login
+    │   │   ├──Logout
+    │   │   ├──ModifyInfo
+    │   │   ├──MyLocationView
+    │   │   ├──Mypage
+    │   │   ├──RecordScrapList
+    │   │   └──Signup
+    │   ├──shareboard
+    │   │   ├──ShareBoardView
+    │   │   ├──ShareBoardDetailView
+    │   │   ├──ShareBoardModifyView
+    │   │   └──ShareBoardWriteView
+    │   ├──walk
+    │   │   ├──DoWalk
+    │   │   ├──RecommendView
+    │   │   ├──ScrapDetaillView
+    │   │   ├──ScrapListView
+    │   │   ├──WalkDetaillView
+    │   │   └──WalkList
+    │   └──Homewview
+
+```
+
+</details>
+<details>
+<summary>Backend</summary>
+
+```
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── com
+    │   │       └── ssafy
+    │   │           └── backend
+    │   │               ├── BackendApplication.java
+    │   │               ├── member
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── group
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── record
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── shareBoard
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── shareBoardComment
+    │   │               │   ├── controller
+    │   │               │   ├── domain
+    │   │               │   ├── dto
+    │   │               │   ├── repository
+    │   │               │   └── service
+    │   │               ├── global
+    │   │               │   ├── config
+    │   │               │   │   ├── SwaggerConfig.java
+    │   │               │   │   ├── properties
+    │   │               │   │   ├── resttemplate
+    │   │               │   │   └── security
+    │   │               │   ├── error
+    │   │               │   │   ├── ErrorResponse.java
+    │   │               │   │   ├── GlobalExceptionHandler.java
+    │   │               │   │   └── exception
+    │   │               │   └── util
+    │   └── resources
+    │       └── application.yml
+
+```
+
+</details>
